@@ -1,4 +1,4 @@
-package com.github.romainlogean.sdp_bootcamp;
+package com.github.romainlogean.sdp_firebase_bootcamp;
 
 import org.junit.Test;
 

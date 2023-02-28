@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1037425348763",
+    "firebase_url": "https://sdp-firebase-bootcamp-16983-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "sdp-firebase-bootcamp-16983",
+    "storage_bucket": "sdp-firebase-bootcamp-16983.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037425348763:android:272d28e5d08c83eba5b63e",
+        "android_client_info": {
+          "package_name": "com.github.romainlogean.sdp_firebase_bootcamp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037425348763-a0p9nc60eqi8nlk4go8remr8uo84a7rb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtKY-pwdpDHJfylObAvjVp3cYOYtZnxWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037425348763-a0p9nc60eqi8nlk4go8remr8uo84a7rb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
