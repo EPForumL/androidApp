@@ -1,41 +1,58 @@
 package com.github.ybecker.bootcampKotlin
 
-import androidx.test.espresso.action.ViewActions
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-
+import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.*
-import org.hamcrest.Matchers.allOf
-
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
     @get:Rule
-    val testRule = ActivityScenarioRule(MainActivity::class.java)
+    val testRule = createAndroidComposeRule(MainActivity::class.java)
+
+    private val initialTxt = "Your Name"
+    private val buttonTxt = "Click me"
 
     @Test
-    fun checkTransitionToGreetActivity() {
+    fun checkTextFieldHasCorrectInitialContent() {
+        testRule.onNodeWithText(initialTxt).assertExists()
+    }
+
+    @Test
+    fun checkButtonHasCorrectText() {
+        testRule.onNodeWithText(buttonTxt).assertExists()
+    }
+
+    @Test
+    fun checkTextFieldHasEnteredText() {
+        val text = "Yann"
+        testRule.onNodeWithText(initialTxt).performTextClearance()
+        testRule.onNodeWithText("").performTextInput(text)
+        testRule.onNodeWithText(text).assertExists()
+    }
+
+    @Test
+    fun checkTransitionToGreetingActivity() {
         Intents.init()
 
-        val textInteraction = onView(ViewMatchers.withId(R.id.mainName))
-        textInteraction.perform(
-            ViewActions.clearText(),
-            ViewActions.typeText("Yann"),
-            ViewActions.closeSoftKeyboard()
-        )
+        val key = "name"
+        val text = "Yann"
+        testRule.onNodeWithText(initialTxt).performTextClearance()
+        testRule.onNodeWithText("").performTextInput(text)
 
-        val buttonInteraction = onView(ViewMatchers.withId(R.id.mainGoButton))
-        buttonInteraction.perform(ViewActions.click())
+        testRule.onNodeWithText(buttonTxt).performClick()
 
         intended(allOf(
-            hasExtra("name", "Yann"),
+            hasExtra(key, text),
             hasComponent(GreetingActivity::class.java.name))
         )
 

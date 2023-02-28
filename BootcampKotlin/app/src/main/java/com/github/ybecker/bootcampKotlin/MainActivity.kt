@@ -1,9 +1,9 @@
 package com.github.ybecker.bootcampKotlin
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
             TextField(
                 value = name,
-                onValueChange = {str -> name = str}
+                onValueChange = { str -> name = str }
             )
 
             Button(onClick = {
