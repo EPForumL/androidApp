@@ -1,5 +1,6 @@
 package com.github.romainlogean.sdp_bootcamp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.mainGoButton);
         button.setOnClickListener(this::greet);
+        Button button2 = findViewById(R.id.mapB);
+        button2.setOnClickListener(this::map);
     }
 
     public void greet(View view){
@@ -26,4 +29,10 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("NAME", name);
         view.getContext().startActivity(intent);
     }
+
+    public void map(View view) {
+        Intent intent = new Intent(view.getContext(), MainActivity3.class);
+        view.getContext().startActivity(intent);
+    }
+
 }
