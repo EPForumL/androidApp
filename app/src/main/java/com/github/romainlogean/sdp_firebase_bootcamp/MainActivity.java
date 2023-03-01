@@ -1,18 +1,11 @@
 package com.github.romainlogean.sdp_firebase_bootcamp;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -33,25 +26,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void get(View view){
         String phone = ((TextView) findViewById(R.id.phone_textview)).getText().toString();
+        Database db = DatabaseManager.getDatabase();
 
-        CompletableFuture<String> future = new CompletableFuture<>();
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-
-        db.child(phone).get().addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
-            @Override
-            public void onSuccess(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getValue() == null) {
-                    future.completeExceptionally(new NoSuchFieldException());
-                } else {
-                    future.complete(dataSnapshot.getValue(String.class));
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                future.completeExceptionally(e);
-            }
-        });
+        CompletableFuture<String> future = db.get(phone);
 
         future.thenAccept(new Consumer<String>() {
             @Override
@@ -60,15 +37,14 @@ public class MainActivity extends AppCompatActivity {
                 emailView.setText(s);
             }
         });
-
     }
 
     public void set(View view){
         String email = ((TextView) findViewById(R.id.email_textview)).getText().toString();
         String phone = ((TextView) findViewById(R.id.phone_textview)).getText().toString();
 
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-        db.child(phone).setValue(email);
+        Database db = DatabaseManager.getDatabase();
+        db.set(phone,email);
     }
 
 }
