@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "762114165667",
+    "firebase_url": "https://sdp-authentication-bootcamp-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "sdp-authentication-bootcamp",
+    "storage_bucket": "sdp-authentication-bootcamp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762114165667:android:db5b6e18180f5569bfa816",
+        "android_client_info": {
+          "package_name": "com.github.romainlogean.sdp_authentication_bootcamp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762114165667-37a2iavd958n5qg7saisbh00p1975am3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeMOPU8uH6chDWyen6ABubbz6yugFV7PM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762114165667-37a2iavd958n5qg7saisbh00p1975am3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
