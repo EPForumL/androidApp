@@ -1,14 +1,16 @@
 plugins {
     id 'com.android.application'
-    id 'jacoco'
+    // Add the Google services Gradle plugin
+    id 'com.google.gms.google-services'
+
 }
 
 android {
-    namespace 'com.github.romainlogean.sdp_bootcamp'
+    namespace 'com.github.romainlogean.sdp_authentication_bootcamp'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.github.romainlogean.sdp_bootcamp"
+        applicationId "com.github.romainlogean.sdp_authentication_bootcamp"
         minSdk 24
         targetSdk 33
         versionCode 1
@@ -22,9 +24,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug {
-            testCoverageEnabled true
-        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -37,43 +36,21 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.firebase:firebase-database:20.1.0'
+    implementation 'com.google.firebase:firebase-auth:21.1.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation 'androidx.test:runner:1.5.2'
-    androidTestImplementation 'androidx.test:rules:1.5.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
-}
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-    jacoco.excludes = ['jdk.internal.*']
-}
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:31.2.2')
 
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
-    reports {
-        xml.required = true
-        html.required = true
-    }
 
-    def fileFilter = [
-            '**/R.class',
-            '**/R$*.class',
-            '**/BuildConfig.*',
-            '**/Manifest*.*',
-            '**/*Test*.*',
-            'android/**/*.*',
-    ]
-    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes", excludes: fileFilter)
-    def mainSrc = "$project.projectDir/src/main/java"
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics'
 
-    sourceDirectories.setFrom(files([mainSrc]))
-    classDirectories.setFrom(files([debugTree]))
-    executionData.setFrom(fileTree(dir: project.buildDir, includes: [
-            'outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec',
-            'outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec'
-    ]))
-}
 
-connectedCheck {
-    finalizedBy jacocoTestReport
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
 }
