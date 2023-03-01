@@ -22,7 +22,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import java.util.Map;
 
-//the
+//This line is necessary because the emulator fails if it is executed after another test.
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class FireDatabaseTests {
