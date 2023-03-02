@@ -16,10 +16,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    private DrawerLayout drawerLayout;
-
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,29 +24,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Button button = findViewById(R.id.mainGoButton);
         button.setOnClickListener(this::greet);
-
-        // create toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar); //Ignore red line errors
-        setSupportActionBar(toolbar);
-
-        drawerLayout = findViewById(R.id.main_drawer_layout);
-        NavigationView navigationView = findViewById(R.id.navOptions);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // enable toggling options
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-        // default sets to Forum Fragment
-        if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragment_container, new ForumFragment())
-                    .commit();
-            navigationView.setCheckedItem(R.id.forumMenuItem);
-        }
     }
 
     public void greet(View view){
@@ -58,44 +32,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String name = nameTV.getText().toString();
         intent.putExtra("NAME", name);
         view.getContext().startActivity(intent);
-    }
-
-    // TO DO
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.forumMenuItem:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new ForumFragment())
-                        .commit();
-                break;
-
-            case R.id.chatMenuItem:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new ChatFragment())
-                        .commit();
-                break;
-
-            case R.id.savedMenuItem:
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fragment_container, new SavedFragment())
-                        .commit();
-                break;
-        }
-
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 }

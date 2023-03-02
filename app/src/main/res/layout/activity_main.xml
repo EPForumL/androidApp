@@ -4,26 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main_drawer_layout"
-    tools:openDrawer="start"
+
     tools:context=".MainActivity">
 
     <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:id="@+id/toolbar"
-            android:elevation="4dp"
-            android:background="@color/material_dynamic_secondary80"
-            app:popupTheme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/mainName"
@@ -31,57 +18,19 @@
             android:layout_height="48dp"
             android:ems="10"
             android:inputType="textPersonName"
-            android:text="Your Name"
+            android:text="Enter your name"
+            android:layout_gravity="center"
+            android:layout_marginTop="250dp"
             android:textSize="20sp" />
 
         <Button
             android:id="@+id/mainGoButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
             android:text="Continue" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/fragment_container"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/optionsButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="1"
-                android:background="#FFFFFF"
-                android:text="Options" />
-
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-            </LinearLayout>
-
-        </LinearLayout>
-
     </LinearLayout>
-
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navOptions"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:menu="@menu/options_menu"
-        app:headerLayout="@layout/nav_layout"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -3,23 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group
+        android:id="@+id/grp1"
         android:checkableBehavior="single" >
 
         <item
             android:id="@+id/forumMenuItem"
+            android:icon="@drawable/nav_forum"
             android:title="Forum" />
         <item
             android:id="@+id/chatMenuItem"
+            android:icon="@drawable/nav_chat"
             android:title="Chat" />
         <item
             android:id="@+id/savedMenuItem"
+            android:icon="@drawable/nav_saved"
             android:title="Saved" />
 
     </group>
 
-    <item
-        android:id="@+id/goBackItem"
-        android:title="Back" />
-
+    <group android:id="@+id/grp2">
+        <item
+            android:id="@+id/settingsItem"
+            android:icon="@drawable/settings_item"
+            android:title="Settings" />
+    </group>
 
 </menu>

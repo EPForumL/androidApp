@@ -7,4 +7,5 @@
     <string name="forum_fragment">Forum</string>
     <string name="chat_fragment">Chat</string>
     <string name="saved_fragment">Saved</string>
+    <string name="settings_fragment">Settings</string>
 </resources>
