@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "754832222682",
+    "project_id": "sdp-authentication-bootc-d17a6",
+    "storage_bucket": "sdp-authentication-bootc-d17a6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754832222682:android:e96bcb20d1c4b6e1f578e3",
+        "android_client_info": {
+          "package_name": "com.github.romainlogean.sdp_authentication_bootcamp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "754832222682-j00h0vecjl5rvgmg24vn4v7spu4ofi46.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.romainlogean.sdp_authentication_bootcamp",
+            "certificate_hash": "e1bb0b6aae59b76863158f0a7ed26140046e8fc2"
+          }
+        },
+        {
+          "client_id": "754832222682-v2aqvi0qshnnu2hang8mvsvd48si7pjh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOWbtUXKnItoWoSK07Ilkoq8BYxdmZTks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "754832222682-v2aqvi0qshnnu2hang8mvsvd48si7pjh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
