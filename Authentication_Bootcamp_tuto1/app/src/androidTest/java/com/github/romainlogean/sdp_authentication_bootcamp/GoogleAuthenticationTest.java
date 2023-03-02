@@ -10,33 +10,19 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import android.content.Context;
-import android.widget.TextView;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
-import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import org.mockito.Mockito;
-import static org.mockito.Mockito.*;
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -54,7 +40,7 @@ public class GoogleAuthenticationTest {
     public void ConnectLaunchGoogleConnection() throws Exception {
         onView(withId(R.id.login_button)).perform(click());
 
-        onView(withText(contains("Continue with Google")));
+        onView(withText("Continue with Google"));
     }
 
 

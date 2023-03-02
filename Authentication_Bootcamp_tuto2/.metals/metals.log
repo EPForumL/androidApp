@@ -1,0 +1,14 @@
+2023.03.02 23:11:23 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /Users/romain/Desktop/SDP/Authentication_Bootcamp_tuto2/.metals/lsp.trace.json or /Users/romain/Library/Caches/org.scalameta.metals/lsp.trace.json
+2023.03.02 23:11:23 INFO  logging to file /Users/romain/Desktop/SDP/Authentication_Bootcamp_tuto2/.metals/metals.log
+2023.03.02 23:11:23 INFO  Started: Metals version 0.11.10 in workspace '/Users/romain/Desktop/SDP/Authentication_Bootcamp_tuto2' for client Visual Studio Code 1.75.1.
+SLF4J: No SLF4J providers were found.
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See https://www.slf4j.org/codes.html#noProviders for further details.
+SLF4J: Class path contains SLF4J bindings targeting slf4j-api versions 1.7.x or earlier.
+SLF4J: Ignoring binding found at [jar:file:/Users/romain/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/outr/scribe-slf4j_2.13/3.10.5/scribe-slf4j_2.13-3.10.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See https://www.slf4j.org/codes.html#ignoredBindings for an explanation.
+2023.03.02 23:11:24 INFO  time: initialize in 0.6s
+2023.03.02 23:11:25 WARN  Build server is not auto-connectable.
+2023.03.02 23:11:25 WARN  no build target for: /Users/romain/Desktop/SDP/Authentication_Bootcamp_tuto2/app/src/main/java/com/github/romainlogean/authentication_bootcamp_tuto2/MainActivity.java
+2023.03.02 23:11:32 WARN  no build target for: /Users/romain/Desktop/SDP/Authentication_Bootcamp_tuto2/app/src/androidTest/java/com/github/romainlogean/authentication_bootcamp_tuto2/OnTapAuthTests.java
+2023.03.02 23:11:35 INFO  shutting down Metals
