@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/forumMenuItem"
+        android:title="Forum" />
+    <item
+        android:id="@+id/chatMenuItem"
+        android:title="Chat" />
+    <item
+        android:id="@+id/savedMenuItem"
+        android:title="Saved" />
+</menu>

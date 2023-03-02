@@ -17,9 +17,37 @@ public class MainActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.mainGoButton);
         button.setOnClickListener(this::greet);
+
+        /*Button options = findViewById(R.id.optionsButton);
+        options.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainerOptions, DisplayFragment.class, null)
+                        .setReorderingAllowed(true)
+                        .addToBackStack("name") // whatever name ?
+                        .commit();
+            }
+        });*/
+
+
+        // add fragment to main view
+        /*getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainerOptions, new DisplayFragment())
+                .commit();*/
     }
 
     public void greet(View view){
+        Intent intent = new Intent(view.getContext(), GreetingActivity.class);
+        TextView nameTV = findViewById(R.id.mainName);
+        String name = nameTV.getText().toString();
+        intent.putExtra("NAME", name);
+        view.getContext().startActivity(intent);
+    }
+
+    public void toggleOptions(View view){
         Intent intent = new Intent(view.getContext(), GreetingActivity.class);
         TextView nameTV = findViewById(R.id.mainName);
         String name = nameTV.getText().toString();

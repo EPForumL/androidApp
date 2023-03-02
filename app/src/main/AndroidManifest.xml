@@ -13,6 +13,11 @@
         android:theme="@style/Theme.SDP_Bootcamp"
         tools:targetApi="31">
         <activity
+            android:name=".MenuActivity"
+            android:exported="false"
+            android:label="@string/title_activity_menu"
+            android:theme="@style/Theme.SDP_Bootcamp.NoActionBar" />
+        <activity
             android:name=".GreetingActivity"
             android:exported="false">
             <meta-data
