@@ -1,51 +1,62 @@
 package com.github.ybecker.epforuml
 
-import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
+import com.github.ybecker.epforuml.Model.*
+import junit.framework.TestCase.assertNull
+import org.junit.Before
 
 class MockDatabaseTest {
 
+    @Before
+    fun setUp(){
+        DatabaseManager.useMockDatabase()
+    }
+
+    private val db = DatabaseManager.getDatabase()
+    private val user = User("user1", "TestUser1", emptyList())
+    private val SwEng = Course("0","Sweng", mutableListOf())
+    private val SDP = Course("1","SDP", mutableListOf())
+
     @Test
     fun addAndGetQuestionTest() {
-        DatabaseManager.useMockDatabase()
-
-        val db = DatabaseManager.getDatabase()
-        val courses = db?.availableCourses()
-
-        val question = "How to write tests in Kotlin?"
-        if (courses != null) {
-            for (c in courses){
-                db.addQuestion(c, question)
-
-                assertThat(db.getQuestions(c)?.get()?.get(0), `is`(question))
-            }
-
-        }
 
     }
 
     @Test
-    fun addAndGetAnswerTest() {
-        DatabaseManager.useMockDatabase()
-
+    fun availableCoursesTest() {
         val db = DatabaseManager.getDatabase()
-        val courses = db?.availableCourses()
 
-        val question = "How to write tests in Kotlin?"
-        val answer = "Use the Kotlin Documentation !"
-        if (courses != null) {
-            for (c in courses){
-                db.addAnswers(c, question, answer)
+        val courseOfMockDB = listOf(SwEng, SDP)
 
-                assertThat(db.getAnswers(c, question)?.get()?.get(0), `is`(answer))
-            }
+        assertThat(db?.availableCourses(), `is`(courseOfMockDB))
+    }
 
-        }
+    @Test
+    fun userQuestionNullTest() {
+//        val db = DatabaseManager.getDatabase()
+//
+//        val userQuestions = db?.getUserQuestions(user)
+//
+//        assertThat(userQuestions).isEqualTo(emptyList())
+
+    }
+
+    @Test
+    fun userQuestionListTest() {
+        val db = DatabaseManager.getDatabase()
+
+        val user = User("user1", "TestUser1", emptyList())
+
+        val userQuestions = db?.getUserQuestions(user)
+
+        db?.addQuestion(user, SDP, "Should we use Kotlin for Android Development?")
+        db?.addQuestion(user, SDP, "We prefer to use XML over Jetpack Compose.")
+
+
+        assertThat(userQuestions, `is`(mutableListOf()))
+
     }
 
 

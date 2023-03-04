@@ -1,26 +1,32 @@
 package com.github.ybecker.epforuml
 
 import java.util.concurrent.CompletableFuture
+import com.github.ybecker.epforuml.Model.*
 
 class FirebaseDatabaseAdapter : Database() {
-    override fun getQuestions(course: String?): CompletableFuture<List<String>>? {
+    override fun getQuestions(course: Course): CompletableFuture<List<Question>>? {
         TODO("Not yet implemented")
     }
 
-    override fun getAnswers(course: String?, question: String?): CompletableFuture<List<String>>? {
+    override fun getAnswers(question: Question): CompletableFuture<List<Answer>>? {
         TODO("Not yet implemented")
     }
 
-    override fun addQuestion(course: String?, question: String?) {
+    override fun addQuestion(user: User, course: Course, questionText: String?) {
         TODO("Not yet implemented")
     }
 
-    override fun addAnswers(course: String?, question: String?, answer: String?) {
+    override fun addAnswers(user: User, question: Question, answerText: String?) {
         TODO("Not yet implemented")
     }
 
-    override fun availableCourses(): List<String>? {
+    override fun availableCourses(): List<Course>? {
         TODO("Not yet implemented")
     }
+
+    override fun getUserQuestions(user: User): List<Question>? {
+        TODO("Not yet implemented")
+    }
+
 
 }
