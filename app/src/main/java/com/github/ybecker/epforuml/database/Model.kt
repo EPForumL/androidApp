@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml
+package com.github.ybecker.epforuml.database
 
 class Model {
     // This class represent a Question
@@ -8,7 +8,7 @@ class Model {
     data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String)
 
     // This class represent a user
-    data class User(val userId: String, val username: String, var answers: List<Question>)
+    data class User(val userId: String, val username: String, var questions: List<Question>, var answers: List<Answer>)
 
     //This class represent a course
     data class Course(val courseId: String, val courseName: String, var answers: List<Question>)

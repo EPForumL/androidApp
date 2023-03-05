@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml
+package com.github.ybecker.epforuml.database
 
 object DatabaseManager {
     private var db: Database = FirebaseDatabaseAdapter()
@@ -8,7 +8,7 @@ object DatabaseManager {
         useMockDatabase();
     }
 
-    fun getDatabase(): Database? {
+    fun getDatabase(): Database {
         return db
     }
 
