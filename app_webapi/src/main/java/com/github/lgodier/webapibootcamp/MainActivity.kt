@@ -65,12 +65,7 @@ class MainActivity : AppCompatActivity() {
                     val random = Random()
                     println(random.nextInt(activityDao.count()))
                     message +=
-                        activityDao.loadById(
-                                random.nextInt(activityDao.count())
-                            ).description
-
-
-                }.start()
+                        activityDao.loadById(random.nextInt(activityDao.count()).description}.start()
                 findViewById<TextView>(R.id.textView).text = message
                 }
         })
