@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view"
+    >
+    <group
+        android:checkableBehavior="single">
+
+
+        <item
+            android:id="@+id/nav_home"
+            android:title="Home"
+            android:icon="@drawable/nav_home"></item>
+
+        <item
+            android:id="@+id/nav_my_questions"
+            android:title="My Questions"
+            android:icon="@drawable/nav_my_questions"></item>
+
+        <item
+            android:id="@+id/nav_saved_questions"
+            android:title="Saved Questions"
+            android:icon="@drawable/nav_saved_questions"></item>
+
+    </group>
+
+    <item android:title="Options">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:title="Settings"
+                android:icon="@drawable/nav_settings"></item>
+            <item
+                android:id="@+id/nav_account"
+                android:title="My Account"
+                android:icon="@drawable/nav_account"></item>
+        </menu>
+
+    </item>
+
+
+</menu>
