@@ -1,20 +1,25 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 /**
  * This class represents a database that uses Firebase Realtime Database
  */
 class FirebaseDatabaseAdapter : Database() {
-    override fun availableCourses(): List<Course> {
+
+    private val db: DatabaseReference = FirebaseDatabase.getInstance().reference
+
+    override fun availableCourses(): Set<Course> {
         TODO("Not yet implemented")
     }
 
-    override fun getQuestionsForCourse(course: Course): List<Question> {
+    override fun getQuestionsForCourse(course: Course): Set<Question> {
         TODO("Not yet implemented")
     }
 
-    override fun getAnswersForQuestion(question: Question): List<Answer> {
+    override fun getAnswersForQuestion(question: Question): Set<Answer> {
         TODO("Not yet implemented")
     }
 
@@ -22,7 +27,7 @@ class FirebaseDatabaseAdapter : Database() {
         TODO("Not yet implemented")
     }
 
-    override fun addAnswers(user: User, question: Question, answerText: String?): Answer {
+    override fun addAnswer(user: User, question: Question, answerText: String?): Answer {
         TODO("Not yet implemented")
     }
 
@@ -30,7 +35,7 @@ class FirebaseDatabaseAdapter : Database() {
         TODO("Not yet implemented")
     }
 
-    override fun getUserQuestions(user: User): List<Question> {
+    override fun getUserQuestions(user: User): Set<Question> {
         TODO("Not yet implemented")
     }
 

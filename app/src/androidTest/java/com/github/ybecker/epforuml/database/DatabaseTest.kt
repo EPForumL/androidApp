@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml
 
+import com.github.ybecker.epforuml.database.Database
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -11,7 +12,7 @@ import org.junit.Before
 
 class MockDatabaseTest {
 
-    private val db = DatabaseManager.getDatabase()
+    private var db: Database = DatabaseManager.getDatabase()
     // these variable are already in the MockDatabase
     private val user = User("user1", "TestUser", emptyList(), emptyList())
     private val SwEng = Course("0","Sweng", mutableListOf())
@@ -20,6 +21,7 @@ class MockDatabaseTest {
     @Before
     fun setUp(){
         DatabaseManager.useMockDatabase()
+        db = DatabaseManager.getDatabase()
     }
 
     //TODO make more tests !
@@ -27,13 +29,13 @@ class MockDatabaseTest {
     @Test
     fun addAndGetUser(){
         val user2 = User("user2", "TestUser2", emptyList(), emptyList())
-        db?.addUser(user2.userId, user2.username)
-        assertThat(db?.getUserById(user2.userId), equalTo(user2))
+        db.addUser(user2.userId, user2.username)
+        assertThat(db.getUserById(user2.userId), equalTo(user2))
     }
 
     @Test
     fun getCourseByIdTest(){
-        assertThat(db?.getCourseById(SDP.courseId), equalTo(SDP))
+        assertThat(db.getCourseById(SDP.courseId), equalTo(SDP))
     }
 
     @Test
@@ -54,7 +56,7 @@ class MockDatabaseTest {
     @Test
     fun AddAndGetQuestionByIdTest(){
         val question = db.addQuestion(user, SDP, "I have a question.")
-        assertThat(db.getQuestionById(question!!.questionId), equalTo(question))
+        assertThat(db.getQuestionById(question.questionId), equalTo(question))
     }
 
     @Test
@@ -65,8 +67,9 @@ class MockDatabaseTest {
     @Test
     fun AddAndGetAnswerByIdTest(){
         val question = db.addQuestion(user, SDP, "I have a question.")
-        val answer = db.addAnswers(user, question, "And what is it ?")
-        assertThat(db.getQuestionById(question!!.questionId), equalTo(question))
+        val answer = db.addAnswer(user, question, "And what is it ?")
+        assertThat(db.getQuestionById(question.questionId), equalTo(question))
+        assertThat(db.getAnswerById(answer.answerId), equalTo(answer))
     }
 
     @Test
@@ -76,7 +79,7 @@ class MockDatabaseTest {
 
     @Test
     fun availableCoursesTest() {
-        val courseOfMockDB = listOf(SwEng, SDP)
+        val courseOfMockDB = setOf(SwEng, SDP)
         assertThat(db.availableCourses(), `is`(courseOfMockDB))
     }
 
@@ -88,10 +91,28 @@ class MockDatabaseTest {
         val q2 = db.addQuestion(user, SDP, "We prefer to use XML over Jetpack Compose.")
         val userQuestionsAfter = db.getUserQuestions(user)
 
-        assertThat(userQuestionsBefore, equalTo(emptyList()))
-        assertThat(userQuestionsAfter, equalTo(mutableListOf(q2, q1)))
+        assertThat(userQuestionsBefore, equalTo(emptySet()))
+        assertThat(userQuestionsAfter, equalTo(setOf(q2, q1)))
         assertThat(userQuestionsAfter, equalTo(db.getQuestionsForCourse(SDP)))
     }
 
+    @Test
+    fun getAnswerFromQuestionTest(){
+
+        val q1 = db.addQuestion(user, SDP, "Should we use Kotlin for Android Development?")
+        val a1 = db.addAnswer(user, q1, "Yes, it is well documented on the internet")
+        val a2= db.addAnswer(user, q1, "Yes it is.")
+
+        val answers = setOf(a2, a1)
+        assertThat(db.getAnswersForQuestion(q1), equalTo(answers))
+
+
+    }
+
+    @Test
+    fun getAnswerFromQuestionWithoutAnyAnswerTest(){
+        val q2 = db.addQuestion(user, SDP, "We prefer to use XML over Jetpack Compose.")
+        assertThat(db.getAnswersForQuestion(q2), equalTo(setOf()))
+    }
 
 }

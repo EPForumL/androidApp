@@ -22,12 +22,12 @@ class MockDatabase : Database() {
         users[user1.userId] = user1
     }
 
-    override fun getQuestionsForCourse(course: Course): List<Question> {
-        return questions.filterValues { it.courseId == course.courseId }.values.toList()
+    override fun getQuestionsForCourse(course: Course): Set<Question> {
+        return questions.filterValues { it.courseId == course.courseId }.values.toSet()
     }
 
-    override fun getAnswersForQuestion(question: Question): List<Answer> {
-        return answers.filterValues { it.questionId == question.questionId }.values.toList()
+    override fun getAnswersForQuestion(question: Question): Set<Answer> {
+        return answers.filterValues { it.questionId == question.questionId }.values.toSet()
     }
 
     override fun addQuestion(user: User, course: Course, questionText: String?): Question {
@@ -42,7 +42,7 @@ class MockDatabase : Database() {
         return question
     }
 
-    override fun addAnswers(user: User, question: Question, answerText: String?): Answer {
+    override fun addAnswer(user: User, question: Question, answerText: String?): Answer {
         val answerId = "answer${answers.size + 1}"
         val answer = Answer(answerId, question.questionId, user.userId, answerText ?: "")
         answers[answerId] = answer
@@ -61,8 +61,8 @@ class MockDatabase : Database() {
     }
 
 
-    override fun availableCourses(): List<Course> {
-        return courses.values.toList()
+    override fun availableCourses(): Set<Course> {
+        return courses.values.toSet()
     }
 
     override fun getQuestionById(id: String): Question? {
@@ -81,9 +81,8 @@ class MockDatabase : Database() {
         return courses.get(id)
     }
 
-    override fun getUserQuestions(user: User): List<Question> {
-        val userQuestions = questions.filterValues { it.userId == user.userId }.values.toList()
-        return userQuestions.toList()
+    override fun getUserQuestions(user: User): Set<Question> {
+        return questions.filterValues { it.userId == user.userId }.values.toSet()
     }
 
 }

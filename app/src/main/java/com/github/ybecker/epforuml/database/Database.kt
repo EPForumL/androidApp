@@ -12,7 +12,7 @@ abstract class Database {
      *
      * @return a list of every available courses
      */
-    abstract fun availableCourses(): List<Course>
+    abstract fun availableCourses(): Set<Course>
 
     /**
      * Retrieves a list of questions for a given course.
@@ -20,7 +20,7 @@ abstract class Database {
      * @param course the course for which to retrieve questions
      * @return a list of all questions for the given course
      */
-    abstract fun getQuestionsForCourse(course: Course): List<Question>
+    abstract fun getQuestionsForCourse(course: Course): Set<Question>
 
     /**
      * Retrieves a list of answers for a given question.
@@ -28,7 +28,7 @@ abstract class Database {
      * @param question: the question for which to retrieve answers
      * @return a list of all answers for the given question
      */
-    abstract fun getAnswersForQuestion(question: Question): List<Answer>
+    abstract fun getAnswersForQuestion(question: Question): Set<Answer>
 
     /**
      * Posts a new question in a given course.
@@ -48,7 +48,7 @@ abstract class Database {
      * @param answerText the text of the answer itself
      * @return the answer that was posted in database
      */
-    abstract fun addAnswers(user: User, question: Question, answerText: String?): Answer
+    abstract fun addAnswer(user: User, question: Question, answerText: String?): Answer
 
     /**
      * Adds a user to the database.
@@ -64,7 +64,7 @@ abstract class Database {
      *
      * @return a list of every question asked by a user
      */
-    abstract fun getUserQuestions(user: User): List<Question>
+    abstract fun getUserQuestions(user: User): Set<Question>
 
     /**
      * Returns the question with the given ID.
