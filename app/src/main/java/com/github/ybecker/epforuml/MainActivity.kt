@@ -13,16 +13,18 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var toggle : ActionBarDrawerToggle
+    lateinit var drawerLayout: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val drawerLayout : DrawerLayout = findViewById(R.id.drawer_layout)
+        drawerLayout = findViewById(R.id.drawer_layout)
         val navView : NavigationView = findViewById(R.id.nav_view)
 
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
@@ -30,6 +32,24 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        navView.setNavigationItemSelectedListener {
+            when(it.itemId) {
+                R.id.nav_home -> replaceFragment(HomeFragment(), it.toString())
+                R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment(), it.toString())
+                R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment(), it.toString())
+                R.id.nav_account -> replaceFragment(AccountFragment(), it.toString())
+                R.id.nav_settings -> replaceFragment(SettingsFragment(), it.toString())
+            }
+
+            true
+        }
+    }
+
+    private fun replaceFragment(fragment: Fragment, title : String) {
+        supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
+        drawerLayout.closeDrawers()
+        setTitle(title)
     }
 
     /**

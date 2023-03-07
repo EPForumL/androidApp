@@ -16,7 +16,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/main_text"
-            android:text="Welcome to EPForumL!"
+            android:text="@string/welcome"
+            android:textSize="20sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +27,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/frame_layout"></FrameLayout>
+            android:id="@+id/frame_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -34,12 +36,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:id="@+id/nav_view"
+        app:headerLayout="@layout/nav_header"
         android:fitsSystemWindows="true"
-        android:layout_gravity="start"
-        >
-
-
-
-    </com.google.android.material.navigation.NavigationView>
+        android:layout_gravity="start" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
