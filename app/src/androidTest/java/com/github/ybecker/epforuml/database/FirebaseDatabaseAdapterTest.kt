@@ -31,7 +31,7 @@ class FirebaseDatabaseAdapterTest {
 //        var dbInstance = FirebaseDatabase.getInstance()
 //        dbInstance.useEmulator("127.0.0.1", 9000)
 
-        val firebaseDB = FirebaseDatabase.getInstance().reference
+        val firebaseDB = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app").reference
         firebaseDB.child("courses").setValue(null)
         firebaseDB.child("users").setValue(null)
         firebaseDB.child("questions").setValue(null)
