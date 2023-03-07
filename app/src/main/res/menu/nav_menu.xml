@@ -24,7 +24,7 @@
 
     </group>
 
-    <item android:title="@string/options">
+    <item android:title="@string/profile">
         <menu>
             <group android:checkableBehavior="single">
                 <item

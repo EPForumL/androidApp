@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +32,17 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
+        // how to make the toggle open the drawer ?
+        /*toggle.setToolbarNavigationClickListener {
+            drawerLayout.openDrawer(navView)
+        }*/
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        if(savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment()).commit()
+        }
+
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
@@ -44,6 +55,14 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun replaceFragment(fragment: Fragment, title : String) {
