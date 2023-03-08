@@ -1,18 +1,9 @@
 package com.github.ybecker.epforuml
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.activity.compose.setContent
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
