@@ -13,6 +13,11 @@
             android:icon="@drawable/nav_home" />
 
         <item
+            android:id="@+id/nav_courses"
+            android:title="@string/courses"
+            android:icon="@drawable/nav_courses" />
+
+        <item
             android:id="@+id/nav_my_questions"
             android:title="@string/my_questions"
             android:icon="@drawable/nav_my_questions" />

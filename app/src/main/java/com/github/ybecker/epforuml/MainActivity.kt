@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
                 R.id.nav_home -> replaceFragment(HomeFragment(), it.toString())
+                R.id.nav_courses -> replaceFragment(CoursesFragment(), it.toString())
                 R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment(), it.toString())
                 R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment(), it.toString())
                 R.id.nav_account -> replaceFragment(AccountFragment(), it.toString())

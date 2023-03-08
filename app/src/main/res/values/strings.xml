@@ -10,6 +10,7 @@
     <string name="welcome">Welcome to EPForumL!</string>
     <string name="home">Home</string>
     <string name="my_questions">My Questions</string>
+    <string name="courses">Courses</string>
     <string name="saved_questions">Saved Questions</string>
     <string name="options">Options</string>
     <string name="profile">Profile</string>
@@ -17,6 +18,4 @@
     <string name="my_account">My Account</string>
     <string name="forum">Forum</string>
     <string name="menu">Menu</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

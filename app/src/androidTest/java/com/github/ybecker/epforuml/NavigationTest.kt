@@ -41,6 +41,11 @@ class NavigationTest {
 
         onView(withContentDescription(R.string.open))
             .perform(click())
+        onView(withId(R.id.nav_courses)).perform(click())
+        onView(withId(R.id.courses_layout_parent)).check(matches(isDisplayed()))
+
+        onView(withContentDescription(R.string.open))
+            .perform(click())
         onView(withId(R.id.nav_home)).perform(click())
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
