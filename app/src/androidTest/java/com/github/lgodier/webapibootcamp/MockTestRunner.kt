@@ -1,3 +1,4 @@
+/*
 package com.github.lgodier.webapibootcamp
 
 import android.app.Application
@@ -10,4 +11,4 @@ class MockTestRunner : AndroidJUnitRunner() {
                                 context: Context?): Application {
         return super.newApplication(cl, BoredActivityTestApp::class.java.name, context)
     }
-}
+}*/

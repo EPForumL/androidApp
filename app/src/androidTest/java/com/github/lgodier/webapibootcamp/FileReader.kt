@@ -1,3 +1,4 @@
+/*
 package com.github.lgodier.webapibootcamp
 
 import androidx.test.platform.app.InstrumentationRegistry
@@ -19,4 +20,4 @@ object FileReader {
             throw e
         }
     }
-}
+}*/

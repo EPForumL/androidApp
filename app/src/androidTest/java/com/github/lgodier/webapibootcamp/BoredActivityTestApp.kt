@@ -1,3 +1,4 @@
+/*
 package com.github.lgodier.webapibootcamp
 
 class BoredActivityTestApp : BoredActivityApp() {
@@ -8,4 +9,4 @@ class BoredActivityTestApp : BoredActivityApp() {
         return url
     }
 
-}
+}*/

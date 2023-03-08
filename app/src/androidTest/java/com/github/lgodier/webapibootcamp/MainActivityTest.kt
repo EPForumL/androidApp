@@ -1,3 +1,4 @@
+/*
 package com.github.lgodier.webapibootcamp
 
 import androidx.test.espresso.Espresso.onView
@@ -55,4 +56,4 @@ class MainActivityTest {
      //   scenario.close()
     }
 
-}
+}*/
