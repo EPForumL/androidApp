@@ -7,10 +7,12 @@ import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
 
 class FirebaseDatabaseAdapterTest {
+
     private lateinit var db: Database
     private lateinit var swEng: Course
     private lateinit var sdp: Course
@@ -23,21 +25,22 @@ class FirebaseDatabaseAdapterTest {
 
     @Before
     fun setUp() {
-        // ATTENTION CE TEST REINITIALISE LA DB
-
         //To run this test make sur to install firebase database emulator
         //and run "firebase emulators:start --only database"
 
-//        var dbInstance = FirebaseDatabase.getInstance()
-//        dbInstance.useEmulator("127.0.0.1", 9000)
+        val firebaseInstance = FirebaseDatabase
+            .getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
+            //.useEmulator("127.0.0.1", 9000)
 
         val firebaseDB = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app").reference
+
+
         firebaseDB.child("courses").setValue(null)
         firebaseDB.child("users").setValue(null)
         firebaseDB.child("questions").setValue(null)
         firebaseDB.child("answers").setValue(null)
 
-        db = FirebaseDatabaseAdapter()
+        db = DatabaseManager.getDatabase()
 
         swEng = Course("0", "SwEng", emptyList())
         sdp = Course("1", "SDP", emptyList())
@@ -45,19 +48,28 @@ class FirebaseDatabaseAdapterTest {
         firebaseDB.child("courses").child("0").setValue(swEng)
         firebaseDB.child("courses").child("1").setValue(sdp)
 
-        romain = db.addUser("Romain")
-        theo = db.addUser("Theo")
+        romain = db.addUser("0", "Romain")
+        theo = db.addUser("1","Theo")
 
         question1 = db.addQuestion(romain, sdp, "I have question about the SDP course !")
         question2 = db.addQuestion(romain, sdp, "I think that the lambda with 'it' in Kotlin are great !")
 
         answer1 = db.addAnswer(romain, question2, "Yes they are !")
         answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
+
+    }
+
+    @Test
+    fun waitTest(){
+        var i = 0
+        while (i<100000){
+            i++
+        }
     }
 
     @Test
     fun addAndGetUser() {
-        val user2 = db.addUser("TestUser2")
+        val user2 = db.addUser("2","TestUser2")
         assertThat(db.getUserById(user2.userId), equalTo(user2))
     }
 
@@ -106,5 +118,45 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun availableCoursesTest() {
         assertTrue(db.availableCourses().map { it.courseId }.containsAll(listOf(swEng.courseId, sdp.courseId)))
+    }
+
+    @Test
+    fun getCourseQuestionTest(){
+        assertThat(db.getCourseQuestions(sdp).map { it.questionId }.toSet(), equalTo(setOf(question1.questionId, question2.questionId)))
+    }
+
+    @Test
+    fun getCourseQuestionWhenEmpty(){
+        assertThat(db.getCourseQuestions(swEng).map { it.questionId }.toSet(), equalTo(setOf()))
+    }
+
+    @Test
+    fun getUserQuestionTest(){
+        assertThat(db.getUserQuestions(romain).map { it.questionId }.toSet(), equalTo(setOf(question1.questionId, question2.questionId)))
+    }
+
+    @Test
+    fun getUserQuestionWhenEmpty(){
+        assertThat(db.getUserQuestions(theo).map { it.questionId }.toSet(), equalTo(setOf()))
+    }
+
+    @Test
+    fun getUserAnswersTest(){
+        assertThat(db.getUserAnswers(romain).map { it.answerId }.toSet(), equalTo(setOf(answer1.answerId,answer2.answerId)))
+    }
+
+    @Test
+    fun getUserAnswersWhenEmpty(){
+        assertThat(db.getUserAnswers(theo).map { it.answerId }.toSet(), equalTo(setOf()))
+    }
+
+    @Test
+    fun getQuestionAnswers(){
+        assertThat(db.getQuestionAnswers(question2).map { it.answerId }.toSet(), equalTo(setOf(answer1.answerId, answer2.answerId)))
+    }
+
+    @Test
+    fun getQuestionAnswersWhenEmpty(){
+        assertThat(db.getQuestionAnswers(question1).map { it.answerId }.toSet(), equalTo(setOf()))
     }
 }

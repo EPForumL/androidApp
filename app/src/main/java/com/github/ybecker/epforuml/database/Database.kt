@@ -32,11 +32,18 @@ abstract class Database {
 
 
     /**
-     * Returns a list of every question asked by a user.
+     * Returns a list of every questions asked by a user.
      *
-     * @return a list of every question asked by a user
+     * @return a list of every questions asked by a user
      */
     abstract fun getUserQuestions(user: User): Set<Question>
+
+    /**
+     * Returns a list of every answers asked by a user.
+     *
+     * @return a list of every answers asked by a user
+     */
+    abstract fun getUserAnswers(user: User): Set<Answer>
 
     //TODO see if we need getUserAnswers
 
@@ -67,7 +74,7 @@ abstract class Database {
      * @param username the name of the user to add
      * @return the user that was added in database
      */
-    abstract fun addUser(username:String): User
+    abstract fun addUser(userId:String, username:String): User
 
     /**
      * Returns the question with the given ID.

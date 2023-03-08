@@ -27,7 +27,7 @@ class MockDatabaseTest {
     @Test
     fun addAndGetUser(){
         val user2 = User("user2", "TestUser2", emptyList(), emptyList())
-        db.addUser(user2.username)
+        db.addUser(user2.userId, user2.username)
         assertThat(db.getUserById(user2.userId), equalTo(user2))
     }
 

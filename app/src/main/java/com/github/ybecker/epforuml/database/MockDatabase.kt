@@ -46,6 +46,14 @@ class MockDatabase : Database() {
         val answer = Answer(answerId, question.questionId, user.userId, answerText ?: "")
         answers[answerId] = answer
         questions[question.questionId]?.answers = questions[question.questionId]?.answers?.plus(answer) ?: listOf(answer)
+        courses[question.courseId]?.questions?.let { courseQuestions ->
+            courseQuestions?.forEach { courseQuestion ->
+                if (courseQuestion.questionId == question.questionId) {
+                    courseQuestion.answers = questions[question.questionId]?.answers?.plus(answer) ?: listOf(answer)
+                }
+            }
+        }
+
         users[user.userId]?.let {
             val updatedAnswers = it.answers + answer
             users[user.userId] = it.copy(answers = updatedAnswers)
@@ -53,9 +61,9 @@ class MockDatabase : Database() {
         return answer
     }
 
-    override fun addUser(username: String): User {
-        val userId = "user${users.size + 1}"
-        val user = User(userId , username, emptyList(), emptyList())
+    override fun addUser(userId:String, username: String): User {
+        val newUserId = "user${users.size + 1}"
+        val user = User(newUserId , username, emptyList(), emptyList())
         users[userId] = user
         return user
     }
@@ -83,6 +91,10 @@ class MockDatabase : Database() {
 
     override fun getUserQuestions(user: User): Set<Question> {
         return questions.filterValues { it.userId == user.userId }.values.toSet()
+    }
+
+    override fun getUserAnswers(user: User): Set<Answer> {
+        return answers.filterValues { it.userId == user.userId }.values.toSet()
     }
 
 }

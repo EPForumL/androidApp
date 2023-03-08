@@ -1,9 +1,7 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -12,12 +10,15 @@ import java.util.concurrent.TimeUnit
  */
 class FirebaseDatabaseAdapter : Database() {
 
-    private val db: DatabaseReference = FirebaseDatabase.getInstance().reference
+    // save the database reference
+    private val dbInstance = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
+    private val db: DatabaseReference = dbInstance.reference
 
+    // save every useful path to navigate in the database
     private val usersPath = "users"
     private val coursesPath = "courses"
     private val questionsPath = "questions"
-    private val answerPath = "answers"
+    private val answersPath = "answers"
 
     private val courseIdPath = "courseId"
     private val userIdPath = "userId"
@@ -32,9 +33,10 @@ class FirebaseDatabaseAdapter : Database() {
 
     override fun availableCourses(): Set<Course> {
         val future = CompletableFuture<Set<Course>>()
-
+        // go in "courses" dir
         db.child(coursesPath).get().addOnSuccessListener {
             val courses = mutableSetOf<Course>()
+            // add every course that in not null in "courses" in the map
             for (courseSnapshot in it.children) {
                 val course = getCourse(courseSnapshot)
                 if (course != null) {
@@ -49,30 +51,35 @@ class FirebaseDatabaseAdapter : Database() {
         return future.get(5,TimeUnit.SECONDS)
     }
 
-    //Note that using course.questions is false because you don't take the db last value !
+    //Note that using course.questions in the main is false because you don't take new values in the db into account !
     override fun getCourseQuestions(course: Course): Set<Question> {
+        // go in "courses/courseId/questions" dir
         val future = CompletableFuture<Set<Question>>()
-        db.child(coursesPath).child(course.courseId).get().addOnSuccessListener {
-            val questions = mutableSetOf<Question>()
-            for (courseSnapshot in it.children) {
-                val question = getQuestion(courseSnapshot)
-                if (question != null) {
-                    questions.add(question)
+        db.child(coursesPath).child(course.courseId).child(questionsPath).get()
+            .addOnSuccessListener {
+                val questions = mutableSetOf<Question>()
+                // add every course's question that in not null in the map
+                for (courseSnapshot in it.children) {
+                    val question = getQuestion(courseSnapshot)
+                    if (question != null) {
+                        questions.add(question)
+                    }
                 }
-            }
-            future.complete(questions)
-        }.addOnFailureListener {
+                future.complete(questions)
+            }.addOnFailureListener {
             future.completeExceptionally(it)
         }
 
-        return future.get(5,TimeUnit.SECONDS)
+        return future.get(5, TimeUnit.SECONDS)
     }
 
+    //Note that using question.answers in the main is false because you don't take new values in the db into account !
     override fun getQuestionAnswers(question: Question): Set<Answer> {
-
         val future = CompletableFuture<Set<Answer>>()
-        db.child(questionsPath).child(question.questionId).get().addOnSuccessListener {
+        // go in "question/questionId" dir
+        db.child(questionsPath).child(question.questionId).child(answersPath).get().addOnSuccessListener {
             val answers = mutableSetOf<Answer>()
+            // add every question's answer that is not null in the map
             for (courseSnapshot in it.children) {
                 val answer = getAnswer(courseSnapshot)
                 if (answer != null) {
@@ -87,10 +94,13 @@ class FirebaseDatabaseAdapter : Database() {
         return future.get(5,TimeUnit.SECONDS)
     }
 
+    //Note that using user.question in the main is false because you don't take new values in the db into account !
     override fun getUserQuestions(user: User): Set<Question> {
         val future = CompletableFuture<Set<Question>>()
-        db.child(usersPath).child(user.userId).get().addOnSuccessListener {
+        // go in "user/userId" dir
+        db.child(usersPath).child(user.userId).child(questionsPath).get().addOnSuccessListener {
             val questions = mutableSetOf<Question>()
+            // add every user's question that is not null in the map
             for (courseSnapshot in it.children) {
                 val question = getQuestion(courseSnapshot)
                 if (question != null) {
@@ -105,54 +115,87 @@ class FirebaseDatabaseAdapter : Database() {
         return future.get(5,TimeUnit.SECONDS)
     }
 
+    override fun getUserAnswers(user: User): Set<Answer> {
+        val future = CompletableFuture<Set<Answer>>()
+        // go in "user/userId" dir
+        db.child(usersPath).child(user.userId).child(answersPath).get().addOnSuccessListener {
+            val answers = mutableSetOf<Answer>()
+            // add every user's question that is not null in the map
+            for (courseSnapshot in it.children) {
+                val answer = getAnswer(courseSnapshot)
+                if (answer != null) {
+                    answers.add(answer)
+                }
+            }
+            future.complete(answers)
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
+
+        return future.get(5,TimeUnit.SECONDS)
+    }
+
     override fun addQuestion(user: User, course: Course, questionText: String?): Question {
+        // create a space for the new question in sb and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
+        // create the new question using given parameters
         val question = Question(questionId, course.courseId, user.userId, questionText ?: "", emptyList())
+        // add the new question in the db
         newChildRef.setValue(question)
-        db.child(questionsPath).child(question.questionId).setValue(question)
 
-        val updatedCourseQuestions = course.questions + question
-        val courseUpdates = hashMapOf<String, Any>(questionsPath to updatedCourseQuestions)
-        db.child(coursesPath).child(course.courseId).updateChildren(courseUpdates)
+        //add the question in the course's questions list
+        db.child(coursesPath).child(course.courseId).child(questionsPath).child(questionId).setValue(question)
+        getCourseQuestions(course)
 
-        val updatedUserQuestions = user.questions + question
-        val userUpdates = hashMapOf<String, Any>(questionsPath to updatedUserQuestions)
-        db.child(usersPath).child(user.userId).updateChildren(userUpdates)
+        //add the question in the user's questions list
+        db.child(usersPath).child(user.userId).child(questionsPath).child(questionId).setValue(question)
 
         return question
     }
 
     override fun addAnswer(user: User, question: Question, answerText: String?): Answer {
-        val newChildRef = db.child(answerPath).push()
-        val answerId = newChildRef.key ?: error("Failed to generate question ID")
+        // create a space for the new answer in sb and save its id
+        val newChildRef = db.child(answersPath).push()
+        val answerId = newChildRef.key ?: error("Failed to generate answer ID")
+        // create the new answer using given parameters
         val answer = Answer(answerId, question.questionId, user.userId, answerText ?: "")
         newChildRef.setValue(answer)
-        db.child(answerPath).child(answer.answerId).setValue(answer)
 
-        val updatedQuestionAnswer = question.answers + answer
-        val questionUpdates = hashMapOf<String, Any>(answerPath to updatedQuestionAnswer)
-        db.child(questionsPath).child(question.questionId).updateChildren(questionUpdates)
+        //TODO for a next sprint modify List of object by List of id it will be clearer and takes less memory in DB !
 
-        val updatedUserAnswer = user.answers + answer
-        val userUpdates = hashMapOf<String, Any>(answerPath to updatedUserAnswer)
-        db.child(usersPath).child(user.userId).updateChildren(userUpdates)
+        //add the answer in the question's answers list
+        db.child(questionsPath).child(question.questionId).child(answersPath).child(answerId).setValue(answer)
+
+        //add the answer in the user's questions list
+        db.child(usersPath).child(user.userId).child(answersPath).child(answerId).setValue(answer)
+
+        //add the answer in the course's question's answers list
+        db.child(coursesPath).child(question.courseId).child(questionsPath).child(question.questionId).child(answersPath).child(answerId).setValue(answer)
+
+        //add the answer in the user's question's answers list
+        db.child(usersPath).child(user.userId).child(questionsPath).child(question.questionId).child(answersPath).child(answerId).setValue(answer)
+
 
         return answer
     }
 
-    //TODO rework this with one single id per user (I wait the authentification part to be done for that)
-    override fun addUser(username: String): User {
-        val newChildRef = db.child(usersPath).push()
-        val userId = newChildRef.key ?: error("Failed to generate user ID")
-        val user = User(userId, username, emptyList(), emptyList())
-        newChildRef.setValue(user)
-        return user
+    override fun addUser(userId:String, username: String): User {
+
+        val getUser = getUserById(userId)
+        if(getUser != null){
+            return getUser
+        }
+
+        // create a space for the new question in sb and save its id
+        val newUser = User(userId, username, emptyList(), emptyList())
+        db.child(usersPath).child(userId).setValue(newUser)
+        return newUser
     }
 
     override fun getQuestionById(id: String): Question? {
         val future = CompletableFuture<Question?>()
-
+        // go in "questions/id" and use private methode to get the question
         db.child(questionsPath).child(id).get().addOnSuccessListener {
             future.complete(getQuestion(it))
         }.addOnFailureListener {
@@ -164,8 +207,8 @@ class FirebaseDatabaseAdapter : Database() {
 
     override fun getAnswerById(id: String): Answer? {
         val future = CompletableFuture<Answer?>()
-
-        db.child(answerPath).child(id).get().addOnSuccessListener {
+        // go in "answers/id" and use private methode to get the answer
+        db.child(answersPath).child(id).get().addOnSuccessListener {
             future.complete(getAnswer(it))
         }.addOnFailureListener {
             future.completeExceptionally(it)
@@ -176,7 +219,7 @@ class FirebaseDatabaseAdapter : Database() {
 
     override fun getUserById(id: String): User? {
         val future = CompletableFuture<User?>()
-
+        // go in "users/id" and use private methode to get the user
         db.child(usersPath).child(id).get().addOnSuccessListener {
             future.complete(getUser(it))
         }.addOnFailureListener {
@@ -188,7 +231,7 @@ class FirebaseDatabaseAdapter : Database() {
 
     override fun getCourseById(id: String): Course? {
         val future = CompletableFuture<Course?>()
-
+        // go in "courses/id" and use private methode to get the course
         db.child(coursesPath).child(id).get().addOnSuccessListener {
             future.complete(getCourse(it))
         }.addOnFailureListener {
@@ -203,22 +246,22 @@ class FirebaseDatabaseAdapter : Database() {
             return null
         }
 
+        // save every non list variables of the user in a map
         val userMap = hashMapOf<String, Any?>()
-
         dataSnapshot.children.forEach {
-            if (it.key != questionsPath && it.key!=answerPath) {
+            if (it.key != questionsPath && it.key!=answersPath) {
                 userMap[it.key!!] = it.value
             }
         }
-
+        // save every answers in a List using getAnswers private methode
         val answers = arrayListOf<Answer>()
-        dataSnapshot.child(answerPath).children.forEach {
+        dataSnapshot.child(answersPath).children.forEach {
             val answer = getAnswer(it)
             if(answer != null){
                 answers.add(answer)
             }
         }
-
+        // save every question in a List using getQuestion private method
         val questions = arrayListOf<Question>()
         dataSnapshot.child(questionsPath).children.forEach {
             val question = getQuestion(it)
@@ -231,7 +274,7 @@ class FirebaseDatabaseAdapter : Database() {
             userMap[userIdPath] as String,
             userMap[usernamePath] as String,
             questions,
-           answers
+            answers
         )
     }
 
@@ -239,17 +282,16 @@ class FirebaseDatabaseAdapter : Database() {
         if(dataSnapshot.value == null){
             return null
         }
-
+        // save every non list variables of the question in a map
         var questionMap = hashMapOf<String, Any?>()
-
         dataSnapshot.children.forEach {
-            if (it.key != answerPath) {
+            if (it.key != answersPath) {
                 questionMap[it.key!!] = it.value
             }
         }
-
+        // save every answers in a List using getAnswers private method
         val answers = arrayListOf<Answer>()
-        dataSnapshot.child(answerPath).children.forEach {
+        dataSnapshot.child(answersPath).children.forEach {
             val answer = getAnswer(it)
             if(answer != null){
                 answers.add(answer)
@@ -267,9 +309,8 @@ class FirebaseDatabaseAdapter : Database() {
         if(dataSnapshot.value == null){
             return null
         }
-
+        // save every variables of the answer in a map
         val answerMap = hashMapOf<String, Any?>()
-
         dataSnapshot.children.forEach { answerMap[it.key!!] = it.value }
 
         return Answer(answerMap[answerIdPath] as String,
@@ -282,15 +323,14 @@ class FirebaseDatabaseAdapter : Database() {
         if(dataSnapshot.value == null){
             return null
         }
-
+        // save every non list variables of the course in a map
         val courseMap = hashMapOf<String, Any?>()
-
         dataSnapshot.children.forEach {
             if (it.key != questionsPath) {
                 courseMap[it.key!!] = it.value
             }
         }
-
+        // save every questions in a List using getQuestion private method
         val questions = arrayListOf<Question>()
         dataSnapshot.child(questionsPath).children.forEach {
             val question = getQuestion(it)
