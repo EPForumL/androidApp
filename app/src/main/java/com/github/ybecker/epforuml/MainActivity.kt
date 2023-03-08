@@ -32,11 +32,6 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // how to make the toggle open the drawer ?
-        /*toggle.setToolbarNavigationClickListener {
-            drawerLayout.openDrawer(navView)
-        }*/
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if(savedInstanceState == null) {
@@ -69,36 +64,5 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
         setTitle(title)
-    }
-
-    /**
-     * Creates the input field for the name and the button to transition to the greeting activity
-     */
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Preview
-    @Composable
-    fun NameAndButton() {
-        // We can't use "this" inside the onClick lambda as we would not get the same context
-        val context = this
-
-        // Used to align vertically the window components
-        Column(content = {
-            // This is a standard way to update the TextField when the contents are modified
-            var name by remember { mutableStateOf("Your Name") }
-
-            TextField(
-                value = name,
-                onValueChange = { str -> name = str }
-            )
-
-            Button(onClick = {
-                val intent = Intent(context, GreetingActivity::class.java)
-                // We pass the name entered by the user to the greeting activity
-                intent.putExtra("name", name)
-                startActivity(intent)
-            }) {
-                Text("Click me")
-            }
-        })
     }
 }

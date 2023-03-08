@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="20dp"
+    android:id="@+id/settings_layout_parent"
     android:background="@color/purple_200"
     tools:context=".SettingsFragment">
 

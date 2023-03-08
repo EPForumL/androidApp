@@ -19,43 +19,5 @@ class MainActivityTest {
     @get:Rule
     val testRule = createAndroidComposeRule(MainActivity::class.java)
 
-    private val initialTxt = "Your Name"
-    private val buttonTxt = "Click me"
 
-    @Test
-    fun checkTextFieldHasCorrectInitialContent() {
-        testRule.onNodeWithText(initialTxt).assertExists()
-    }
-
-    @Test
-    fun checkButtonHasCorrectText() {
-        testRule.onNodeWithText(buttonTxt).assertExists()
-    }
-
-    @Test
-    fun checkTextFieldHasEnteredText() {
-        val text = "Yann"
-        testRule.onNodeWithText(initialTxt).performTextClearance()
-        testRule.onNodeWithText("").performTextInput(text)
-        testRule.onNodeWithText(text).assertExists()
-    }
-
-    @Test
-    fun checkTransitionToGreetingActivity() {
-        Intents.init()
-
-        val key = "name"
-        val text = "Yann"
-        testRule.onNodeWithText(initialTxt).performTextClearance()
-        testRule.onNodeWithText("").performTextInput(text)
-
-        testRule.onNodeWithText(buttonTxt).performClick()
-
-        intended(allOf(
-            hasExtra(key, text),
-            hasComponent(GreetingActivity::class.java.name))
-        )
-
-        Intents.release()
-    }
 }
