@@ -1,10 +1,5 @@
 package com.github.ybecker.epforuml
 
-import android.app.Activity
-import android.view.Gravity
-import androidx.appcompat.widget.Toolbar
-import androidx.compose.material3.DrawerValue
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -52,11 +47,3 @@ class NavigationTest {
         scenario.close()
     }
 }
-
-/*fun <T: Activity> ActivityScenario<T>.getToolbarNavigationContentDescriptor(): String {
-    var description = ""
-    onActivity {
-        description = it.findViewById<Toolbar>(R.id.toolbar).navigationContentDescription as String
-    }
-    return description
-}*/
