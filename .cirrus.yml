@@ -13,17 +13,17 @@ check_android_task:
     sdkmanager --install "system-images;android-30;google_apis;x86"
   create_avd_script:
     echo no | avdmanager create avd --force
-      --name emulator
-      --package "system-images;android-30;google_apis;x86"
+    --name emulator
+    --package "system-images;android-30;google_apis;x86"
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
-      -avd emulator
-      -no-audio
-      -no-boot-anim
-      -gpu swiftshader_indirect
-      -no-snapshot
-      -no-window
-      -camera-back none
+    -avd emulator
+    -no-audio
+    -no-boot-anim
+    -gpu swiftshader_indirect
+    -no-snapshot
+    -no-window
+    -camera-back none
   assemble_instrumented_tests_script: |
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest
