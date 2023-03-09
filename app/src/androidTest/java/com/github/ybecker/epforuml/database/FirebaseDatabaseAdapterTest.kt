@@ -60,14 +60,6 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
-    fun waitTest(){
-        var i = 0
-        while (i<100000){
-            i++
-        }
-    }
-
-    @Test
     fun addAndGetUser() {
         val user2 = db.addUser("2","TestUser2")
         assertThat(db.getUserById(user2.userId), equalTo(user2))
@@ -158,5 +150,11 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun getQuestionAnswersWhenEmpty(){
         assertThat(db.getQuestionAnswers(question1).map { it.answerId }.toSet(), equalTo(setOf()))
+    }
+
+    @Test
+    fun addExistingUserReturnTheUserTest(){
+        val user = db.addUser(romain.userId, "NewRomain")
+        assertThat(user.username, equalTo(romain.username))
     }
 }

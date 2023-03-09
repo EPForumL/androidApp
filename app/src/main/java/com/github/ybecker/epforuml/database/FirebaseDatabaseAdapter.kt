@@ -53,8 +53,8 @@ class FirebaseDatabaseAdapter : Database() {
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
     override fun getCourseQuestions(course: Course): Set<Question> {
-        // go in "courses/courseId/questions" dir
         val future = CompletableFuture<Set<Question>>()
+        // go in "courses/courseId/questions" dir
         db.child(coursesPath).child(course.courseId).child(questionsPath).get()
             .addOnSuccessListener {
                 val questions = mutableSetOf<Question>()
@@ -161,8 +161,6 @@ class FirebaseDatabaseAdapter : Database() {
         // create the new answer using given parameters
         val answer = Answer(answerId, question.questionId, user.userId, answerText ?: "")
         newChildRef.setValue(answer)
-
-        //TODO for a next sprint modify List of object by List of id it will be clearer and takes less memory in DB !
 
         //add the answer in the question's answers list
         db.child(questionsPath).child(question.questionId).child(answersPath).child(answerId).setValue(answer)

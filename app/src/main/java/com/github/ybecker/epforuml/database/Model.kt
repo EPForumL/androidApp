@@ -2,8 +2,6 @@ package com.github.ybecker.epforuml.database
 
 class Model {
 
-    //TODO list des ID (voir enlever completement suivant l'implementation de FirebaseDatabse) et Set a la palce de Listes ?
-
     // This class represent a Question
     data class Question(val questionId: String, val courseId: String, val userId: String, val questionText: String, var answers: List<Answer>){
         constructor() : this("", "", "", "", emptyList())

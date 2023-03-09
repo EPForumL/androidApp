@@ -22,8 +22,6 @@ class MockDatabaseTest {
         db = DatabaseManager.getDatabase()
     }
 
-    //TODO make more tests !
-
     @Test
     fun addAndGetUser(){
         val user2 = User("user2", "TestUser2", emptyList(), emptyList())
@@ -103,7 +101,7 @@ class MockDatabaseTest {
 
         val answers = setOf(a2, a1)
         assertThat(db.getQuestionAnswers(q1), equalTo(answers))
-
+        assertThat(db.getUserAnswers(user), equalTo(answers))
 
     }
 
@@ -112,5 +110,4 @@ class MockDatabaseTest {
         val q2 = db.addQuestion(user, SDP, "We prefer to use XML over Jetpack Compose.")
         assertThat(db.getQuestionAnswers(q2), equalTo(setOf()))
     }
-
 }

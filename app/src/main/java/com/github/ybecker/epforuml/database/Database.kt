@@ -45,8 +45,6 @@ abstract class Database {
      */
     abstract fun getUserAnswers(user: User): Set<Answer>
 
-    //TODO see if we need getUserAnswers
-
     /**
      * Posts a new question in a given course.
      *
