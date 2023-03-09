@@ -1,6 +1,6 @@
-package com.github.ybecker.epforuml.data
+package com.github.ybecker.epforuml.ui.login.data
 
-import com.github.ybecker.epforuml.data.model.LoggedInUser
+import com.github.ybecker.epforuml.ui.login.data.model.LoggedInUser
 
 /**
  * Class that requests authentication and user information from the remote data source and

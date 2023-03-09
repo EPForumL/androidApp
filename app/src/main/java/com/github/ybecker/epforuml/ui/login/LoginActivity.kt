@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml.login
+package com.github.ybecker.epforuml.ui.login
 
 import android.app.Activity
 import androidx.lifecycle.Observer

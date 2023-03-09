@@ -1,9 +1,9 @@
-package com.github.ybecker.epforuml.login
+package com.github.ybecker.epforuml.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.github.ybecker.epforuml.data.LoginDataSource
-import com.github.ybecker.epforuml.data.LoginRepository
+import com.github.ybecker.epforuml.ui.login.data.LoginDataSource
+import com.github.ybecker.epforuml.ui.login.data.LoginRepository
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.

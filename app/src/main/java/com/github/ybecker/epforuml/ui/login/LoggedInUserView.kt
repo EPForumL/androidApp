@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml.login
+package com.github.ybecker.epforuml.ui.login
 
 /**
  * User details post authentication that is exposed to the UI

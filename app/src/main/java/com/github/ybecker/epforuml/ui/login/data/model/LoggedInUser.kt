@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml.data.model
+package com.github.ybecker.epforuml.ui.login.data.model
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository

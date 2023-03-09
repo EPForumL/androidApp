@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml.login
+package com.github.ybecker.epforuml.ui.login
 
 /**
  * Data validation state of the login form.

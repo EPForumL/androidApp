@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml.data
+package com.github.ybecker.epforuml.ui.login.data
 
 /**
  * A generic class that holds a value with its loading status.

@@ -1,6 +1,6 @@
-package com.github.ybecker.epforuml.data
+package com.github.ybecker.epforuml.ui.login.data
 
-import com.github.ybecker.epforuml.data.model.LoggedInUser
+import com.github.ybecker.epforuml.ui.login.data.model.LoggedInUser
 import java.io.IOException
 import java.util.*
 

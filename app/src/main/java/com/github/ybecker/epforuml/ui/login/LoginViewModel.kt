@@ -1,11 +1,11 @@
-package com.github.ybecker.epforuml.login
+package com.github.ybecker.epforuml.ui.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
-import com.github.ybecker.epforuml.data.LoginRepository
-import com.github.ybecker.epforuml.data.Result
+import com.github.ybecker.epforuml.ui.login.data.LoginRepository
+import com.github.ybecker.epforuml.ui.login.data.Result
 
 import com.github.ybecker.epforuml.R
 
