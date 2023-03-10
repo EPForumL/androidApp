@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.database
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.FirebaseDatabase
 import junit.framework.TestCase.assertNull
@@ -9,6 +10,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
+import org.junit.runner.RunWith
 
 
 class FirebaseDatabaseAdapterTest {
@@ -23,41 +25,48 @@ class FirebaseDatabaseAdapterTest {
     private lateinit var answer1: Answer
     private lateinit var answer2: Answer
 
-    @Before
-    fun setUp() {
-        //To run this test make sur to install firebase database emulator
-        //and run "firebase emulators:start --only database"
+    companion object{
+        @BeforeClass
+        @JvmStatic
+        fun emulatorSetup(){
+            //To run this test make sur to install firebase database emulator
+            //and run "firebase emulators:start --only database"
 
-        val firebaseInstance = FirebaseDatabase
-            .getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
-            //.useEmulator("127.0.0.1", 9000)
-
-        val firebaseDB = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app").reference
-
-
-        firebaseDB.child("courses").setValue(null)
-        firebaseDB.child("users").setValue(null)
-        firebaseDB.child("questions").setValue(null)
-        firebaseDB.child("answers").setValue(null)
-
-        db = DatabaseManager.getDatabase()
-
-        swEng = Course("0", "SwEng", emptyList())
-        sdp = Course("1", "SDP", emptyList())
-
-        firebaseDB.child("courses").child("0").setValue(swEng)
-        firebaseDB.child("courses").child("1").setValue(sdp)
-
-        romain = db.addUser("0", "Romain")
-        theo = db.addUser("1","Theo")
-
-        question1 = db.addQuestion(romain, sdp, "I have question about the SDP course !")
-        question2 = db.addQuestion(romain, sdp, "I think that the lambda with 'it' in Kotlin are great !")
-
-        answer1 = db.addAnswer(romain, question2, "Yes they are !")
-        answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
-
+            val firebaseInstance = FirebaseDatabase
+                .getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
+                .useEmulator("127.0.0.1", 9000)
+        }
     }
+
+    @Before
+        fun setUp() {
+
+            val firebaseDB = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app").reference
+
+            firebaseDB.child("courses").setValue(null)
+            firebaseDB.child("users").setValue(null)
+            firebaseDB.child("questions").setValue(null)
+            firebaseDB.child("answers").setValue(null)
+
+            db = DatabaseManager.getDatabase()
+
+            swEng = Course("0", "SwEng", emptyList())
+            sdp = Course("1", "SDP", emptyList())
+
+            firebaseDB.child("courses").child("0").setValue(swEng)
+            firebaseDB.child("courses").child("1").setValue(sdp)
+
+            romain = db.addUser("0", "Romain")
+            theo = db.addUser("1","Theo")
+
+            question1 = db.addQuestion(romain, sdp, "I have question about the SDP course !")
+            question2 = db.addQuestion(romain, sdp, "I think that the lambda with 'it' in Kotlin are great !")
+
+            answer1 = db.addAnswer(romain, question2, "Yes they are !")
+            answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
+
+        }
+
 
     @Test
     fun addAndGetUser() {
