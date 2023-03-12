@@ -13,20 +13,19 @@ class MockDatabase : Database() {
     private val courses = hashMapOf<String, Course>()
 
     init {
-
-        val course1 = Course("0","Sweng", mutableListOf())
+        val course1 = Course("course0","Sweng", mutableListOf())
         courses[course1.courseId] = course1
-        val course2 = Course("1","SDP", mutableListOf())
+        val course2 = Course("course1","SDP", mutableListOf())
         courses[course2.courseId] = course2
         val user1 = User("user1", "TestUser", emptyList(), emptyList())
         users[user1.userId] = user1
     }
 
-    override fun getQuestionsForCourse(course: Course): Set<Question> {
+    override fun getCourseQuestions(course: Course): Set<Question> {
         return questions.filterValues { it.courseId == course.courseId }.values.toSet()
     }
 
-    override fun getAnswersForQuestion(question: Question): Set<Answer> {
+    override fun getQuestionAnswers(question: Question): Set<Answer> {
         return answers.filterValues { it.questionId == question.questionId }.values.toSet()
     }
 
@@ -34,7 +33,7 @@ class MockDatabase : Database() {
         val questionId = "question${questions.size + 1}"
         val question = Question(questionId, course.courseId, user.userId, questionText ?: "", emptyList())
         questions[questionId] = question
-        courses[course.courseId]?.answers = courses[course.courseId]?.answers?.plus(question) ?: listOf(question)
+        courses[course.courseId]?.questions = courses[course.courseId]?.questions?.plus(question) ?: listOf(question)
         users[user.userId]?.let {
             val updatedQuestions = it.questions + question
             users[user.userId] = it.copy(questions = updatedQuestions)
@@ -47,6 +46,14 @@ class MockDatabase : Database() {
         val answer = Answer(answerId, question.questionId, user.userId, answerText ?: "")
         answers[answerId] = answer
         questions[question.questionId]?.answers = questions[question.questionId]?.answers?.plus(answer) ?: listOf(answer)
+        courses[question.courseId]?.questions?.let { courseQuestions ->
+            courseQuestions?.forEach { courseQuestion ->
+                if (courseQuestion.questionId == question.questionId) {
+                    courseQuestion.answers = questions[question.questionId]?.answers?.plus(answer) ?: listOf(answer)
+                }
+            }
+        }
+
         users[user.userId]?.let {
             val updatedAnswers = it.answers + answer
             users[user.userId] = it.copy(answers = updatedAnswers)
@@ -54,8 +61,9 @@ class MockDatabase : Database() {
         return answer
     }
 
-    override fun addUser(userId: String, username: String, ): User {
-        val user = User(userId , username, emptyList(), emptyList())
+    override fun addUser(userId:String, username: String): User {
+        val newUserId = "user${users.size + 1}"
+        val user = User(newUserId , username, emptyList(), emptyList())
         users[userId] = user
         return user
     }
@@ -83,6 +91,10 @@ class MockDatabase : Database() {
 
     override fun getUserQuestions(user: User): Set<Question> {
         return questions.filterValues { it.userId == user.userId }.values.toSet()
+    }
+
+    override fun getUserAnswers(user: User): Set<Answer> {
+        return answers.filterValues { it.userId == user.userId }.values.toSet()
     }
 
 }
