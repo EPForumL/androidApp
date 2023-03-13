@@ -21,4 +21,5 @@ class Model {
     data class Course(val courseId: String, val courseName: String, var questions: List<Question>){
         constructor() : this("", "", emptyList())
     }
+
 }

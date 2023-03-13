@@ -48,7 +48,7 @@
         android:text="@string/subscriptions"
         app:layout_constraintBottom_toTopOf="@+id/subscriptionsTable"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.004"
+        app:layout_constraintHorizontal_bias="0.079"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
