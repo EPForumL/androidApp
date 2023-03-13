@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:paddingTop="20dp"
     android:id="@+id/my_questions_layout_parent"
-    android:background="@color/black"
     tools:context=".MyQuestionsFragment">
 
     <TextView
