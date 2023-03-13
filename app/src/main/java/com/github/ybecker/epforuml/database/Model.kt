@@ -13,8 +13,8 @@ class Model {
     }
 
     // This class represent a user
-    data class User(val userId: String, val username: String, var questions: List<Question>, var answers: List<Answer>){
-        constructor() : this("", "", emptyList(), emptyList())
+    data class User(val userId: String, val username: String, var questions: List<Question>, var answers: List<Answer>, var subscriptions: List<Course>){
+        constructor() : this("", "", emptyList(), emptyList(), emptyList())
     }
 
     //This class represent a course

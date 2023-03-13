@@ -19,6 +19,7 @@ class FirebaseDatabaseAdapter : Database() {
     private val coursesPath = "courses"
     private val questionsPath = "questions"
     private val answersPath = "answers"
+    private val subscriptionsPath = "subscriptions"
 
     private val courseIdPath = "courseId"
     private val userIdPath = "userId"
@@ -135,6 +136,26 @@ class FirebaseDatabaseAdapter : Database() {
         return future.get(5,TimeUnit.SECONDS)
     }
 
+    override fun getUserSubscriptions(user: User): Set<Course> {
+        val future = CompletableFuture<Set<Course>>()
+        // go in "user/subscriptions" dir
+        db.child(usersPath).child(user.userId).child(subscriptionsPath).get().addOnSuccessListener {
+            val courses = mutableSetOf<Course>()
+            // add every user's question that is not null in the map
+            for (courseSnapshot in it.children) {
+                val course = getCourse(courseSnapshot)
+                if (course != null) {
+                    courses.add(course)
+                }
+            }
+            future.complete(courses)
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
+
+        return future.get(5,TimeUnit.SECONDS)
+    }
+
     override fun addQuestion(user: User, course: Course, questionText: String?): Question {
         // create a space for the new question in sb and save its id
         val newChildRef = db.child(questionsPath).push()
@@ -186,9 +207,17 @@ class FirebaseDatabaseAdapter : Database() {
         }
 
         // create a space for the new question in sb and save its id
-        val newUser = User(userId, username, emptyList(), emptyList())
+        val newUser = User(userId, username, emptyList(), emptyList(), emptyList())
         db.child(usersPath).child(userId).setValue(newUser)
         return newUser
+    }
+
+    override fun addSubscription(user: User, course: Course): User? {
+        val updatedSubscriptions = user.subscriptions.plus(course)
+
+        db.child(usersPath).child(user.userId).child(subscriptionsPath).setValue(updatedSubscriptions)
+
+        return user.copy(subscriptions = updatedSubscriptions)
     }
 
     override fun getQuestionById(id: String): Question? {
@@ -267,12 +296,21 @@ class FirebaseDatabaseAdapter : Database() {
                 questions.add(question)
             }
         }
+        // save every subscriptions in a List using getCourse private method
+        val subscriptions = arrayListOf<Course>()
+        dataSnapshot.child(subscriptionsPath).children.forEach {
+            val course = getCourse(it)
+            if(course != null){
+                subscriptions.add(course)
+            }
+        }
 
         return User(
             userMap[userIdPath] as String,
             userMap[usernamePath] as String,
             questions,
-            answers
+            answers,
+            subscriptions
         )
     }
 

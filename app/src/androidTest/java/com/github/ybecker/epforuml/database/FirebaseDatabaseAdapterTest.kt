@@ -65,6 +65,9 @@ class FirebaseDatabaseAdapterTest {
             answer1 = db.addAnswer(romain, question2, "Yes they are !")
             answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
 
+            romain = db.addSubscription(romain, sdp) ?: User("", "error", emptyList(), emptyList(), emptyList())
+            romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
+
         }
 
 
@@ -166,4 +169,12 @@ class FirebaseDatabaseAdapterTest {
         val user = db.addUser(romain.userId, "NewRomain")
         assertThat(user.username, equalTo(romain.username))
     }
+
+    @Test
+    fun getUserSubscriptionTest(){
+        assertThat(romain.subscriptions.map { it.courseId }, equalTo(db.getUserSubscriptions(romain).map { it.courseId }))
+        assertThat(romain.subscriptions.map { it.courseId }, equalTo(setOf(sdp, swEng).map { it.courseId }))
+    }
+
+
 }

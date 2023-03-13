@@ -12,7 +12,7 @@ class MockDatabaseTest {
 
     private var db: Database = DatabaseManager.getDatabase()
     // these variable are already in the MockDatabase
-    private val user = User("user1", "TestUser", emptyList(), emptyList())
+    private var user = User("user1", "TestUser", emptyList(), emptyList(), emptyList())
     private val SwEng = Course("course0","Sweng", emptyList())
     private val SDP = Course("course1","SDP", emptyList())
 
@@ -24,7 +24,7 @@ class MockDatabaseTest {
 
     @Test
     fun addAndGetUser(){
-        val user2 = User("user2", "TestUser2", emptyList(), emptyList())
+        val user2 = User("user2", "TestUser2", emptyList(), emptyList(), emptyList())
         db.addUser(user2.userId, user2.username)
         assertThat(db.getUserById(user2.userId), equalTo(user2))
     }
@@ -109,5 +109,13 @@ class MockDatabaseTest {
     fun getAnswerFromQuestionWithoutAnyAnswerTest(){
         val q2 = db.addQuestion(user, SDP, "We prefer to use XML over Jetpack Compose.")
         assertThat(db.getQuestionAnswers(q2), equalTo(setOf()))
+    }
+
+    @Test
+    fun getUserSubscriptionTest(){
+        user = db.addSubscription(user, SwEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
+        user = db.addSubscription(user, SDP) ?: User("", "error", emptyList(), emptyList(), emptyList())
+        assertThat(user.subscriptions.map { it.courseId }, equalTo(db.getUserSubscriptions(user).map { it.courseId }))
+        assertThat(user.subscriptions.map { it.courseId }, equalTo(setOf(SwEng, SDP).map { it.courseId }))
     }
 }
