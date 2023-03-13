@@ -213,7 +213,11 @@ class FirebaseDatabaseAdapter : Database() {
     }
 
     override fun addSubscription(user: User, course: Course): User? {
-        val updatedSubscriptions = user.subscriptions.plus(course)
+        val subscriptions = user.subscriptions.toMutableList()
+        if (!subscriptions.contains(course)) {
+            subscriptions.add(course)
+        }
+        val updatedSubscriptions = subscriptions.toList()
 
         db.child(usersPath).child(user.userId).child(subscriptionsPath).setValue(updatedSubscriptions)
 

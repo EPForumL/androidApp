@@ -115,6 +115,7 @@ class MockDatabaseTest {
     fun getUserSubscriptionTest(){
         user = db.addSubscription(user, SwEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
         user = db.addSubscription(user, SDP) ?: User("", "error", emptyList(), emptyList(), emptyList())
+        user = db.addSubscription(user, SDP) ?: User("", "error", emptyList(), emptyList(), emptyList())
         assertThat(user.subscriptions.map { it.courseId }, equalTo(db.getUserSubscriptions(user).map { it.courseId }))
         assertThat(user.subscriptions.map { it.courseId }, equalTo(setOf(SwEng, SDP).map { it.courseId }))
     }

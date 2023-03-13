@@ -69,13 +69,15 @@ class MockDatabase : Database() {
     }
 
     override fun addSubscription(user: User, course: Course): User? {
-        if(users[user.userId] == null){
+        if (users[user.userId] == null) {
             return null
-        }
-        else{
-
+        } else {
             users[user.userId]?.let {
-                val updatedSubscription = it.subscriptions + course
+                val subscriptions = it.subscriptions.toMutableList()
+                if (!subscriptions.contains(course)) {
+                    subscriptions.add(course)
+                }
+                val updatedSubscription = subscriptions.toList()
                 users[user.userId] = it.copy(subscriptions = updatedSubscription)
             }
             return users[user.userId]

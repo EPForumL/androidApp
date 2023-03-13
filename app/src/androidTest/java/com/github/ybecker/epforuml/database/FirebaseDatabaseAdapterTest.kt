@@ -67,6 +67,7 @@ class FirebaseDatabaseAdapterTest {
 
             romain = db.addSubscription(romain, sdp) ?: User("", "error", emptyList(), emptyList(), emptyList())
             romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
+            romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
 
         }
 
