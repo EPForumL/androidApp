@@ -21,4 +21,8 @@ class Model {
     data class Course(val courseId: String, val courseName: String, var questions: List<Question>){
         constructor() : this("", "", emptyList())
     }
+
+    data class Subscriptions (val uid : Int, val cid : Int){
+        var isValid : Boolean = false
+    }
 }
