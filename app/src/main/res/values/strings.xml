@@ -16,7 +16,7 @@
     <string name="account_fragment">Account</string>
     <string name="my_questions_fragment">My Questions</string>
     <string name="saved_questions_fragment">Saved Questions</string>
-    <string name="welcome">Welcome to EPForumL!</string>
+    <string name="welcome_main">Welcome to EPForumL!</string>
     <string name="home">Home</string>
     <string name="my_questions">My Questions</string>
     <string name="courses">Courses</string>
