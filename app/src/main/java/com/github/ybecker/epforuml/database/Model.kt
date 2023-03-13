@@ -22,7 +22,7 @@ class Model {
         constructor() : this("", "", emptyList())
     }
 
-    data class Subscriptions (val uid : Int, val cid : Int){
+    data class Subscriptions (val uid : String, val cid : String){
         var isValid : Boolean = false
     }
 }
