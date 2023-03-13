@@ -14,4 +14,13 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="switch_mode">Switch mode</string>
+    <string name="share_localisation">Share localisation</string>
+    <string name="privacy">Privacy</string>
+    <string name="subscriptions">Subscriptions</string>
+    <string name="preferences">Preferences</string>
+    <string name="choose_new_password">Choose new password</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="change_password">Change Password</string>
+    <string name="channel">Channel</string>
 </resources>
