@@ -1,20 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/courses_layout_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="20dp"
-    android:id="@+id/courses_layout_parent"
-    android:background="@color/black"
+    android:background="@color/material_dynamic_primary90"
     tools:context=".CoursesFragment">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCourses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:padding="16dp"
+        android:layout_marginTop="75dp" />
+
     <TextView
+        android:id="@+id/CourseTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="@string/courses"
-        android:textColor="@color/white"
-        android:textSize="30sp"
-        android:textStyle="bold"/>
+        android:text="Courses"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <!-- Conteneur pour le fragment CourseQuestionsFragment -->
+    <FrameLayout
+        android:id="@+id/course_questions_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </FrameLayout>
