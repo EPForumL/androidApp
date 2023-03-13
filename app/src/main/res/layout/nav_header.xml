@@ -6,7 +6,7 @@
     android:paddingBottom="20dp"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="@color/material_dynamic_primary90">
+    android:background="@color/teal_200">
 
     <TextView
         android:layout_width="wrap_content"
