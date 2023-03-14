@@ -12,8 +12,7 @@ import androidx.fragment.app.Fragment
 class SettingsFragment : Fragment() {
 
 
-    private lateinit var btnToggleDark:Button;
-    @SuppressLint("SuspiciousIndentation")
+    private lateinit var btnToggleDark:Button
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -22,14 +21,17 @@ class SettingsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         btnToggleDark = view.findViewById(R.id.switchDark)
         btnToggleDark.setOnClickListener {
-            if(btnToggleDark.isActivated)
-                AppCompatDelegate
-                    .setDefaultNightMode(
-                        AppCompatDelegate.MODE_NIGHT_YES)
-            else
+            if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
                 AppCompatDelegate
                     .setDefaultNightMode(
                         AppCompatDelegate.MODE_NIGHT_NO)
+
+            }else{
+                AppCompatDelegate
+                    .setDefaultNightMode(
+                        AppCompatDelegate.MODE_NIGHT_YES)
+
+            }
         }
         return view
     }
