@@ -13,6 +13,9 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.FirebaseAuth
 
+/**
+ * Activity that shows the login options
+ */
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
         DatabaseManager.useMockDatabase()
         val authenticator = AuthenticatorManager.getAuthenticator()
 
+        // Will be used to launch the sign in intent
         val signInLauncher = registerForActivityResult(
             FirebaseAuthUIActivityResultContract()
         ) { res -> this.onSignInResult(res) }
@@ -34,6 +38,9 @@ class LoginActivity : AppCompatActivity() {
         guestButton.setOnClickListener { continueAsGuest() }
     }
 
+    /**
+     * Skips connection to go directly to the main activity
+     */
     private fun continueAsGuest() {
         startActivity(Intent(this, MainActivity::class.java))
     }
