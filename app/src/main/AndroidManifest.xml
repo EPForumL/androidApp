@@ -12,11 +12,9 @@
         android:theme="@style/Theme.EPForumL"
         tools:targetApi="31">
         <activity
-            android:name=".authentication.OneTapLoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".GreetingActivity"
-            android:exported="false" />
+            android:name=".login.LoginActivity"
+            android:exported="false"
+            android:label="@string/title_activity_login" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

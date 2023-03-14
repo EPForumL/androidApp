@@ -20,15 +20,37 @@ abstract class Database {
      * @param course the course for which to retrieve questions
      * @return a list of all questions for the given course
      */
-    abstract fun getQuestionsForCourse(course: Course): Set<Question>
+    abstract fun getCourseQuestions(course: Course): Set<Question>
 
     /**
      * Retrieves a list of answers for a given question.
      *
-     * @param question: the question for which to retrieve answers
+     * @param question the question for which to retrieve answers
      * @return a list of all answers for the given question
      */
-    abstract fun getAnswersForQuestion(question: Question): Set<Answer>
+    abstract fun getQuestionAnswers(question: Question): Set<Answer>
+
+
+    /**
+     * Returns a list of every questions asked by a user.
+     *
+     * @return a list of every questions asked by a user
+     */
+    abstract fun getUserQuestions(user: User): Set<Question>
+
+    /**
+     * Returns a list of every answers asked by a user.
+     *
+     * @return a list of every answers asked by a user
+     */
+    abstract fun getUserAnswers(user: User): Set<Answer>
+
+    /**
+     * Returns a list of every courses the user is subscribed to.
+     *
+     * @return a list of every courses the user is subscribed to
+     */
+    abstract fun getUserSubscriptions(user: User): Set<Course>
 
     /**
      * Posts a new question in a given course.
@@ -57,14 +79,16 @@ abstract class Database {
      * @param username the name of the user to add
      * @return the user that was added in database
      */
-    abstract fun addUser(userId: String, username:String): User
+    abstract fun addUser(userId:String, username:String): User
 
     /**
-     * Returns a list of every question asked by a user.
+     * Adds a subscription to the given user for the specified course.
      *
-     * @return a list of every question asked by a user
+     * @param user the user that want to subscribe
+     * @param course the course to which the user is subscribing
+     * @return the user with updated subscribe list, or null it the user is not found
      */
-    abstract fun getUserQuestions(user: User): Set<Question>
+    abstract fun addSubscription(user: User, course: Course): User?
 
     /**
      * Returns the question with the given ID.
