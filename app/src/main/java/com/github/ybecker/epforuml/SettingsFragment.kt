@@ -1,22 +1,36 @@
 package com.github.ybecker.epforuml
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SettingsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class SettingsFragment : Fragment() {
+
+
+    private lateinit var btnToggleDark:Button;
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false)
+    ): View {
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+        btnToggleDark = view.findViewById(R.id.switchDark)
+        btnToggleDark.setOnClickListener {
+            if(btnToggleDark.isActivated)
+                AppCompatDelegate
+                    .setDefaultNightMode(
+                        AppCompatDelegate.MODE_NIGHT_YES)
+            else
+                AppCompatDelegate
+                    .setDefaultNightMode(
+                        AppCompatDelegate.MODE_NIGHT_NO)
+        }
+        return view
     }
 }
