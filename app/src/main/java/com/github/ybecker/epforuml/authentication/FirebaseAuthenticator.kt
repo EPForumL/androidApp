@@ -58,7 +58,7 @@ class FirebaseAuthenticator(private val activity: AppCompatActivity) : Authentic
                 .signOut(activity)
                 .addOnCompleteListener {
                     makeAndShowToast("Successfully signed out")
-                } // TODO: Do something more when logout ?
+                }
         }
     }
 
@@ -86,6 +86,12 @@ class FirebaseAuthenticator(private val activity: AppCompatActivity) : Authentic
         Toast.makeText(activity, txt, Toast.LENGTH_LONG).show()
     }
 
+    /**
+     * Depending on the result, adds the user to the database and proceeds to the next activity
+     * if authentication was successful or shows an error message if it wasn't.
+     *
+     * @param result: The result of the authentication
+     */
     private fun onSignInResult(result: FirebaseAuthUIAuthenticationResult?) {
         val response = result?.idpResponse
         if (result?.resultCode == AppCompatActivity.RESULT_OK) {
