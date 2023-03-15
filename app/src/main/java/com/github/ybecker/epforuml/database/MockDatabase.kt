@@ -37,7 +37,7 @@ class MockDatabase : Database() {
         courses[course11.courseId] = course11
         val course12 = Course("course11","Database", mutableListOf())
         courses[course12.courseId] = course12
-        val user1 = User("user1", "TestUser", emptyList(), emptyList())
+        val user1 = User("user1", "TestUser", emptyList(), emptyList(), emptyList())
         users[user1.userId] = user1
     }
 
@@ -83,9 +83,25 @@ class MockDatabase : Database() {
 
     override fun addUser(userId:String, username: String): User {
         val newUserId = "user${users.size + 1}"
-        val user = User(newUserId , username, emptyList(), emptyList())
+        val user = User(newUserId , username, emptyList(), emptyList(), emptyList())
         users[userId] = user
         return user
+    }
+
+    override fun addSubscription(user: User, course: Course): User? {
+        if (users[user.userId] == null) {
+            return null
+        } else {
+            users[user.userId]?.let {
+                val subscriptions = it.subscriptions.toMutableList()
+                if (!subscriptions.contains(course)) {
+                    subscriptions.add(course)
+                }
+                val updatedSubscription = subscriptions.toList()
+                users[user.userId] = it.copy(subscriptions = updatedSubscription)
+            }
+            return users[user.userId]
+        }
     }
 
 
@@ -115,6 +131,10 @@ class MockDatabase : Database() {
 
     override fun getUserAnswers(user: User): Set<Answer> {
         return answers.filterValues { it.userId == user.userId }.values.toSet()
+    }
+
+    override fun getUserSubscriptions(user: User): Set<Course> {
+        return user.subscriptions.toSet()
     }
 
 }

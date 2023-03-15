@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">EPForumL</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="settings_fragment">Settings</string>
+    <string name="chat_fragment">Chat</string>
+    <string name="account_fragment">Account</string>
+    <string name="my_questions_fragment">My Questions</string>
+    <string name="saved_questions_fragment">Saved Questions</string>
+    <string name="welcome">Welcome to EPForumL!</string>
+    <string name="home">Home</string>
+    <string name="my_questions">My Questions</string>
+    <string name="courses">Courses</string>
+    <string name="saved_questions">Saved Questions</string>
+    <string name="options">Options</string>
+    <string name="profile">Profile</string>
+    <string name="settings">Settings</string>
+    <string name="my_account">My Account</string>
+    <string name="forum">Forum</string>
+    <string name="menu">Menu</string>
+</resources>
