@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 ./build
 ./build.gradle
 ./idea
 ./gradle
-=======
 /build
-../.gradle
-../.idea
 ../local.properties
->>>>>>> 2eec5c0ab88d6d4bfc1e5504a613a29e7e3c549c
