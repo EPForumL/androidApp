@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1043962004253",
+    "firebase_url": "https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "epforuml-38150",
+    "storage_bucket": "epforuml-38150.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043962004253:android:fdfa994912a11fdc2b97f4",
+        "android_client_info": {
+          "package_name": "com.github.ybecker.epforuml"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043962004253-7fkk9jho4fdc50jlrt22hpj9evip2uc9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.ybecker.epforuml",
+            "certificate_hash": "e1bb0b6aae59b76863158f0a7ed26140046e8fc2"
+          }
+        },
+        {
+          "client_id": "1043962004253-noceucg419bg19fi1gbkr5kff065tinh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBt8dE5VADXkSam3x2EiTRw0tSLRghTatk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043962004253-lvhft5vbii3qepupilpfs05pdm514b47.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
