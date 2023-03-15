@@ -37,8 +37,13 @@ class MockDatabase : Database() {
         courses[course11.courseId] = course11
         val course12 = Course("course11","Database", mutableListOf())
         courses[course12.courseId] = course12
+
         val user1 = User("user1", "TestUser", emptyList(), emptyList(), emptyList())
         users[user1.userId] = user1
+
+        this.addSubscription(user1, course1)
+        this.addSubscription(user1, course2)
+
     }
 
     override fun getCourseQuestions(course: Course): Set<Question> {

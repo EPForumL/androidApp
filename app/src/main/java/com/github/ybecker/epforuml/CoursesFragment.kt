@@ -10,7 +10,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.database.Database
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 
 class CoursesFragment : Fragment() {
@@ -18,18 +20,16 @@ class CoursesFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CourseAdapter
     private lateinit var user: User
+    private lateinit var userSubscriptions: MutableList<Course>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_courses, container, false)
         recyclerView = rootView.findViewById(R.id.recyclerViewCourses)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        //TODO CHANGE
-        DatabaseManager.useMockDatabase()
-        val db = DatabaseManager.db
+        user = db.getUserById("user1")!!
 
-        user = User()
-
+        userSubscriptions = db.getUserSubscriptions(user).toMutableList()
         adapter = CourseAdapter(db.availableCourses().toList()) { course ->
             onCourseClick(course)
         }
@@ -42,18 +42,22 @@ class CoursesFragment : Fragment() {
         private val onCourseClickListener: (Course) -> Unit
     ) : RecyclerView.Adapter<CourseViewHolder>() {
 
+        //this methode populate the recycler view with "item_course"
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_course, parent, false)
             val switch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
 
-            switch.setOnCheckedChangeListener { buttonView, isChecked ->
-                if(isChecked){
-                    val courseName = itemView.findViewById<TextView>(R.id.courseTitleTextView).text
-                    Toast.makeText(itemView.context, "You subscribed to "+ courseName, Toast.LENGTH_SHORT).show()
-                }
-                else{
-                    val courseName = itemView.findViewById<TextView>(R.id.courseTitleTextView).text
-                    Toast.makeText(itemView.context, "You unsubscribed to "+ courseName, Toast.LENGTH_SHORT).show()
+            // we set u
+            switch.setOnCheckedChangeListener { _, isChecked ->
+                val course = itemView.tag as? Course
+                if(course != null){
+                    if(isChecked){
+                        db.addSubscription(user, course)
+                        Toast.makeText(itemView.context, "You subscribed to "+ course.courseName, Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        Toast.makeText(itemView.context, "You unsubscribed to "+ course.courseName, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
@@ -62,7 +66,8 @@ class CoursesFragment : Fragment() {
 
         override fun onBindViewHolder(holder: CourseViewHolder, position: Int) {
             val course = courses[position]
-            holder.bind(course)
+            holder.bind(course, userSubscriptions.map { it.courseId }.contains(course.courseId))
+            holder.itemView.tag = course
             holder.itemView.setOnClickListener { onCourseClickListener(course) }
         }
 
@@ -72,13 +77,16 @@ class CoursesFragment : Fragment() {
 
     private inner class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val courseTitleTextView = itemView.findViewById<TextView>(R.id.courseTitleTextView)
+        private val subscriptionSwitch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
 
-        fun bind(course: Course) {
+        fun bind(course: Course, isSubscribed: Boolean) {
             courseTitleTextView.text = course.courseName
+            subscriptionSwitch.isChecked = isSubscribed
         }
     }
 
     private fun onCourseClick(course: Course) {
+        //for later
         println("Clicked course: ${course.courseName}")
     }
 
