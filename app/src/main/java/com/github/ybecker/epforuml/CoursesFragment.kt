@@ -11,12 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
-import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.database.Model.*
 
 class CoursesFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CourseAdapter
+    private lateinit var user: User
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_courses, container, false)
@@ -25,7 +26,9 @@ class CoursesFragment : Fragment() {
 
         //TODO CHANGE
         DatabaseManager.useMockDatabase()
-        val db = DatabaseManager.getDatabase()
+        val db = DatabaseManager.db
+
+        user = User()
 
         adapter = CourseAdapter(db.availableCourses().toList()) { course ->
             onCourseClick(course)
@@ -35,13 +38,14 @@ class CoursesFragment : Fragment() {
     }
 
     private inner class CourseAdapter(
-        private val courses: List<Model.Course>,
-        private val onCourseClickListener: (Model.Course) -> Unit
+        private val courses: List<Course>,
+        private val onCourseClickListener: (Course) -> Unit
     ) : RecyclerView.Adapter<CourseViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_course, parent, false)
             val switch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
+
             switch.setOnCheckedChangeListener { buttonView, isChecked ->
                 if(isChecked){
                     val courseName = itemView.findViewById<TextView>(R.id.courseTitleTextView).text
@@ -69,12 +73,12 @@ class CoursesFragment : Fragment() {
     private inner class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val courseTitleTextView = itemView.findViewById<TextView>(R.id.courseTitleTextView)
 
-        fun bind(course: Model.Course) {
+        fun bind(course: Course) {
             courseTitleTextView.text = course.courseName
         }
     }
 
-    private fun onCourseClick(course: Model.Course) {
+    private fun onCourseClick(course: Course) {
         println("Clicked course: ${course.courseName}")
     }
 

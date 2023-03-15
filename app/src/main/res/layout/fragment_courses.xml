@@ -12,6 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:textColor="@color/textColor"
         android:text="Courses"
         android:textSize="40sp"
         android:textStyle="bold" />
@@ -20,6 +21,7 @@
         android:id="@+id/manager_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="75dp"
         android:text="Subscribtion managment : "
