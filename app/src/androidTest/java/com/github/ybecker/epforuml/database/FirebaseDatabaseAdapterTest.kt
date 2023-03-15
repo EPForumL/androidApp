@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml.database
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.FirebaseDatabase
 import junit.framework.TestCase.assertNull
@@ -8,9 +7,7 @@ import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
 
 
 class FirebaseDatabaseAdapterTest {
@@ -25,7 +22,7 @@ class FirebaseDatabaseAdapterTest {
     private lateinit var answer1: Answer
     private lateinit var answer2: Answer
 
-    companion object{
+    /*companion object{
         @BeforeClass
         @JvmStatic
         fun emulatorSetup(){
@@ -34,9 +31,9 @@ class FirebaseDatabaseAdapterTest {
 
             val firebaseInstance = FirebaseDatabase
                 .getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
-                .useEmulator("127.0.0.1", 9000)
+                //.useEmulator("127.0.0.1", 9000)
         }
-    }
+    }*/
 
     @Before
         fun setUp() {
@@ -48,7 +45,7 @@ class FirebaseDatabaseAdapterTest {
             firebaseDB.child("questions").setValue(null)
             firebaseDB.child("answers").setValue(null)
 
-            db = DatabaseManager.getDatabase()
+            db = FirebaseDatabaseAdapter()
 
             swEng = Course("0", "SwEng", emptyList())
             sdp = Course("1", "SDP", emptyList())
