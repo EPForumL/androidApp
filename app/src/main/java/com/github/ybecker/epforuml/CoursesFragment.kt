@@ -1,12 +1,13 @@
 package com.github.ybecker.epforuml
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Switch
 import android.widget.TextView
-import androidx.drawerlayout.widget.DrawerLayout
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
@@ -40,6 +41,18 @@ class CoursesFragment : Fragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_course, parent, false)
+            val switch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
+            switch.setOnCheckedChangeListener { buttonView, isChecked ->
+                if(isChecked){
+                    val courseName = itemView.findViewById<TextView>(R.id.courseTitleTextView).text
+                    Toast.makeText(itemView.context, "You subscribed to "+ courseName, Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    val courseName = itemView.findViewById<TextView>(R.id.courseTitleTextView).text
+                    Toast.makeText(itemView.context, "You unsubscribed to "+ courseName, Toast.LENGTH_SHORT).show()
+                }
+            }
+
             return CourseViewHolder(itemView)
         }
 
@@ -63,21 +76,6 @@ class CoursesFragment : Fragment() {
 
     private fun onCourseClick(course: Model.Course) {
         println("Clicked course: ${course.courseName}")
-
-        launchCourseQuestionFragment(course.courseName)
-    }
-
-    private fun launchCourseQuestionFragment(courseName: String) {
-        val courseQuestionFragment = CourseQuestionsFragment()
-        val bundle = Bundle()
-        bundle.putString("courseName", courseName)
-        courseQuestionFragment.arguments = bundle
-
-        val fragmentManager = parentFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.courses_layout_parent, courseQuestionFragment)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
     }
 
 }
