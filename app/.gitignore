@@ -1,4 +1,6 @@
+./build
+./build.gradle
+./idea
+./gradle
 /build
-../.gradle
-../.idea
 ../local.properties
