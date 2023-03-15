@@ -27,4 +27,13 @@
     <string name="my_account">My Account</string>
     <string name="forum">Forum</string>
     <string name="menu">Menu</string>
+    <string name="channel">channel</string>
+    <string name="switch_mode">switch_mode</string>
+    <string name="subscriptions">subscriptions</string>
+    <string name="privacy">privacy</string>
+    <string name="change_password">change_password</string>
+    <string name="choose_new_password">choose_new_password</string>
+    <string name="repeat_password">repeat_password</string>
+    <string name="share_localisation">share_localisation</string>
+    <string name="preferences">preferences</string>
 </resources>
