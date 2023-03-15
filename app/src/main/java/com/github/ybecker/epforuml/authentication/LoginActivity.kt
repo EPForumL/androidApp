@@ -76,19 +76,16 @@ class LoginActivity : AppCompatActivity() {
         } else {
             // Sign in failed. If response is null the user canceled the
             // sign-in flow using the back button.
-            var errorTxt = ""
             if (response != null) {
                 val error = response.error?.errorCode
-                errorTxt = "Could not login : ${error.toString()}"
+                print("Could not login : ${error.toString()}")
             } else {
-                errorTxt = "Canceled authentication"
+                Toast.makeText(
+                    this,
+                    "Canceled authentication",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-
-            Toast.makeText(
-                this,
-                errorTxt,
-                Toast.LENGTH_LONG
-            ).show()
         }
     }
 }
