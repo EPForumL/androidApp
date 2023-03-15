@@ -10,8 +10,8 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class FirebaseAuthenticatorTest {
-    @Rule
-    val testRule = ActivityScenarioRule(MainActivity::class.java)
+    //@Rule
+    //val testRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Test
     fun test() {
