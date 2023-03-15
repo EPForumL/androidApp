@@ -19,7 +19,7 @@ android {
 
     defaultConfig {
         applicationId "com.github.ybecker.epforuml"
-        minSdk 24
+        minSdk 28
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -84,7 +84,7 @@ dependencies {
     // Optional - Integration with activities
     implementation("androidx.activity:activity-compose:1.6.1")
     // Optional - Integration with ViewModels
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
     // Optional - Integration with LiveData
     implementation("androidx.compose.runtime:runtime-livedata")
     // Optional - Integration with RxJava

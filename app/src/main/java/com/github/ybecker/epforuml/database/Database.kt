@@ -46,6 +46,13 @@ abstract class Database {
     abstract fun getUserAnswers(user: User): Set<Answer>
 
     /**
+     * Returns a list of every courses the user is subscribed to.
+     *
+     * @return a list of every courses the user is subscribed to
+     */
+    abstract fun getUserSubscriptions(user: User): Set<Course>
+
+    /**
      * Posts a new question in a given course.
      *
      * @param user the user that adds the question
@@ -73,6 +80,15 @@ abstract class Database {
      * @return the user that was added in database
      */
     abstract fun addUser(userId:String, username:String): User
+
+    /**
+     * Adds a subscription to the given user for the specified course.
+     *
+     * @param user the user that want to subscribe
+     * @param course the course to which the user is subscribing
+     * @return the user with updated subscribe list, or null it the user is not found
+     */
+    abstract fun addSubscription(user: User, course: Course): User?
 
     /**
      * Returns the question with the given ID.
