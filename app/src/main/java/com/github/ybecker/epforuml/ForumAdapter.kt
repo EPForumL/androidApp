@@ -9,7 +9,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.imageview.ShapeableImageView
 
-class ForumAdapter(private val questionsList : MutableList<String>) :
+class ForumAdapter(private val questionsList : MutableList<Model.Question>) :
     RecyclerView.Adapter<ForumAdapter.ForumViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForumViewHolder {
@@ -23,7 +23,7 @@ class ForumAdapter(private val questionsList : MutableList<String>) :
 
     override fun onBindViewHolder(holder: ForumViewHolder, position: Int) {
         val currentItem = questionsList[position]
-        holder.currentText.text = currentItem//.questionText
+        holder.currentText.text = currentItem.questionText
     }
 
     class ForumViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {

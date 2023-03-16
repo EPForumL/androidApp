@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.FirebaseDatabaseAdapter
 import com.github.ybecker.epforuml.database.Model
 
@@ -19,8 +20,9 @@ class HomeFragment : Fragment() {
 
     private lateinit var adapter : ForumAdapter
     private lateinit var recyclerView: RecyclerView
-    private lateinit var questionsList : MutableList<String> // switch to questions when able to transfer data from mainActivtiy
+    private lateinit var questionsList : MutableList<Model.Question> // switch to questions when able to transfer data from mainActivtiy
 
+    private var db = DatabaseManager.db
     /*
     lateinit var questions = Array<String> ??? // is this needed ?
      */
@@ -35,7 +37,7 @@ class HomeFragment : Fragment() {
     /**
      * Initialize question array
      */
-    private fun questionsRetrieval() {
+    /*private fun questionsRetrieval() {
         questionsList = mutableListOf(
             "What about me ?",
             "What about us ?",
@@ -46,12 +48,12 @@ class HomeFragment : Fragment() {
                     "it it it it it it it it it it it it it it it it it it it it it it it it it it it it it ",
             "last question I promise"
         )
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // remove when using mockDB
-        questionsRetrieval()
+        getQuestionsQuery()
 
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_forum)
@@ -60,5 +62,17 @@ class HomeFragment : Fragment() {
 
         adapter = ForumAdapter(questionsList)
         recyclerView.adapter = adapter
+    }
+
+
+    fun getQuestionsQuery() {
+        var courseSet = db.availableCourses()
+
+        // reset questionsList for refresh
+        questionsList = mutableListOf()
+
+        for (course in courseSet) {
+            questionsList.addAll(db.getCourseQuestions(course))
+        }
     }
 }
