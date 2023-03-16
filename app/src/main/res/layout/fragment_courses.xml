@@ -1,20 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/courses_layout_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="20dp"
-    android:id="@+id/courses_layout_parent"
-    android:background="@color/black"
+    android:orientation="vertical"
     tools:context=".CoursesFragment">
 
     <TextView
+        android:id="@+id/CourseTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="@string/courses"
-        android:textColor="@color/white"
-        android:textSize="30sp"
-        android:textStyle="bold"/>
+        android:textColor="@color/textColor"
+        android:text="Courses"
+        android:textSize="40sp"
+        android:textStyle="bold" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/manager_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="75dp"
+        android:text="Subscribtion managment : "
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewCourses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:padding="16dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

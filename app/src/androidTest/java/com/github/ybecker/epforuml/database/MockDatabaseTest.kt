@@ -4,6 +4,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
+import junit.framework.TestCase
 import junit.framework.TestCase.assertNull
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
@@ -41,7 +42,8 @@ class MockDatabaseTest {
 
     @Test
     fun getUserByIdTest(){
-        assertThat(db?.getUserById(user.userId), equalTo(user))
+        assertThat(db?.getUserById(user.userId)?.userId, equalTo(user.userId))
+        assertThat(db?.getUserById(user.userId)?.username, equalTo(user.username))
     }
 
     @Test
@@ -76,7 +78,7 @@ class MockDatabaseTest {
     @Test
     fun availableCoursesTest() {
         val courseOfMockDB = setOf(SDP, SwEng)
-        assertThat(db.availableCourses(), equalTo(courseOfMockDB))
+        TestCase.assertTrue(db.availableCourses().map { it.courseId }.containsAll(courseOfMockDB.map { it.courseId }))
     }
 
     @Test

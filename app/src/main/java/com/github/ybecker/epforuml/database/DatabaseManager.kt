@@ -1,7 +1,7 @@
 package com.github.ybecker.epforuml.database
 
 object DatabaseManager {
-    private var db: Database = FirebaseDatabaseAdapter()
+    var db: Database = FirebaseDatabaseAdapter()
 
     /**
      * Retrieves the current instance of the Database

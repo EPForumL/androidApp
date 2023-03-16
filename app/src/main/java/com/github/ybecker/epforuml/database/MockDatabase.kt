@@ -17,8 +17,33 @@ class MockDatabase : Database() {
         courses[course1.courseId] = course1
         val course2 = Course("course1","SDP", mutableListOf())
         courses[course2.courseId] = course2
+        val course3 = Course("course2","AnalyseI", mutableListOf())
+        courses[course3.courseId] = course3
+        val course4 = Course("course3","AnalyseII", mutableListOf())
+        courses[course4.courseId] = course4
+        val course5 = Course("course4","AnalyseIII", mutableListOf())
+        courses[course5.courseId] = course5
+        val course6 = Course("course5","AnalyseIV", mutableListOf())
+        courses[course6.courseId] = course6
+        val course7 = Course("course6","Algo", mutableListOf())
+        courses[course7.courseId] = course7
+        val course8 = Course("course7","TOC", mutableListOf())
+        courses[course8.courseId] = course8
+        val course9 = Course("course8","POO", mutableListOf())
+        courses[course9.courseId] = course9
+        val course10 = Course("course9","POS", mutableListOf())
+        courses[course10.courseId] = course10
+        val course11 = Course("course10","OS", mutableListOf())
+        courses[course11.courseId] = course11
+        val course12 = Course("course11","Database", mutableListOf())
+        courses[course12.courseId] = course12
+
         val user1 = User("user1", "TestUser", emptyList(), emptyList(), emptyList())
         users[user1.userId] = user1
+
+        this.addSubscription(user1, course1)
+        this.addSubscription(user1, course2)
+
     }
 
     override fun getCourseQuestions(course: Course): Set<Question> {
@@ -62,8 +87,11 @@ class MockDatabase : Database() {
     }
 
     override fun addUser(userId:String, username: String): User {
-        val newUserId = "user${users.size + 1}"
-        val user = User(newUserId , username, emptyList(), emptyList(), emptyList())
+        var user = users[userId]
+        if(user != null){
+            return user
+        }
+        user = User(userId , username, emptyList(), emptyList(), emptyList())
         users[userId] = user
         return user
     }
@@ -114,7 +142,7 @@ class MockDatabase : Database() {
     }
 
     override fun getUserSubscriptions(user: User): Set<Course> {
-        return user.subscriptions.toSet()
+        return users[user.userId]?.subscriptions?.toSet() ?: setOf()
     }
 
 }
