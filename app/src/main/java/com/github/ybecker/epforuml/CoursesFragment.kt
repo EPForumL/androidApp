@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 
@@ -25,7 +26,8 @@ class CoursesFragment : Fragment() {
         recyclerView = rootView.findViewById(R.id.recyclerViewCourses)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        user = db.getUserById("user1") ?: User()
+        val userId = AuthenticatorManager.getAuthenticator().user?.userId
+        user = db.getUserById(userId ?: "") ?: User()
 
         userSubscriptions = db.getUserSubscriptions(user).toMutableList()
         adapter = CourseAdapter(db.availableCourses().toList()) { course ->

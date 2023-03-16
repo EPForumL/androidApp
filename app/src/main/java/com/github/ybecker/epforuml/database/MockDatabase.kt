@@ -87,8 +87,11 @@ class MockDatabase : Database() {
     }
 
     override fun addUser(userId:String, username: String): User {
-        val newUserId = "user${users.size + 1}"
-        val user = User(newUserId , username, emptyList(), emptyList(), emptyList())
+        var user = users[userId]
+        if(user != null){
+            return user
+        }
+        user = User(userId , username, emptyList(), emptyList(), emptyList())
         users[userId] = user
         return user
     }
@@ -139,7 +142,7 @@ class MockDatabase : Database() {
     }
 
     override fun getUserSubscriptions(user: User): Set<Course> {
-        return user.subscriptions.toSet()
+        return users[user.userId]?.subscriptions?.toSet() ?: setOf()
     }
 
 }
