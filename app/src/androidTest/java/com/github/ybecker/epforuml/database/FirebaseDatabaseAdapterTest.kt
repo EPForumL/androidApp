@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml.database
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.FirebaseDatabase
 import junit.framework.TestCase.assertNull
@@ -8,9 +7,7 @@ import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Test
-import org.junit.runner.RunWith
 
 
 class FirebaseDatabaseAdapterTest {
@@ -25,7 +22,7 @@ class FirebaseDatabaseAdapterTest {
     private lateinit var answer1: Answer
     private lateinit var answer2: Answer
 
-    companion object{
+    /*companion object{
         @BeforeClass
         @JvmStatic
         fun emulatorSetup(){
@@ -34,42 +31,42 @@ class FirebaseDatabaseAdapterTest {
 
             val firebaseInstance = FirebaseDatabase
                 .getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
-                .useEmulator("127.0.0.1", 9000)
+                //.useEmulator("127.0.0.1", 9000)
         }
-    }
+    }*/
 
     @Before
-        fun setUp() {
+    fun setUp() {
 
-            val firebaseDB = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app").reference
+        val firebaseDB = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app").reference
 
-            firebaseDB.child("courses").setValue(null)
-            firebaseDB.child("users").setValue(null)
-            firebaseDB.child("questions").setValue(null)
-            firebaseDB.child("answers").setValue(null)
+        firebaseDB.child("courses").setValue(null)
+        firebaseDB.child("users").setValue(null)
+        firebaseDB.child("questions").setValue(null)
+        firebaseDB.child("answers").setValue(null)
 
-            db = DatabaseManager.getDatabase()
+        db = FirebaseDatabaseAdapter()
 
-            swEng = Course("0", "SwEng", emptyList())
-            sdp = Course("1", "SDP", emptyList())
+        swEng = Course("0", "SwEng", emptyList())
+        sdp = Course("1", "SDP", emptyList())
 
-            firebaseDB.child("courses").child("0").setValue(swEng)
-            firebaseDB.child("courses").child("1").setValue(sdp)
+        firebaseDB.child("courses").child("0").setValue(swEng)
+        firebaseDB.child("courses").child("1").setValue(sdp)
 
-            romain = db.addUser("0", "Romain")
-            theo = db.addUser("1","Theo")
+        romain = db.addUser("0", "Romain")
+        theo = db.addUser("1","Theo")
 
-            question1 = db.addQuestion(romain, sdp, "I have question about the SDP course !")
-            question2 = db.addQuestion(romain, sdp, "I think that the lambda with 'it' in Kotlin are great !")
+        question1 = db.addQuestion(romain, sdp, "I have question about the SDP course !")
+        question2 = db.addQuestion(romain, sdp, "I think that the lambda with 'it' in Kotlin are great !")
 
-            answer1 = db.addAnswer(romain, question2, "Yes they are !")
-            answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
+        answer1 = db.addAnswer(romain, question2, "Yes they are !")
+        answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
 
-            romain = db.addSubscription(romain, sdp) ?: User("", "error", emptyList(), emptyList(), emptyList())
-            romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
-            romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
+        romain = db.addSubscription(romain, sdp) ?: User("", "error", emptyList(), emptyList(), emptyList())
+        romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
+        romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
 
-        }
+    }
 
 
     @Test
