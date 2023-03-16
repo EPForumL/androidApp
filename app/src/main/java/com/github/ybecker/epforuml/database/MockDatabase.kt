@@ -27,6 +27,13 @@ class MockDatabase : Database() {
         val question2 = Question("question2", "course0", "user1",
                                 "What is a Scrum Master ?", mutableListOf())
         questions[question2.questionId] = question2
+        val question3 = Question("question3", "course0", "user1",
+            "Extremely long long long long long long long long long long long long long " +
+                    "long long long long long long long long long long long long long long long" +
+                    "long long long long long long long long long long long long long long long" +
+                    "long long long long long long long long long long long long long long long " +
+                    "question", mutableListOf())
+        questions[question3.questionId] = question3
     }
 
     override fun getCourseQuestions(course: Course): Set<Question> {
