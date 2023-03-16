@@ -26,9 +26,11 @@ class CoursesFragment : Fragment() {
         recyclerView = rootView.findViewById(R.id.recyclerViewCourses)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
-        val userId = AuthenticatorManager.getAuthenticator().user?.userId
+        // we take the current user in the database
+        val userId = AuthenticatorManager.authenticator?.user?.userId
         user = db.getUserById(userId ?: "") ?: User()
 
+        // save actual user subscription in the a private variable
         userSubscriptions = db.getUserSubscriptions(user).toMutableList()
         adapter = CourseAdapter(db.availableCourses().toList()) { course ->
             onCourseClick(course)
@@ -42,20 +44,22 @@ class CoursesFragment : Fragment() {
         private val onCourseClickListener: (Course) -> Unit
     ) : RecyclerView.Adapter<CourseViewHolder>() {
 
-        //this methode populate the recycler view with "item_course"
+        //this methode put the different courses in the recycler view
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_course, parent, false)
             val switch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
 
-            // we set u
+            // add a listener to every switches
             switch.setOnCheckedChangeListener { _, isChecked ->
                 val course = itemView.tag as? Course
                 if(course != null){
                     if(isChecked){
+                        // add a subscription for this user in the course
                         db.addSubscription(user, course)
                         Toast.makeText(itemView.context, "You subscribed to "+ course.courseName, Toast.LENGTH_SHORT).show()
                     }
                     else{
+                        //TODO update database to unsubscribe
                         Toast.makeText(itemView.context, "You unsubscribed to "+ course.courseName, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -66,7 +70,9 @@ class CoursesFragment : Fragment() {
 
         override fun onBindViewHolder(holder: CourseViewHolder, position: Int) {
             val course = courses[position]
+            // call bind with name args and if the switch is checked or not
             holder.bind(course, userSubscriptions.map { it.courseId }.contains(course.courseId))
+            // add course here so we can get it in onCreateViewHolder
             holder.itemView.tag = course
             holder.itemView.setOnClickListener { onCourseClickListener(course) }
         }
@@ -74,6 +80,7 @@ class CoursesFragment : Fragment() {
         override fun getItemCount() = courses.size
 
     }
+
 
     private inner class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val courseTitleTextView = itemView.findViewById<TextView>(R.id.courseTitleTextView)

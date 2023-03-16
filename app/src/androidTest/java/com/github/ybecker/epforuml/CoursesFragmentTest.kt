@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml
 
 import android.view.View
 import android.widget.Switch
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -20,14 +21,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.action.ViewActions.*
+import com.github.ybecker.epforuml.authentication.Authenticator
+import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.google.android.gms.auth.api.Auth
 import junit.framework.TestCase.fail
 import org.hamcrest.Matchers.*
 
 
 @RunWith(AndroidJUnit4::class)
 class CoursesFragmentTest {
-
-
 
 
     private fun ClickOnSwitch(itemPosition:Int){
@@ -48,13 +50,15 @@ class CoursesFragmentTest {
 
     @Test
     fun SubscribtionStayWhenSwitchingScreen(){
+        DatabaseManager.useMockDatabase()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity { AuthenticatorManager.createMockAuthenticator(it) }
         DatabaseManager.useMockDatabase()
         val user = db.addUser("0", "TestUser")
 
-        val checkPosition = 0
+        AuthenticatorManager.authenticator?.user = user
 
-        AuthenticatorManager.getAuthenticator().user = user
+        val checkPosition = 0
 
         onView(withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_courses)).perform(click())
@@ -73,12 +77,11 @@ class CoursesFragmentTest {
 
         DatabaseManager.useMockDatabase()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
-
+        scenario.onActivity { AuthenticatorManager.createMockAuthenticator(it) }
         val user = db.addUser("0", "TestUser")
+        AuthenticatorManager.authenticator?.user = user
 
         val checkPosition = 0
-
-        AuthenticatorManager.getAuthenticator().user = user
 
         assertTrue(user.subscriptions.isEmpty())
 
