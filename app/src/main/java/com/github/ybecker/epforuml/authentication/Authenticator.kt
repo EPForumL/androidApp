@@ -14,15 +14,15 @@ interface Authenticator {
     /**
      * Allows a user to sign-in
      */
-    fun signIn(signInLauncher: ActivityResultLauncher<Intent>)
+    fun signIn()
 
     /**
      * Allows the current logged-in user to sign-out
      */
-    fun signOut(activity: AppCompatActivity)
+    fun signOut()
 
     /**
      * Deletes the current logged-in user from the firebase user list and the database
      */
-    fun deleteUser(activity: AppCompatActivity)
+    fun deleteUser()
 }
