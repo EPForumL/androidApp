@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.authentication
 
+import androidx.compose.ui.test.hasText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
@@ -33,9 +34,9 @@ class FirebaseAuthenticatorTest {
     }
 
     @Test
-    fun checkSignInButtonOpensSignInActivity() {
-        onView(ViewMatchers.withId(R.id.signInButton)).perform(click())
-        onView(ViewMatchers.withText("Sign in with Google")).check(matches(isDisplayed()))
-        onView(ViewMatchers.withText("Sign in with email")).check(matches(isDisplayed()))
+    fun checkLoginActivityHasExpectedComponents() {
+        onView(ViewMatchers.withId(R.id.welcomeText)).check(matches(ViewMatchers.withText("Welcome to EPForumL")))
+        onView(ViewMatchers.withId(R.id.signInButton)).check(matches(isDisplayed()))
+        onView(ViewMatchers.withId(R.id.guestButton)).check(matches(isDisplayed()))
     }
 }
