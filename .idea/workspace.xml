@@ -12,21 +12,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8274362f-bd56-4a62-adaa-0dc841af3731" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/androidApp.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/github/ybecker/epforuml/NewQuestionFragment.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/circle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/ic_plus.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/plus_icon.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_new_question.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/github/ybecker/epforuml/CoursesFragmentTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/androidTest/java/com/github/ybecker/epforuml/CoursesFragmentTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/github/ybecker/epforuml/CoursesFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/github/ybecker/epforuml/CoursesFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/github/ybecker/epforuml/HomeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/github/ybecker/epforuml/HomeFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/github/ybecker/epforuml/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/github/ybecker/epforuml/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\Caroline V\.android\avd\Pixel_2_API_33.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -77,8 +92,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
-        <option value="layoutResourceFile" />
         <option value="resourceFile" />
+        <option value="layoutResourceFile" />
+        <option value="valueResourceFile" />
         <option value="Kotlin Class" />
       </list>
     </option>
@@ -109,14 +125,16 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;android-custom-view/Users/romain/.gradle/caches/modules-2/files-2.1/androidx.recyclerview/recyclerview/1.1.0/f2bdf79e1977939817f54a9d3e2f6bc52b63bdd0/recyclerview-1.1.0-sources.jar!/androidx/recyclerview/widget/RecyclerView.java_SELECTED&quot;: &quot;RecyclerView&quot;,
     &quot;android-custom-view/Users/romain/.gradle/caches/modules-2/files-2.1/com.google.android.material/material/1.8.0/60ab9cfeed56173f0fb0c798009d91e049bbbba1/material-1.8.0-sources.jar!/com/google/android/material/navigation/NavigationView.java_SELECTED&quot;: &quot;NavigationView&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;com.android.tools.idea.emulator.zoom.toolbar.visible&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/romain/Desktop/SDP/androidApp&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Caroline V/AndroidStudioProjects/androidApp&quot;,
     &quot;memory.settings.postsync.last.time.stamp&quot;: &quot;1678897958588&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
@@ -140,7 +158,7 @@
       <command value="gradle connectedCheck" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.androidApp [connectedCheck]">
+  <component name="RunManager" selected="Android App.app">
     <configuration name="EPForumL" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="SDP_Bootcamp.app.main" />
       <option name="DEPLOY" value="true" />
@@ -195,9 +213,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
       <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
-      <method v="2">
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method v="2" />
     </configuration>
     <configuration name="EPForumL.app.androidTest" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="EPForumL.app.androidTest" />
@@ -253,9 +269,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
       <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
-      <method v="2">
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method v="2" />
     </configuration>
     <configuration name="EPForumL.app.unitTest" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="EPForumL.app.unitTest" />
@@ -311,9 +325,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
       <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
-      <method v="2">
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method v="2" />
     </configuration>
     <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="EPForumL.app.main" />
@@ -369,9 +381,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
       <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
-      <method v="2">
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method v="2" />
     </configuration>
     <configuration name="CoursesFragmentTest" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests" temporary="true" nameIsGenerated="true">
       <module name="EPForumL.app.androidTest" />
@@ -422,9 +432,7 @@
         <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
         <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
       </Profilers>
-      <method v="2">
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method v="2" />
     </configuration>
     <configuration name="SubscribtionStayWhenSwitchingScreen()" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests" temporary="true" nameIsGenerated="true">
       <module name="EPForumL.app.androidTest" />
@@ -475,9 +483,7 @@
         <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
         <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
       </Profilers>
-      <method v="2">
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method v="2" />
     </configuration>
     <configuration name="SubscriptionModifyDatabase()" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests" temporary="true" nameIsGenerated="true">
       <module name="EPForumL.app.androidTest" />
@@ -528,9 +534,7 @@
         <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
         <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
       </Profilers>
-      <method v="2">
-        <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
+      <method v="2" />
     </configuration>
     <configuration name="androidApp [app:testDebugUnitTest]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
@@ -587,10 +591,10 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.androidApp [connectedCheck]" />
         <item itemvalue="Android Instrumented Tests.SubscribtionStayWhenSwitchingScreen()" />
         <item itemvalue="Android Instrumented Tests.SubscriptionModifyDatabase()" />
         <item itemvalue="Android Instrumented Tests.CoursesFragmentTest" />
-        <item itemvalue="Gradle.androidApp [connectedCheck]" />
         <item itemvalue="Gradle.androidApp [app:testDebugUnitTest]" />
       </list>
     </recent_temporary>
