@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.FirebaseDatabaseAdapter
 import com.github.ybecker.epforuml.database.Model
+import android.widget.ImageButton
 
 /**
  * A simple [Fragment] subclass.
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomeFragment : Fragment() {
+class HomeFragment(val mainActivity: MainActivity) : Fragment() {
 
     private lateinit var adapter : ForumAdapter
     private lateinit var recyclerView: RecyclerView
@@ -32,7 +33,16 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
+        // Set click listener for the circular button with the "+" sign
+        newQuestionButton.setOnClickListener {
+            // Navigate to the new fragment to add a new question
+            mainActivity.replaceFragment(NewQuestionFragment(mainActivity), "New Question")
+        }
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,4 +72,5 @@ class HomeFragment : Fragment() {
             questionsList.addAll(db.getCourseQuestions(course))
         }
     }
+
 }

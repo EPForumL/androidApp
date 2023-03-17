@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/ask_a_new_question"
+            android:textSize="24sp" />
+
+        <!-- Subject Selection -->
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_subject_of_new_question" />
+
+        <Spinner
+            android:layout_marginTop="16dp"
+            android:id="@+id/subject_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/subject_options"
+            android:prompt="@string/subject_prompt" />
+
+        <!-- Title Input -->
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/new_question_title" />
+
+        <EditText
+            android:padding="8dp"
+            android:id="@+id/question_title_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:autofillHints="Question title"
+            tools:ignore="LabelFor" />
+
+        <!-- Question Details Input -->
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/new_question_details" />
+
+        <EditText
+            android:id="@+id/question_details_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:minLines="5"
+            android:maxLines="10"
+            android:autofillHints="Question body"
+            tools:ignore="LabelFor" />
+
+        <!-- Anonymous Switch -->
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/post_new_question_anonymously" />
+
+        <Switch
+            android:padding="8dp"
+            android:id="@+id/anonymous_switch"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:text="@string/submit_new_question"
+            android:layout_marginTop="16dp"
+            android:background="@color/teal_700"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:padding="16dp" />
+
+    </LinearLayout>
+</ScrollView>
