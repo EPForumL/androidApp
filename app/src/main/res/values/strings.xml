@@ -36,4 +36,18 @@
     <string name="repeat_password">repeat_password</string>
     <string name="share_localisation">share_localisation</string>
     <string name="preferences">preferences</string>
+
+    ///Objects of the new fragment page:
+    <string name="preview_question">Preview Question</string>
+    <string name="post_new_question_anonymously">Post Question Anonymously?</string>
+    <string name="new_question_details">Question Details</string>
+    <string name="new_question_title">Question Title</string>
+    <string name="select_subject_of_new_question">Select Subject</string>
+    <string name="ask_a_new_question">Ask a Question</string>
+    <string name="subject_prompt">subject prompt</string>
+    <string name="submit_new_question">Submit</string>
+    <string name="add_question_button">add question button</string>
+    <string name="add_question_button_" />
+
+
 </resources>

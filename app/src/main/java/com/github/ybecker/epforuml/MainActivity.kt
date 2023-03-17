@@ -6,7 +6,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -27,13 +26,13 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment()).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
         }
 
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment(), it.toString())
+                R.id.nav_home -> replaceFragment(HomeFragment(this), it.toString())
                 R.id.nav_courses -> replaceFragment(CoursesFragment(), it.toString())
                 R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment(), it.toString())
                 R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment(), it.toString())
@@ -53,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun replaceFragment(fragment: Fragment, title : String) {
+    fun replaceFragment(fragment: Fragment, title : String) {
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
         setTitle(title)

@@ -3,16 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="20dp"
     android:id="@+id/home_layout_parent"
     tools:context=".HomeFragment">
 
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:text="@string/forum"
         android:textSize="30sp"
         android:textStyle="bold"/>
+
+    <ImageButton
+        android:id="@+id/new_question_button"
+        android:background="@android:color/transparent"
+        android:layout_gravity="top|end"
+        android:layout_margin="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_plus"
+        android:padding="16dp"
+        android:contentDescription="@string/add_question_button_"/>
+
+
+
 
 </FrameLayout>
