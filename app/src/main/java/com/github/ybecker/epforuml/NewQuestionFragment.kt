@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.MockDatabase
 
@@ -26,6 +27,8 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         // Create an instance of the MockDatabase
         val mockDatabase = DatabaseManager.useMockDatabase()
 
+        //user
+        val user = AuthenticatorManager.authenticator?.user
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
@@ -85,7 +88,9 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                         //find course correponding to the selected name
                         val course =
                             coursesList.filter { course -> course.courseName == selectedCourse }[0]
-                        //DatabaseManager.db.addQuestion(DatabaseManager.db.addQuestion())
+                        if (user != null) {
+                            DatabaseManager.db.addQuestion(user, course, questTitle.toString())
+                        }
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>) {
