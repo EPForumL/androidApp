@@ -142,7 +142,7 @@
       <recent name="com.github.ybecker.epforuml" />
     </key>
   </component>
-  <component name="RunManager" selected="Android Instrumented Tests.ForumAdapterTest">
+  <component name="RunManager" selected="Android App.app">
     <configuration name="EPForumL" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="SDP_Bootcamp.app.main" />
       <option name="DEPLOY" value="true" />

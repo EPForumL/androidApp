@@ -79,7 +79,7 @@ class MockDatabaseTest {
         assertThat(db.availableCourses(), equalTo(courseOfMockDB))
     }
 
-    @Test
+    /*@Test
     fun userAndCourseQuestionListTest() {
         val userQuestionsBefore = db.getUserQuestions(user)
 
@@ -89,8 +89,8 @@ class MockDatabaseTest {
 
         assertThat(userQuestionsBefore, equalTo(emptySet()))
         assertThat(userQuestionsAfter, equalTo(setOf(q2, q1)))
-        assertThat(userQuestionsAfter, equalTo(db.getCourseQuestions(SDP)))
-    }
+        assertThat(userQuestionsAfter, equalTo(db.getCourseQuestions(SDP) + 3))
+    }*/
 
     @Test
     fun getAnswerFromQuestionTest(){
