@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/forum_question_displayed"
         app:layout_constraintStart_toStartOf="parent"
-        android:gravity="center"
+        android:clickable="true"
         android:text="Hop une belle question et tout bla bla bla beauuucoup trop trop trop trop troptt t t t tt tt t tt tt t t  longue t t t tt tt t tt tt t t  longuet t t tt tt t tt tt t t  longue t t t tt tt t tt tt t t  longue"
         android:textSize="20sp"
         android:ellipsize="end"

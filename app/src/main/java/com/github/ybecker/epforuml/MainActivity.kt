@@ -16,10 +16,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var toggle : ActionBarDrawerToggle
     lateinit var drawerLayout: DrawerLayout
-    private lateinit var db : Database
-    lateinit var bundle : Bundle
 
-    //private var questionsList = mutableListOf<Model.Question>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,14 +36,6 @@ class MainActivity : AppCompatActivity() {
         if(savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment()).commit()
         }
-
-
-        // find a way of transfering content of db to fragments
-       /* getQuestionsQuery()
-        for (question in questionsList) {
-            bundle.putString(question.questionId, question.questionText)
-        }*/
-
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
@@ -75,15 +64,4 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.closeDrawers()
         setTitle(title)
     }
-
-    /*fun getQuestionsQuery() {
-        var courseSet = db.availableCourses()
-
-        // reset questionsList for refresh
-        questionsList = mutableListOf()
-
-        for (course in courseSet) {
-            questionsList.addAll(db.getCourseQuestions(course))
-        }
-    }*/
 }

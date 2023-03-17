@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
@@ -34,22 +35,6 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    /**
-     * Initialize question array
-     */
-    /*private fun questionsRetrieval() {
-        questionsList = mutableListOf(
-            "What about me ?",
-            "What about us ?",
-            "An especially looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong question because" +
-                    "we need to be able to test it and for now we have not had another way of testing it iti it " +
-                    "it it it it it it it it it it it it it it it it it it it it it it it it it it it " +
-                    "it it it it it it it it it it it it it it it it it it it it it it it it it it it " +
-                    "it it it it it it it it it it it it it it it it it it it it it it it it it it it it it ",
-            "last question I promise"
-        )
-    }*/
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // remove when using mockDB
@@ -62,6 +47,8 @@ class HomeFragment : Fragment() {
 
         adapter = ForumAdapter(questionsList)
         recyclerView.adapter = adapter
+
+
     }
 
 
