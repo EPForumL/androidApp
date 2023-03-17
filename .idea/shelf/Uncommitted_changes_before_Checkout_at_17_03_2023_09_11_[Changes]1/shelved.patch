@@ -1,0 +1,26 @@
+Index: .idea/androidTestResultsUserPreferences.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AndroidTestResultsUserPreferences\">\r\n    <option name=\"androidTestResultsTableState\">\r\n      <map>\r\n        <entry key=\"-437677366\">\r\n          <value>\r\n            <AndroidTestResultsTableState>\r\n              <option name=\"preferredColumnWidths\">\r\n                <map>\r\n                  <entry key=\"Duration\" value=\"90\" />\r\n                  <entry key=\"Pixel_2_API_33\" value=\"120\" />\r\n                  <entry key=\"Tests\" value=\"360\" />\r\n                </map>\r\n              </option>\r\n            </AndroidTestResultsTableState>\r\n          </value>\r\n        </entry>\r\n        <entry key=\"-220404209\">\r\n          <value>\r\n            <AndroidTestResultsTableState>\r\n              <option name=\"preferredColumnWidths\">\r\n                <map>\r\n                  <entry key=\"Duration\" value=\"90\" />\r\n                  <entry key=\"Pixel_2_API_30\" value=\"120\" />\r\n                  <entry key=\"Pixel_2_API_33\" value=\"120\" />\r\n                  <entry key=\"Tests\" value=\"360\" />\r\n                </map>\r\n              </option>\r\n            </AndroidTestResultsTableState>\r\n          </value>\r\n        </entry>\r\n        <entry key=\"590441118\">\r\n          <value>\r\n            <AndroidTestResultsTableState>\r\n              <option name=\"preferredColumnWidths\">\r\n                <map>\r\n                  <entry key=\"Duration\" value=\"90\" />\r\n                  <entry key=\"Pixel_2_API_30\" value=\"120\" />\r\n                  <entry key=\"Pixel_2_API_33\" value=\"120\" />\r\n                  <entry key=\"Tests\" value=\"360\" />\r\n                </map>\r\n              </option>\r\n            </AndroidTestResultsTableState>\r\n          </value>\r\n        </entry>\r\n        <entry key=\"1240144654\">\r\n          <value>\r\n            <AndroidTestResultsTableState>\r\n              <option name=\"preferredColumnWidths\">\r\n                <map>\r\n                  <entry key=\"Duration\" value=\"90\" />\r\n                  <entry key=\"Pixel_2_API_33\" value=\"120\" />\r\n                  <entry key=\"Tests\" value=\"360\" />\r\n                </map>\r\n              </option>\r\n            </AndroidTestResultsTableState>\r\n          </value>\r\n        </entry>\r\n        <entry key=\"1594825860\">\r\n          <value>\r\n            <AndroidTestResultsTableState>\r\n              <option name=\"preferredColumnWidths\">\r\n                <map>\r\n                  <entry key=\"Duration\" value=\"90\" />\r\n                  <entry key=\"Pixel_2_API_33\" value=\"120\" />\r\n                  <entry key=\"Tests\" value=\"360\" />\r\n                </map>\r\n              </option>\r\n            </AndroidTestResultsTableState>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/androidTestResultsUserPreferences.xml b/.idea/androidTestResultsUserPreferences.xml
+--- a/.idea/androidTestResultsUserPreferences.xml	
++++ b/.idea/androidTestResultsUserPreferences.xml	
+@@ -9,6 +9,7 @@
+               <option name="preferredColumnWidths">
+                 <map>
+                   <entry key="Duration" value="90" />
++                  <entry key="Pixel_2_API_30" value="120" />
+                   <entry key="Pixel_2_API_33" value="120" />
+                   <entry key="Tests" value="360" />
+                 </map>
+@@ -50,6 +51,7 @@
+               <option name="preferredColumnWidths">
+                 <map>
+                   <entry key="Duration" value="90" />
++                  <entry key="Pixel_2_API_30" value="120" />
+                   <entry key="Pixel_2_API_33" value="120" />
+                   <entry key="Tests" value="360" />
+                 </map>
