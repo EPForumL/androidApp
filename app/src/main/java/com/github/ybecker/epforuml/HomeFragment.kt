@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.FirebaseDatabaseAdapter
 import com.github.ybecker.epforuml.database.Model
 import android.widget.ImageButton
@@ -24,7 +25,6 @@ class HomeFragment(val mainActivity: MainActivity) : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var questionsList : MutableList<Model.Question> // switch to questions when able to transfer data from mainActivtiy
 
-    private var db = DatabaseManager.db
     /*
     lateinit var questions = Array<String> ??? // is this needed ?
      */
