@@ -6,15 +6,23 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.github.ybecker.epforuml.database.Database
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.MockDatabase
+import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var toggle : ActionBarDrawerToggle
     lateinit var drawerLayout: DrawerLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // initialize DB to Mock
+        //DatabaseManager.useMockDatabase()
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView : NavigationView = findViewById(R.id.nav_view)
@@ -28,7 +36,6 @@ class MainActivity : AppCompatActivity() {
         if(savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
         }
-
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {

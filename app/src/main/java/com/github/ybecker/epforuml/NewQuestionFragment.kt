@@ -25,7 +25,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         // DataBase
 
         // Create an instance of the MockDatabase
-        val mockDatabase = DatabaseManager.useMockDatabase()
+        //val mockDatabase = DatabaseManager.useMockDatabase()
 
         //user
         val user = AuthenticatorManager.authenticator?.user

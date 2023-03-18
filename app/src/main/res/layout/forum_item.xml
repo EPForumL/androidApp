@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="10dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:id="@+id/question_image"
+        android:src="@drawable/nav_account"
+        android:layout_marginRight="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/forum_question_displayed"
+        app:layout_constraintStart_toStartOf="parent"
+        android:clickable="true"
+        android:text="Hop une belle question et tout bla bla bla beauuucoup trop trop trop trop troptt t t t tt tt t tt tt t t  longue t t t tt tt t tt tt t t  longuet t t tt tt t tt tt t t  longue t t t tt tt t tt tt t t  longue"
+        android:textSize="20sp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:textStyle="bold"/>
+</LinearLayout>

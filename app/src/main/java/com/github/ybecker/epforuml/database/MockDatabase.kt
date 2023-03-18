@@ -41,9 +41,22 @@ class MockDatabase : Database() {
         val user1 = User("user1", "TestUser", emptyList(), emptyList(), emptyList())
         users[user1.userId] = user1
 
+        val question1 = Question("question1", "course1", "user1",
+                                "How do I fix the CI ?", mutableListOf())
+        questions[question1.questionId] = question1
+        val question2 = Question("question2", "course0", "user1",
+                                "What is a Scrum Master ?", mutableListOf())
+        questions[question2.questionId] = question2
+        val question3 = Question("question3", "course0", "user1",
+            "Extremely long long long long long long long long long long long long long " +
+                    "long long long long long long long long long long long long long long long" +
+                    "long long long long long long long long long long long long long long long" +
+                    "long long long long long long long long long long long long long long long " +
+                    "question", mutableListOf())
+        questions[question3.questionId] = question3
+
         this.addSubscription(user1, course1)
         this.addSubscription(user1, course2)
-
     }
 
     override fun getCourseQuestions(course: Course): Set<Question> {

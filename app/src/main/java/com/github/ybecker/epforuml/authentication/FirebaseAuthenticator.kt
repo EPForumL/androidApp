@@ -103,7 +103,7 @@ class FirebaseAuthenticator(private val activity: AppCompatActivity) : Authentic
             val username = firebaseUser.displayName
             username?.let {
                 AuthenticatorManager.authenticator?.user =
-                    DatabaseManager.getDatabase().addUser(firebaseUser.uid, it)
+                    DatabaseManager.db.addUser(firebaseUser.uid, it)
             }
 
             Toast.makeText(
