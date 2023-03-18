@@ -9,6 +9,7 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.authentication.LoginActivity
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -16,7 +17,9 @@ import org.junit.runner.RunWith
 class NightModeTest {
     @Test
     fun testFragmentSettingsDarkMode() {
-        val scenario = ActivityScenario.launch(MainActivity::class.java)
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+        // go to MainActivity
+        onView(withId(R.id.guestButton)).perform(click())
 
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
         // open navigation drawer
