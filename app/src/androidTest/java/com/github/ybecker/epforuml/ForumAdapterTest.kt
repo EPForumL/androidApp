@@ -22,8 +22,8 @@ class ForumAdapterTest {
 
     @Before
     fun setup() {
-        scenario = ActivityScenario.launch(MainActivity::class.java)
         DatabaseManager.useMockDatabase()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 
 
