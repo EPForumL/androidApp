@@ -5,10 +5,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
 import org.junit.After
 import org.junit.Before
@@ -18,12 +21,16 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class ForumAdapterTest {
 
-    private lateinit var scenario : ActivityScenario<MainActivity>
+
+
+    private lateinit var scenario : ActivityScenario<LoginActivity>
 
     @Before
     fun setup() {
-        scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario = ActivityScenario.launch(LoginActivity::class.java)
         DatabaseManager.useMockDatabase()
+
+        onView(withId(R.id.guestButton)).perform(click())
     }
 
 

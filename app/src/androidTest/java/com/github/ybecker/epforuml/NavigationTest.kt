@@ -8,6 +8,7 @@ import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import com.github.ybecker.epforuml.authentication.LoginActivity
 import org.hamcrest.Matchers.allOf
 import org.junit.BeforeClass
 import org.junit.Test
@@ -18,12 +19,9 @@ class NavigationTest {
 
     @Test
     fun testFragmentNavigation() {
-        val scenario = ActivityScenario.launch(MainActivity::class.java)
-
-        /*
-        onView(allOf(withText(text)))
-            .inRoot(isDialog())
-            .check(matches(isDisplayed())) ???*/
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+        // go to MainActivity
+        onView(withId(R.id.guestButton)).perform(click())
 
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
