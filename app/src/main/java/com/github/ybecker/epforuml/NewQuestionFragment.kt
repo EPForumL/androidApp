@@ -89,7 +89,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                         val course =
                             coursesList.filter { course -> course.courseName == selectedCourse }[0]
                         if (user != null) {
-                            DatabaseManager.db.addQuestion(user, course, questTitle.toString())
+                            DatabaseManager.db.addQuestion(user, course, questBody.toString() ,questTitle.toString())
                         }
                     }
 

@@ -30,6 +30,7 @@ class FirebaseDatabaseAdapter : Database() {
     private val usernamePath = "username"
 
     private val questionTextPath = "questionText"
+    private val questionTitlePath = "questionTitle"
     private val answerTextPath = "answerText"
 
     override fun availableCourses(): Set<Course> {
@@ -156,12 +157,12 @@ class FirebaseDatabaseAdapter : Database() {
         return future.get(5,TimeUnit.SECONDS)
     }
 
-    override fun addQuestion(user: User, course: Course, questionText: String?): Question {
+    override fun addQuestion(user: User, course: Course, questionTitle: String, questionText: String?): Question {
         // create a space for the new question in sb and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-        val question = Question(questionId, course.courseId, user.userId, questionText ?: "", emptyList())
+        val question = Question(questionId, course.courseId, user.userId,questionTitle, questionText ?: "", emptyList())
         // add the new question in the db
         newChildRef.setValue(question)
 
@@ -341,6 +342,7 @@ class FirebaseDatabaseAdapter : Database() {
             questionMap[questionIdPath] as String,
             questionMap[courseIdPath] as String,
             questionMap[userIdPath] as String,
+            questionMap[questionTitlePath] as String,
             questionMap[questionTextPath] as String,
             answers)
     }

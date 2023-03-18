@@ -56,8 +56,8 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addUser("0", "Romain")
         theo = db.addUser("1","Theo")
 
-        question1 = db.addQuestion(romain, sdp, "I have question about the SDP course !")
-        question2 = db.addQuestion(romain, sdp, "I think that the lambda with 'it' in Kotlin are great !")
+        question1 = db.addQuestion(romain, sdp, "About SDP", "I have question about the SDP course !")
+        question2 = db.addQuestion(romain, sdp, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !")
 
         answer1 = db.addAnswer(romain, question2, "Yes they are !")
         answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
@@ -98,7 +98,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addAndgetQuestionByIdTest() {
-        val question = db.addQuestion(romain, sdp, "I have a question.")
+        val question = db.addQuestion(romain, sdp, "Question","I have a question.")
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
     }
 
@@ -174,5 +174,9 @@ class FirebaseDatabaseAdapterTest {
         assertThat(romain.subscriptions.map { it.courseId }, equalTo(setOf(sdp, swEng).map { it.courseId }))
     }
 
+    @Test
+    fun getQuestionTitleTest(){
+        assertThat(db.getQuestionById(question1.questionId)?.questionTitle, equalTo(question1.questionTitle))
+    }
 
 }

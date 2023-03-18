@@ -53,7 +53,7 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetQuestionByIdTest(){
-        val question = db.addQuestion(user, SDP, "I have a question.")
+        val question = db.addQuestion(user, SDP, "Question","I have a question.")
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
     }
 
@@ -64,7 +64,7 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetAnswerByIdTest(){
-        val question = db.addQuestion(user, SDP, "I have a question.")
+        val question = db.addQuestion(user, SDP, "Question","I have a question.")
         val answer = db.addAnswer(user, question, "And what is it ?")
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
         assertThat(db.getAnswerById(answer.answerId), equalTo(answer))
@@ -81,23 +81,10 @@ class MockDatabaseTest {
         TestCase.assertTrue(db.availableCourses().map { it.courseId }.containsAll(courseOfMockDB.map { it.courseId }))
     }
 
-    /*@Test
-    fun userAndCourseQuestionListTest() {
-        val userQuestionsBefore = db.getUserQuestions(user)
-
-        val q1 = db.addQuestion(user, SDP, "Should we use Kotlin for Android Development?")
-        val q2 = db.addQuestion(user, SDP, "We prefer to use XML over Jetpack Compose.")
-        val userQuestionsAfter = db.getUserQuestions(user)
-
-        assertThat(userQuestionsBefore, equalTo(emptySet()))
-        assertThat(userQuestionsAfter, equalTo(setOf(q2, q1)))
-        assertThat(userQuestionsAfter, equalTo(db.getCourseQuestions(SDP) + 3))
-    }*/
-
     @Test
     fun getAnswerFromQuestionTest(){
 
-        val q1 = db.addQuestion(user, SDP, "Should we use Kotlin for Android Development?")
+        val q1 = db.addQuestion(user, SDP, "Kotlin","Should we use Kotlin for Android Development?")
         val a1 = db.addAnswer(user, q1, "Yes, it is well documented on the internet")
         val a2= db.addAnswer(user, q1, "Yes it is.")
 
@@ -109,7 +96,7 @@ class MockDatabaseTest {
 
     @Test
     fun getAnswerFromQuestionWithoutAnyAnswerTest(){
-        val q2 = db.addQuestion(user, SDP, "We prefer to use XML over Jetpack Compose.")
+        val q2 = db.addQuestion(user, SDP, "XML vs JetpackCompose","We prefer to use XML over Jetpack Compose.")
         assertThat(db.getQuestionAnswers(q2), equalTo(setOf()))
     }
 
@@ -120,5 +107,11 @@ class MockDatabaseTest {
         user = db.addSubscription(user, SDP) ?: User("", "error", emptyList(), emptyList(), emptyList())
         assertThat(user.subscriptions.map { it.courseId }, equalTo(db.getUserSubscriptions(user).map { it.courseId }))
         assertThat(user.subscriptions.map { it.courseId }, equalTo(setOf(SwEng, SDP).map { it.courseId }))
+    }
+
+    @Test
+    fun getQuestionTitleTest(){
+        val q = db.addQuestion(user, SDP, "chatGPT","He is a friend on mine :)")
+        assertThat(db.getQuestionById(q.questionId)?.questionTitle, equalTo(q.questionTitle))
     }
 }
