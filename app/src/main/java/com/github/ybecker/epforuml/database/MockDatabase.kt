@@ -42,7 +42,9 @@ class MockDatabase : Database() {
         users[user1.userId] = user1
 
         val question1 = Question("question1", "course1", "user1",
-                                "How do I fix the CI ?", "",  mutableListOf())
+                                "How do I fix the CI ?",
+            "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg",
+            mutableListOf())
         questions[question1.questionId] = question1
         val question2 = Question("question2", "course0", "user1",
                                 "What is a Scrum Master ?", "" , mutableListOf())

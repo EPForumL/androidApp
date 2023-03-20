@@ -20,6 +20,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
  */
 class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
+    var IMAGE_URI = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -116,7 +117,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
     private fun chooseImage() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+        //openActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -131,7 +132,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
     companion object {
         private const val PICK_IMAGE_REQUEST = 1
-        private var IMAGE_URI = ""
     }
 
 }
