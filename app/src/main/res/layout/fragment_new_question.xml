@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,78 +19,103 @@
 
         <!-- Subject Selection -->
         <TextView
-            android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="@string/select_subject_of_new_question" />
 
         <Spinner
-            android:layout_marginTop="16dp"
             android:id="@+id/subject_spinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:entries="@array/subject_options"
+            android:minHeight="48dp"
             android:prompt="@string/subject_prompt" />
 
         <!-- Title Input -->
         <TextView
-            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="@string/new_question_title" />
 
         <EditText
-            android:padding="8dp"
             android:id="@+id/question_title_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="Question title"
             android:inputType="text"
             android:maxLines="1"
-            android:autofillHints="Question title"
+            android:padding="8dp"
             tools:ignore="LabelFor" />
 
         <!-- Question Details Input -->
         <TextView
-            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="@string/new_question_details" />
 
         <EditText
             android:id="@+id/question_details_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:minLines="5"
-            android:maxLines="10"
             android:autofillHints="Question body"
+            android:inputType="textMultiLine"
+            android:maxLines="10"
+            android:minLines="5"
             tools:ignore="LabelFor" />
 
         <!-- Anonymous Switch -->
         <TextView
-            android:layout_marginTop="16dp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="@string/post_new_question_anonymously" />
 
         <Switch
-            android:padding="8dp"
             android:id="@+id/anonymous_switch"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:padding="8dp"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="15dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/uploadButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Import picture" />
 
         <Button
             android:id="@+id/btn_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:text="@string/submit_new_question"
             android:layout_marginTop="16dp"
             android:background="@color/teal_700"
+            android:padding="16dp"
+            android:text="@string/submit_new_question"
             android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:padding="16dp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 </ScrollView>

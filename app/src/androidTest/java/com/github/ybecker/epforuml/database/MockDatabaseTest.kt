@@ -1,6 +1,6 @@
 package com.github.ybecker.epforuml.database
 
-import org.hamcrest.CoreMatchers.`is`
+import com.github.ybecker.epforuml.NewQuestionFragment
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
@@ -53,7 +53,12 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetQuestionByIdTest(){
-        val question = db.addQuestion(user, SDP, "I have a question.")
+        val question = db.addQuestion(
+            user,
+            SDP,
+            "I have a question.",
+            NewQuestionFragment.IMAGE_URI
+        )
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
     }
 
@@ -64,7 +69,12 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetAnswerByIdTest(){
-        val question = db.addQuestion(user, SDP, "I have a question.")
+        val question = db.addQuestion(
+            user,
+            SDP,
+            "I have a question.",
+            NewQuestionFragment.IMAGE_URI
+        )
         val answer = db.addAnswer(user, question, "And what is it ?")
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
         assertThat(db.getAnswerById(answer.answerId), equalTo(answer))
@@ -97,7 +107,12 @@ class MockDatabaseTest {
     @Test
     fun getAnswerFromQuestionTest(){
 
-        val q1 = db.addQuestion(user, SDP, "Should we use Kotlin for Android Development?")
+        val q1 = db.addQuestion(
+            user,
+            SDP,
+            "Should we use Kotlin for Android Development?",
+            NewQuestionFragment.IMAGE_URI
+        )
         val a1 = db.addAnswer(user, q1, "Yes, it is well documented on the internet")
         val a2= db.addAnswer(user, q1, "Yes it is.")
 
@@ -109,7 +124,12 @@ class MockDatabaseTest {
 
     @Test
     fun getAnswerFromQuestionWithoutAnyAnswerTest(){
-        val q2 = db.addQuestion(user, SDP, "We prefer to use XML over Jetpack Compose.")
+        val q2 = db.addQuestion(
+            user,
+            SDP,
+            "We prefer to use XML over Jetpack Compose.",
+            NewQuestionFragment.IMAGE_URI
+        )
         assertThat(db.getQuestionAnswers(q2), equalTo(setOf()))
     }
 

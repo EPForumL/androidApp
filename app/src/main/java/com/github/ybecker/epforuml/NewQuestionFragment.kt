@@ -1,14 +1,17 @@
 package com.github.ybecker.epforuml
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import com.github.ybecker.epforuml.database.DatabaseManager
-import com.github.ybecker.epforuml.database.MockDatabase
+
 
 /**
  * A simple [Fragment] subclass.
@@ -89,7 +92,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                         val course =
                             coursesList.filter { course -> course.courseName == selectedCourse }[0]
                         if (user != null) {
-                            DatabaseManager.db.addQuestion(user, course, questTitle.toString())
+                            DatabaseManager.db.addQuestion(user, course, questTitle.toString(), IMAGE_URI)
                         }
                     }
 
@@ -98,16 +101,37 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                     }
                 }
 
-
-
-
-
                 mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
             }
 
         }
 
+        val uploadButton = view?.findViewById<Button>(R.id.uploadButton)
+        uploadButton?.setOnClickListener { chooseImage() }
+
         return view
 
     }
+
+
+    private fun chooseImage() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, PICK_IMAGE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            // Do something with the selected image URI
+            IMAGE_URI = data.data.toString()
+            //TODO allow to modify the image
+        }
+    }
+
+    companion object {
+        private const val PICK_IMAGE_REQUEST = 1
+        private var IMAGE_URI = ""
+    }
+
 }

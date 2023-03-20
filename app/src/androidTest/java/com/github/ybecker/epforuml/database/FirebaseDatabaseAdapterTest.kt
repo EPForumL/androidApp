@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.database
 
+import com.github.ybecker.epforuml.NewQuestionFragment
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.FirebaseDatabase
 import junit.framework.TestCase.assertNull
@@ -56,8 +57,18 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addUser("0", "Romain")
         theo = db.addUser("1","Theo")
 
-        question1 = db.addQuestion(romain, sdp, "I have question about the SDP course !")
-        question2 = db.addQuestion(romain, sdp, "I think that the lambda with 'it' in Kotlin are great !")
+        question1 = db.addQuestion(
+            romain,
+            sdp,
+            "I have question about the SDP course !",
+            NewQuestionFragment.IMAGE_URI
+        )
+        question2 = db.addQuestion(
+            romain,
+            sdp,
+            "I think that the lambda with 'it' in Kotlin are great !",
+            NewQuestionFragment.IMAGE_URI
+        )
 
         answer1 = db.addAnswer(romain, question2, "Yes they are !")
         answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
@@ -98,7 +109,12 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addAndgetQuestionByIdTest() {
-        val question = db.addQuestion(romain, sdp, "I have a question.")
+        val question = db.addQuestion(
+            romain,
+            sdp,
+            "I have a question.",
+            NewQuestionFragment.IMAGE_URI
+        )
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
     }
 
