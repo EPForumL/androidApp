@@ -57,7 +57,7 @@ class MockDatabaseTest {
             user,
             SDP,
             "I have a question.",
-            NewQuestionFragment.IMAGE_URI
+            ""
         )
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
     }
@@ -73,7 +73,7 @@ class MockDatabaseTest {
             user,
             SDP,
             "I have a question.",
-            NewQuestionFragment.IMAGE_URI
+            ""
         )
         val answer = db.addAnswer(user, question, "And what is it ?")
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
@@ -111,7 +111,7 @@ class MockDatabaseTest {
             user,
             SDP,
             "Should we use Kotlin for Android Development?",
-            NewQuestionFragment.IMAGE_URI
+            ""
         )
         val a1 = db.addAnswer(user, q1, "Yes, it is well documented on the internet")
         val a2= db.addAnswer(user, q1, "Yes it is.")
@@ -128,7 +128,7 @@ class MockDatabaseTest {
             user,
             SDP,
             "We prefer to use XML over Jetpack Compose.",
-            NewQuestionFragment.IMAGE_URI
+            ""
         )
         assertThat(db.getQuestionAnswers(q2), equalTo(setOf()))
     }

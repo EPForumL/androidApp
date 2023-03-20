@@ -61,13 +61,13 @@ class FirebaseDatabaseAdapterTest {
             romain,
             sdp,
             "I have question about the SDP course !",
-            NewQuestionFragment.IMAGE_URI
+            ""
         )
         question2 = db.addQuestion(
             romain,
             sdp,
             "I think that the lambda with 'it' in Kotlin are great !",
-            NewQuestionFragment.IMAGE_URI
+           ""
         )
 
         answer1 = db.addAnswer(romain, question2, "Yes they are !")
@@ -113,7 +113,7 @@ class FirebaseDatabaseAdapterTest {
             romain,
             sdp,
             "I have a question.",
-            NewQuestionFragment.IMAGE_URI
+            ""
         )
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
     }

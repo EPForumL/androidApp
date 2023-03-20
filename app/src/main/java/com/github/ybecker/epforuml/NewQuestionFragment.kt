@@ -112,6 +112,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
         }
 
+        //select image
         val uploadButton = view?.findViewById<Button>(R.id.uploadButton)
         uploadButton?.setOnClickListener {
             pickImage.launch("image/*")
