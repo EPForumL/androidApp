@@ -32,7 +32,7 @@ class FirebaseDatabaseAdapter : Database() {
     private val questionTextPath = "questionText"
     private val answerTextPath = "answerText"
 
-    private val questionURIPath = "questionURI"
+    private val questionURIPath = "imageURI"
 
     override fun availableCourses(): Set<Course> {
         val future = CompletableFuture<Set<Course>>()

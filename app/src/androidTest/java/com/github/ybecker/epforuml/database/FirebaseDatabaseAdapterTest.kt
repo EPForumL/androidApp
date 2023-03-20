@@ -61,13 +61,13 @@ class FirebaseDatabaseAdapterTest {
             romain,
             sdp,
             "I have question about the SDP course !",
-            ""
+            "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg"
         )
         question2 = db.addQuestion(
             romain,
             sdp,
             "I think that the lambda with 'it' in Kotlin are great !",
-           ""
+           "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg"
         )
 
         answer1 = db.addAnswer(romain, question2, "Yes they are !")
@@ -113,7 +113,7 @@ class FirebaseDatabaseAdapterTest {
             romain,
             sdp,
             "I have a question.",
-            ""
+            "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg"
         )
         assertThat(db.getQuestionById(question.questionId), equalTo(question))
     }
