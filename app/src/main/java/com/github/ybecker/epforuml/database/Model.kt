@@ -3,8 +3,8 @@ package com.github.ybecker.epforuml.database
 class Model {
 
     // This class represent a Question
-    data class Question(val questionId: String, val courseId: String, val userId: String, val questionText: String, var answers: List<Answer>){
-        constructor() : this("", "", "", "", emptyList())
+    data class Question(val questionId: String, val courseId: String, val userId: String, val questionText: String, val imageURI : String, var answers: List<Answer>){
+        constructor() : this("", "", "", "", "",emptyList())
     }
 
     // This class represent a user an answer
