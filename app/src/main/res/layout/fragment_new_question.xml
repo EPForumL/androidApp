@@ -85,9 +85,6 @@
             android:layout_width="match_parent"
             android:layout_height="15dp" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/textView6"
@@ -97,13 +94,31 @@
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="13dp" />
+
+        <TextView
+            android:id="@+id/image_uri"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No image selected yet" />
+
+        <Button
+            android:id="@+id/takeImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TAKE PICTURE" />
+
 
         <Button
             android:id="@+id/uploadButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Import picture" />
+
+        <androidx.camera.view.PreviewView
+                android:id="@+id/previewView"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"/>
 
         <Button
             android:id="@+id/btn_submit"
