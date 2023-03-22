@@ -60,7 +60,9 @@ abstract class Database {
      * @param questionText the text of the question itself
      * @return the question that was posted in database
      */
-    abstract fun addQuestion(user: User, course: Course, questionTitle: String, questionText: String?): Question
+
+    abstract fun addQuestion(user: User, course: Course, questionTitle: String, questionText: String?, image_uri: String): Question
+
 
     /**
      * Posts a new answer to a question in a given course.
