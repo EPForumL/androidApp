@@ -53,130 +53,193 @@ class FirebaseDatabaseAdapterTest {
         firebaseDB.child("courses").child("0").setValue(swEng)
         firebaseDB.child("courses").child("1").setValue(sdp)
 
-        romain = db.addUser("0", "Romain")
-        theo = db.addUser("1","Theo")
+        val course3 = Course("course2","AnalyseI", mutableListOf())
+        firebaseDB.child("courses").child(course3.courseId).setValue(course3)
+        val course4 = Course("course3","AnalyseII", mutableListOf())
+        firebaseDB.child("courses").child(course4.courseId).setValue(course4)
+        val course5 = Course("course4","AnalyseIII", mutableListOf())
+        firebaseDB.child("courses").child(course5.courseId).setValue(course5)
+        val course6 = Course("course5","AnalyseIV", mutableListOf())
+        firebaseDB.child("courses").child(course6.courseId).setValue(course6)
+        val course7 = Course("course6","Algo", mutableListOf())
+        firebaseDB.child("courses").child(course7.courseId).setValue(course7)
+        val course8 = Course("course7","TOC", mutableListOf())
+        firebaseDB.child("courses").child(course8.courseId).setValue(course8)
+        val course9 = Course("course8","POO", mutableListOf())
+        firebaseDB.child("courses").child(course9.courseId).setValue(course9)
+        val course10 = Course("course9","POS", mutableListOf())
+        firebaseDB.child("courses").child(course10.courseId).setValue(course10)
+        val course11 = Course("course10","OS", mutableListOf())
+        firebaseDB.child("courses").child(course11.courseId).setValue(course11)
+        val course12 = Course("course11","Database", mutableListOf())
+        firebaseDB.child("courses").child(course12.courseId).setValue(course12)
 
-        question1 = db.addQuestion(romain, sdp, "About SDP", "I have question about the SDP course !")
-        question2 = db.addQuestion(romain, sdp, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !")
+        romain = db.addUser("0", "Romain").get()
+        theo = db.addUser("1","Theo").get()
 
-        answer1 = db.addAnswer(romain, question2, "Yes they are !")
-        answer2 = db.addAnswer(romain, question2, "The exclamation marks are also really great")
+        question1 = db.addQuestion(romain.userId, sdp.courseId, "About SDP", "I have question about the SDP course !")
+        question2 = db.addQuestion(romain.userId, sdp.courseId, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !")
 
-        romain = db.addSubscription(romain, sdp) ?: User("", "error", emptyList(), emptyList(), emptyList())
-        romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
-        romain = db.addSubscription(romain, swEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
+        answer1 = db.addAnswer(romain.userId, question2.questionId, "Yes they are !")
+        answer2 = db.addAnswer(romain.userId, question2.questionId, "The exclamation marks are also really great")
+
+        romain = db.addSubscription(romain.userId, sdp.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
+        romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
+        romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
 
     }
 
 
     @Test
     fun addAndGetUser() {
-        val user2 = db.addUser("2","TestUser2")
-        assertThat(db.getUserById(user2.userId), equalTo(user2))
+        val user2 = db.addUser("2","TestUser2").get()
+        db.getUserById(user2.userId).thenAccept {
+            assertThat(it, equalTo(user2))
+        }.join()
     }
 
     @Test
     fun getCourseByIdTest() {
-        assertThat(db.getCourseById("1")?.courseId, equalTo(sdp.courseId))
+        db.getCourseById("1").thenAccept {
+            assertThat(it?.courseId, equalTo(sdp.courseId))
+        }.join()
     }
 
     @Test
     fun getUnexistingCourseByIdReturnsNullTest() {
-        assertNull(db.getCourseById("nothing"))
+        db.getCourseById("nothing").thenAccept {
+            assertNull(it)
+        }.join()
     }
 
     @Test
     fun getUserByIdTest() {
-        assertThat(db.getUserById(romain.userId)?.userId, equalTo(romain.userId))
-        assertThat(db.getUserById(romain.userId)?.username, equalTo(romain.username))
+        db.getUserById(romain.userId).thenAccept {
+            assertThat(it?.userId, equalTo(romain.userId))
+        }.join()
+        db.getUserById(romain.userId).thenAccept {
+            assertThat(it?.username, equalTo(romain.username))
+        }.join()
     }
 
     @Test
     fun getUnexistingUserByIdReturnsNullTest() {
-        assertNull(db.getUserById("nobody"))
+        db.getCourseById("nobody").thenAccept {
+            assertNull(it)
+        }.join()
     }
 
     @Test
     fun addAndgetQuestionByIdTest() {
-        val question = db.addQuestion(romain, sdp, "Question","I have a question.")
-        assertThat(db.getQuestionById(question.questionId), equalTo(question))
+        val question = db.addQuestion(romain.userId, sdp.courseId, "Question","I have a question.")
+        db.getQuestionById(question.questionId).thenAccept {
+            assertThat(it, equalTo(question))
+        }.join()
     }
 
     @Test
     fun getUnexistingQuestionByIdReturnsNullTest(){
-        assertNull(db.getQuestionById("nothing"))
+        db.getQuestionById("nothing").thenAccept {
+            assertNull(it)
+        }.join()
     }
 
     @Test
     fun getAnswerByIdTest(){
-        assertThat(db.getAnswerById(answer1.answerId), equalTo(answer1))
+        db.getAnswerById(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(answer1))
+        }.join()
     }
 
     @Test
     fun getUnexistingAnswerByIdReturnsNullTest(){
-        assertNull(db.getAnswerById("nothing"))
+        db.getAnswerById("nothing").thenAccept {
+            assertNull(it)
+        }.join()
     }
 
     @Test
     fun availableCoursesTest() {
-        assertTrue(db.availableCourses().map { it.courseId }.containsAll(listOf(swEng.courseId, sdp.courseId)))
+        db.availableCourses().thenAccept {
+            assertTrue(it.map { it.courseId }.containsAll(listOf(swEng.courseId, sdp.courseId)))
+        }.join()
     }
 
     @Test
     fun getCourseQuestionTest(){
-        assertThat(db.getCourseQuestions(sdp).map { it.questionId }.toSet(), equalTo(setOf(question1.questionId, question2.questionId)))
+        db.getCourseQuestions(sdp.courseId).thenAccept {
+            assertThat(it. map { it.questionId }, equalTo(listOf(question1.questionId, question2.questionId)))
+        }.join()
     }
 
     @Test
     fun getCourseQuestionWhenEmpty(){
-        assertThat(db.getCourseQuestions(swEng).map { it.questionId }.toSet(), equalTo(setOf()))
+        db.getCourseQuestions(swEng.courseId).thenAccept {
+            assertThat(it.map { it.questionId }, equalTo(listOf()))
+        }.join()
     }
 
     @Test
     fun getUserQuestionTest(){
-        assertThat(db.getUserQuestions(romain).map { it.questionId }.toSet(), equalTo(setOf(question1.questionId, question2.questionId)))
+        db.getUserQuestions(romain.userId).thenAccept {
+            assertThat(it.map { it.questionId }, equalTo(listOf(question1.questionId, question2.questionId)))
+        }.join()
     }
 
     @Test
     fun getUserQuestionWhenEmpty(){
-        assertThat(db.getUserQuestions(theo).map { it.questionId }.toSet(), equalTo(setOf()))
+        db.getUserQuestions(theo.userId).thenAccept {
+            assertThat(it.map { it.questionId }, equalTo(listOf()))
+        }.join()
     }
 
     @Test
     fun getUserAnswersTest(){
-        assertThat(db.getUserAnswers(romain).map { it.answerId }.toSet(), equalTo(setOf(answer1.answerId,answer2.answerId)))
+        db.getUserAnswers(romain.userId).thenAccept {
+            assertThat(it.map { it.answerId }, equalTo(listOf(answer1.answerId, answer2.answerId)))
+        }.join()
     }
 
     @Test
     fun getUserAnswersWhenEmpty(){
-        assertThat(db.getUserAnswers(theo).map { it.answerId }.toSet(), equalTo(setOf()))
+        db.getUserAnswers(theo.userId).thenAccept {
+            assertThat(it.map { it.answerId }, equalTo(listOf()))
+        }.join()
     }
 
     @Test
     fun getQuestionAnswers(){
-        assertThat(db.getQuestionAnswers(question2).map { it.answerId }.toSet(), equalTo(setOf(answer1.answerId, answer2.answerId)))
+        db.getQuestionAnswers(question2.questionId).thenAccept {
+            assertThat(it.map { it.answerId }, equalTo(listOf(answer1.answerId, answer2.answerId)))
+        }.join()
     }
 
     @Test
     fun getQuestionAnswersWhenEmpty(){
-        assertThat(db.getQuestionAnswers(question1).map { it.answerId }.toSet(), equalTo(setOf()))
+        db.getQuestionAnswers(question1.questionId).thenAccept {
+            assertThat(it.map { it.answerId }, equalTo(listOf()))
+        }.join()
     }
 
     @Test
     fun addExistingUserReturnTheUserTest(){
-        val user = db.addUser(romain.userId, "NewRomain")
+        val user = db.addUser(romain.userId, "NewRomain").get()
         assertThat(user.username, equalTo(romain.username))
     }
 
     @Test
     fun getUserSubscriptionTest(){
-        assertThat(romain.subscriptions.map { it.courseId }, equalTo(db.getUserSubscriptions(romain).map { it.courseId }))
-        assertThat(romain.subscriptions.map { it.courseId }, equalTo(setOf(sdp, swEng).map { it.courseId }))
+        db.getUserSubscriptions(romain.userId).thenAccept {
+            assertThat(it.map { it.courseId }, equalTo(listOf(swEng, sdp).map { it.courseId }))
+        }.join()
+
     }
 
     @Test
     fun getQuestionTitleTest(){
-        assertThat(db.getQuestionById(question1.questionId)?.questionTitle, equalTo(question1.questionTitle))
+        db.getQuestionById(question1.questionId).thenAccept {
+            assertThat(it?.questionTitle, equalTo(question1.questionTitle))
+        }.join()
     }
 
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.*
 import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.MockDatabase
 
 /**
@@ -40,71 +41,74 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
 
         // Get the set of available courses from the MockDatabase
-        val coursesSet = DatabaseManager.db.availableCourses()
+        //val coursesSet = DatabaseManager.db.availableCourses()
 
         // Convert the set to an ArrayList
-        val coursesList = ArrayList(coursesSet)
+        //val coursesList = ArrayList(coursesSet)
 
-        val courseNamesList = coursesList.map { course -> course.courseName }
+        db.availableCourses().thenAccept{
+            val coursesList = it
+            val courseNamesList = it.map { course -> course.courseName }
 
-        // Create an ArrayAdapter with the coursesList as the data source
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            courseNamesList
-        )
+            // Create an ArrayAdapter with the coursesList as the data source
+            val adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                courseNamesList
+            )
 
-        // Set the ArrayAdapter as the Spinner adapter
-        spinner.adapter = adapter
-
-
-        //SubmitButton
-
-        val submitButton = view?.findViewById<Button>(R.id.btn_submit)
-        submitButton?.setOnClickListener {
-            print("click submit btn")
-            val questBody = view.findViewById<EditText>(R.id.question_details_edittext)
-            val questTitle = view.findViewById<EditText>(R.id.question_title_edittext)
-
-            if (questBody.text.isBlank() || questTitle.text.isBlank()) {
-                Toast.makeText(
-                    requireContext(),
-                    "Question title or body cannot be empty",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                // perform submit action
+            // Set the ArrayAdapter as the Spinner adapter
+            spinner.adapter = adapter
 
 
-                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        val selectedCourse = parent.getItemAtPosition(position) as String
+            //SubmitButton
 
-                        //find course correponding to the selected name
-                        val course =
-                            coursesList.filter { course -> course.courseName == selectedCourse }[0]
-                        if (user != null) {
-                            DatabaseManager.db.addQuestion(user, course, questBody.toString() ,questTitle.toString())
+            val submitButton = view?.findViewById<Button>(R.id.btn_submit)
+            submitButton?.setOnClickListener {
+                print("click submit btn")
+                val questBody = view.findViewById<EditText>(R.id.question_details_edittext)
+                val questTitle = view.findViewById<EditText>(R.id.question_title_edittext)
+
+                if (questBody.text.isBlank() || questTitle.text.isBlank()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Question title or body cannot be empty",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    // perform submit action
+
+
+                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val selectedCourse = parent.getItemAtPosition(position) as String
+
+                            //find course correponding to the selected name
+                            val course =
+                                coursesList.filter { course -> course.courseName == selectedCourse }[0]
+                            if (user != null) {
+                                db.addQuestion(
+                                    user.userId,
+                                    course.courseId,
+                                    questBody.toString(),
+                                    questTitle.toString()
+                                )
+                            }
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>) {
+                            // Do nothing
                         }
                     }
 
-                    override fun onNothingSelected(parent: AdapterView<*>) {
-                        // Do nothing
-                    }
+                    mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
                 }
-
-
-
-
-
-                mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
             }
-
         }
 
         return view

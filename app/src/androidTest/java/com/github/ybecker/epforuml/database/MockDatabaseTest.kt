@@ -1,11 +1,11 @@
 package com.github.ybecker.epforuml.database
 
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
 import junit.framework.TestCase
 import junit.framework.TestCase.assertNull
+import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
 
@@ -27,91 +27,122 @@ class MockDatabaseTest {
     fun addAndGetUser(){
         val user2 = User("user2", "TestUser2", emptyList(), emptyList(), emptyList())
         db.addUser(user2.userId, user2.username)
-        assertThat(db.getUserById(user2.userId), equalTo(user2))
+        db.getUserById(user2.userId).thenAccept {
+            assertThat(db.getUserById(user2.userId), equalTo(user2))
+        }
     }
 
     @Test
     fun getCourseByIdTest(){
-        assertThat(db.getCourseById(SDP.courseId), equalTo(SDP))
+        db.getCourseById(SDP.courseId).thenAccept {
+            assertThat(it, equalTo(SDP))
+        }
     }
 
     @Test
     fun getUnexistingCourseByIdReturnsNullTest(){
-        assertNull(db?.getCourseById("nothing"))
+        db.getCourseById("nothing").thenAccept {
+            assertNull(it)
+        }
     }
 
     @Test
     fun getUserByIdTest(){
-        assertThat(db?.getUserById(user.userId)?.userId, equalTo(user.userId))
-        assertThat(db?.getUserById(user.userId)?.username, equalTo(user.username))
+        db.getUserById(user.userId).thenAccept {
+            assertThat(it?.userId, equalTo(user.userId))
+            assertThat(it?.username, equalTo(user.username))
+        }
     }
 
     @Test
     fun getUnexistingUserByIdReturnsNullTest(){
-        assertNull(db.getUserById("nobody"))
+        db.getUserById("nobody").thenAccept {
+            assertNull(it)
+        }
     }
 
     @Test
     fun AddAndGetQuestionByIdTest(){
-        val question = db.addQuestion(user, SDP, "Question","I have a question.")
-        assertThat(db.getQuestionById(question.questionId), equalTo(question))
+        val question = db.addQuestion(user.userId, SDP.courseId, "Question","I have a question.")
+        db.getQuestionById(question.questionId).thenAccept {
+            assertThat(it, equalTo(question))
+        }
     }
 
     @Test
     fun getUnexistingQuestionByIdReturnsNullTest(){
-        assertNull(db.getQuestionById("nothing"))
+        db.getQuestionById("nothing").thenAccept {
+            assertNull(it)
+        }
     }
 
     @Test
     fun AddAndGetAnswerByIdTest(){
-        val question = db.addQuestion(user, SDP, "Question","I have a question.")
-        val answer = db.addAnswer(user, question, "And what is it ?")
-        assertThat(db.getQuestionById(question.questionId), equalTo(question))
-        assertThat(db.getAnswerById(answer.answerId), equalTo(answer))
+        val question = db.addQuestion(user.userId, SDP.courseId, "Question","I have a question.")
+        val answer = db.addAnswer(user.userId, question.questionId, "And what is it ?")
+
+        db.getQuestionById(question.questionId).thenAccept {
+            assertThat(it, equalTo(question))
+        }
+        db.getAnswerById(answer.answerId).thenAccept {
+            assertThat(it, equalTo(answer))
+        }
     }
 
     @Test
     fun getUnexistingAnswerByIdReturnsNullTest(){
-        assertNull(db.getAnswerById("nothing"))
+        db.getAnswerById("nothing").thenAccept {
+            assertNull(it)
+        }
     }
 
     @Test
     fun availableCoursesTest() {
-        val courseOfMockDB = setOf(SDP, SwEng)
-        TestCase.assertTrue(db.availableCourses().map { it.courseId }.containsAll(courseOfMockDB.map { it.courseId }))
+        val courseOfMockDB = listOf(SDP, SwEng)
+        db.availableCourses().thenAccept {
+            assertTrue(it.map { it.courseId }.containsAll(courseOfMockDB.map { it.courseId }))
+        }
     }
 
     @Test
     fun getAnswerFromQuestionTest(){
 
-        val q1 = db.addQuestion(user, SDP, "Kotlin","Should we use Kotlin for Android Development?")
-        val a1 = db.addAnswer(user, q1, "Yes, it is well documented on the internet")
-        val a2= db.addAnswer(user, q1, "Yes it is.")
+        val q1 = db.addQuestion(user.userId, SDP.courseId, "Kotlin","Should we use Kotlin for Android Development?")
+        val a1 = db.addAnswer(user.userId, q1.questionId, "Yes, it is well documented on the internet")
+        val a2= db.addAnswer(user.userId, q1.questionId, "Yes it is.")
 
-        val answers = setOf(a2, a1)
-        assertThat(db.getQuestionAnswers(q1), equalTo(answers))
-        assertThat(db.getUserAnswers(user), equalTo(answers))
-
+        val answers = listOf(a2, a1)
+        db.getQuestionAnswers(q1.questionId).thenAccept {
+            assertThat(it, equalTo(answers))
+        }
+        db.getUserAnswers(user.userId).thenAccept {
+            assertThat(it, equalTo(answers))
+        }
     }
 
     @Test
     fun getAnswerFromQuestionWithoutAnyAnswerTest(){
-        val q2 = db.addQuestion(user, SDP, "XML vs JetpackCompose","We prefer to use XML over Jetpack Compose.")
-        assertThat(db.getQuestionAnswers(q2), equalTo(setOf()))
+        val q2 = db.addQuestion(user.userId, SDP.courseId, "XML vs JetpackCompose","We prefer to use XML over Jetpack Compose.")
+        db.getQuestionAnswers(q2.questionId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }
     }
 
     @Test
     fun getUserSubscriptionTest(){
-        user = db.addSubscription(user, SwEng) ?: User("", "error", emptyList(), emptyList(), emptyList())
-        user = db.addSubscription(user, SDP) ?: User("", "error", emptyList(), emptyList(), emptyList())
-        user = db.addSubscription(user, SDP) ?: User("", "error", emptyList(), emptyList(), emptyList())
-        assertThat(user.subscriptions.map { it.courseId }, equalTo(db.getUserSubscriptions(user).map { it.courseId }))
-        assertThat(user.subscriptions.map { it.courseId }, equalTo(setOf(SwEng, SDP).map { it.courseId }))
+        db.addSubscription(user.userId, SwEng.courseId)
+        db.addSubscription(user.userId, SDP.courseId)
+        db.addSubscription(user.userId, SDP.courseId)
+        db.getUserSubscriptions(user.userId).thenAccept {
+            assertThat(it.map { it.courseId }, equalTo(listOf(SwEng, SDP).map { it.courseId }))
+        }
     }
 
     @Test
     fun getQuestionTitleTest(){
-        val q = db.addQuestion(user, SDP, "chatGPT","He is a friend on mine :)")
-        assertThat(db.getQuestionById(q.questionId)?.questionTitle, equalTo(q.questionTitle))
+        val q = db.addQuestion(user.userId, SDP.courseId, "chatGPT","He is a friend on mine :)")
+        db.getQuestionById(q.questionId).thenAccept {
+            assertThat(it?.questionTitle, equalTo(q.questionTitle))
+        }
     }
 }

@@ -18,7 +18,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         // TODO: Use real database when available
-        DatabaseManager.useMockDatabase()
+        //DatabaseManager.useMockDatabase()
 
         AuthenticatorManager.createFirebaseAuthenticator(this)
         val authenticator = AuthenticatorManager.authenticator

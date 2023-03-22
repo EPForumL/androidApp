@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * An abstract class that defines a set of methods to be implemented by concrete database implementations.
@@ -12,7 +13,7 @@ abstract class Database {
      *
      * @return a list of every available courses
      */
-    abstract fun availableCourses(): Set<Course>
+    abstract fun availableCourses(): CompletableFuture<List<Course>>
 
     /**
      * Retrieves a list of questions for a given course.
@@ -20,7 +21,7 @@ abstract class Database {
      * @param course the course for which to retrieve questions
      * @return a list of all questions for the given course
      */
-    abstract fun getCourseQuestions(course: Course): Set<Question>
+    abstract fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>>
 
     /**
      * Retrieves a list of answers for a given question.
@@ -28,7 +29,7 @@ abstract class Database {
      * @param question the question for which to retrieve answers
      * @return a list of all answers for the given question
      */
-    abstract fun getQuestionAnswers(question: Question): Set<Answer>
+    abstract fun getQuestionAnswers(questionId: String): CompletableFuture<List<Answer>>
 
 
     /**
@@ -36,21 +37,21 @@ abstract class Database {
      *
      * @return a list of every questions asked by a user
      */
-    abstract fun getUserQuestions(user: User): Set<Question>
+    abstract fun getUserQuestions(userId: String): CompletableFuture<List<Question>>
 
     /**
      * Returns a list of every answers asked by a user.
      *
      * @return a list of every answers asked by a user
      */
-    abstract fun getUserAnswers(user: User): Set<Answer>
+    abstract fun getUserAnswers(userId: String): CompletableFuture<List<Answer>>
 
     /**
      * Returns a list of every courses the user is subscribed to.
      *
      * @return a list of every courses the user is subscribed to
      */
-    abstract fun getUserSubscriptions(user: User): Set<Course>
+    abstract fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>>
 
     /**
      * Posts a new question in a given course.
@@ -60,7 +61,7 @@ abstract class Database {
      * @param questionText the text of the question itself
      * @return the question that was posted in database
      */
-    abstract fun addQuestion(user: User, course: Course, questionTitle: String, questionText: String?): Question
+    abstract fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?): Question
 
     /**
      * Posts a new answer to a question in a given course.
@@ -70,7 +71,7 @@ abstract class Database {
      * @param answerText the text of the answer itself
      * @return the answer that was posted in database
      */
-    abstract fun addAnswer(user: User, question: Question, answerText: String?): Answer
+    abstract fun addAnswer(userId: String, questionId: String, answerText: String?): Answer
 
     /**
      * Adds a user to the database.
@@ -79,7 +80,7 @@ abstract class Database {
      * @param username the name of the user to add
      * @return the user that was added in database
      */
-    abstract fun addUser(userId:String, username:String): User
+    abstract fun addUser(userId:String, username:String): CompletableFuture<User>
 
     /**
      * Adds a subscription to the given user for the specified course.
@@ -88,7 +89,7 @@ abstract class Database {
      * @param course the course to which the user is subscribing
      * @return the user with updated subscribe list, or null it the user is not found
      */
-    abstract fun addSubscription(user: User, course: Course): User?
+    abstract fun addSubscription(userId: String, courseId: String): CompletableFuture<User?>
 
     /**
      * Returns the question with the given ID.
@@ -96,7 +97,7 @@ abstract class Database {
      * @param id the ID of the question
      * @return the question with the given ID
      */
-    abstract fun getQuestionById(id: String): Question?
+    abstract fun getQuestionById(id: String): CompletableFuture<Question?>
 
     /**
      * Returns the answer with the given ID.
@@ -104,7 +105,7 @@ abstract class Database {
      * @param id the ID of the answer
      * @return the answer with the given ID
      */
-    abstract fun getAnswerById(id: String): Answer?
+    abstract fun getAnswerById(id: String): CompletableFuture<Answer?>
 
     /**
      * Returns the user with the given ID.
@@ -113,7 +114,7 @@ abstract class Database {
      * @return the user with the given ID
      */
 
-    abstract fun getUserById(id: String): User?
+    abstract fun getUserById(id: String): CompletableFuture<User?>
 
     /**
      * Returns the course with the given ID.
@@ -121,5 +122,5 @@ abstract class Database {
      * @param id the ID of the course
      * @return the course with the given ID
      */
-    abstract fun getCourseById(id: String): Course?
+    abstract fun getCourseById(id: String): CompletableFuture<Course?>
 }

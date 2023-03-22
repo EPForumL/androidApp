@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * This class is a database that should only be used for tests
@@ -55,107 +56,111 @@ class MockDatabase : Database() {
                     "question", mutableListOf())
         questions[question3.questionId] = question3
 
-        this.addSubscription(user1, course1)
-        this.addSubscription(user1, course2)
+        this.addSubscription(user1.userId, course1.courseId)
+        this.addSubscription(user1.userId, course2.courseId)
     }
 
-    override fun getCourseQuestions(course: Course): Set<Question> {
-        return questions.filterValues { it.courseId == course.courseId }.values.toSet()
+    override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
+        return CompletableFuture.completedFuture(questions.filterValues { it.courseId == courseId }.values.toList())
     }
 
-    override fun getQuestionAnswers(question: Question): Set<Answer> {
-        return answers.filterValues { it.questionId == question.questionId }.values.toSet()
+    override fun getQuestionAnswers(questionId: String): CompletableFuture<List<Answer>> {
+        return CompletableFuture.completedFuture(answers.filterValues { it.questionId == questionId }.values.toList())
     }
 
-    override fun addQuestion(user: User, course: Course, questionTitle: String, questionText: String?): Question {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?): Question {
         val questionId = "question${questions.size + 1}"
-        val question = Question(questionId, course.courseId, user.userId, questionTitle,questionText ?: "", emptyList())
+        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", emptyList())
         questions[questionId] = question
-        courses[course.courseId]?.questions = courses[course.courseId]?.questions?.plus(question) ?: listOf(question)
-        users[user.userId]?.let {
-            val updatedQuestions = it.questions + question
-            users[user.userId] = it.copy(questions = updatedQuestions)
+        courses[courseId]?.questions = courses[courseId]?.questions?.plus(question.questionId) ?: listOf(question.questionId)
+        users[userId]?.let {
+            val updatedQuestions = it.questions + question.questionId
+            users[userId] = it.copy(questions = updatedQuestions)
         }
         return question
     }
 
-    override fun addAnswer(user: User, question: Question, answerText: String?): Answer {
+    override fun addAnswer(userId: String, questionId: String, answerText: String?): Answer {
         val answerId = "answer${answers.size + 1}"
-        val answer = Answer(answerId, question.questionId, user.userId, answerText ?: "")
+        val answer = Answer(answerId, questionId, userId, answerText ?: "")
         answers[answerId] = answer
-        questions[question.questionId]?.answers = questions[question.questionId]?.answers?.plus(answer) ?: listOf(answer)
-        courses[question.courseId]?.questions?.let { courseQuestions ->
-            courseQuestions?.forEach { courseQuestion ->
-                if (courseQuestion.questionId == question.questionId) {
-                    courseQuestion.answers = questions[question.questionId]?.answers?.plus(answer) ?: listOf(answer)
-                }
-            }
-        }
+        questions[questionId]?.answers = questions[questionId]?.answers?.plus(answer.answerId) ?: listOf(answer.answerId)
 
-        users[user.userId]?.let {
-            val updatedAnswers = it.answers + answer
-            users[user.userId] = it.copy(answers = updatedAnswers)
+        users[userId]?.let {
+            val updatedAnswers = it.answers + answer.answerId
+            users[userId] = it.copy(answers = updatedAnswers)
         }
         return answer
     }
 
-    override fun addUser(userId:String, username: String): User {
+    override fun addUser(userId:String, username: String): CompletableFuture<User> {
         var user = users[userId]
         if(user != null){
-            return user
+            return CompletableFuture.completedFuture(user)
         }
         user = User(userId , username, emptyList(), emptyList(), emptyList())
         users[userId] = user
-        return user
+        return CompletableFuture.completedFuture(user)
     }
 
-    override fun addSubscription(user: User, course: Course): User? {
-        if (users[user.userId] == null) {
-            return null
+    override fun addSubscription(userId: String, courseId: String): CompletableFuture<User?> {
+        if (users[userId] == null) {
+            return CompletableFuture.completedFuture(null)
         } else {
-            users[user.userId]?.let {
+            users[userId]?.let {
                 val subscriptions = it.subscriptions.toMutableList()
-                if (!subscriptions.contains(course)) {
-                    subscriptions.add(course)
+                if (!subscriptions.contains(courseId)) {
+                    subscriptions.add(courseId)
                 }
                 val updatedSubscription = subscriptions.toList()
-                users[user.userId] = it.copy(subscriptions = updatedSubscription)
+                users[userId] = it.copy(subscriptions = updatedSubscription)
             }
-            return users[user.userId]
+            return CompletableFuture.completedFuture(users[userId])
         }
     }
 
 
-    override fun availableCourses(): Set<Course> {
-        return courses.values.toSet()
+    override fun availableCourses(): CompletableFuture<List<Course>> {
+        return CompletableFuture.completedFuture(courses.values.toList())
     }
 
-    override fun getQuestionById(id: String): Question? {
-        return questions.get(id)
+    override fun getQuestionById(id: String): CompletableFuture<Question?> {
+        return CompletableFuture.completedFuture(questions.get(id))
     }
 
-    override fun getAnswerById(id: String): Answer? {
-        return answers.get(id)
+    override fun getAnswerById(id: String): CompletableFuture<Answer?> {
+        return CompletableFuture.completedFuture(answers.get(id))
     }
 
-    override fun getUserById(id: String): User? {
-        return users.get(id)
+    override fun getUserById(id: String): CompletableFuture<User?> {
+        return CompletableFuture.completedFuture(users.get(id))
     }
 
-    override fun getCourseById(id: String): Course? {
-        return courses.get(id)
+    override fun getCourseById(id: String): CompletableFuture<Course?> {
+        return CompletableFuture.completedFuture(courses.get(id))
     }
 
-    override fun getUserQuestions(user: User): Set<Question> {
-        return questions.filterValues { it.userId == user.userId }.values.toSet()
+    override fun getUserQuestions(userId: String): CompletableFuture<List<Question>> {
+        return CompletableFuture.completedFuture(questions.filterValues { it.userId == userId }.values.toList())
     }
 
-    override fun getUserAnswers(user: User): Set<Answer> {
-        return answers.filterValues { it.userId == user.userId }.values.toSet()
+    override fun getUserAnswers(userId: String): CompletableFuture<List<Answer>> {
+        return CompletableFuture.completedFuture(answers.filterValues { it.userId == userId }.values.toList())
     }
 
-    override fun getUserSubscriptions(user: User): Set<Course> {
-        return users[user.userId]?.subscriptions?.toSet() ?: setOf()
+    override fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>> {
+        val list = (users[userId]?.subscriptions ?: listOf()).map { courseId ->
+            getCourseById(courseId).thenApply { course ->
+                course?.let { it }
+            }
+        }
+        val allFutures = CompletableFuture.allOf(*list.toTypedArray())
+        return allFutures.thenApply {
+            list.map { it.join() }
+        }
     }
+
+
+
 
 }
