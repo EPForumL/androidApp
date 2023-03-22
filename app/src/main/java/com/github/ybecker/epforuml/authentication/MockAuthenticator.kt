@@ -10,7 +10,7 @@ class MockAuthenticator(private val activity: AppCompatActivity) : Authenticator
     override var user: Model.User? = null
 
     override fun signIn() {
-        user = DatabaseManager.getDatabase().addUser("id", "Un BG sans nom")
+        user = DatabaseManager.getDatabase().addUser("0", "TestUser")
         activity.startActivity(Intent(activity, MainActivity::class.java))
     }
 

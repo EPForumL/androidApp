@@ -7,12 +7,17 @@ import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.ybecker.epforuml.authentication.AuthenticatorManager
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
+import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class CoursesFragment : Fragment() {
 
@@ -27,7 +32,8 @@ class CoursesFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         // we take the current user in the database
-        val userId = AuthenticatorManager.authenticator?.user?.userId
+        //val userId = FirebaseAuthenticator(requireActivity(), this).user?.userId
+        val userId = Firebase.auth.currentUser?.uid
         user = db.getUserById(userId ?: "") ?: User()
 
         // save actual user subscription in the a private variable

@@ -13,6 +13,8 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import com.github.ybecker.epforuml.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
@@ -25,6 +27,7 @@ class FirebaseAuthenticatorTest {
 
     @Before
     fun initIntents() {
+        Firebase.auth.signOut()
         Intents.init()
     }
 
@@ -35,7 +38,8 @@ class FirebaseAuthenticatorTest {
 
     @Test
     fun checkLoginActivityHasExpectedComponents() {
-        onView(ViewMatchers.withId(R.id.welcomeText)).check(matches(ViewMatchers.withText("Welcome to EPForumL")))
+        onView(ViewMatchers.withId(R.id.welcomeText))
+            .check(matches(ViewMatchers.withText(R.string.login_welcome)))
         onView(ViewMatchers.withId(R.id.signInButton)).check(matches(isDisplayed()))
         onView(ViewMatchers.withId(R.id.guestButton)).check(matches(isDisplayed()))
     }

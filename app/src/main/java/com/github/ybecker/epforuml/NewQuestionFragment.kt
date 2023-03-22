@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.github.ybecker.epforuml.authentication.AuthenticatorManager
+import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.firebase.ktx.Firebase
 
 
 /**
@@ -42,11 +44,11 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         // Create an instance of the MockDatabase
         //val mockDatabase = DatabaseManager.useMockDatabase()
 
-        //user
-        val user = AuthenticatorManager.authenticator?.user
-
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
+
+        //user
+        val user = FirebaseAuthenticator(requireActivity(), this).user
 
 
         //Spinner

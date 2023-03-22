@@ -1,34 +1,48 @@
 package com.github.ybecker.epforuml.authentication
 
 import android.content.Intent
-import android.net.Credentials
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultCaller
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.ybecker.epforuml.MainActivity
-import com.github.ybecker.epforuml.R
-import com.github.ybecker.epforuml.database.Database
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
-import com.google.android.gms.auth.api.credentials.CredentialsClient
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 /**
  * Authenticator implementation that uses firebase authentication mechanisms
  */
-class FirebaseAuthenticator(private val activity: AppCompatActivity) : Authenticator {
+class FirebaseAuthenticator(
+    private val activity: FragmentActivity,
+    caller: ActivityResultCaller = activity
+    ) : Authenticator {
+
     override var user: Model.User? = null
 
     // Will be used to launch the sign in intent
-    private val signInLauncher = activity.registerForActivityResult(
+    private val signInLauncher = caller.registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
     ) { res -> this.onSignInResult(res) }
+
+    init {
+        val firebaseUser = Firebase.auth.currentUser
+        if (firebaseUser != null) {
+            user = firebaseUser.displayName?.let {
+                Model.User(firebaseUser.uid,
+                    it,
+                    listOf(),
+                    listOf(),
+                    listOf())
+            }
+        }
+    }
 
     override fun signIn() {
         // Adds the authentication means
@@ -81,13 +95,13 @@ class FirebaseAuthenticator(private val activity: AppCompatActivity) : Authentic
         val response = result?.idpResponse
         if (result?.resultCode == AppCompatActivity.RESULT_OK) {
             // Successfully signed in
-            signInSucceeds(FirebaseAuth.getInstance().currentUser)
+            signInSucceeds()
         } else {
             // Sign in failed. If response is null the user canceled the
             // sign-in flow using the back button.
             if (response != null) {
                 val error = response.error?.errorCode
-                print("Could not login : ${error.toString()}")
+                print("\nCould not login : ${error.toString()}\n")
             } else {
                 Toast.makeText(
                     activity,
@@ -98,12 +112,13 @@ class FirebaseAuthenticator(private val activity: AppCompatActivity) : Authentic
         }
     }
 
-    private fun signInSucceeds(firebaseUser: FirebaseUser?) {
+    private fun signInSucceeds() {
+        val firebaseUser = Firebase.auth.currentUser
         if (firebaseUser != null) {
             val username = firebaseUser.displayName
             username?.let {
-                AuthenticatorManager.authenticator?.user =
-                    DatabaseManager.db.addUser(firebaseUser.uid, it)
+                if (user == null || user?.userId != firebaseUser.uid)
+                    user = DatabaseManager.db.addUser(firebaseUser.uid, it)
             }
 
             Toast.makeText(
@@ -112,7 +127,10 @@ class FirebaseAuthenticator(private val activity: AppCompatActivity) : Authentic
                 Toast.LENGTH_LONG
             ).show()
 
-            activity.startActivity(Intent(activity, MainActivity::class.java))
+            if (activity::class.java == LoginActivity::class.java) {
+                activity.startActivity(Intent(activity, MainActivity::class.java))
+                activity.finish()
+            }
         }
     }
 }

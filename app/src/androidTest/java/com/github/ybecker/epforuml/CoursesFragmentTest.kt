@@ -2,7 +2,6 @@ package com.github.ybecker.epforuml
 
 import android.view.View
 import android.widget.Switch
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -14,7 +13,6 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.*
-import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.Matcher
 import org.junit.Test
@@ -22,8 +20,9 @@ import org.junit.runner.RunWith
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.action.ViewActions.*
 import com.github.ybecker.epforuml.authentication.Authenticator
-import com.github.ybecker.epforuml.authentication.LoginActivity
-import com.google.android.gms.auth.api.Auth
+import com.github.ybecker.epforuml.authentication.MockAuthenticator
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.fail
 import org.hamcrest.Matchers.*
 
@@ -52,11 +51,12 @@ class CoursesFragmentTest {
     fun SubscribtionStayWhenSwitchingScreen(){
         DatabaseManager.useMockDatabase()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity { AuthenticatorManager.createMockAuthenticator(it) }
-        DatabaseManager.useMockDatabase()
-        val user = db.addUser("0", "TestUser")
 
-        AuthenticatorManager.authenticator?.user = user
+        val user = db.addUser("0", "TestUser")
+        scenario.onActivity {
+            val authenticator = MockAuthenticator(it)
+            authenticator.user = user
+        }
 
         val checkPosition = 0
 
@@ -77,9 +77,10 @@ class CoursesFragmentTest {
 
         DatabaseManager.useMockDatabase()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity { AuthenticatorManager.createMockAuthenticator(it) }
+        var authenticator: Authenticator? = null
+        scenario.onActivity { authenticator = MockAuthenticator(it) }
         val user = db.addUser("0", "TestUser")
-        AuthenticatorManager.authenticator?.user = user
+        authenticator?.user = user
 
         val checkPosition = 0
 
