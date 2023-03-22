@@ -37,6 +37,10 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
         }
 
+        if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
+        }
+
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
                 R.id.nav_home -> replaceFragment(HomeFragment(this), it.toString())

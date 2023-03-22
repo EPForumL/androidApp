@@ -43,17 +43,20 @@ class MockDatabase : Database() {
         users[user1.userId] = user1
 
         val question1 = Question("question1", "course1", "user1", "About ci",
-                                "How do I fix the CI ?", mutableListOf())
+                                "How do I fix the CI ?",
+            "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg",
+            mutableListOf())
         questions[question1.questionId] = question1
         val question2 = Question("question2", "course0", "user1", "About Scrum master",
-                                "What is a Scrum Master ?", mutableListOf())
+                                "What is a Scrum Master ?", "" , mutableListOf())
+
         questions[question2.questionId] = question2
         val question3 = Question("question3", "course0", "user1", "Very long question",
             "Extremely long long long long long long long long long long long long long " +
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long " +
-                    "question", mutableListOf())
+                    "question" ,"", mutableListOf())
         questions[question3.questionId] = question3
 
         this.addSubscription(user1.userId, course1.courseId)
@@ -68,9 +71,10 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(answers.filterValues { it.questionId == questionId }.values.toList())
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?): Question {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
         val questionId = "question${questions.size + 1}"
-        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", emptyList())
+        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", image_uri, emptyList())
+
         questions[questionId] = question
         courses[courseId]?.questions = courses[courseId]?.questions?.plus(question.questionId) ?: listOf(question.questionId)
         users[userId]?.let {

@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.database
 
+import com.github.ybecker.epforuml.NewQuestionFragment
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.FirebaseDatabase
 import junit.framework.TestCase.assertNull
@@ -77,8 +78,8 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addUser("0", "Romain").get()
         theo = db.addUser("1","Theo").get()
 
-        question1 = db.addQuestion(romain.userId, sdp.courseId, "About SDP", "I have question about the SDP course !")
-        question2 = db.addQuestion(romain.userId, sdp.courseId, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !")
+        question1 = db.addQuestion(romain.userId, sdp.courseId, "About SDP", "I have question about the SDP course !","https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
+        question2 = db.addQuestion(romain.userId, sdp.courseId, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !","https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
 
         answer1 = db.addAnswer(romain.userId, question2.questionId, "Yes they are !")
         answer2 = db.addAnswer(romain.userId, question2.questionId, "The exclamation marks are also really great")
@@ -131,7 +132,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addAndgetQuestionByIdTest() {
-        val question = db.addQuestion(romain.userId, sdp.courseId, "Question","I have a question.")
+        val question = db.addQuestion(romain.userId, sdp.courseId, "Question","I have a question.", "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
         db.getQuestionById(question.questionId).thenAccept {
             assertThat(it, equalTo(question))
         }.join()

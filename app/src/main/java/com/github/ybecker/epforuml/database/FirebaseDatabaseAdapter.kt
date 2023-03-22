@@ -34,6 +34,8 @@ class FirebaseDatabaseAdapter : Database() {
     private val questionTitlePath = "questionTitle"
     private val answerTextPath = "answerText"
 
+    private val questionURIPath = "imageURI"
+
     override fun availableCourses(): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Course>>()
         // go in "courses" dir
@@ -257,12 +259,14 @@ class FirebaseDatabaseAdapter : Database() {
     }
 
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?): Question {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
+
         // create a space for the new question in sb and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-        val question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", emptyList())
+        val question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", image_uri, emptyList())
+
         // add the new question in the db
         newChildRef.setValue(question)
 
@@ -422,13 +426,15 @@ class FirebaseDatabaseAdapter : Database() {
 
         val questionText = dataSnapshot.child(questionTextPath).getValue(String::class.java) ?: return null
 
+        val questionURI = dataSnapshot.child(questionURIPath).getValue(String::class.java) ?: return null
+
         // save every answers in a List using getAnswers private method
         val answers = arrayListOf<String>()
         dataSnapshot.child(answersPath).children.forEach { answerSnapshot ->
             answerSnapshot.key?.let { answers.add(it) }
         }
 
-        return Question(questionId, courseId, userId, questionTitle, questionText, answers)
+        return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers)
     }
 
     private fun getAnswer(dataSnapshot: DataSnapshot): Answer?{

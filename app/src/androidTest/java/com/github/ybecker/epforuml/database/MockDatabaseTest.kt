@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.database
 
+import com.github.ybecker.epforuml.NewQuestionFragment
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
@@ -63,7 +64,7 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetQuestionByIdTest(){
-        val question = db.addQuestion(user.userId, SDP.courseId, "Question","I have a question.")
+        val question = db.addQuestion(user.userId, SDP.courseId, "Question","I have a question.", "")
         db.getQuestionById(question.questionId).thenAccept {
             assertThat(it, equalTo(question))
         }
@@ -78,7 +79,7 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetAnswerByIdTest(){
-        val question = db.addQuestion(user.userId, SDP.courseId, "Question","I have a question.")
+        val question = db.addQuestion(user.userId, SDP.courseId, "Question","I have a question.", "")
         val answer = db.addAnswer(user.userId, question.questionId, "And what is it ?")
 
         db.getQuestionById(question.questionId).thenAccept {
@@ -87,6 +88,7 @@ class MockDatabaseTest {
         db.getAnswerById(answer.answerId).thenAccept {
             assertThat(it, equalTo(answer))
         }
+
     }
 
     @Test
@@ -107,7 +109,7 @@ class MockDatabaseTest {
     @Test
     fun getAnswerFromQuestionTest(){
 
-        val q1 = db.addQuestion(user.userId, SDP.courseId, "Kotlin","Should we use Kotlin for Android Development?")
+        val q1 = db.addQuestion(user.userId, SDP.courseId, "Kotlin","Should we use Kotlin for Android Development?","")
         val a1 = db.addAnswer(user.userId, q1.questionId, "Yes, it is well documented on the internet")
         val a2= db.addAnswer(user.userId, q1.questionId, "Yes it is.")
 
@@ -122,7 +124,7 @@ class MockDatabaseTest {
 
     @Test
     fun getAnswerFromQuestionWithoutAnyAnswerTest(){
-        val q2 = db.addQuestion(user.userId, SDP.courseId, "XML vs JetpackCompose","We prefer to use XML over Jetpack Compose.")
+        val q2 = db.addQuestion(user.userId, SDP.courseId, "XML vs JetpackCompose","We prefer to use XML over Jetpack Compose.","")
         db.getQuestionAnswers(q2.questionId).thenAccept {
             assertThat(it, equalTo(listOf()))
         }
@@ -140,7 +142,7 @@ class MockDatabaseTest {
 
     @Test
     fun getQuestionTitleTest(){
-        val q = db.addQuestion(user.userId, SDP.courseId, "chatGPT","He is a friend on mine :)")
+        val q = db.addQuestion(user.userId, SDP.courseId, "chatGPT","He is a friend of mine :)","")
         db.getQuestionById(q.questionId).thenAccept {
             assertThat(it?.questionTitle, equalTo(q.questionTitle))
         }

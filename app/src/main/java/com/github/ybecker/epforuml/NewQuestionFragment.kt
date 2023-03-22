@@ -1,15 +1,17 @@
 package com.github.ybecker.epforuml
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
-import com.github.ybecker.epforuml.database.MockDatabase
 
 /**
  * A simple [Fragment] subclass.
@@ -18,10 +20,22 @@ import com.github.ybecker.epforuml.database.MockDatabase
  */
 class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
+    private lateinit var takePictureButton: Button
+
+
+
+
+    var IMAGE_URI = ""
+    private val pickImage =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            IMAGE_URI = uri.toString()
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
 
         // DataBase
 
@@ -39,16 +53,16 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
         // Retrieve the Spinner view
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
+        //spinner.se = this.mainActivity.intent.getStringExtra("subject")
 
         // Get the set of available courses from the MockDatabase
-        //val coursesSet = DatabaseManager.db.availableCourses()
-
-        // Convert the set to an ArrayList
-        //val coursesList = ArrayList(coursesSet)
-
-        db.availableCourses().thenAccept{
+        db.availableCourses().thenAccept {
             val coursesList = it
-            val courseNamesList = it.map { course -> course.courseName }
+
+            // Convert the set to an ArrayList
+            //val coursesList = ArrayList(coursesSet)
+
+            val courseNamesList = coursesList.map { course -> course.courseName }
 
             // Create an ArrayAdapter with the coursesList as the data source
             val adapter = ArrayAdapter(
@@ -60,14 +74,22 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
             // Set the ArrayAdapter as the Spinner adapter
             spinner.adapter = adapter
 
+            //set if not empty
 
+            val questBody = view.findViewById<EditText>(R.id.question_details_edittext)
+            val questTitle = view.findViewById<EditText>(R.id.question_title_edittext)
+            val imageURI = view.findViewById<TextView>(R.id.image_uri)
+
+            questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
+            questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
+            imageURI.setText(this.mainActivity.intent.getStringExtra("uri"))
+
+            // perform submit action
             //SubmitButton
 
             val submitButton = view?.findViewById<Button>(R.id.btn_submit)
             submitButton?.setOnClickListener {
                 print("click submit btn")
-                val questBody = view.findViewById<EditText>(R.id.question_details_edittext)
-                val questTitle = view.findViewById<EditText>(R.id.question_title_edittext)
 
                 if (questBody.text.isBlank() || questTitle.text.isBlank()) {
                     Toast.makeText(
@@ -76,9 +98,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                         Toast.LENGTH_SHORT
                     ).show()
                 } else {
-                    // perform submit action
-
-
                     spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(
                             parent: AdapterView<*>,
@@ -86,17 +105,18 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                             position: Int,
                             id: Long
                         ) {
-                            val selectedCourse = parent.getItemAtPosition(position) as String
+                            val questionSubject = parent.getItemAtPosition(position) as String
 
                             //find course correponding to the selected name
                             val course =
-                                coursesList.filter { course -> course.courseName == selectedCourse }[0]
+                                coursesList.filter { course -> course.courseName == questionSubject }[0]
                             if (user != null) {
-                                db.addQuestion(
+                                DatabaseManager.db.addQuestion(
                                     user.userId,
                                     course.courseId,
+                                    questTitle.toString(),
                                     questBody.toString(),
-                                    questTitle.toString()
+                                    imageURI.toString()
                                 )
                             }
                         }
@@ -109,9 +129,30 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                     mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
                 }
             }
+
+
+            //select image
+            val uploadButton = view?.findViewById<Button>(R.id.uploadButton)
+            uploadButton?.setOnClickListener {
+                pickImage.launch("image/*")
+            }
+
+
+            takePictureButton = view.findViewById(R.id.takeImage)
+
+            takePictureButton.setOnClickListener {
+                val questionDetails = questBody.text.toString()
+                val questionTitle = questTitle.text.toString()
+
+                val intent = Intent(this.mainActivity, CameraActivity::class.java)
+                intent.putExtra("questionTitle", questionTitle)
+                intent.putExtra("questionDetails", questionDetails)
+
+                startActivity(intent)
+            }
         }
 
         return view
 
-    }
+        }
 }
