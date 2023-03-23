@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -58,11 +59,16 @@ class HomeFragment(val mainActivity: MainActivity) : Fragment() {
         adapter = ForumAdapter(questionsList)
         recyclerView.adapter = adapter
 
-
+        // move to QuestionDetails when clicking on specific question
+        adapter.onItemClick = {
+            val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+            intent.putExtra("question", it)
+            startActivity(intent)
+        }
     }
 
 
-    fun getQuestionsQuery() {
+    private fun getQuestionsQuery() {
         var courseSet = db.availableCourses()
 
         // reset questionsList for refresh
