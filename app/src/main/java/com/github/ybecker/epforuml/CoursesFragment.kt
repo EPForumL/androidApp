@@ -21,7 +21,7 @@ class CoursesFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CourseAdapter
     private lateinit var user: User
-    private lateinit var userSubscriptionIds: List<Course>
+    private lateinit var userSubscriptions : List<Course>
     private lateinit var courses: List<Course>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -39,7 +39,7 @@ class CoursesFragment : Fragment() {
 
         CompletableFuture.allOf(futureCourses, futureUserSubscriptions).thenAccept {
             courses = futureCourses.get()
-            userSubscriptionIds = futureUserSubscriptions.get()
+            userSubscriptions  = futureUserSubscriptions.get()
             // save actual user subscription in the a private variable
             adapter = CourseAdapter(courses) { course ->
                 onCourseClick(course)
@@ -112,7 +112,7 @@ class CoursesFragment : Fragment() {
 
         fun bind(course: Course) {
             courseTitleTextView.text = course.courseName
-            subscriptionSwitch.isChecked = userSubscriptionIds.map { it.courseId }.contains(course.courseId)
+            subscriptionSwitch.isChecked = userSubscriptions .map { it.courseId }.contains(course.courseId)
         }
     }
 
