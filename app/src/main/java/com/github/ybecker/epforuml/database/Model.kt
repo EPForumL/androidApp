@@ -14,7 +14,7 @@ class Model {
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
-            TODO("answers")
+            parcel.createTypedArrayList(Answer.CREATOR)!!
         ) {
         }
 
@@ -45,7 +45,7 @@ class Model {
 
     // This class represent a user an answer
     data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String)
-        :Parcelable {
+        : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
             parcel.readString()!!,

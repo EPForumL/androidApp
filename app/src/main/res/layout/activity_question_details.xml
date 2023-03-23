@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="20dp"
     android:id="@+id/question_details_layout"
     tools:context=".QuestionDetailsActivity">
 
@@ -11,6 +13,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/new_question_title"
-        android:id="@+id/question_details_main_text"/>
+        android:textSize="40sp"
+        android:textStyle="bold"
+        android:id="@+id/qdetails_title"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/new_question_title"
+        android:textSize="30sp"
+        android:id="@+id/qdetails_content"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/answers_recycler"/>
 
 </LinearLayout>
