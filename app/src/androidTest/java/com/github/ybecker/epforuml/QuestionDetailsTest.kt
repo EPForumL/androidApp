@@ -37,24 +37,22 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum)).check(matches(isClickable()))
     }
 
-    /*@Test
-    fun clickingQuestionLeadsToNewActivity() {
-        Intents.init()
-
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
-
-        intended(hasComponent(QuestionDetailsActivity::class.java.name))
-
-        Intents.release()
-    }*/
-
     @Test
     fun newActivityContainsCorrectData() {
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
 
         onView(withId(R.id.qdetails_title)).check(matches(withText("question3")))
+    }
+
+    @Test
+    fun backToMainIsCorrect() {
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+
+        onView(withId(R.id.back_to_forum_button)).perform(click())
+
+        onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
     }
 
     @After

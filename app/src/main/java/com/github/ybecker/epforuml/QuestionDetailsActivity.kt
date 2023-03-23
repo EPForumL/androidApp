@@ -15,6 +15,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val button : Button = findViewById(R.id.back_to_forum_button)
         button.setOnClickListener {
             val intent = Intent(application.applicationContext, MainActivity::class.java)
+            // any necessary extra to pass to intent to keep logged in ?
             startActivity(intent)
         }
 
