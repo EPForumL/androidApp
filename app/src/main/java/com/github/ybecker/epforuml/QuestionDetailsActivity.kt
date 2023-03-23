@@ -1,17 +1,22 @@
 package com.github.ybecker.epforuml
 
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
-import androidx.annotation.RequiresApi
-import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
 import com.github.ybecker.epforuml.database.Model
 
 class QuestionDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_details)
+
+        val button : Button = findViewById(R.id.back_to_forum_button)
+        button.setOnClickListener {
+            val intent = Intent(application.applicationContext, MainActivity::class.java)
+            startActivity(intent)
+        }
 
         val question = intent.getParcelableExtra<Model.Question>("question")
         if (question != null) {
