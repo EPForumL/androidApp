@@ -14,6 +14,7 @@ class SettingsFragment : Fragment() {
 
 
     private lateinit var btnToggleDark:Switch
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
