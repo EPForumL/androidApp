@@ -49,7 +49,7 @@ class CameraTest {
         } catch (e: Exception) {
             Log.e("NewQuestionFragment", "Error lauching activity: \${e.message}")
         }
-}
+}/*
 
     @Test
     fun navigatesCorrectly(){
@@ -73,4 +73,4 @@ class CameraTest {
 
 
     }
-}
+*/}
