@@ -10,4 +10,12 @@
     <color name="textColor">#FCFCFC</color>
     <color name="backgroundColor">#000000</color>
     <color name="courseColor">#323232</color>
+
+    <color name="shade0">#1BD0D8</color>
+    <color name="shade1">#A9F9FD</color>
+    <color name="shade2">#78F0F6</color>
+    <color name="shade3">#00777D</color>
+    <color name="shade4">#005F63</color>
+
+
 </resources>

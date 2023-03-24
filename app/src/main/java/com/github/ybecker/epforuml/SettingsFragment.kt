@@ -6,13 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Switch
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 
 class SettingsFragment : Fragment() {
 
 
-    private lateinit var btnToggleDark:Button
+    private lateinit var btnToggleDark:Switch
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -20,6 +21,7 @@ class SettingsFragment : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
         btnToggleDark = view.findViewById(R.id.switchDark)
+        btnToggleDark.isChecked=(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES)
         btnToggleDark.setOnClickListener {
             if(AppCompatDelegate.getDefaultNightMode()==AppCompatDelegate.MODE_NIGHT_YES){
                 AppCompatDelegate
