@@ -54,7 +54,7 @@ class CoursesFragmentTest {
         val scenario = ActivityScenario.launch(MainActivity::class.java)
         scenario.onActivity { AuthenticatorManager.createMockAuthenticator(it) }
         DatabaseManager.useMockDatabase()
-        val user = db.addUser("0", "TestUser")
+        val user = db.addUser("0", "TestUser").get()
 
         AuthenticatorManager.authenticator?.user = user
 
@@ -78,7 +78,7 @@ class CoursesFragmentTest {
         DatabaseManager.useMockDatabase()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
         scenario.onActivity { AuthenticatorManager.createMockAuthenticator(it) }
-        val user = db.addUser("0", "TestUser")
+        val user = db.addUser("0", "TestUser").get()
         AuthenticatorManager.authenticator?.user = user
 
         val checkPosition = 0
@@ -89,8 +89,9 @@ class CoursesFragmentTest {
         onView(withId(R.id.nav_courses)).perform(click())
 
         ClickOnSwitch(checkPosition)
-
-        assertTrue(db.getUserSubscriptions(user).size == 1)
+        db.getUserSubscriptions(user.userId).thenAccept {
+            assertTrue(it.size == 1)
+        }
 
         scenario.close()
 

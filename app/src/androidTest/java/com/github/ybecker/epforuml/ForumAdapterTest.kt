@@ -39,21 +39,21 @@ class ForumAdapterTest {
         onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions
             .scrollToPosition<RecyclerView.ViewHolder>(0))
 
-        onView(withText(DatabaseManager.db.getQuestionById("question3")?.questionId))
+        onView(withText(DatabaseManager.db.getQuestionById("question3").get()?.questionText))
             .check(matches(isDisplayed()))
 
         // check second question
         onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions
             .scrollToPosition<RecyclerView.ViewHolder>(1))
 
-        onView(withText(DatabaseManager.db.getQuestionById("question2")?.questionId))
+        onView(withText(DatabaseManager.db.getQuestionById("question2").get()?.questionText))
             .check(matches(isDisplayed()))
 
         // check third question
         onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions
             .scrollToPosition<RecyclerView.ViewHolder>(2))
 
-        onView(withText(DatabaseManager.db.getQuestionById("question1")?.questionId))
+        onView(withText(DatabaseManager.db.getQuestionById("question1").get()?.questionText))
             .check(matches(isDisplayed()))
     }
 
