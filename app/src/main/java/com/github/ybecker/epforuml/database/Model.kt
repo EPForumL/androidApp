@@ -79,12 +79,12 @@ class Model {
     }
 
     // This class represent a user
-    data class User(val userId: String, val username: String, var questions: List<Question>, var answers: List<Answer>, var subscriptions: List<Course>){
+    data class User(val userId: String, val username: String, var questions: List<String>, var answers: List<String>, var subscriptions: List<String>){
         constructor() : this("", "", emptyList(), emptyList(), emptyList())
     }
 
     //This class represent a course
-    data class Course(val courseId: String, val courseName: String, var questions: List<Question>){
+    data class Course(val courseId: String, val courseName: String, var questions: List<String>){
         constructor() : this("", "", emptyList())
     }
 }

@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import com.github.ybecker.epforuml.database.DatabaseManager
-
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 
 /**
  * A simple [Fragment] subclass.
@@ -56,106 +56,103 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         //spinner.se = this.mainActivity.intent.getStringExtra("subject")
 
         // Get the set of available courses from the MockDatabase
-        val coursesSet = DatabaseManager.db.availableCourses()
+        db.availableCourses().thenAccept {
+            val coursesList = it
 
-        // Convert the set to an ArrayList
-        val coursesList = ArrayList(coursesSet)
+            // Convert the set to an ArrayList
+            //val coursesList = ArrayList(coursesSet)
 
-        val courseNamesList = coursesList.map { course -> course.courseName }
+            val courseNamesList = coursesList.map { course -> course.courseName }
 
-        // Create an ArrayAdapter with the coursesList as the data source
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
-            courseNamesList
-        )
+            // Create an ArrayAdapter with the coursesList as the data source
+            val adapter = ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                courseNamesList
+            )
 
-        // Set the ArrayAdapter as the Spinner adapter
-        spinner.adapter = adapter
+            // Set the ArrayAdapter as the Spinner adapter
+            spinner.adapter = adapter
 
-        //set if not empty
+            //set if not empty
 
-        val questBody = view.findViewById<EditText>(R.id.question_details_edittext)
-        val questTitle = view.findViewById<EditText>(R.id.question_title_edittext)
-        val imageURI = view.findViewById<TextView>(R.id.image_uri)
+            val questBody = view.findViewById<EditText>(R.id.question_details_edittext)
+            val questTitle = view.findViewById<EditText>(R.id.question_title_edittext)
+            val imageURI = view.findViewById<TextView>(R.id.image_uri)
 
-        questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
-        questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
-        imageURI.setText(this.mainActivity.intent.getStringExtra("uri"))
+            questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
+            questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
+            imageURI.setText(this.mainActivity.intent.getStringExtra("uri"))
 
-        // perform submit action
-        //SubmitButton
+            // perform submit action
+            //SubmitButton
 
-        val submitButton = view?.findViewById<Button>(R.id.btn_submit)
-        submitButton?.setOnClickListener {
-            print("click submit btn")
+            val submitButton = view?.findViewById<Button>(R.id.btn_submit)
+            submitButton?.setOnClickListener {
+                print("click submit btn")
 
-            if (questBody.text.isBlank() || questTitle.text.isBlank()) {
-                Toast.makeText(
-                    requireContext(),
-                    "Question title or body cannot be empty",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
-                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        val questionSubject= parent.getItemAtPosition(position) as String
+                if (questBody.text.isBlank() || questTitle.text.isBlank()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Question title or body cannot be empty",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val questionSubject = parent.getItemAtPosition(position) as String
 
-                        //find course correponding to the selected name
-                        val course =
-                            coursesList.filter { course -> course.courseName == questionSubject }[0]
-                        if (user != null) {
-                            DatabaseManager.db.addQuestion(
-                                user,
-                                course,
-                                questTitle.toString(),
-                                imageURI.toString()
-                            )
+                            //find course correponding to the selected name
+                            val course =
+                                coursesList.filter { course -> course.courseName == questionSubject }[0]
+                            if (user != null) {
+                                DatabaseManager.db.addQuestion(
+                                    user.userId,
+                                    course.courseId,
+                                    questTitle.toString(),
+                                    questBody.toString(),
+                                    imageURI.toString()
+                                )
+                            }
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>) {
+                            // Do nothing
                         }
                     }
 
-                    override fun onNothingSelected(parent: AdapterView<*>) {
-                        // Do nothing
-                    }
+                    mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
                 }
-
-                mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
             }
 
-        }
 
-        //select image
-        val uploadButton = view?.findViewById<Button>(R.id.uploadButton)
-        uploadButton?.setOnClickListener {
-            pickImage.launch("image/*")
-        }
+            //select image
+            val uploadButton = view?.findViewById<Button>(R.id.uploadButton)
+            uploadButton?.setOnClickListener {
+                pickImage.launch("image/*")
+            }
 
 
-        takePictureButton = view.findViewById(R.id.takeImage)
+            takePictureButton = view.findViewById(R.id.takeImage)
 
-        takePictureButton.setOnClickListener {
-            val questionDetails = questBody.text.toString()
-            val questionTitle = questTitle.text.toString()
+            takePictureButton.setOnClickListener {
+                val questionDetails = questBody.text.toString()
+                val questionTitle = questTitle.text.toString()
 
-            val intent = Intent(this.mainActivity, CameraActivity::class.java)
-            intent.putExtra( "questionTitle",questionTitle)
-            intent.putExtra( "questionDetails",questionDetails)
+                val intent = Intent(this.mainActivity, CameraActivity::class.java)
+                intent.putExtra("questionTitle", questionTitle)
+                intent.putExtra("questionDetails", questionDetails)
 
-            startActivity(intent)
+                startActivity(intent)
+            }
         }
 
         return view
 
-    }
-
-
-
+        }
 }
-
-
-
