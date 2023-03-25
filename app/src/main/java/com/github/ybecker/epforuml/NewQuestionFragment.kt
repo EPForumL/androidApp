@@ -32,36 +32,22 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        // DataBase
-        // Create an instance of the MockDatabase
-        //val mockDatabase = DatabaseManager.useMockDatabase()
-        //user
         val user = AuthenticatorManager.authenticator?.user
-
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
 
         //Spinner
-        // Retrieve the Spinner view
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
 
         // Get the set of available courses from the MockDatabase
         db.availableCourses().thenAccept {
             val coursesList = it
-            // Convert the set to an ArrayList
-            //val coursesList = ArrayList(coursesSet)
             val courseNamesList = coursesList.map { course -> course.courseName }
-            // Create an ArrayAdapter with the coursesList as the data source
             val adapter = ArrayAdapter(
                 requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
                 courseNamesList
             )
-            // Set the ArrayAdapter as the Spinner adapter
             spinner.adapter = adapter
-
-            //set if not empty
             val (questBody, questTitle, imageURI) = setUp(view)
 
             setSubmitButton(view, questBody, questTitle, spinner, coursesList, user, imageURI)
