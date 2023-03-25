@@ -25,7 +25,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             textView.text = question.questionText
 
             val title : TextView = findViewById(R.id.qdetails_title)
-            title.text = question.questionId
+            title.text = question.questionTitle
 
             // TODO : implement RecyclerView for answers
             // var answerDisplay : RecyclerView = findViewById(R.id.answers_recycler)
