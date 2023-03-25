@@ -48,6 +48,8 @@
     <string name="submit_new_question">Submit</string>
     <string name="add_question_button">add question button</string>
     <string name="add_question_button_" />
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
