@@ -48,6 +48,7 @@ class FirebaseDatabaseAdapter : Database() {
                     courses.add(course)
                 }
             }
+            //complete the future when every children has been added
             future.complete(courses)
         }.addOnFailureListener {
             future.completeExceptionally(it)
@@ -258,10 +259,23 @@ class FirebaseDatabaseAdapter : Database() {
         return future
     }
 
+    override fun addCourse(courseName: String): Course {
+        // create a space for the new course in db and save its id
+        val newChildRef = db.child(coursesPath).push()
+        val courseId = newChildRef.key ?: error("Failed to generate course ID")
+
+        // create the new course using given parameters
+        val course = Course(courseId, courseName, emptyList())
+
+        // add the new course in the db
+        newChildRef.setValue(course)
+        return course
+    }
+
 
     override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
 
-        // create a space for the new question in sb and save its id
+        // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
@@ -312,6 +326,10 @@ class FirebaseDatabaseAdapter : Database() {
         return future
     }
 
+    override fun removeUser(userId: String) {
+        db.child(usersPath).child(userId).removeValue()
+    }
+
     override fun addSubscription(userId: String, courseId: String): CompletableFuture<User?> {
 //        val subscriptionsId = getUserSubscriptions(userId).map { it.courseId }.toMutableList()
 //        if (subscriptionsId.contains(courseId)) {
@@ -322,6 +340,10 @@ class FirebaseDatabaseAdapter : Database() {
         db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).setValue(courseId)
 
         return getUserById(userId)
+    }
+
+    override fun removeSubscription(userId: String, courseId: String) {
+        db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).removeValue()
     }
 
     override fun getQuestionById(questionId: String): CompletableFuture<Question?> {

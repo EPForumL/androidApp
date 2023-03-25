@@ -48,32 +48,18 @@ class FirebaseDatabaseAdapterTest {
 
         db = FirebaseDatabaseAdapter()
 
-        swEng = Course("0", "SwEng", emptyList())
-        sdp = Course("1", "SDP", emptyList())
-
-        firebaseDB.child("courses").child("0").setValue(swEng)
-        firebaseDB.child("courses").child("1").setValue(sdp)
-
-        val course3 = Course("course2","AnalyseI", mutableListOf())
-        firebaseDB.child("courses").child(course3.courseId).setValue(course3)
-        val course4 = Course("course3","AnalyseII", mutableListOf())
-        firebaseDB.child("courses").child(course4.courseId).setValue(course4)
-        val course5 = Course("course4","AnalyseIII", mutableListOf())
-        firebaseDB.child("courses").child(course5.courseId).setValue(course5)
-        val course6 = Course("course5","AnalyseIV", mutableListOf())
-        firebaseDB.child("courses").child(course6.courseId).setValue(course6)
-        val course7 = Course("course6","Algo", mutableListOf())
-        firebaseDB.child("courses").child(course7.courseId).setValue(course7)
-        val course8 = Course("course7","TOC", mutableListOf())
-        firebaseDB.child("courses").child(course8.courseId).setValue(course8)
-        val course9 = Course("course8","POO", mutableListOf())
-        firebaseDB.child("courses").child(course9.courseId).setValue(course9)
-        val course10 = Course("course9","POS", mutableListOf())
-        firebaseDB.child("courses").child(course10.courseId).setValue(course10)
-        val course11 = Course("course10","OS", mutableListOf())
-        firebaseDB.child("courses").child(course11.courseId).setValue(course11)
-        val course12 = Course("course11","Database", mutableListOf())
-        firebaseDB.child("courses").child(course12.courseId).setValue(course12)
+        swEng = db.addCourse("SwEng")
+        sdp = db.addCourse("SDP")
+        db.addCourse("AnalyseI")
+        db.addCourse("AnalyseII")
+        db.addCourse("AnalyseIII")
+        db.addCourse("AnalyseIV")
+        db.addCourse("Algo")
+        db.addCourse("TOC")
+        db.addCourse("POO")
+        db.addCourse("POS")
+        db.addCourse("OS")
+        db.addCourse("Database")
 
         romain = db.addUser("0", "Romain").get()
         theo = db.addUser("1","Theo").get()
@@ -101,7 +87,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun getCourseByIdTest() {
-        db.getCourseById("1").thenAccept {
+        db.getCourseById(sdp.courseId).thenAccept {
             assertThat(it?.courseId, equalTo(sdp.courseId))
         }.join()
     }

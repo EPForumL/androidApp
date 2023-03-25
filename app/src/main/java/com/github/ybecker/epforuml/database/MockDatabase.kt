@@ -71,6 +71,14 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(answers.filterValues { it.questionId == questionId }.values.toList())
     }
 
+    override fun addCourse(courseName: String): Course {
+        val courseId = "question${questions.size + 1}"
+        val course = Course(courseId, courseName, emptyList())
+        courses[courseId] = course
+
+        return course
+    }
+
     override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
         val questionId = "question${questions.size + 1}"
         val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", image_uri, emptyList())
@@ -107,6 +115,10 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(user)
     }
 
+    override fun removeUser(userId: String) {
+        users.remove(userId)
+    }
+
     override fun addSubscription(userId: String, courseId: String): CompletableFuture<User?> {
         if (users[userId] == null) {
             return CompletableFuture.completedFuture(null)
@@ -120,6 +132,14 @@ class MockDatabase : Database() {
                 users[userId] = it.copy(subscriptions = updatedSubscription)
             }
             return CompletableFuture.completedFuture(users[userId])
+        }
+    }
+
+    override fun removeSubscription(userId: String, courseId: String) {
+        val user = users[userId]
+        if(user != null) {
+            val updatedSubscription = user.subscriptions.filter { it != courseId }
+            users[userId] = user.copy(subscriptions = updatedSubscription)
         }
     }
 
@@ -163,5 +183,6 @@ class MockDatabase : Database() {
             list.map { it.join() }
         }
     }
+
 
 }
