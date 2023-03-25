@@ -15,18 +15,18 @@ class Model {
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
-            parcel.createTypedArrayList(Answer.CREATOR)!!
+            parcel.createStringArrayList()!!
         ) {
         }
-
-        constructor() : this("", "", "", "", "",emptyList())
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {
             parcel.writeString(questionId)
             parcel.writeString(courseId)
             parcel.writeString(userId)
+            parcel.writeString(questionTitle)
             parcel.writeString(questionText)
             parcel.writeString(imageURI)
+            parcel.writeStringList(answers)
         }
 
         override fun describeContents(): Int {
@@ -42,6 +42,7 @@ class Model {
                 return arrayOfNulls(size)
             }
         }
+
     }
 
     // This class represent a user an answer

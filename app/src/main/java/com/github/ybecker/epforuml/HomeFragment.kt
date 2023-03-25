@@ -54,7 +54,7 @@ class HomeFragment(val mainActivity: MainActivity) : Fragment() {
         // remove when using mockDB
         //getQuestionsQuery()
 
-        futureCourseList.thenAccept {
+        futureCourseList.thenAccept { it ->
             val futureQuestionList =  mutableListOf<CompletableFuture<List<Question>>>()
             for (course in it){
                 futureQuestionList.add(db.getCourseQuestions(course.courseId))
@@ -70,9 +70,9 @@ class HomeFragment(val mainActivity: MainActivity) : Fragment() {
                 recyclerView.adapter = adapter
 
                 // move to QuestionDetails when clicking on specific question
-                adapter.onItemClick = {
+                adapter.onItemClick = {q ->
                     val intent = Intent(this.context, QuestionDetailsActivity::class.java)
-                    intent.putExtra("question", it)
+                    intent.putExtra("question", q)
                     startActivity(intent)
                 }
             }
