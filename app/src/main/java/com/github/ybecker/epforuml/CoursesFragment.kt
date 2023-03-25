@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.auth.ktx.auth
@@ -33,7 +34,7 @@ class CoursesFragment : Fragment() {
 
         // we take the current user in the database
         //val userId = FirebaseAuthenticator(requireActivity(), this).user?.userId
-        val userId = Firebase.auth.currentUser?.uid
+        val userId = DatabaseManager.user?.userId
         user = db.getUserById(userId ?: "") ?: User()
 
         // save actual user subscription in the a private variable

@@ -52,10 +52,9 @@ class CoursesFragmentTest {
         DatabaseManager.useMockDatabase()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
 
-        val user = db.addUser("0", "TestUser")
+        //val user = db.addUser("0", "TestUser")
         scenario.onActivity {
-            val authenticator = MockAuthenticator(it)
-            authenticator.user = user
+            MockAuthenticator(it).signIn()
         }
 
         val checkPosition = 0
@@ -77,21 +76,21 @@ class CoursesFragmentTest {
 
         DatabaseManager.useMockDatabase()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
-        var authenticator: Authenticator? = null
-        scenario.onActivity { authenticator = MockAuthenticator(it) }
-        val user = db.addUser("0", "TestUser")
-        authenticator?.user = user
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+        val user = DatabaseManager.user
+        //val user = db.addUser("0", "TestUser")
+        //authenticator?.user = user
 
         val checkPosition = 0
 
-        assertTrue(user.subscriptions.isEmpty())
+        user?.subscriptions?.isEmpty()?.let { assertTrue(it) }
 
         onView(withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_courses)).perform(click())
 
         ClickOnSwitch(checkPosition)
 
-        assertTrue(db.getUserSubscriptions(user).size == 1)
+        assertTrue(user?.let { db.getUserSubscriptions(it).size } == 1)
 
         scenario.close()
 

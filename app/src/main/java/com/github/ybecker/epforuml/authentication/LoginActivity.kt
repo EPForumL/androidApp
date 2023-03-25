@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         guestButton.setOnClickListener { continueAsGuest() }
 
         // Skips the login activity if there is already a user logged in
-        if (authenticator.user != null) {
+        if (DatabaseManager.user != null) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }

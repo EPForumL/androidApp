@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/teal_700"
-    tools:context=".AccountFragment">
+    tools:context=".account.AccountFragment">
 
     <TextView
-        android:id="@+id/titleAccount"
+        android:id="@+id/titleAccountGuest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/account_fragment"
@@ -32,7 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleAccount"
+        app:layout_constraintTop_toBottomOf="@+id/titleAccountGuest"
         app:layout_constraintVertical_bias="0.287" />
 
     <Button

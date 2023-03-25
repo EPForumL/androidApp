@@ -11,6 +11,8 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.account.AccountFragment
+import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
@@ -21,10 +23,8 @@ import com.google.firebase.ktx.Firebase
  */
 class FirebaseAuthenticator(
     private val activity: FragmentActivity,
-    caller: ActivityResultCaller = activity
+    private val caller: ActivityResultCaller = activity
     ) : Authenticator {
-
-    override var user: Model.User? = null
 
     // Will be used to launch the sign in intent
     private val signInLauncher = caller.registerForActivityResult(
@@ -34,7 +34,8 @@ class FirebaseAuthenticator(
     init {
         val firebaseUser = Firebase.auth.currentUser
         if (firebaseUser != null) {
-            user = firebaseUser.displayName?.let {
+            DatabaseManager.user =
+                firebaseUser.displayName?.let {
                 Model.User(firebaseUser.uid,
                     it,
                     listOf(),
@@ -61,24 +62,44 @@ class FirebaseAuthenticator(
     }
 
     override fun signOut() {
-        if (user != null) {
+        if (DatabaseManager.user != null) {
             AuthUI.getInstance()
                 .signOut(activity)
                 .addOnCompleteListener {
-                    Toast.makeText(activity, "Successfully signed out", Toast.LENGTH_LONG).show()
+                    DatabaseManager.user = null
+                    val fragment = caller as Fragment
+                    fragment.parentFragmentManager
+                        .beginTransaction()
+                        .replace(fragment.id, AccountFragmentGuest())
+                        .commit()
+
+                    Toast.makeText(
+                        activity,
+                        "Successfully signed out",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
         }
     }
 
     override fun deleteUser() {
+        val user = DatabaseManager.user
         if (user != null) {
             AuthUI.getInstance()
                 .delete(activity)
                 .addOnCompleteListener {
+                    DatabaseManager.user = null
                     // TODO: Remove user from database
+
+                    val fragment = caller as Fragment
+                    fragment.parentFragmentManager
+                        .beginTransaction()
+                        .replace(fragment.id, AccountFragmentGuest())
+                        .commit()
+
                     Toast.makeText(
                         activity,
-                        "Successfully deleted user : ${user!!.username}",
+                        "Successfully deleted user : ${user.username}",
                         Toast.LENGTH_LONG
                     ).show()
                 }
@@ -117,8 +138,10 @@ class FirebaseAuthenticator(
         if (firebaseUser != null) {
             val username = firebaseUser.displayName
             username?.let {
-                if (user == null || user?.userId != firebaseUser.uid)
-                    user = DatabaseManager.db.addUser(firebaseUser.uid, it)
+                val user = DatabaseManager.user
+                if (user == null || user.userId != firebaseUser.uid)
+                    DatabaseManager.user =
+                        DatabaseManager.db.addUser(firebaseUser.uid, it)
             }
 
             Toast.makeText(
@@ -130,6 +153,12 @@ class FirebaseAuthenticator(
             if (activity::class.java == LoginActivity::class.java) {
                 activity.startActivity(Intent(activity, MainActivity::class.java))
                 activity.finish()
+            } else {
+                val fragment = caller as Fragment
+                fragment.parentFragmentManager
+                    .beginTransaction()
+                    .replace(fragment.id, AccountFragment())
+                    .commit()
             }
         }
     }

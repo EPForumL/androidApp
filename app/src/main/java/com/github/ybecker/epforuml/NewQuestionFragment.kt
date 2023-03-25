@@ -48,7 +48,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
 
         //user
-        val user = FirebaseAuthenticator(requireActivity(), this).user
+        val user = DatabaseManager.user
 
 
         //Spinner
