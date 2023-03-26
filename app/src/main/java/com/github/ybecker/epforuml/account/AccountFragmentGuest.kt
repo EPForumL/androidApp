@@ -15,9 +15,7 @@ import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 
 /**
- * A simple [Fragment] subclass.
- * Use the [AccountFragmentGuest.newInstance] factory method to
- * create an instance of this fragment.
+ * The guest account fragment
  */
 class AccountFragmentGuest : Fragment() {
 
@@ -27,10 +25,12 @@ class AccountFragmentGuest : Fragment() {
     ): View? {
         val authenticator = FirebaseAuthenticator(requireActivity(), this)
 
+        // Prepares the view for the fragment
         val view = inflater.inflate(
             R.layout.fragment_account_guest,
             container,
-            false)
+            false
+        )
 
         val signInButton = view.findViewById<Button>(R.id.signInButtonAccount)
         signInButton.setOnClickListener { authenticator.signIn() }

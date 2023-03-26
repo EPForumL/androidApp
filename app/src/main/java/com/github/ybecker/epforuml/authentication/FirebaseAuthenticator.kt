@@ -34,16 +34,19 @@ class FirebaseAuthenticator(
     ) { res -> this.onSignInResult(res) }
 
     init {
+        // If the user is already connected set the user to the corresponding value
         val firebaseUser = Firebase.auth.currentUser
         if (firebaseUser != null) {
             DatabaseManager.user =
                 firebaseUser.displayName?.let {
-                Model.User(firebaseUser.uid,
-                    it,
-                    listOf(),
-                    listOf(),
-                    listOf())
-            }
+                    Model.User(
+                        firebaseUser.uid,
+                        it,
+                        listOf(),
+                        listOf(),
+                        listOf()
+                    )
+                }
         }
     }
 
@@ -68,18 +71,7 @@ class FirebaseAuthenticator(
             AuthUI.getInstance()
                 .signOut(activity)
                 .addOnCompleteListener {
-                    DatabaseManager.user = null
-                    val fragment = caller as Fragment
-                    fragment.parentFragmentManager
-                        .beginTransaction()
-                        .replace(fragment.id, AccountFragmentGuest())
-                        .commit()
-
-                    Toast.makeText(
-                        activity,
-                        "Successfully signed out",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    logout("Successfully signed out")
                 }
         }
     }
@@ -90,22 +82,30 @@ class FirebaseAuthenticator(
             AuthUI.getInstance()
                 .delete(activity)
                 .addOnCompleteListener {
-                    DatabaseManager.user = null
                     // TODO: Remove user from database
-
-                    val fragment = caller as Fragment
-                    fragment.parentFragmentManager
-                        .beginTransaction()
-                        .replace(fragment.id, AccountFragmentGuest())
-                        .commit()
-
-                    Toast.makeText(
-                        activity,
-                        "Successfully deleted user : ${user.username}",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    DatabaseManager.user = null
+                    logout("Successfully deleted user : ${user.username}")
                 }
         }
+    }
+
+    /**
+     * Logout the user, show guest fragment and show toast message
+     *
+     * @param txt: The text to show on the toast
+     */
+    private fun logout(txt: String) {
+        // User is logged out
+        DatabaseManager.user = null
+
+        // Change to guest fragment
+        val fragment = caller as Fragment
+        fragment.parentFragmentManager
+            .beginTransaction()
+            .replace(fragment.id, AccountFragmentGuest())
+            .commit()
+
+        Toast.makeText(activity, txt, Toast.LENGTH_LONG).show()
     }
 
     /**
@@ -135,11 +135,15 @@ class FirebaseAuthenticator(
         }
     }
 
+    /**
+     * Adds logged user to the database and starts MainActivity or AccountFragment
+     */
     private fun signInSucceeds() {
         val firebaseUser = Firebase.auth.currentUser
         if (firebaseUser != null) {
             val username = firebaseUser.displayName
             username?.let {
+                // Adds user to the database
                 val user = DatabaseManager.user
                 if (user == null || user.userId != firebaseUser.uid) {
                     val futureUser = DatabaseManager.db.addUser(firebaseUser.uid, it)
@@ -153,6 +157,8 @@ class FirebaseAuthenticator(
                 Toast.LENGTH_LONG
             ).show()
 
+            // If this is the login activity go to main otherwise switch from guest fragment to
+            // account fragment.
             if (activity::class.java == LoginActivity::class.java) {
                 activity.startActivity(Intent(activity, MainActivity::class.java))
                 activity.finish()

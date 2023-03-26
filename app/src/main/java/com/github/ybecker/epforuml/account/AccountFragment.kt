@@ -12,9 +12,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 /**
- * A simple [Fragment] subclass.
- * Use the [AccountFragment.newInstance] factory method to
- * create an instance of this fragment.
+ * The signed-in account fragment.
  */
 class AccountFragment : Fragment() {
     override fun onCreateView(
@@ -23,10 +21,12 @@ class AccountFragment : Fragment() {
     ): View? {
         val authenticator = FirebaseAuthenticator(requireActivity(), this)
 
+        // Prepares the view for the fragment
         val view = inflater.inflate(
             R.layout.fragment_account,
             container,
-            false)
+            false
+        )
 
         val signOutButton = view.findViewById<Button>(R.id.signOutButton)
         signOutButton.setOnClickListener { authenticator.signOut() }

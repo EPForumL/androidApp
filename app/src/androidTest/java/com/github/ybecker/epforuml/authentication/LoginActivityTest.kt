@@ -29,14 +29,14 @@ class LoginActivityTest {
     lateinit var scenario: ActivityScenario<LoginActivity>
 
     @Before
-    fun init() {
+    fun initTests() {
         Firebase.auth.signOut()
         DatabaseManager.user = null
         Intents.init()
     }
 
     @After
-    fun end() {
+    fun endTests() {
         Intents.release()
     }
 
