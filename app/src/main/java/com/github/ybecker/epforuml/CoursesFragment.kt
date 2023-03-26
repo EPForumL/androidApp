@@ -14,6 +14,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import java.util.concurrent.CompletableFuture
+import kotlin.properties.Delegates
 
 class CoursesFragment : Fragment() {
 
