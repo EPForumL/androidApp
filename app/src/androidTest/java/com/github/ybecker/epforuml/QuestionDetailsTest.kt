@@ -42,7 +42,7 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
 
-        onView(withId(R.id.qdetails_title)).check(matches(withText("question3")))
+        onView(withId(R.id.qdetails_title)).check(matches(withText("Very long question")))
     }
 
     @Test
