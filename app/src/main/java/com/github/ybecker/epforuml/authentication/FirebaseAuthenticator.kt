@@ -17,6 +17,8 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 
 /**
  * Authenticator implementation that uses firebase authentication mechanisms
@@ -139,9 +141,10 @@ class FirebaseAuthenticator(
             val username = firebaseUser.displayName
             username?.let {
                 val user = DatabaseManager.user
-                if (user == null || user.userId != firebaseUser.uid)
-                    DatabaseManager.user =
-                        DatabaseManager.db.addUser(firebaseUser.uid, it)
+                if (user == null || user.userId != firebaseUser.uid) {
+                    val futureUser = DatabaseManager.db.addUser(firebaseUser.uid, it)
+                    futureUser.thenAccept { DatabaseManager.user = futureUser.get() }
+                }
             }
 
             Toast.makeText(

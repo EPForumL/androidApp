@@ -8,8 +8,8 @@ import com.github.ybecker.epforuml.database.Model
 
 class MockAuthenticator(private val activity: AppCompatActivity) : Authenticator {
     override fun signIn() {
-        DatabaseManager.user =
-            DatabaseManager.getDatabase().addUser("0", "TestUser")
+        val futureUser = DatabaseManager.getDatabase().addUser("0", "TestUser")
+        futureUser.thenAccept { DatabaseManager.user = futureUser.get() }
         activity.startActivity(Intent(activity, MainActivity::class.java))
     }
 

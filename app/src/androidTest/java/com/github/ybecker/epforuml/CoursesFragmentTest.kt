@@ -19,8 +19,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.action.ViewActions.*
-import com.github.ybecker.epforuml.authentication.Authenticator
-import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.fail
@@ -50,12 +48,11 @@ class CoursesFragmentTest {
     @Test
     fun SubscribtionStayWhenSwitchingScreen(){
         DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
 
-        //val user = db.addUser("0", "TestUser")
-        scenario.onActivity {
-            MockAuthenticator(it).signIn()
-        }
+        val user = db.addUser("0", "TestUser").get()
+        DatabaseManager.user = user
 
         val checkPosition = 0
 
@@ -73,27 +70,26 @@ class CoursesFragmentTest {
 
     @Test
     fun SubscriptionModifyDatabase(){
-
         DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-        val user = DatabaseManager.user
-        //val user = db.addUser("0", "TestUser")
-        //authenticator?.user = user
+
+        val user = db.addUser("0", "TestUser").get()
+        DatabaseManager.user = user
 
         val checkPosition = 0
 
-        user?.subscriptions?.isEmpty()?.let { assertTrue(it) }
+        assertTrue(user.subscriptions.isEmpty())
 
         onView(withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_courses)).perform(click())
 
         ClickOnSwitch(checkPosition)
-
-        assertTrue(user?.let { db.getUserSubscriptions(it).size } == 1)
+        db.getUserSubscriptions(user.userId).thenAccept {
+            assertTrue(it.size == 1)
+        }
 
         scenario.close()
-
     }
 
     //For later : need to rework database :
