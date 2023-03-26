@@ -26,7 +26,7 @@ class ForumAdapter(private val questionsList : MutableList<Model.Question>) :
 
     override fun onBindViewHolder(holder: ForumViewHolder, position: Int) {
         val currentItem = questionsList[position]
-        holder.currentText.text = currentItem.questionId
+        holder.currentText.text = currentItem.questionTitle
 
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(currentItem)
