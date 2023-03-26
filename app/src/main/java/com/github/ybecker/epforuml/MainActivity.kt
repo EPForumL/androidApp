@@ -43,17 +43,17 @@ class MainActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment(this), it.toString())
-                R.id.nav_courses -> replaceFragment(CoursesFragment(), it.toString())
-                R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment(), it.toString())
-                R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment(), it.toString())
+                R.id.nav_home -> replaceFragment(HomeFragment(this))
+                R.id.nav_courses -> replaceFragment(CoursesFragment())
+                R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
+                R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())
                 R.id.nav_account ->
                     if (DatabaseManager.user == null) {
-                        replaceFragment(AccountFragmentGuest(), it.toString())
+                        replaceFragment(AccountFragmentGuest())
                     } else {
-                        replaceFragment(AccountFragment(), it.toString())
+                        replaceFragment(AccountFragment())
                     }
-                R.id.nav_settings -> replaceFragment(SettingsFragment(), it.toString())
+                R.id.nav_settings -> replaceFragment(SettingsFragment())
             }
 
             true
