@@ -126,7 +126,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                         }
                     }
 
-                    mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
+                    mainActivity.replaceFragment(HomeFragment(mainActivity))
                 }
             }
 
