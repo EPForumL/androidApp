@@ -54,7 +54,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
             seUploadImage(view)
             setTakeImage(view, questBody, questTitle)
         }
-
         return view
 
         }
@@ -115,7 +114,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         questTitle: EditText
     ) {
         takePictureButton = view.findViewById(R.id.takeImage)
-
         takePictureButton.setOnClickListener {
             val questionDetails = questBody.text.toString()
             val questionTitle = questTitle.text.toString()
@@ -142,7 +140,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
-        imageURI.setText(this.mainActivity.intent.getStringExtra("uri"))
+        imageURI.text = this.mainActivity.intent.getStringExtra("uri")
         return Triple(questBody, questTitle, imageURI)
     }
 }
