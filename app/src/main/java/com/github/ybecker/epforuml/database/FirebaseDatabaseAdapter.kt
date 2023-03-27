@@ -1,7 +1,6 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.database.*
 import java.util.concurrent.CompletableFuture
 
@@ -9,10 +8,10 @@ import java.util.concurrent.CompletableFuture
 /**
  * This class represents a database that uses Firebase Realtime Database
  */
-class FirebaseDatabaseAdapter : Database() {
+class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     // save the database reference
-    private val dbInstance = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
+    private val dbInstance = instance
     private val db: DatabaseReference = dbInstance.reference
 
     // save every useful path to navigate in the database
@@ -35,6 +34,14 @@ class FirebaseDatabaseAdapter : Database() {
     private val answerTextPath = "answerText"
 
     private val questionURIPath = "imageURI"
+
+    init {
+        try {
+            dbInstance.useEmulator("10.0.2.2", 9000)
+        } catch (e: IllegalStateException) {
+            //do nothing if emulator is already enabled
+        }
+    }
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Course>>()

@@ -1,8 +1,8 @@
 package com.github.ybecker.epforuml.database
 
-import com.github.ybecker.epforuml.NewQuestionFragment
 import com.github.ybecker.epforuml.database.Model.*
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
@@ -13,7 +13,7 @@ import org.junit.Test
 
 class FirebaseDatabaseAdapterTest {
 
-    private lateinit var db: Database
+    private lateinit var db: FirebaseDatabaseAdapter
     private lateinit var swEng: Course
     private lateinit var sdp: Course
     private lateinit var romain: User
@@ -23,30 +23,28 @@ class FirebaseDatabaseAdapterTest {
     private lateinit var answer1: Answer
     private lateinit var answer2: Answer
 
-    /*companion object{
-        @BeforeClass
-        @JvmStatic
-        fun emulatorSetup(){
-            //To run this test make sur to install firebase database emulator
-            //and run "firebase emulators:start --only database"
-
-            val firebaseInstance = FirebaseDatabase
-                .getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
-                //.useEmulator("127.0.0.1", 9000)
-        }
-    }*/
-
+    //To run this test make sur to install firebase database emulator
+    //and run "firebase emulators:start --only database"
     @Before
     fun setUp() {
 
-        val firebaseDB = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app").reference
+        val database = Firebase.database
+
+        //local tests works on the emulator but the CI fails
+        // so with the try-catch it work but on the real database...
+        try{
+            database.useEmulator("10.0.2.2", 9000)
+        }
+        catch (r : IllegalStateException){ }
+
+        db = FirebaseDatabaseAdapter(database)
+
+        val firebaseDB = database.reference
 
         firebaseDB.child("courses").setValue(null)
         firebaseDB.child("users").setValue(null)
         firebaseDB.child("questions").setValue(null)
         firebaseDB.child("answers").setValue(null)
-
-        db = FirebaseDatabaseAdapter()
 
         swEng = db.addCourse("SwEng")
         sdp = db.addCourse("SDP")
@@ -73,9 +71,7 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addSubscription(romain.userId, sdp.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
-
     }
-
 
     @Test
     fun addAndGetUser() {
@@ -229,4 +225,42 @@ class FirebaseDatabaseAdapterTest {
         }.join()
     }
 
+    @Test
+    fun addCourse(){
+        val newCourseName = "addedCourseTest"
+        db.availableCourses().thenAccept {
+            assertThat(it.filter{ it.courseId == newCourseName }, equalTo(emptyList()))
+        }.join()
+        val newCourse = db.addCourse(newCourseName)
+        db.availableCourses().thenAccept {
+            assertThat(it.filter { it.courseId == newCourse.courseId}, equalTo(listOf(newCourse)))
+        }.join()
+    }
+
+    @Test
+    fun removeUserTest(){
+        val newUser = db.addUser("newID", "newNAME").get()
+        db.getUserById(newUser.userId).thenAccept {
+            assertThat(newUser.username, equalTo(it?.username))
+            assertThat(newUser.userId, equalTo(it?.userId))
+        }.join()
+        db.removeUser(newUser.userId)
+        db.getUserById(newUser.userId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun removeSubscription(){
+        val testCourse = db.addCourse("NEW TEST COURSE")
+        val testUser = db.addUser("IDID", "TestUser").get()
+        db.addSubscription(testUser.userId, testCourse.courseId)
+        db.getUserSubscriptions(testUser.userId).thenAccept {
+            it.contains(testCourse)
+        }.join()
+        db.removeSubscription(testUser.userId, testCourse.courseId)
+        db.getUserSubscriptions(testUser.userId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
 }

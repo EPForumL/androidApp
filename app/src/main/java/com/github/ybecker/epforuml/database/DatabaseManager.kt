@@ -1,7 +1,11 @@
 package com.github.ybecker.epforuml.database
 
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+
 object DatabaseManager {
-    var db: Database = FirebaseDatabaseAdapter()
+    var db: Database = FirebaseDatabaseAdapter(Firebase.database)
 
     /**
      * Retrieves the current instance of the Database

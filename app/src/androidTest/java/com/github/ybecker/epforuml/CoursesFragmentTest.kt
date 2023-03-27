@@ -26,6 +26,7 @@ import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.google.android.gms.auth.api.Auth
 import junit.framework.TestCase.fail
 import org.hamcrest.Matchers.*
+import org.junit.Before
 
 
 @RunWith(AndroidJUnit4::class)
@@ -46,6 +47,11 @@ class CoursesFragmentTest {
             .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(itemPosition,
                 checkViewViewChild(R.id.subscriptionSwitch)
             ))
+    }
+
+    @Before
+    fun setUp(){
+        DatabaseManager.useMockDatabase()
     }
 
     @Test
