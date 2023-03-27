@@ -59,6 +59,13 @@ class MockDatabase : Database() {
                     "question" ,"", mutableListOf())
         questions[question3.questionId] = question3
 
+        addAnswer("user1", "question1", "première réponse")
+        addAnswer("user1", "question1", "Nan mais je suis pas d'accord")
+        addAnswer("user1", "question1", "Ok alors si tu veux faire ça," +
+                "il faut installer la VM et faire tout depuis chez toi avec le VPN")
+        addAnswer("user1", "question1", "Nan mais je suis pas d'accord")
+        addAnswer("user1", "question1", "Nan mais je suis pas d'accord non plus")
+
         this.addSubscription(user1.userId, course1.courseId)
         this.addSubscription(user1.userId, course2.courseId)
     }
@@ -88,7 +95,7 @@ class MockDatabase : Database() {
         val answerId = "answer${answers.size + 1}"
         val answer = Answer(answerId, questionId, userId, answerText ?: "")
         answers[answerId] = answer
-        questions[questionId]?.answers = questions[questionId]?.answers?.plus(answer.answerId) ?: listOf(answer.answerId)
+        questions[questionId]?.answers = questions[questionId]?.answers?.plus(answer.answerText) ?: mutableListOf(answer.answerText)
 
         users[userId]?.let {
             val updatedAnswers = it.answers + answer.answerId

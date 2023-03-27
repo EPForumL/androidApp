@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.Model
 
@@ -23,10 +24,17 @@ class QuestionDetailsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
+        answerRecyclerView = findViewById(R.id.answers_recycler)
+        answerRecyclerView.layoutManager = LinearLayoutManager(this)
+        answerRecyclerView.setHasFixedSize(true)
+
         val question = intent.getParcelableExtra<Model.Question>("question")
         if (question != null) {
             val title : TextView = findViewById(R.id.qdetails_title)
             title.text = question.questionTitle
+
+            answerRecyclerView.adapter = AnswerAdapter(question.questionId, question.questionText, question.answers)
 
             // TODO : move questions detail to recyclerView
             /*

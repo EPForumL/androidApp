@@ -9,6 +9,6 @@
         android:layout_height="wrap_content"
         android:text="@string/new_question_details"
         android:textSize="30sp"
-        android:id="@+id/qdetails_content"/>
+        android:id="@+id/qdetails_question_content"/>
 
 </RelativeLayout>
