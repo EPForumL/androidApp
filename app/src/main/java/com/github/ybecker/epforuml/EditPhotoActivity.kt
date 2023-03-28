@@ -37,7 +37,7 @@ private lateinit var imageView : ImageView
     private fun goBackToQuestion(){
         val intent  = Intent(this, MainActivity::class.java)
         intent.putExtra("uri", IMAGE_URI)
-        intent.putExtra("fragment", "EditPhotoFragment")
+        intent.putExtra("fragment", "NewQuestionFragment")
         intent.putExtra("questionTitle", this.intent.getStringExtra("questionTitle"))
         intent.putExtra("questionDetails", this.intent.getStringExtra("questionDetails"))
         startActivity(intent)
