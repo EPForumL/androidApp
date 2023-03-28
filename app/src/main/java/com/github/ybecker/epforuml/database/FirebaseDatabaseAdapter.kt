@@ -66,205 +66,58 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
-        val future = CompletableFuture<List<Question>>()
-        // go in "courses/courseId/questions" dir
-        db.child(coursesPath).child(courseId).child(questionsPath).get().addOnSuccessListener {
-            val questionFutures = mutableListOf<CompletableFuture<Question>>()
+        val future = CompletableFuture<List<Any>>()
 
-            // add every course's question that in not null in the map
-            for (questionSnapshot in it.children) {
+        // use private getListOfAny methode with correct arguents
+        getListOfAny(listOf(coursesPath,courseId,questionsPath), questionsPath, future) { ds -> getQuestion(ds) }
 
-                val questionId = questionSnapshot.value as String
-                val questionFuture = CompletableFuture<Question>()
-                questionFutures.add(questionFuture)
-
-                db.child(questionsPath).child(questionId).get().addOnSuccessListener{
-                    val question = getQuestion(it)
-                    if (question != null) {
-                        questionFuture.complete(question)
-                    } else {
-                        questionFuture.completeExceptionally(Exception("Question not found"))
-                    }
-                }
-            }
-            val questions = mutableListOf<Question>()
-            CompletableFuture.allOf(*questionFutures.toTypedArray()).thenAccept {
-                for (questionFuture in questionFutures) {
-                    if (!questionFuture.isCompletedExceptionally) {
-                        val question = questionFuture.get()
-                        questions.add(question)
-                    }
-                }
-                future.complete(questions)
-            }
-        }.addOnFailureListener {
-            future.completeExceptionally(it)
-        }
-
-        return future
+        //cast the future to the a list of question future
+        return future as CompletableFuture<List<Question>>
     }
 
     //Note that using question.answers in the main is false because you don't take new values in the db into account !
     override fun getQuestionAnswers(questionId: String): CompletableFuture<List<Answer>> {
-        val future = CompletableFuture<List<Answer>>()
-        // go in "question/questionId" dir
-        db.child(questionsPath).child(questionId).child(answersPath).get().addOnSuccessListener {
-            val answerFutures = mutableListOf<CompletableFuture<Answer>>()
+        val future = CompletableFuture<List<Any>>()
 
-            // add every question's answer that is not null in the map
-            for (answersSnapshot in it.children) {
-                val answerId = answersSnapshot.value as String
-                val answerFuture = CompletableFuture<Answer>()
-                answerFutures.add(answerFuture)
+        // use private getListOfAny methode with correct arguents
+        getListOfAny(listOf(questionsPath,questionId,answersPath), answersPath, future) { ds -> getAnswer(ds) }
 
-                db.child(answersPath).child(answerId).get().addOnSuccessListener{
-                    val answer = getAnswer(it)
-                    if (answer != null) {
-                        answerFuture.complete(answer)
-                    } else {
-                        answerFuture.completeExceptionally(Exception("Answer not found"))
-                    }
-                }.addOnFailureListener{
-                    future.completeExceptionally(it)
-                }
-            }
-            val questions = mutableListOf<Answer>()
-            CompletableFuture.allOf(*answerFutures.toTypedArray()).thenAccept {
-                for (answerFuture in answerFutures) {
-                    if (!answerFuture.isCompletedExceptionally) {
-                        val question = answerFuture.get()
-                        questions.add(question)
-                    }
-                }
-                future.complete(questions)
-            }
-        }.addOnFailureListener {
-            future.completeExceptionally(it)
-        }
-
-        return future
+        //cast the future to the a list of answers future
+        return future as CompletableFuture<List<Answer>>
     }
 
     //Note that using user.question in the main is false because you don't take new values in the db into account !
     override fun getUserQuestions(userId: String): CompletableFuture<List<Question>> {
-        val future = CompletableFuture<List<Question>>()
-        // go in "user/userId" dir
-        db.child(usersPath).child(userId).child(questionsPath).get().addOnSuccessListener {
-            val questionFutures = mutableListOf<CompletableFuture<Question>>()
+        val future = CompletableFuture<List<Any>>()
 
-            // add every course's question that in not null in the map
-            for (questionSnapshot in it.children) {
+        // use private getListOfAny methode with correct arguents
+        getListOfAny(listOf(usersPath,userId,questionsPath), questionsPath, future) { ds -> getQuestion(ds) }
 
-                val questionId = questionSnapshot.value as String
-                val questionFuture = CompletableFuture<Question>()
-                questionFutures.add(questionFuture)
-
-                db.child(questionsPath).child(questionId).get().addOnSuccessListener{
-                    val question = getQuestion(it)
-                    if (question != null) {
-                        questionFuture.complete(question)
-                    } else {
-                        questionFuture.completeExceptionally(Exception("Question not found"))
-                    }
-                }
-            }
-            val questions = mutableListOf<Question>()
-            CompletableFuture.allOf(*questionFutures.toTypedArray()).thenAccept {
-                for (questionFuture in questionFutures) {
-                    if (!questionFuture.isCompletedExceptionally) {
-                        val question = questionFuture.get()
-                        questions.add(question)
-                    }
-                }
-                future.complete(questions)
-            }
-        }.addOnFailureListener {
-            future.completeExceptionally(it)
-        }
-
-        return future
+        //cast the future to the a list of questions future
+        return future as CompletableFuture<List<Question>>
     }
 
     override fun getUserAnswers(userId: String): CompletableFuture<List<Answer>> {
-        val future = CompletableFuture<List<Answer>>()
-        // go in "user/userId" dir
-        db.child(usersPath).child(userId).child(answersPath).get().addOnSuccessListener {
-            val answerFutures = mutableListOf<CompletableFuture<Answer>>()
+        val future = CompletableFuture<List<Any>>()
 
-            // add every question's answer that is not null in the map
-            for (answersSnapshot in it.children) {
-                val answerId = answersSnapshot.value as String
-                val answerFuture = CompletableFuture<Answer>()
-                answerFutures.add(answerFuture)
+        // use private getListOfAny methode with correct arguents
+        getListOfAny(listOf(usersPath,userId,answersPath), answersPath, future) { ds -> getAnswer(ds) }
 
-                db.child(answersPath).child(answerId).get().addOnSuccessListener{
-                    val answer = getAnswer(it)
-                    if (answer != null) {
-                        answerFuture.complete(answer)
-                    } else {
-                        answerFuture.completeExceptionally(Exception("Answer not found"))
-                    }
-                }.addOnFailureListener{
-                    future.completeExceptionally(it)
-                }
-            }
-            val questions = mutableListOf<Answer>()
-            CompletableFuture.allOf(*answerFutures.toTypedArray()).thenAccept {
-                for (answerFuture in answerFutures) {
-                    if (!answerFuture.isCompletedExceptionally) {
-                        val question = answerFuture.get()
-                        questions.add(question)
-                    }
-                }
-                future.complete(questions)
-            }
-        }.addOnFailureListener {
-            future.completeExceptionally(it)
-        }
-
-        return future
+        //cast the future to the a list of answers future
+        return future as CompletableFuture<List<Answer>>
     }
+
 
     override fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>> {
-        val future = CompletableFuture<List<Course>>()
-        // go in "user/subscriptions" dir
-        db.child(usersPath).child(userId).child(subscriptionsPath).get().addOnSuccessListener {
-            val courseFutures = mutableListOf<CompletableFuture<Course>>()
-            // add every user's subscribed course that is not null in the map
-            for (subscriptionSnapshot in it.children) {
+        val future = CompletableFuture<List<Any>>()
 
-                val courseId = subscriptionSnapshot.value as String
-                val courseFuture = CompletableFuture<Course>()
-                courseFutures.add(courseFuture)
+        // use private getListOfAny methode with correct arguents
+        getListOfAny(listOf(usersPath,userId,subscriptionsPath), coursesPath, future) { ds -> getCourse(ds) }
 
-                db.child(coursesPath).child(courseId).get().addOnSuccessListener{
-                    val course = getCourse(it)
-                    if (course != null) {
-                        courseFuture.complete(course)
-                    } else {
-                        courseFuture.completeExceptionally(Exception("Course not found"))
-                    }
-                }.addOnFailureListener{
-                    future.completeExceptionally(it)
-                }
-
-            }
-            val courses = mutableListOf<Course>()
-            CompletableFuture.allOf(*courseFutures.toTypedArray()).thenAccept {
-                for (courseFuture in courseFutures) {
-                    if (!courseFuture.isCompletedExceptionally) {
-                        val course = courseFuture.get()
-                        courses.add(course)
-                    }
-                }
-                future.complete(courses)
-            }
-        }.addOnFailureListener {
-            future.completeExceptionally(it)
-        }
-
-        return future
+        //cast the future to the a list of courses future
+        return future as CompletableFuture<List<Course>>
     }
+
 
     override fun addCourse(courseName: String): Course {
         // create a space for the new course in db and save its id
@@ -320,11 +173,14 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     override fun addUser(userId:String, username: String): CompletableFuture<User> {
 
         val future = CompletableFuture<User>()
+        //try to get the user with given id
         getUserById(userId).thenAccept {
             if(it != null){
+                //if user exists complete with it
                 future.complete(it)
             }
             else{
+                // it user do not exist create a new one and complete with it
                 val newUser = User(userId, username, emptyList(), emptyList(), emptyList())
                 db.child(usersPath).child(userId).setValue(newUser)
                 future.complete(newUser)
@@ -333,80 +189,112 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
-    override fun removeUser(userId: String) {
-        db.child(usersPath).child(userId).removeValue()
-    }
-
     override fun addSubscription(userId: String, courseId: String): CompletableFuture<User?> {
-//        val subscriptionsId = getUserSubscriptions(userId).map { it.courseId }.toMutableList()
-//        if (subscriptionsId.contains(courseId)) {
-//            return getUserById(userId)
-//        }
-//        subscriptionsId.add(courseId)
-//        val updatedSubscriptionsId = subscriptionsId.toList()
+
         db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).setValue(courseId)
 
         return getUserById(userId)
+    }
+
+    override fun removeUser(userId: String) {
+        db.child(usersPath).child(userId).removeValue()
     }
 
     override fun removeSubscription(userId: String, courseId: String) {
         db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).removeValue()
     }
 
-    override fun getQuestionById(questionId: String): CompletableFuture<Question?> {
-        val future = CompletableFuture<Question?>()
-        db.child(questionsPath).child(questionId).get()
-            .addOnSuccessListener {
-                future.complete(getQuestion(it))
-            }.addOnFailureListener {
-                future.completeExceptionally(it)
-            }
-        return future
+    override fun getQuestionById(id: String): CompletableFuture<Question?> {
+        val future = CompletableFuture<Any?>()
+
+        //call the private getAnyById with argument for questions
+        getAnyById(id, questionsPath, future) {ds -> getQuestion(ds)}
+
+        //cast the general future to a question one
+        return future as CompletableFuture<Question?>
     }
 
     override fun getAnswerById(id: String): CompletableFuture<Answer?> {
-        if(id == null){
-            return CompletableFuture.completedFuture(Answer())
-        }
-        val future = CompletableFuture<Answer?>()
-        // go in "answers/id" and use private methode to get the answer
-        db.child(answersPath).child(id).get().addOnSuccessListener {
-            future.complete(getAnswer(it))
-        }.addOnFailureListener {
-            future.completeExceptionally(it)
-        }
 
-        return future
+        val future = CompletableFuture<Any?>()
+
+        //call the private getAnyById with argument for answers
+        getAnyById(id, answersPath, future) {ds -> getAnswer(ds)}
+
+        //cast the general future to a answer one
+        return future as CompletableFuture<Answer?>
     }
 
     override fun getUserById(id: String): CompletableFuture<User?> {
-        if(id == null){
-            return CompletableFuture.completedFuture(User())
-        }
-        val future = CompletableFuture<User?>()
-        // go in "users/id" and use private methode to get the user
-        db.child(usersPath).child(id).get().addOnSuccessListener {
-            future.complete(getUser(it))
-        }.addOnFailureListener {
-            future.completeExceptionally(it)
-        }
+        val future = CompletableFuture<Any?>()
 
-        return future
+        //call the private getAnyById with argument for users
+        getAnyById(id, usersPath, future) {ds -> getUser(ds)}
+
+        //cast the general future to a user one
+        return future as CompletableFuture<User?>
     }
 
     override fun getCourseById(id: String): CompletableFuture<Course?> {
+        val future = CompletableFuture<Any?>()
+
+        //call the private getAnyById with argument for courses
+        getAnyById(id, coursesPath, future) { ds -> getCourse(ds) }
+
+        //cast the general future to a course one
+        return future as CompletableFuture<Course?>
+    }
+
+    private fun getAnyById(id: String, dataPath: String, future: CompletableFuture<Any?>, getter: (DataSnapshot) -> Any?) {
         if(id == null){
-            return CompletableFuture.completedFuture(Course())
+            future.complete(null)
         }
-        val future = CompletableFuture<Course?>()
-        // go in "courses/id" and use private methode to get the course
-        db.child(coursesPath).child(id).get().addOnSuccessListener {
-            future.complete(getCourse(it))
+        // go in the given path
+        db.child(dataPath).child(id).get().addOnSuccessListener {
+            // use the getter methode to get the researched object and complete given future with it
+            future.complete(getter(it))
         }.addOnFailureListener {
             future.completeExceptionally(it)
         }
+    }
 
-        return future
+    private fun getListOfAny(listPath: List<String>, objectPath: String, future: CompletableFuture<List<Any>>, getter: (DataSnapshot) -> Any?){
+
+        val path = listPath.joinToString(separator = "/")
+        db.child(path).get().addOnSuccessListener {
+            val modelFutures = mutableListOf<CompletableFuture<Any>>()
+            // add every user's subscribed course that is not null in the map
+            for (subscriptionSnapshot in it.children) {
+
+                val modelId = subscriptionSnapshot.value as String
+                val modelFuture = CompletableFuture<Any>()
+                modelFutures.add(modelFuture)
+
+                db.child(objectPath).child(modelId).get().addOnSuccessListener{
+                    val model = getter(it)
+                    if (model != null) {
+                        modelFuture.complete(model)
+                    } else {
+                        modelFuture.completeExceptionally(Exception("Course not found"))
+                    }
+                }.addOnFailureListener{
+                    future.completeExceptionally(it)
+                }
+
+            }
+            val models = mutableListOf<Any>()
+            CompletableFuture.allOf(*modelFutures.toTypedArray()).thenAccept {
+                for (modelFuture in modelFutures) {
+                    if (!modelFuture.isCompletedExceptionally) {
+                        val model = modelFuture.get()
+                        models.add(model)
+                    }
+                }
+                future.complete(models)
+            }
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
     }
 
     private fun getUser(dataSnapshot: DataSnapshot): User? {
