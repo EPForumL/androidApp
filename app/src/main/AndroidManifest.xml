@@ -61,7 +61,7 @@
                 <action android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorTextActivity" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>/>
+        </activity>
         <activity
             android:name="com.dsphotoeditor.sdk.activity.DsPhotoEditorCropActivity"
             android:exported="true">
