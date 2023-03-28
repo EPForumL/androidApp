@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertNull
@@ -13,6 +14,7 @@ import org.junit.Test
 
 class FirebaseDatabaseAdapterTest {
 
+    private lateinit var database: FirebaseDatabase
     private lateinit var db: FirebaseDatabaseAdapter
     private lateinit var swEng: Course
     private lateinit var sdp: Course
@@ -23,12 +25,33 @@ class FirebaseDatabaseAdapterTest {
     private lateinit var answer1: Answer
     private lateinit var answer2: Answer
 
+    // FirebaseDatabaseAdapter private variables
+    private val usersPath = "users"
+    private val coursesPath = "courses"
+    private val questionsPath = "questions"
+    private val answersPath = "answers"
+    private val subscriptionsPath = "subscriptions"
+
+    private val courseIdPath = "courseId"
+    private val userIdPath = "userId"
+    private val questionIdPath = "questionId"
+    private val answerIdPath = "answerId"
+
+    private val courseNamePath = "courseName"
+    private val usernamePath = "username"
+
+    private val questionTextPath = "questionText"
+    private val questionTitlePath = "questionTitle"
+    private val answerTextPath = "answerText"
+
+    private val questionURIPath = "imageURI"
+
     //To run this test make sur to install firebase database emulator
     //and run "firebase emulators:start --only database"
     @Before
     fun setUp() {
 
-        val database = Firebase.database
+        database = Firebase.database
 
         //local tests works on the emulator but the CI fails
         // so with the try-catch it work but on the real database...
@@ -262,5 +285,127 @@ class FirebaseDatabaseAdapterTest {
         db.getUserSubscriptions(testUser.userId).thenAccept {
             assertThat(it, equalTo(listOf()))
         }.join()
+    }
+
+    @Test
+    fun getMalformedCourseIsNull(){
+        val dbRef = database.reference
+        val newCourseId = "test"
+        db.getCourseById(newCourseId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(coursesPath).child(newCourseId).setValue(null)
+
+        db.getCourseById(newCourseId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(coursesPath).child(newCourseId).child(courseIdPath).setValue(newCourseId)
+
+        db.getCourseById(newCourseId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun getMalformedUserIsNull(){
+        val dbRef = database.reference
+        val newUserId = "test"
+        db.getUserById(newUserId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(usersPath).child(newUserId).setValue(null)
+
+        db.getUserById(newUserId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(usersPath).child(newUserId).child(userIdPath).setValue(newUserId)
+
+        db.getUserById(newUserId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun getMalformedQuestionIsNull(){
+        val dbRef = database.reference
+        val newQuestionId = "test"
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).setValue(null)
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(questionIdPath).setValue(newQuestionId)
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(courseIdPath).setValue("someCourse")
+
+        dbRef.child(questionsPath).child(newQuestionId).child(courseIdPath).setValue("someCourse")
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(questionTitlePath).setValue("someUser")
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(questionTitlePath).setValue("someTitle")
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(questionTextPath).setValue("someText")
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun getMalformedAnswerIsNull(){
+        val dbRef = database.reference
+        val newAnswerId = "test"
+        db.getCourseById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(answersPath).child(newAnswerId).setValue(null)
+
+        db.getAnswerById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(answersPath).child(newAnswerId).child(answerIdPath).setValue(newAnswerId)
+
+        db.getAnswerById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(answersPath).child(newAnswerId).child(questionIdPath).setValue("someQuestion")
+
+        db.getAnswerById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(answersPath).child(newAnswerId).child(userIdPath).setValue("someUSer")
+
+        db.getAnswerById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun addNewObjectWithTolerateNullArgsTest(){
+
+        val newAnswer = db.addAnswer(romain.userId, question1.questionId, null)
+        db.getAnswerById(newAnswer.answerId).thenAccept {
+            assertThat(it?.answerText, equalTo(""))
+        }
+
+        val newQuestion = db.addQuestion(romain.userId, question1.questionId, "title", null, "URI")
+        db.getQuestionById(newQuestion.questionId).thenAccept {
+            assertThat(it?.questionText, equalTo(""))
+        }
     }
 }

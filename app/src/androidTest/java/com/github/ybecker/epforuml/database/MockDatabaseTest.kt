@@ -213,4 +213,39 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf()))
         }.join()
     }
+
+    @Test
+    fun getUserQuestionTest(){
+        db.getUserQuestions(user.userId).thenAccept {
+            assertThat(it.map { it.questionId }, equalTo(listOf(question1.questionId, question2.questionId, question3.questionId)))
+        }.join()
+    }
+
+    @Test
+    fun getUserSubscriptionsWithNullUserTest(){
+        db.addSubscription("nobody", sdp.courseId).thenAccept {
+            assertNull(it)
+        }
+    }
+
+    @Test
+    fun addExistingUserReturnOriginalTest(){
+        db.addUser(user.userId, "NEWUSER").thenAccept {
+            assertThat(it?.username, equalTo(user.username))
+        }
+    }
+
+    @Test
+    fun addNewObjectWithTolerateNullArgsTest(){
+
+        val newAnswer = db.addAnswer(user.userId, question1.questionId, null)
+        db.getAnswerById(newAnswer.answerId).thenAccept {
+            assertThat(it?.answerText, equalTo(""))
+        }
+
+        val newQuestion = db.addQuestion(user.userId, question1.questionId, "title", null, "URI")
+        db.getQuestionById(newQuestion.questionId).thenAccept {
+            assertThat(it?.questionText, equalTo(""))
+        }
+    }
 }

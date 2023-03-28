@@ -64,11 +64,11 @@ class MockDatabase : Database() {
     }
 
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
-        return CompletableFuture.completedFuture(questions.filterValues { it.courseId == courseId }.values.toList())
+        return CompletableFuture.completedFuture(questions.filterValues { it.courseId == courseId }.values.toList().reversed())
     }
 
     override fun getQuestionAnswers(questionId: String): CompletableFuture<List<Answer>> {
-        return CompletableFuture.completedFuture(answers.filterValues { it.questionId == questionId }.values.toList())
+        return CompletableFuture.completedFuture(answers.filterValues { it.questionId == questionId }.values.toList().reversed())
     }
 
     override fun addCourse(courseName: String): Course {
@@ -165,11 +165,11 @@ class MockDatabase : Database() {
     }
 
     override fun getUserQuestions(userId: String): CompletableFuture<List<Question>> {
-        return CompletableFuture.completedFuture(questions.filterValues { it.userId == userId }.values.toList())
+        return CompletableFuture.completedFuture(questions.filterValues { it.userId == userId }.values.toList().reversed())
     }
 
     override fun getUserAnswers(userId: String): CompletableFuture<List<Answer>> {
-        return CompletableFuture.completedFuture(answers.filterValues { it.userId == userId }.values.toList())
+        return CompletableFuture.completedFuture(answers.filterValues { it.userId == userId }.values.toList().reversed())
     }
 
     override fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>> {

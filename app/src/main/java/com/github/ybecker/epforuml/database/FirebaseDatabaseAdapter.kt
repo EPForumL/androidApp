@@ -35,13 +35,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     private val questionURIPath = "imageURI"
 
-    init {
-        try {
-            dbInstance.useEmulator("10.0.2.2", 9000)
-        } catch (e: IllegalStateException) {
-            //do nothing if emulator is already enabled
-        }
-    }
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Course>>()
@@ -246,9 +239,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     private fun getAnyById(id: String, dataPath: String, future: CompletableFuture<Any?>, getter: (DataSnapshot) -> Any?) {
-        if(id == null){
-            future.complete(null)
-        }
+
         // go in the given path
         db.child(dataPath).child(id).get().addOnSuccessListener {
             // use the getter methode to get the researched object and complete given future with it
@@ -260,16 +251,17 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     private fun getListOfAny(listPath: List<String>, objectPath: String, future: CompletableFuture<List<Any>>, getter: (DataSnapshot) -> Any?){
 
+        //creat path by joining the given list
         val path = listPath.joinToString(separator = "/")
         db.child(path).get().addOnSuccessListener {
             val modelFutures = mutableListOf<CompletableFuture<Any>>()
             // add every user's subscribed course that is not null in the map
             for (subscriptionSnapshot in it.children) {
-
+                //create a future for every child
                 val modelId = subscriptionSnapshot.value as String
                 val modelFuture = CompletableFuture<Any>()
                 modelFutures.add(modelFuture)
-
+                //get object for every child
                 db.child(objectPath).child(modelId).get().addOnSuccessListener{
                     val model = getter(it)
                     if (model != null) {
@@ -283,6 +275,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
             }
             val models = mutableListOf<Any>()
+            // when every child's future complete, crete the list of models with their result
             CompletableFuture.allOf(*modelFutures.toTypedArray()).thenAccept {
                 for (modelFuture in modelFutures) {
                     if (!modelFuture.isCompletedExceptionally) {
@@ -290,6 +283,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                         models.add(model)
                     }
                 }
+                //complete the  caller function future
                 future.complete(models)
             }
         }.addOnFailureListener {
@@ -298,9 +292,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     private fun getUser(dataSnapshot: DataSnapshot): User? {
-        if(dataSnapshot == null){
-            return null
-        }
 
         // Get user id
         val userId = dataSnapshot.child(userIdPath).getValue(String::class.java) ?: return null
@@ -329,9 +320,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     private fun getQuestion(dataSnapshot: DataSnapshot): Question? {
-        if(dataSnapshot == null){
-            return null
-        }
 
         val questionId = dataSnapshot.child(questionIdPath).getValue(String::class.java) ?: return null
 
@@ -355,9 +343,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     private fun getAnswer(dataSnapshot: DataSnapshot): Answer?{
-        if(dataSnapshot == null){
-            return null
-        }
         // save every variables of the answer in a map
         val answerId = dataSnapshot.child(answerIdPath).getValue(String::class.java) ?: return null
 
@@ -371,9 +356,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     private fun getCourse(dataSnapshot: DataSnapshot): Course?{
-        if(dataSnapshot == null){
-            return null
-        }
         // save every non list variables of the course in a map
         val courseId = dataSnapshot.child(courseIdPath).getValue(String::class.java) ?: return null
 
