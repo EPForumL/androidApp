@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.ybecker.epforuml.authentication.AuthenticatorManager
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import java.util.concurrent.CompletableFuture
@@ -29,7 +29,7 @@ class CoursesFragment : Fragment() {
         val futureCourses = db.availableCourses()
 
         // we take the current user in the database
-        user = AuthenticatorManager.authenticator?.user ?: User()
+        user = DatabaseManager.user ?: User()
 
         val futureUserSubscriptions= db.getUserSubscriptions(user.userId)
 
