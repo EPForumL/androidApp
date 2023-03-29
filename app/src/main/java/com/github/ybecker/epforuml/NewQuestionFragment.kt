@@ -10,7 +10,6 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.authentication.AuthenticatorManager
-import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 
@@ -21,11 +20,16 @@ import com.github.ybecker.epforuml.database.Model
  */
 class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
+    private lateinit var questBody : EditText
+    private lateinit var questTitle : EditText
+    private lateinit var imageURI: TextView
     private lateinit var takePictureButton: Button
+
+
     private var IMAGE_URI = ""
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            IMAGE_URI = uri.toString()
+            imageURI.setText(uri.toString())
         }
 
     override fun onCreateView(
@@ -34,10 +38,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
     ): View? {
         val user = AuthenticatorManager.authenticator?.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
-
-        //Spinner
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
-
         // Get the set of available courses from the MockDatabase
         db.availableCourses().thenAccept {
             val coursesList = it
@@ -48,53 +49,59 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                 courseNamesList
             )
             spinner.adapter = adapter
-            val (questBody, questTitle, imageURI) = setUp(view)
-
-            setSubmitButton(view, questBody, questTitle, spinner, coursesList, user, imageURI)
+            setUp(view,spinner,coursesList,user)
             mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
-            seUploadImage(view)
-            setTakeImage(view, questBody, questTitle)
         }
         return view
 
         }
 
-    private fun setSubmitButton(
-        view: View?,
-        questBody: EditText,
-        questTitle: EditText,
+    private fun setUp(
+        view: View,
         spinner: Spinner,
         coursesList: List<Model.Course>,
         user: Model.User?,
-        imageURI: TextView
     ) {
+        setUp(view)
         val submitButton = view?.findViewById<Button>(R.id.btn_submit)
-        submitButton?.setOnClickListener {
-            if (questBody.text.isBlank() || questTitle.text.isBlank()) {
-                Toast.makeText(requireContext(), "Question title or body cannot be empty",
-                    Toast.LENGTH_SHORT).show()
-            } else {
-                spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        val questionSubject = parent.getItemAtPosition(position) as String
-                        val course =coursesList.filter { course -> course.courseName == questionSubject }[0]
-                        if (user != null) {
-                            db.addQuestion(
-                                user.userId,
-                                course.courseId,
-                                questTitle.toString(),
-                                questBody.toString(),
-                                imageURI.toString()
-                            )
-                        }
+        submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
+        seUploadImage(view)
+        setTakeImage(view, questBody, questTitle)
+    }
+
+    private fun submitButtonListener(
+        spinner: Spinner,
+        coursesList: List<Model.Course>,
+        user: Model.User?
+    ): (v: View) -> Unit = {
+        if (questBody.text.isBlank() || questTitle.text.isBlank()) {
+            Toast.makeText(
+                requireContext(), "Question title or body cannot be empty",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    val questionSubject = parent.getItemAtPosition(position) as String
+                    val course =
+                        coursesList.filter { course -> course.courseName == questionSubject }[0]
+                    if (user != null) {
+                        db.addQuestion(
+                            user.userId,
+                            course.courseId,
+                            questTitle.toString(),
+                            questBody.toString(),
+                            imageURI.toString()
+                        )
                     }
-                    override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         }
     }
@@ -108,11 +115,9 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         takePictureButton.setOnClickListener {
             val questionDetails = questBody.text.toString()
             val questionTitle = questTitle.text.toString()
-
             val intent = Intent(this.mainActivity, CameraActivity::class.java)
             intent.putExtra("questionTitle", questionTitle)
             intent.putExtra("questionDetails", questionDetails)
-
             startActivity(intent)
         }
     }
@@ -125,9 +130,9 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
     }
 
     private fun setUp(view: View): Triple<EditText, EditText, TextView> {
-        val questBody = view.findViewById<EditText>(R.id.question_details_edittext)
-        val questTitle = view.findViewById<EditText>(R.id.question_title_edittext)
-        val imageURI = view.findViewById<TextView>(R.id.image_uri)
+         questBody = view.findViewById(R.id.question_details_edittext)
+         questTitle = view.findViewById(R.id.question_title_edittext)
+         imageURI = view.findViewById(R.id.image_uri)
 
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
