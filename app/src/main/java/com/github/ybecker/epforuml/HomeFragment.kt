@@ -10,7 +10,6 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
@@ -73,6 +72,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
                 futureQuestionList.let { it.forEach {
                     questionsList.addAll(it.get())
                 } }
+                questionsDisplay()
             }
         }
     }
@@ -91,6 +91,5 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
     private fun refresh() {
         getQuestionsList()
-        questionsDisplay()
     }
 }

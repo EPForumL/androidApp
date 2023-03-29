@@ -110,6 +110,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
 
     implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
+    implementation 'com.google.firebase:firebase-database-ktx:20.0.0'
 }
 
 tasks.withType(Test) {

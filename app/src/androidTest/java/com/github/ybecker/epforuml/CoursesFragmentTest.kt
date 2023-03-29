@@ -2,7 +2,6 @@ package com.github.ybecker.epforuml
 
 import android.view.View
 import android.widget.Switch
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
@@ -14,18 +13,17 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
 import androidx.test.espresso.matcher.ViewMatchers.*
-import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.Matcher
 import org.junit.Test
 import org.junit.runner.RunWith
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.action.ViewActions.*
-import com.github.ybecker.epforuml.authentication.Authenticator
-import com.github.ybecker.epforuml.authentication.LoginActivity
-import com.google.android.gms.auth.api.Auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.fail
 import org.hamcrest.Matchers.*
+import org.junit.Before
 
 
 @RunWith(AndroidJUnit4::class)
@@ -48,15 +46,19 @@ class CoursesFragmentTest {
             ))
     }
 
+    @Before
+    fun setUp(){
+        DatabaseManager.useMockDatabase()
+    }
+
     @Test
     fun SubscribtionStayWhenSwitchingScreen(){
         DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity { AuthenticatorManager.createMockAuthenticator(it) }
-        DatabaseManager.useMockDatabase()
-        val user = db.addUser("0", "TestUser").get()
 
-        AuthenticatorManager.authenticator?.user = user
+        val user = db.addUser("0", "TestUser").get()
+        DatabaseManager.user = user
 
         val checkPosition = 0
 
@@ -73,13 +75,26 @@ class CoursesFragmentTest {
     }
 
     @Test
-    fun SubscriptionModifyDatabase(){
-
+    fun NoUserConnectedTest(){
         DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity { AuthenticatorManager.createMockAuthenticator(it) }
+
+        onView(withContentDescription(R.string.open)).perform(click())
+        onView(withId(R.id.nav_courses)).perform(click())
+
+        onView(withText("You are not connected"))
+
+    }
+
+    @Test
+    fun SubscriptionModifyDatabase(){
+        DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+
         val user = db.addUser("0", "TestUser").get()
-        AuthenticatorManager.authenticator?.user = user
+        DatabaseManager.user = user
 
         val checkPosition = 0
 
@@ -94,8 +109,37 @@ class CoursesFragmentTest {
         }
 
         scenario.close()
-
     }
+
+    @Test
+    fun UnubscriptionModifyDatabase(){
+        DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+
+        val user = db.addUser("0", "TestUser").get()
+        DatabaseManager.user = user
+
+        val checkPosition = 0
+
+        assertTrue(user.subscriptions.isEmpty())
+
+        onView(withContentDescription(R.string.open)).perform(click())
+        onView(withId(R.id.nav_courses)).perform(click())
+
+        ClickOnSwitch(checkPosition)
+        db.getUserSubscriptions(user.userId).thenAccept {
+            assertTrue(it.size == 1)
+        }
+
+        ClickOnSwitch(checkPosition)
+        db.getUserSubscriptions(user.userId).thenAccept {
+            assertTrue(it.isEmpty())
+        }
+
+        scenario.close()
+    }
+
 
     //For later : need to rework database :
     //@Test
