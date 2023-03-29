@@ -59,12 +59,21 @@ class MockDatabase : Database() {
                     "question" ,"", mutableListOf())
         questions[question3.questionId] = question3
 
-        addAnswer("user1", "question1", "première réponse")
-        addAnswer("user1", "question1", "Nan mais je suis pas d'accord")
-        addAnswer("user1", "question1", "Ok alors si tu veux faire ça," +
+        val answer1 = Answer("answer1", "question1", "user1", "première réponse")
+        addAnswer(answer1.userId, answer1.questionId, answer1.answerText)
+
+        val answer2 = Answer("answer2", "question1", "user1", "Nan mais je suis pas d'accord")
+        addAnswer(answer2.userId, answer2.questionId, answer2.answerText)
+
+        val answer3 = Answer("answer3", "question1", "user1", "Ok alors si tu veux faire ça, " +
                 "il faut installer la VM et faire tout depuis chez toi avec le VPN")
-        addAnswer("user1", "question1", "Nan mais je suis pas d'accord")
-        addAnswer("user1", "question1", "Nan mais je suis pas d'accord non plus")
+        addAnswer(answer3.userId, answer3.questionId, answer3.answerText)
+
+        val answer4 = Answer("answer4", "question1", "user1", "Nan mais je suis pas d'accord")
+        addAnswer(answer4.userId, answer4.questionId, answer4.answerText)
+
+        val answer5 = Answer("answer5", "question1", "user1", "Nan mais je suis pas d'accord non plus")
+        addAnswer(answer5.userId, answer5.questionId, answer5.answerText)
 
         this.addSubscription(user1.userId, course1.courseId)
         this.addSubscription(user1.userId, course2.courseId)

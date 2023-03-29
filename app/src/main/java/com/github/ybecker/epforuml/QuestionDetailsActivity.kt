@@ -35,15 +35,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
             title.text = question.questionTitle
 
             answerRecyclerView.adapter = AnswerAdapter(question.questionId, question.questionText, question.answers)
-
-            // TODO : move questions detail to recyclerView
-            /*
-            val textView : TextView = findViewById(R.id.qdetails_content)
-            textView.text = question.questionText
-            */
-
-            // TODO : implement RecyclerView for answers
-            // var answerDisplay : RecyclerView = findViewById(R.id.answers_recycler)
         }
     }
 
