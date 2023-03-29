@@ -25,8 +25,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
     private lateinit var imageURI: TextView
     private lateinit var takePictureButton: Button
 
-
-    private var IMAGE_URI = ""
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageURI.setText(uri.toString())
