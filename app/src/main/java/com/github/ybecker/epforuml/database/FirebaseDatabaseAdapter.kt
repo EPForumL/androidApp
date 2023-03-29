@@ -299,7 +299,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // Get username
         val username = dataSnapshot.child(usernamePath).getValue(String::class.java) ?: return null
 
-
         // save every answers in a List using getAnswers private methode
         val answers = arrayListOf<String>()
         dataSnapshot.child(answersPath).children.forEach { answerSnapshot ->
