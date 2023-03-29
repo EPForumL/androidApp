@@ -12,7 +12,8 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="settings_fragment">Settings</string>
-    <string name="chat_fragment">Chat</string>
+    <string name="chat_fragment">Chat</string>}
+    <string name="ds_photo_editor_top_button_apply">ds_photo_editor_top_button_apply</string>
     <string name="account_fragment">Account</string>
     <string name="my_questions_fragment">My Questions</string>
     <string name="saved_questions_fragment">Saved Questions</string>
