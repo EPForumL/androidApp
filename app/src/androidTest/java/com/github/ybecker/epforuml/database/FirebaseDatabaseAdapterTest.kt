@@ -344,12 +344,10 @@ class FirebaseDatabaseAdapterTest {
         }.join()
         dbRef.child(questionsPath).child(newQuestionId).child(courseIdPath).setValue("someCourse")
 
-        dbRef.child(questionsPath).child(newQuestionId).child(courseIdPath).setValue("someCourse")
-
         db.getQuestionById(newQuestionId).thenAccept {
             assertNull(it)
         }.join()
-        dbRef.child(questionsPath).child(newQuestionId).child(questionTitlePath).setValue("someUser")
+        dbRef.child(questionsPath).child(newQuestionId).child(userIdPath).setValue("someUser")
 
         db.getQuestionById(newQuestionId).thenAccept {
             assertNull(it)

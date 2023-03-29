@@ -75,6 +75,19 @@ class CoursesFragmentTest {
     }
 
     @Test
+    fun NoUserConnectedTest(){
+        DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+
+        onView(withContentDescription(R.string.open)).perform(click())
+        onView(withId(R.id.nav_courses)).perform(click())
+
+        onView(withText("You are not connected"))
+
+    }
+
+    @Test
     fun SubscriptionModifyDatabase(){
         DatabaseManager.useMockDatabase()
         Firebase.auth.signOut()
@@ -97,6 +110,36 @@ class CoursesFragmentTest {
 
         scenario.close()
     }
+
+    @Test
+    fun UnubscriptionModifyDatabase(){
+        DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+
+        val user = db.addUser("0", "TestUser").get()
+        DatabaseManager.user = user
+
+        val checkPosition = 0
+
+        assertTrue(user.subscriptions.isEmpty())
+
+        onView(withContentDescription(R.string.open)).perform(click())
+        onView(withId(R.id.nav_courses)).perform(click())
+
+        ClickOnSwitch(checkPosition)
+        db.getUserSubscriptions(user.userId).thenAccept {
+            assertTrue(it.size == 1)
+        }
+
+        ClickOnSwitch(checkPosition)
+        db.getUserSubscriptions(user.userId).thenAccept {
+            assertTrue(it.isEmpty())
+        }
+
+        scenario.close()
+    }
+
 
     //For later : need to rework database :
     //@Test
