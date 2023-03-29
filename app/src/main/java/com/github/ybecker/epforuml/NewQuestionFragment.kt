@@ -22,7 +22,7 @@ import com.github.ybecker.epforuml.database.Model
 class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
     private lateinit var takePictureButton: Button
-    var IMAGE_URI = ""
+    private var IMAGE_URI = ""
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             IMAGE_URI = uri.toString()
@@ -51,6 +51,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
             val (questBody, questTitle, imageURI) = setUp(view)
 
             setSubmitButton(view, questBody, questTitle, spinner, coursesList, user, imageURI)
+            mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
             seUploadImage(view)
             setTakeImage(view, questBody, questTitle)
         }
@@ -69,14 +70,9 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
     ) {
         val submitButton = view?.findViewById<Button>(R.id.btn_submit)
         submitButton?.setOnClickListener {
-            print("click submit btn")
-
             if (questBody.text.isBlank() || questTitle.text.isBlank()) {
-                Toast.makeText(
-                    requireContext(),
-                    "Question title or body cannot be empty",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Question title or body cannot be empty",
+                    Toast.LENGTH_SHORT).show()
             } else {
                 spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                     override fun onItemSelected(
@@ -86,9 +82,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                         id: Long
                     ) {
                         val questionSubject = parent.getItemAtPosition(position) as String
-                        //find course correponding to the selected name
-                        val course =
-                            coursesList.filter { course -> course.courseName == questionSubject }[0]
+                        val course =coursesList.filter { course -> course.courseName == questionSubject }[0]
                         if (user != null) {
                             db.addQuestion(
                                 user.userId,
@@ -99,11 +93,8 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                             )
                         }
                     }
-
-                    override fun onNothingSelected(parent: AdapterView<*>) {}
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
                 }
-
-                mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
             }
         }
     }

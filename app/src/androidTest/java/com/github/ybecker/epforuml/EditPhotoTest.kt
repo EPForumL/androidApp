@@ -17,29 +17,24 @@ class EditPhotoTest {
 
 @Test
     fun navigatesCorrectlyThroughApp() {
-/*
+
         val scenario = ActivityScenario.launch(EditPhotoActivity::class.java)
 // go to MainActivity
         onView(ViewMatchers.withId(R.id.guestButton)).perform(click())
-
-        onView(ViewMatchers.withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
-
         // open navigation drawer
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
         onView(ViewMatchers.withId(R.id.nav_home)).perform(click())
         onView(ViewMatchers.withId(R.id.new_question_button)).perform(click())
-        onView(ViewMatchers.withId(R.id.takeImage)).check(matches(isDisplayed()))
         onView(ViewMatchers.withId(R.id.takeImage)).perform(ViewActions.scrollTo())
         onView(ViewMatchers.withId(R.id.takeImage)).perform(click())
 
-
-        onView(ViewMatchers.withId(R.id.image_capture_button)).check(matches(isDisplayed()))
         onView(ViewMatchers.withId(R.id.image_capture_button)).perform(click())
 
 
-        onView(ViewMatchers.withId(R.id.ds_photo_editor_top_button_apply).check(isDisplayed()))
-        onView(ViewMatchers.withId(R.id.ds_photo_editor_top_button_apply).perform(click()))
-*/
+
+
+        //
+        //onView(ViewMatchers.withId(R.id.ds_photo_editor_top_button_apply).perform(click()))
     }
 }

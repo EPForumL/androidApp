@@ -24,7 +24,7 @@ import com.dsphotoeditor.sdk.utils.DsPhotoEditorConstants
  */
 class EditPhotoActivity: AppCompatActivity() {
 
-private lateinit var IMAGE_URI : String
+private lateinit var IMAGE_URI : Uri
 private lateinit var imageView : ImageView
 
     override fun onCreate(avedInstanceState: Bundle?){
@@ -40,7 +40,7 @@ private lateinit var imageView : ImageView
      */
     private fun goBackToQuestion(){
         val intent  = Intent(this, MainActivity::class.java)
-        intent.putExtra("uri", IMAGE_URI)
+        intent.putExtra("uri", IMAGE_URI.toString())
         intent.putExtra("fragment", "NewQuestionFragment")
         intent.putExtra("questionTitle", this.intent.getStringExtra("questionTitle"))
         intent.putExtra("questionDetails", this.intent.getStringExtra("questionDetails"))
@@ -67,15 +67,13 @@ private lateinit var imageView : ImageView
 
     private fun openImage() {
         //Initialize URI
-        IMAGE_URI = this.intent.getStringExtra("uri").toString()
-        val uri = Uri.parse(IMAGE_URI)
+        IMAGE_URI = Uri.parse(this.intent.getStringExtra("uri").toString())
         val intent = Intent(
             this,
             DsPhotoEditorActivity::class.java
         )
-        intent.data = uri
+        intent.data = IMAGE_URI
         intent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_OUTPUT_DIRECTORY, "Images")
-
         intent.putExtra(DsPhotoEditorConstants.DS_TOOL_BAR_BACKGROUND_COLOR, Color.GRAY)
         intent.putExtra(DsPhotoEditorConstants.DS_MAIN_BACKGROUND_COLOR, Color.WHITE)
         intent.putExtra(
@@ -84,13 +82,11 @@ private lateinit var imageView : ImageView
                 DsPhotoEditorActivity.TOOL_CONTRAST,
                 DsPhotoEditorActivity.TOOL_EXPOSURE,
                 DsPhotoEditorActivity.TOOL_FILTER,
-                DsPhotoEditorActivity.TOOL_FRAME,
                 DsPhotoEditorActivity.TOOL_PIXELATE,
                 DsPhotoEditorActivity.TOOL_ROUND,
                 DsPhotoEditorActivity.TOOL_SATURATION,
                 DsPhotoEditorActivity.TOOL_WARMTH,
                 DsPhotoEditorActivity.TOOL_SHARPNESS,
-                DsPhotoEditorActivity.TOOL_STICKER
             )
         )
         startActivityForResult(intent,101)
