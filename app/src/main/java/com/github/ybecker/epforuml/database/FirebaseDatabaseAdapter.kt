@@ -59,56 +59,48 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
-        val future = CompletableFuture<List<Any>>()
 
         // use private getListOfAny methode with correct arguents
-        getListOfAny(listOf(coursesPath,courseId,questionsPath), questionsPath, future) { ds -> getQuestion(ds) }
-
-        //cast the future to the a list of question future
-        return future as CompletableFuture<List<Question>>
+        return getListOfAny(listOf(coursesPath,courseId,questionsPath), questionsPath) { ds -> getQuestion(ds) }
+                //cast the future to the a list of question future
+                as CompletableFuture<List<Question>>
     }
 
     //Note that using question.answers in the main is false because you don't take new values in the db into account !
     override fun getQuestionAnswers(questionId: String): CompletableFuture<List<Answer>> {
-        val future = CompletableFuture<List<Any>>()
 
         // use private getListOfAny methode with correct arguents
-        getListOfAny(listOf(questionsPath,questionId,answersPath), answersPath, future) { ds -> getAnswer(ds) }
-
-        //cast the future to the a list of answers future
-        return future as CompletableFuture<List<Answer>>
+        return getListOfAny(listOf(questionsPath,questionId,answersPath), answersPath) { ds -> getAnswer(ds) }
+                //cast the future to the a list of answers future
+                as CompletableFuture<List<Answer>>
     }
 
     //Note that using user.question in the main is false because you don't take new values in the db into account !
     override fun getUserQuestions(userId: String): CompletableFuture<List<Question>> {
-        val future = CompletableFuture<List<Any>>()
 
         // use private getListOfAny methode with correct arguents
-        getListOfAny(listOf(usersPath,userId,questionsPath), questionsPath, future) { ds -> getQuestion(ds) }
-
-        //cast the future to the a list of questions future
-        return future as CompletableFuture<List<Question>>
+        return getListOfAny(listOf(usersPath,userId,questionsPath), questionsPath) { ds -> getQuestion(ds) }
+                //cast the future to the a list of questions future
+                as CompletableFuture<List<Question>>
     }
 
+    //Note that using user.answers in the main is false because you don't take new values in the db into account !
     override fun getUserAnswers(userId: String): CompletableFuture<List<Answer>> {
-        val future = CompletableFuture<List<Any>>()
 
         // use private getListOfAny methode with correct arguents
-        getListOfAny(listOf(usersPath,userId,answersPath), answersPath, future) { ds -> getAnswer(ds) }
-
-        //cast the future to the a list of answers future
-        return future as CompletableFuture<List<Answer>>
+        return getListOfAny(listOf(usersPath,userId,answersPath), answersPath) { ds -> getAnswer(ds) }
+                //cast the future to the a list of answers future
+                as CompletableFuture<List<Answer>>
     }
 
-
+    //Note that using user.subscriptions in the main is false because you don't take new values in the db into account !
     override fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Any>>()
 
         // use private getListOfAny methode with correct arguents
-        getListOfAny(listOf(usersPath,userId,subscriptionsPath), coursesPath, future) { ds -> getCourse(ds) }
-
-        //cast the future to the a list of courses future
-        return future as CompletableFuture<List<Course>>
+        return  getListOfAny(listOf(usersPath,userId,subscriptionsPath), coursesPath) { ds -> getCourse(ds) }
+                //cast the future to the a list of courses future
+                as CompletableFuture<List<Course>>
     }
 
 
@@ -198,48 +190,42 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> {
-        val future = CompletableFuture<Any?>()
 
         //call the private getAnyById with argument for questions
-        getAnyById(id, questionsPath, future) {ds -> getQuestion(ds)}
+        return getAnyById(id, questionsPath) {ds -> getQuestion(ds)}
+                //cast the general future to a question one
+                as CompletableFuture<Question?>
 
-        //cast the general future to a question one
-        return future as CompletableFuture<Question?>
     }
 
     override fun getAnswerById(id: String): CompletableFuture<Answer?> {
 
-        val future = CompletableFuture<Any?>()
-
         //call the private getAnyById with argument for answers
-        getAnyById(id, answersPath, future) {ds -> getAnswer(ds)}
-
-        //cast the general future to a answer one
-        return future as CompletableFuture<Answer?>
+        return getAnyById(id, answersPath) {ds -> getAnswer(ds)}
+                //cast the general future to a answer one
+                as CompletableFuture<Answer?>
     }
 
     override fun getUserById(id: String): CompletableFuture<User?> {
-        val future = CompletableFuture<Any?>()
 
         //call the private getAnyById with argument for users
-        getAnyById(id, usersPath, future) {ds -> getUser(ds)}
+        return getAnyById(id, usersPath) {ds -> getUser(ds)}
+                //cast the general future to a user one
+                as CompletableFuture<User?>
 
-        //cast the general future to a user one
-        return future as CompletableFuture<User?>
     }
 
     override fun getCourseById(id: String): CompletableFuture<Course?> {
-        val future = CompletableFuture<Any?>()
 
         //call the private getAnyById with argument for courses
-        getAnyById(id, coursesPath, future) { ds -> getCourse(ds) }
+        return getAnyById(id, coursesPath) { ds -> getCourse(ds) }
+                //cast the general future to a course one
+                as CompletableFuture<Course?>
 
-        //cast the general future to a course one
-        return future as CompletableFuture<Course?>
     }
 
-    private fun getAnyById(id: String, dataPath: String, future: CompletableFuture<Any?>, getter: (DataSnapshot) -> Any?) {
-
+    private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {
+        val future = CompletableFuture<Any?>()
         // go in the given path
         db.child(dataPath).child(id).get().addOnSuccessListener {
             // use the getter methode to get the researched object and complete given future with it
@@ -247,53 +233,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }.addOnFailureListener {
             future.completeExceptionally(it)
         }
+        return future
     }
 
-    //
-//    private fun getListOfAny(listPath: List<String>, objectPath: String, future: CompletableFuture<List<Any>>, getter: (DataSnapshot) -> Any?){
-//
-//        //creat path by joining the given list
-//        val path = listPath.joinToString(separator = "/")
-//        db.child(path).get().addOnSuccessListener {
-//            val modelFutures = mutableListOf<CompletableFuture<Any>>()
-//            // add every user's subscribed course that is not null in the map
-//            for (subscriptionSnapshot in it.children) {
-//                //create a future for every child
-//                val modelId = subscriptionSnapshot.value as String
-//                val modelFuture = CompletableFuture<Any>()
-//                modelFutures.add(modelFuture)
-//                //get object for every child
-//                db.child(objectPath).child(modelId).get().addOnSuccessListener{
-//                    val model = getter(it)
-//                    if (model != null) {
-//                        modelFuture.complete(model)
-//                    } else {
-//                        modelFuture.completeExceptionally(Exception("Course not found"))
-//                    }
-//                }.addOnFailureListener{
-//                    future.completeExceptionally(it)
-//                }
-//
-//            }
-//            val models = mutableListOf<Any>()
-//            // when every child's future complete, crete the list of models with their result
-//            CompletableFuture.allOf(*modelFutures.toTypedArray()).thenAccept {
-//                for (modelFuture in modelFutures) {
-//                    if (!modelFuture.isCompletedExceptionally) {
-//                        val model = modelFuture.get()
-//                        models.add(model)
-//                    }
-//                }
-//                //complete the  caller function future
-//                future.complete(models)
-//            }
-//        }.addOnFailureListener {
-//            future.completeExceptionally(it)
-//        }
-//    }
+    private fun getListOfAny(listPath: List<String>, objectPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<List<Any>>{
 
-    private fun getListOfAny(listPath: List<String>, objectPath: String, future: CompletableFuture<List<Any>>, getter: (DataSnapshot) -> Any?){
-
+        val future = CompletableFuture<List<Any>>()
         //creat path by joining the given list
         val path = listPath.joinToString(separator = "/")
         db.child(path).get().addOnSuccessListener {
@@ -302,28 +247,30 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             for (subscriptionSnapshot in it.children) {
                 //create a future for every child
                 val modelId = subscriptionSnapshot.value as String
-                val modelFuture = CompletableFuture<Any?>()
-                modelFutures.add(modelFuture)
                 //get object for every child
-                this.getAnyById(modelId, objectPath, modelFuture, getter)
-
+                modelFutures.add(getAnyById(modelId,objectPath, getter))
             }
-            val models = mutableListOf<Any>()
-            // when every child's future complete, crete the list of models with their result
-            CompletableFuture.allOf(*modelFutures.toTypedArray()).thenAccept {
-                for (modelFuture in modelFutures) {
-                    if (!modelFuture.isCompletedExceptionally) {
-                        val model = modelFuture.get()
-                        if(model != null) {
-                            models.add(model)
-                        }
-                    }
-                }
-                //complete the  caller function future
-                future.complete(models)
-            }
+            convertListOfFutureToFutureOfList(future, modelFutures)
         }.addOnFailureListener {
             future.completeExceptionally(it)
+        }
+        return future
+    }
+
+    private fun convertListOfFutureToFutureOfList(future: CompletableFuture<List<Any>>, futureList: List<CompletableFuture<Any?>>){
+        val models = mutableListOf<Any>()
+        // when every child's future complete, crete the list of models with their result
+        CompletableFuture.allOf(*futureList.toTypedArray()).thenAccept {
+            for (modelFuture in futureList) {
+                if (!modelFuture.isCompletedExceptionally) {
+                    val model = modelFuture.get()
+                    if(model != null) {
+                        models.add(model)
+                    }
+                }
+            }
+            //complete the  caller function future
+            future.complete(models)
         }
     }
 

@@ -399,11 +399,11 @@ class FirebaseDatabaseAdapterTest {
         val newAnswer = db.addAnswer(romain.userId, question1.questionId, null)
         db.getAnswerById(newAnswer.answerId).thenAccept {
             assertThat(it?.answerText, equalTo(""))
-        }
+        }.join()
 
         val newQuestion = db.addQuestion(romain.userId, question1.questionId, "title", null, "URI")
         db.getQuestionById(newQuestion.questionId).thenAccept {
             assertThat(it?.questionText, equalTo(""))
-        }
+        }.join()
     }
 }
