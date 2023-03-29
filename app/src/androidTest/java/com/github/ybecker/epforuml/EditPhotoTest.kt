@@ -15,9 +15,9 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class EditPhotoTest {
 
-/*    @Test
+@Test
     fun navigatesCorrectlyThroughApp() {
-
+/*
         val scenario = ActivityScenario.launch(EditPhotoActivity::class.java)
 // go to MainActivity
         onView(ViewMatchers.withId(R.id.guestButton)).perform(click())
@@ -40,6 +40,6 @@ class EditPhotoTest {
 
         onView(ViewMatchers.withId(R.id.ds_photo_editor_top_button_apply).check(isDisplayed()))
         onView(ViewMatchers.withId(R.id.ds_photo_editor_top_button_apply).perform(click()))
-
-    }*/
+*/
+    }
 }

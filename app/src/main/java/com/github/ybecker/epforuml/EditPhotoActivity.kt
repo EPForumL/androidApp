@@ -34,6 +34,10 @@ private lateinit var imageView : ImageView
         checkPermission()
         }
 
+    /**
+     * This method is meant to initialize the intent so that upon activity creation, everything gets
+     * set up nicely
+     */
     private fun goBackToQuestion(){
         val intent  = Intent(this, MainActivity::class.java)
         intent.putExtra("uri", IMAGE_URI)
@@ -43,6 +47,10 @@ private lateinit var imageView : ImageView
         startActivity(intent)
 
     }
+
+    /**
+     * if not done before, check that the activity is allowed to write on disk
+     */
     private fun checkPermission(){
         val permission =ActivityCompat.checkSelfPermission(this,WRITE_EXTERNAL_STORAGE)
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
@@ -51,7 +59,6 @@ private lateinit var imageView : ImageView
             if(permission != PackageManager.PERMISSION_GRANTED){
                 ActivityCompat.requestPermissions(this,
                     arrayOf(WRITE_EXTERNAL_STORAGE), 100)
-
             }else{
                 openImage()
             }
@@ -60,7 +67,6 @@ private lateinit var imageView : ImageView
 
     private fun openImage() {
         //Initialize URI
-
         IMAGE_URI = this.intent.getStringExtra("uri").toString()
         val uri = Uri.parse(IMAGE_URI)
         val intent = Intent(
@@ -95,8 +101,6 @@ private lateinit var imageView : ImageView
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 101){
             goBackToQuestion()
-
-
         }
     }
 
