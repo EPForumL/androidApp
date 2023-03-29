@@ -51,6 +51,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="imagetomodify">imageToModify</string>
+    <string name="login_welcome" />
+    <string name="continue_as_guest">Continue as guest</string>
+    <string name="back" />
 
 
 </resources>

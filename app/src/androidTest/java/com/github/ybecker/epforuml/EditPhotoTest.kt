@@ -19,6 +19,16 @@ class EditPhotoTest {
 @Test
     fun navigatesCorrectlyThroughApp() {
 
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+        onView(ViewMatchers.withId(R.id.guestButton)).perform(click())
+        // open navigation drawer
+        onView(ViewMatchers.withContentDescription(R.string.open))
+            .perform(click())
+        onView(ViewMatchers.withId(R.id.nav_home)).perform(click())
+        onView(ViewMatchers.withId(R.id.new_question_button)).perform(click())
+        onView(ViewMatchers.withId(R.id.takeImage)).perform(ViewActions.scrollTo())
+        onView(ViewMatchers.withId(R.id.takeImage)).perform(click())
+        onView(ViewMatchers.withId(R.id.image_capture_button)).perform(click())
 
 
 
