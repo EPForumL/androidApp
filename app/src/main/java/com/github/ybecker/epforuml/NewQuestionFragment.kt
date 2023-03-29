@@ -10,7 +10,7 @@ import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.github.ybecker.epforuml.authentication.AuthenticatorManager
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 
@@ -35,7 +35,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val user = AuthenticatorManager.authenticator?.user
+        val user = DatabaseManager.user ?: Model.User()
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
 
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
@@ -50,7 +50,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
             )
             spinner.adapter = adapter
             setUp(view,spinner,coursesList,user)
-            mainActivity.replaceFragment(HomeFragment(mainActivity), "HomeFragment")
+            mainActivity.replaceFragment(HomeFragment(this.mainActivity))
         }
         return view
 
