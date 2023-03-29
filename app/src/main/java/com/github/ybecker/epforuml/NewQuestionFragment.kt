@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
@@ -49,20 +48,19 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                 courseNamesList
             )
             spinner.adapter = adapter
-            setUp(view,spinner,coursesList,user)
-            mainActivity.replaceFragment(HomeFragment(this.mainActivity))
+            setUpArgs(view,spinner,coursesList,user)
         }
         return view
 
         }
 
-    private fun setUp(
+    private fun setUpArgs(
         view: View,
         spinner: Spinner,
         coursesList: List<Model.Course>,
         user: Model.User?,
     ) {
-        setUp(view)
+        setUpArgs(view)
         val submitButton = view?.findViewById<Button>(R.id.btn_submit)
         submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
         seUploadImage(view)
@@ -107,6 +105,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         }
+        mainActivity.replaceFragment(HomeFragment(this.mainActivity))
     }
 
     private fun setTakeImage(
@@ -132,7 +131,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         }
     }
 
-    private fun setUp(view: View): Triple<EditText, EditText, TextView> {
+    private fun setUpArgs(view: View): Triple<EditText, EditText, TextView> {
          questBody = view.findViewById(R.id.question_details_edittext)
          questTitle = view.findViewById(R.id.question_title_edittext)
          imageURI = view.findViewById(R.id.image_uri)

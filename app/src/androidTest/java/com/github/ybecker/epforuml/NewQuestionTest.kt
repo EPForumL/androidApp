@@ -34,7 +34,7 @@ class NewQuestionTest {
         onView(withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_home)).perform(click())
         onView(withId(R.id.new_question_button)).perform(click())
-        //onView(withId(R.id.question_title_edittext)).check(matches(isDisplayed()))
+        onView(withId(R.id.question_title_edittext)).check(matches(isDisplayed()))
 
         //onView(withId(R.id.ds_photo_editor_top_button_apply)).check(matches(isDisplayed()))
 
