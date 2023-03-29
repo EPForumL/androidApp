@@ -9,7 +9,7 @@
     tools:context=".account.AccountFragment">
 
     <TextView
-        android:id="@+id/titleAccount"
+        android:id="@+id/titleAccountGuest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/account_fragment"
@@ -22,26 +22,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.1" />
 
-    <Button
-        android:id="@+id/signOutButton"
+    <TextView
+        android:id="@+id/guestMsgAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign-Out"
+        android:text="You are currently using the app as a guest"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleAccount"
-        app:layout_constraintVertical_bias="0.42" />
+        app:layout_constraintTop_toBottomOf="@+id/titleAccountGuest"
+        app:layout_constraintVertical_bias="0.287" />
 
     <Button
-        android:id="@+id/deleteAccoutButton"
+        android:id="@+id/signInButtonAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete Account"
+        android:text="Sign-In"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/signOutButton" />
+        app:layout_constraintTop_toBottomOf="@+id/guestMsgAccount"
+        app:layout_constraintVertical_bias="0.486" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

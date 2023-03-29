@@ -10,7 +10,6 @@ import com.google.firebase.auth.FirebaseUser
  * Interface that represents a mean to authenticate
  */
 interface Authenticator {
-    var user: Model.User?
     /**
      * Allows a user to sign-in
      */
