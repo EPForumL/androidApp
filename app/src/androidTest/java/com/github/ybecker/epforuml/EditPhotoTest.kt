@@ -29,7 +29,7 @@ import org.junit.runner.RunWith
 import java.io.InputStream
 
 
-@RunWith(AndroidJUnit4::class)
+//@RunWith(AndroidJUnit4::class)
 class EditPhotoTest {
 /*
     lateinit var scenario: ActivityScenario<LoginActivity>
