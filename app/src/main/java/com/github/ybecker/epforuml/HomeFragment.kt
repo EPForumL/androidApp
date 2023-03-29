@@ -73,6 +73,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
                 futureQuestionList.let { it.forEach {
                     questionsList.addAll(it.get())
                 } }
+                questionsDisplay()
             }
         }
     }
@@ -91,6 +92,5 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
     private fun refresh() {
         getQuestionsList()
-        questionsDisplay()
     }
 }
