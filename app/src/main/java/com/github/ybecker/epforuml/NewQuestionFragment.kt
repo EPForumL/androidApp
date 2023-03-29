@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.authentication.AuthenticatorManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
@@ -36,6 +37,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
     ): View? {
         val user = AuthenticatorManager.authenticator?.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
+
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
         // Get the set of available courses from the MockDatabase
         db.availableCourses().thenAccept {
@@ -97,6 +99,9 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                             imageURI.toString()
                         )
                     }
+
+
+                    mainActivity.replaceFragment(HomeFragment(mainActivity))
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}

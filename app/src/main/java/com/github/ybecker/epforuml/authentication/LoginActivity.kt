@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 /**
  * Activity that shows the login options
@@ -17,17 +19,19 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // TODO: Use real database when available
-        //DatabaseManager.useMockDatabase()
-
-        AuthenticatorManager.createFirebaseAuthenticator(this)
-        val authenticator = AuthenticatorManager.authenticator
+        val authenticator = FirebaseAuthenticator(this)
 
         val signInButton = findViewById<Button>(R.id.signInButton)
-        signInButton.setOnClickListener { authenticator?.signIn() }
+        signInButton.setOnClickListener { authenticator.signIn() }
 
         val guestButton = findViewById<Button>(R.id.guestButton)
         guestButton.setOnClickListener { continueAsGuest() }
+
+        // Skips the login activity if there is already a user logged in
+        if (DatabaseManager.user != null) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }
     }
 
     /**
@@ -35,5 +39,6 @@ class LoginActivity : AppCompatActivity() {
      */
     private fun continueAsGuest() {
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }
