@@ -34,10 +34,10 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".CameraActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>

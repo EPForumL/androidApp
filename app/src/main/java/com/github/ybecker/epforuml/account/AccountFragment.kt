@@ -1,20 +1,30 @@
 package com.github.ybecker.epforuml.account
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.isPhotoPickerAvailable
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
 
 /**
  * The signed-in account fragment.
  */
 class AccountFragment : Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,6 +43,26 @@ class AccountFragment : Fragment() {
 
         val deleteAccountButton = view.findViewById<Button>(R.id.deleteAccoutButton)
         deleteAccountButton.setOnClickListener { authenticator.deleteUser() }
+
+        val profilePic = view.findViewById<ImageView>(R.id.profilePicture)
+        profilePic.setImageURI(DatabaseManager.user?.profilePic)
+
+        val profilePickEdit = registerForActivityResult(
+            ActivityResultContracts.PickVisualMedia()
+        ) {
+            if (it != null) {
+                profilePic.setImageURI(it)
+                DatabaseManager.user?.profilePic = it
+            }
+        }
+
+        profilePic.setOnClickListener {
+            profilePickEdit.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        }
+
+
 
         return view
     }
