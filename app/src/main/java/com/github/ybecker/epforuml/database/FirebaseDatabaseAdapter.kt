@@ -249,29 +249,63 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
     }
 
+    //
+//    private fun getListOfAny(listPath: List<String>, objectPath: String, future: CompletableFuture<List<Any>>, getter: (DataSnapshot) -> Any?){
+//
+//        //creat path by joining the given list
+//        val path = listPath.joinToString(separator = "/")
+//        db.child(path).get().addOnSuccessListener {
+//            val modelFutures = mutableListOf<CompletableFuture<Any>>()
+//            // add every user's subscribed course that is not null in the map
+//            for (subscriptionSnapshot in it.children) {
+//                //create a future for every child
+//                val modelId = subscriptionSnapshot.value as String
+//                val modelFuture = CompletableFuture<Any>()
+//                modelFutures.add(modelFuture)
+//                //get object for every child
+//                db.child(objectPath).child(modelId).get().addOnSuccessListener{
+//                    val model = getter(it)
+//                    if (model != null) {
+//                        modelFuture.complete(model)
+//                    } else {
+//                        modelFuture.completeExceptionally(Exception("Course not found"))
+//                    }
+//                }.addOnFailureListener{
+//                    future.completeExceptionally(it)
+//                }
+//
+//            }
+//            val models = mutableListOf<Any>()
+//            // when every child's future complete, crete the list of models with their result
+//            CompletableFuture.allOf(*modelFutures.toTypedArray()).thenAccept {
+//                for (modelFuture in modelFutures) {
+//                    if (!modelFuture.isCompletedExceptionally) {
+//                        val model = modelFuture.get()
+//                        models.add(model)
+//                    }
+//                }
+//                //complete the  caller function future
+//                future.complete(models)
+//            }
+//        }.addOnFailureListener {
+//            future.completeExceptionally(it)
+//        }
+//    }
+
     private fun getListOfAny(listPath: List<String>, objectPath: String, future: CompletableFuture<List<Any>>, getter: (DataSnapshot) -> Any?){
 
         //creat path by joining the given list
         val path = listPath.joinToString(separator = "/")
         db.child(path).get().addOnSuccessListener {
-            val modelFutures = mutableListOf<CompletableFuture<Any>>()
+            val modelFutures = mutableListOf<CompletableFuture<Any?>>()
             // add every user's subscribed course that is not null in the map
             for (subscriptionSnapshot in it.children) {
                 //create a future for every child
                 val modelId = subscriptionSnapshot.value as String
-                val modelFuture = CompletableFuture<Any>()
+                val modelFuture = CompletableFuture<Any?>()
                 modelFutures.add(modelFuture)
                 //get object for every child
-                db.child(objectPath).child(modelId).get().addOnSuccessListener{
-                    val model = getter(it)
-                    if (model != null) {
-                        modelFuture.complete(model)
-                    } else {
-                        modelFuture.completeExceptionally(Exception("Course not found"))
-                    }
-                }.addOnFailureListener{
-                    future.completeExceptionally(it)
-                }
+                this.getAnyById(modelId, objectPath, modelFuture, getter)
 
             }
             val models = mutableListOf<Any>()
@@ -280,7 +314,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 for (modelFuture in modelFutures) {
                     if (!modelFuture.isCompletedExceptionally) {
                         val model = modelFuture.get()
-                        models.add(model)
+                        if(model != null) {
+                            models.add(model)
+                        }
                     }
                 }
                 //complete the  caller function future
