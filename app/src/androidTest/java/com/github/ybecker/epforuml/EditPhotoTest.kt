@@ -30,12 +30,12 @@ class EditPhotoTest {
         )
         val scenario = ActivityScenario.launch<Activity>(intent)
 
-        onView(withId(R.id.new_question_button)).perform(click())
         onView(withId(R.id.new_question_button)).check(matches(isDisplayed()))
-        onView(withId(R.id.takeImage)).perform(click())
+        onView(withId(R.id.new_question_button)).perform(click())
         onView(withId(R.id.takeImage)).check(matches(isDisplayed()))
-        onView(withId(R.id.image_capture_button)).perform(click())
+        onView(withId(R.id.takeImage)).perform(click())
         onView(withId(R.id.image_capture_button)).check(matches(isDisplayed()))
+        onView(withId(R.id.image_capture_button)).perform(click())
         var done = false
         while(!done){
             try{
