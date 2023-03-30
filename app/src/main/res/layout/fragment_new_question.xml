@@ -61,7 +61,7 @@
         <EditText
             android:id="@+id/question_details_edittext"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="57dp"
             android:autofillHints="Question body"
             android:inputType="textMultiLine"
             android:maxLines="10"
@@ -78,7 +78,7 @@
         <Switch
             android:id="@+id/anonymous_switch"
             android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_height="60dp"
             android:padding="8dp"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 

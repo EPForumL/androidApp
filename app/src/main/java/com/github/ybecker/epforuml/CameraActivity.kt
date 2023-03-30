@@ -109,7 +109,7 @@ class CameraActivity : AppCompatActivity() {
                     val msg = "Photo capture succeeded: ${output.savedUri}"
                     Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
                     Log.d(TAG, msg)
-                    goBackToQuestion(output.savedUri.toString())
+                    goToEdit(output.savedUri.toString())
                 }
 
             }
@@ -159,13 +159,11 @@ class CameraActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun goBackToQuestion(uri : String){
-        val intent  = Intent(this, MainActivity::class.java)
+    private fun goToEdit(uri : String){
+        val intent  = Intent(this, EditPhotoActivity::class.java)
         intent.putExtra("uri", uri)
-        intent.putExtra("fragment", "NewQuestionFragment")
         intent.putExtra("questionTitle", getIntent().getStringExtra("questionTitle"))
         intent.putExtra("questionDetails", getIntent().getStringExtra("questionDetails"))
-
         startActivity(intent)
 
     }
