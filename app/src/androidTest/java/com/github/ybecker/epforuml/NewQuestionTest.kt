@@ -24,28 +24,20 @@ import org.junit.Rule
 import org.junit.Test import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
 
-
-@RunWith(AndroidJUnit4::class)
-import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
-import org.junit.Test
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
-import com.github.ybecker.epforuml.authentication.LoginActivity
-import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.MockDatabase
 import com.github.ybecker.epforuml.database.Model
 import junit.framework.TestCase.assertNotNull
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert
-import org.junit.After
-import org.junit.Before
-
+@RunWith(AndroidJUnit4::class)
 class NewQuestionTest {
 
     @Before

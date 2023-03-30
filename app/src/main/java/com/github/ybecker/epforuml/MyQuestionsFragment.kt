@@ -11,11 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.ybecker.epforuml.MyQuestionsAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.auth.data.model.User
-import com.github.ybecker.epforuml.authentication.AuthenticatorManager
+
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
+import android.util.Log
 
 
 /**
@@ -29,7 +30,7 @@ class MyQuestionsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MyQuestionsAdapter
-    val user = AuthenticatorManager.authenticator?.user
+    val user = DatabaseManager.user
     private var myQuestionsMap = mutableMapOf<Model.Course, List<Model.Question>>() // switch to questions when able to transfer data from mainActivtiy
 
 
@@ -40,15 +41,12 @@ class MyQuestionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         DatabaseManager.useMockDatabase()
-        getMyQuestionsMap()
+        //getMyQuestionsMap()
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_my_questions, container, false)
 
-
         //Uncomment
-
-
-            return view
+        return view
         }
 
 
@@ -101,25 +99,30 @@ class MyQuestionsFragment : Fragment() {
                                 }
                             }
                         }
-                        myQuestionsMap = mutableMapOf(Pair(Model.Course("course11","Database", mutableListOf()), mutableListOf<Model.Question>(Model.Question("question2", "course0", "user1", "About Scrum master",
-                            "What is a Scrum Master ?", "" , mutableListOf())) ))
-                        adapter = MyQuestionsAdapter(myQuestionsMap)
+                      //  myQuestionsMap = mutableMapOf(Pair(Model.Course("course11","Database", mutableListOf()), mutableListOf<Model.Question>(Model.Question("question2", "course0", "user1", "About Scrum master",
+                        //    "What is a Scrum Master ?", "" , mutableListOf())) ))
 
-                        recyclerView.adapter = adapter
+                        myQuestionsDisplay()
                     }
+
 
                 }
       //  }
     }
 
 
-
-
-
-
-
     private fun myQuestionsDisplay() {
-        getMyQuestionsMap()
+
+       // myQuestionsMap = mutableMapOf(Pair(Model.Course("course11","Database", mutableListOf()),
+           // mutableListOf<Model.Question>(Model.Question("question2", "course0", "user1", "About Scrum master",
+          //  "What is a Scrum Master ?", "" , mutableListOf())) ))
+       // Log.d("MyApp", "This is a debug message.")
+
+
+        adapter = MyQuestionsAdapter(myQuestionsMap)
+        recyclerView.adapter = adapter
+
+        //getMyQuestionsMap()
         //adapter = MyQuestionsAdapter(myQuestionsMap)
 
         //recyclerView.adapter = adapter
@@ -128,10 +131,8 @@ class MyQuestionsFragment : Fragment() {
     }
 
     private fun refresh() {
-
         getMyQuestionsMap()
 
     }
-
 
 }

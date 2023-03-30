@@ -12,7 +12,7 @@ import com.github.ybecker.epforuml.database.Model
 class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, List<Model.Question>>) : RecyclerView.Adapter<MyQuestionsAdapter.MyQuestionsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyQuestionsViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.my_questions_item, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.fragment_my_questions, parent, false)
         return MyQuestionsViewHolder(itemView)
     }
 
@@ -22,9 +22,7 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
 
     override fun onBindViewHolder(holder: MyQuestionsViewHolder, position: Int) {
         val course = myQuestionsMap.keys.elementAt(position)
-
         holder.courseTitle.text = course.courseId
-
         val questionsList = myQuestionsMap[course]?.toMutableList()
 
         holder.forumAdapter = ForumAdapter(questionsList ?: mutableListOf<Model.Question>())

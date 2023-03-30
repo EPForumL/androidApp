@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.imageview.ShapeableImageView
-
 class ForumAdapter(private val questionsList : MutableList<Model.Question>) :
     RecyclerView.Adapter<ForumAdapter.ForumViewHolder>() {
 
@@ -19,7 +18,6 @@ class ForumAdapter(private val questionsList : MutableList<Model.Question>) :
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.forum_item, parent, false)
         return ForumViewHolder(itemView)
     }
-
     override fun getItemCount(): Int {
         return questionsList.size
     }
@@ -32,7 +30,6 @@ class ForumAdapter(private val questionsList : MutableList<Model.Question>) :
             onItemClick?.invoke(currentItem)
         }
     }
-
     class ForumViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val currentText : TextView = itemView.findViewById(R.id.forum_question_displayed)
     }

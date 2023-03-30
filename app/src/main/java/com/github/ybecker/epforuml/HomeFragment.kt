@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
+import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -26,7 +27,6 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var questionsList = mutableListOf<Question>() // switch to questions when able to transfer data from mainActivtiy
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
