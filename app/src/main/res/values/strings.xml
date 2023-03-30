@@ -12,7 +12,8 @@
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="settings_fragment">Settings</string>
-    <string name="chat_fragment">Chat</string>
+    <string name="chat_fragment">Chat</string>}
+    <string name="ds_photo_editor_top_button_apply">ds_photo_editor_top_button_apply</string>
     <string name="account_fragment">Account</string>
     <string name="my_questions_fragment">My Questions</string>
     <string name="saved_questions_fragment">Saved Questions</string>
@@ -48,9 +49,12 @@
     <string name="submit_new_question">Submit</string>
     <string name="add_question_button">add question button</string>
     <string name="add_question_button_" />
-    <string name="login_welcome">Welcome to EPForumL</string>
-    <string name="back"><![CDATA[< BACK]]></string>
-    <string name="refresh">REFRESH</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="imagetomodify">imageToModify</string>
+    <string name="login_welcome" />
+    <string name="continue_as_guest">Continue as guest</string>
+    <string name="back" />
 
 
 </resources>
