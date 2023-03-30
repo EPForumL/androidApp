@@ -12,7 +12,11 @@ object DatabaseManager {
     init {
         val firebaseUser = Firebase.auth.currentUser
         if (firebaseUser != null) {
-            db.getUserById(firebaseUser.uid).thenAccept { user = it }
+            user = Model.User(
+                firebaseUser.uid,
+                firebaseUser.displayName ?: "",
+            firebaseUser.email ?: ""
+            )
         }
     }
 
