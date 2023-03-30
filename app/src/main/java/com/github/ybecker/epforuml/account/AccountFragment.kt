@@ -55,26 +55,32 @@ class AccountFragment : Fragment() {
 
     private fun profilePictureManagement(view: View): View {
         val profilePic = view.findViewById<ImageView>(R.id.profilePicture)
+        // Get the user profile picture and set profilePic to it or just sets it to the
+        // standard image when no profile picture was added to the user.
         DatabaseManager.db.getUserById(DatabaseManager.user?.userId!!).thenAccept {
             val ppPath = it?.profilePic
             if (ppPath != "") {
                 val uri = Uri.parse(Uri.decode(ppPath))
                 profilePic.setImageURI(uri)
             } else {
+                // Standard image when no profile picture was added
                 profilePic.setImageResource(R.drawable.nav_account)
             }
         }
 
+        // Activity used to select a picture in the phone's gallery
         val profilePickEdit = registerForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ) {
             if (it != null) {
                 profilePic.setImageURI(it)
-                DatabaseManager.user?.userId?.let { it1 ->
-                    DatabaseManager.db.getUserById(it1).thenAccept { user ->
+
+                DatabaseManager.user?.userId?.let { userId ->
+                    DatabaseManager.db.getUserById(userId).thenAccept { user ->
                         val newUser = user?.copy(profilePic = it.toString())
                         if (newUser != null) {
                             DatabaseManager.user = newUser
+                            // Update profile picture in the database
                             DatabaseManager.db.updateUser(newUser)
                         }
                     }
@@ -83,6 +89,7 @@ class AccountFragment : Fragment() {
             }
         }
 
+        // Launches the picture gallery activity when we click on the profile picture
         profilePic.setOnClickListener {
             profilePickEdit.launch(
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
