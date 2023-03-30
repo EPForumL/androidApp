@@ -63,6 +63,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
     private fun getQuestionsList() {
         futureCourseList.thenAccept { it ->
             val futureQuestionList = mutableListOf<CompletableFuture<List<Question>>>()
+
             for (course in it) {
                 futureQuestionList.add(db.getCourseQuestions(course.courseId))
             }

@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml
 
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
@@ -40,7 +41,9 @@ class NavigationTest {
 
         onView(withContentDescription(R.string.open))
             .perform(click())
+        onView(withId(R.id.nav_account)).perform(ViewActions.scrollTo())
         onView(withId(R.id.nav_account)).perform(click())
+
         onView(withId(R.id.account_layout_parent)).check(matches(isDisplayed()))
 
         onView(withContentDescription(R.string.open))
