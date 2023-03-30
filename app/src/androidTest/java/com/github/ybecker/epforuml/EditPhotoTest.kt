@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class EditPhotoTest {
 
-    lateinit var scenario: ActivityScenario<LoginActivity>
+    lateinit var scenario: ActivityScenario<MainActivity>
 
     @Before
     fun initTests() {
@@ -38,10 +38,8 @@ class EditPhotoTest {
     @Test
     fun displaysEditorOnCorrectWorkflow(){
 
-        scenario = ActivityScenario.launch(LoginActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
 
-        // go to MainActivity
-        onView(withId(R.id.guestButton)).perform(click())
         onView(withId(R.id.new_question_button)).perform(click())
 
         onView(withId(R.id.takeImage)).perform(click())
