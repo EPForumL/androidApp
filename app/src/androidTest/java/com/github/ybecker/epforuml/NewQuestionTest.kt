@@ -63,6 +63,7 @@ class NewQuestionTest {
             ApplicationProvider.getApplicationContext(),
             MainActivity::class.java
         )
+
         intent.putExtra("uri", "URI")
         intent.putExtra("fragment", "NewQuestionFragment")
         intent.putExtra("questionTitle", "TITLE")
