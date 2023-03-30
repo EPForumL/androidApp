@@ -54,11 +54,22 @@ abstract class Database {
     abstract fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>>
 
     /**
+     * Posts a new course in the forum
+     *
+     * @param courseName the name of the new course
+     * @return the created course
+     */
+    abstract fun addCourse(courseName: String): Course
+
+
+    /**
      * Posts a new question in a given course.
      *
-     * @param user the user that adds the question
-     * @param course the course in which to add the question
+     * @param userId the user that adds the question
+     * @param courseId the course in which to add the question
+     * @param questionTitle the title of the question itself
      * @param questionText the text of the question itself
+     * #param image_uri the uri to an image linked with the question
      * @return the question that was posted in database
      */
     abstract fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,  image_uri: String): Question
@@ -83,6 +94,13 @@ abstract class Database {
     abstract fun addUser(userId:String, username:String, email:String): CompletableFuture<User>
 
     /**
+     * Removes a user to the database.
+     *
+     * @param userId the id of the user to remove
+     */
+    abstract fun removeUser(userId:String)
+
+    /**
      * Adds a subscription to the given user for the specified course.
      *
      * @param user the user that want to subscribe
@@ -90,6 +108,14 @@ abstract class Database {
      * @return the user with updated subscribe list, or null it the user is not found
      */
     abstract fun addSubscription(userId: String, courseId: String): CompletableFuture<User?>
+
+    /**
+     * REmoves a subscription of the given user for a specified course.
+     *
+     * @param user the user that want to subscribe
+     * @param course the course to which the user is subscribing
+     */
+    abstract fun removeSubscription(userId:String, courseId: String)
 
     /**
      * Returns the question with the given ID.

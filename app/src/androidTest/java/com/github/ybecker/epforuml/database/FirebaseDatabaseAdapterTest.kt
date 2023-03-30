@@ -1,8 +1,9 @@
 package com.github.ybecker.epforuml.database
 
-import com.github.ybecker.epforuml.NewQuestionFragment
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
@@ -13,7 +14,8 @@ import org.junit.Test
 
 class FirebaseDatabaseAdapterTest {
 
-    private lateinit var db: Database
+    private lateinit var database: FirebaseDatabase
+    private lateinit var db: FirebaseDatabaseAdapter
     private lateinit var swEng: Course
     private lateinit var sdp: Course
     private lateinit var romain: User
@@ -23,57 +25,62 @@ class FirebaseDatabaseAdapterTest {
     private lateinit var answer1: Answer
     private lateinit var answer2: Answer
 
-    /*companion object{
-        @BeforeClass
-        @JvmStatic
-        fun emulatorSetup(){
-            //To run this test make sur to install firebase database emulator
-            //and run "firebase emulators:start --only database"
+    // FirebaseDatabaseAdapter private variables
+    private val usersPath = "users"
+    private val coursesPath = "courses"
+    private val questionsPath = "questions"
+    private val answersPath = "answers"
+    private val subscriptionsPath = "subscriptions"
 
-            val firebaseInstance = FirebaseDatabase
-                .getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app")
-                //.useEmulator("127.0.0.1", 9000)
-        }
-    }*/
+    private val courseIdPath = "courseId"
+    private val userIdPath = "userId"
+    private val questionIdPath = "questionId"
+    private val answerIdPath = "answerId"
 
+    private val courseNamePath = "courseName"
+    private val usernamePath = "username"
+
+    private val questionTextPath = "questionText"
+    private val questionTitlePath = "questionTitle"
+    private val answerTextPath = "answerText"
+
+    private val questionURIPath = "imageURI"
+
+    //To run this test make sur to install firebase database emulator
+    //and run "firebase emulators:start --only database"
     @Before
     fun setUp() {
 
-        val firebaseDB = FirebaseDatabase.getInstance("https://epforuml-38150-default-rtdb.europe-west1.firebasedatabase.app").reference
+        database = Firebase.database
+
+        //local tests works on the emulator but the CI fails
+        // so with the try-catch it work but on the real database...
+        try{
+            //database.useEmulator("10.0.2.2", 9000)
+        }
+        catch (r : IllegalStateException){ }
+
+        db = FirebaseDatabaseAdapter(database)
+
+        val firebaseDB = database.reference
 
         firebaseDB.child("courses").setValue(null)
         firebaseDB.child("users").setValue(null)
         firebaseDB.child("questions").setValue(null)
         firebaseDB.child("answers").setValue(null)
 
-        db = FirebaseDatabaseAdapter()
-
-        swEng = Course("0", "SwEng", emptyList())
-        sdp = Course("1", "SDP", emptyList())
-
-        firebaseDB.child("courses").child("0").setValue(swEng)
-        firebaseDB.child("courses").child("1").setValue(sdp)
-
-        val course3 = Course("course2","AnalyseI", mutableListOf())
-        firebaseDB.child("courses").child(course3.courseId).setValue(course3)
-        val course4 = Course("course3","AnalyseII", mutableListOf())
-        firebaseDB.child("courses").child(course4.courseId).setValue(course4)
-        val course5 = Course("course4","AnalyseIII", mutableListOf())
-        firebaseDB.child("courses").child(course5.courseId).setValue(course5)
-        val course6 = Course("course5","AnalyseIV", mutableListOf())
-        firebaseDB.child("courses").child(course6.courseId).setValue(course6)
-        val course7 = Course("course6","Algo", mutableListOf())
-        firebaseDB.child("courses").child(course7.courseId).setValue(course7)
-        val course8 = Course("course7","TOC", mutableListOf())
-        firebaseDB.child("courses").child(course8.courseId).setValue(course8)
-        val course9 = Course("course8","POO", mutableListOf())
-        firebaseDB.child("courses").child(course9.courseId).setValue(course9)
-        val course10 = Course("course9","POS", mutableListOf())
-        firebaseDB.child("courses").child(course10.courseId).setValue(course10)
-        val course11 = Course("course10","OS", mutableListOf())
-        firebaseDB.child("courses").child(course11.courseId).setValue(course11)
-        val course12 = Course("course11","Database", mutableListOf())
-        firebaseDB.child("courses").child(course12.courseId).setValue(course12)
+        swEng = db.addCourse("SwEng")
+        sdp = db.addCourse("SDP")
+        db.addCourse("AnalyseI")
+        db.addCourse("AnalyseII")
+        db.addCourse("AnalyseIII")
+        db.addCourse("AnalyseIV")
+        db.addCourse("Algo")
+        db.addCourse("TOC")
+        db.addCourse("POO")
+        db.addCourse("POS")
+        db.addCourse("OS")
+        db.addCourse("Database")
 
         romain = db.addUser("0", "Romain", "testEmail1").get()
         theo = db.addUser("1","Theo", "testEmail2").get()
@@ -90,7 +97,6 @@ class FirebaseDatabaseAdapterTest {
 
     }
 
-
     @Test
     fun addAndGetUser() {
         val user2 = db.addUser("2","TestUser2", "testEmail").get()
@@ -101,7 +107,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun getCourseByIdTest() {
-        db.getCourseById("1").thenAccept {
+        db.getCourseById(sdp.courseId).thenAccept {
             assertThat(it?.courseId, equalTo(sdp.courseId))
         }.join()
     }
@@ -243,4 +249,162 @@ class FirebaseDatabaseAdapterTest {
         }.join()
     }
 
+    @Test
+    fun addCourse(){
+        val newCourseName = "addedCourseTest"
+        db.availableCourses().thenAccept {
+            assertThat(it.filter{ it.courseId == newCourseName }, equalTo(emptyList()))
+        }.join()
+        val newCourse = db.addCourse(newCourseName)
+        db.availableCourses().thenAccept {
+            assertThat(it.filter { it.courseId == newCourse.courseId}, equalTo(listOf(newCourse)))
+        }.join()
+    }
+
+    @Test
+    fun removeUserTest(){
+        val newUser = db.addUser("newID", "newNAME").get()
+        db.getUserById(newUser.userId).thenAccept {
+            assertThat(newUser.username, equalTo(it?.username))
+            assertThat(newUser.userId, equalTo(it?.userId))
+        }.join()
+        db.removeUser(newUser.userId)
+        db.getUserById(newUser.userId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun removeSubscription(){
+        val testCourse = db.addCourse("NEW TEST COURSE")
+        val testUser = db.addUser("IDID", "TestUser").get()
+        db.addSubscription(testUser.userId, testCourse.courseId)
+        db.getUserSubscriptions(testUser.userId).thenAccept {
+            it.contains(testCourse)
+        }.join()
+        db.removeSubscription(testUser.userId, testCourse.courseId)
+        db.getUserSubscriptions(testUser.userId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
+
+    @Test
+    fun getMalformedCourseIsNull(){
+        val dbRef = database.reference
+        val newCourseId = "test"
+        db.getCourseById(newCourseId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(coursesPath).child(newCourseId).setValue(null)
+
+        db.getCourseById(newCourseId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(coursesPath).child(newCourseId).child(courseIdPath).setValue(newCourseId)
+
+        db.getCourseById(newCourseId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun getMalformedUserIsNull(){
+        val dbRef = database.reference
+        val newUserId = "test"
+        db.getUserById(newUserId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(usersPath).child(newUserId).setValue(null)
+
+        db.getUserById(newUserId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(usersPath).child(newUserId).child(userIdPath).setValue(newUserId)
+
+        db.getUserById(newUserId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun getMalformedQuestionIsNull(){
+        val dbRef = database.reference
+        val newQuestionId = "test"
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).setValue(null)
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(questionIdPath).setValue(newQuestionId)
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(courseIdPath).setValue("someCourse")
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(userIdPath).setValue("someUser")
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(questionTitlePath).setValue("someTitle")
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(questionsPath).child(newQuestionId).child(questionTextPath).setValue("someText")
+
+        db.getQuestionById(newQuestionId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun getMalformedAnswerIsNull(){
+        val dbRef = database.reference
+        val newAnswerId = "test"
+        db.getCourseById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(answersPath).child(newAnswerId).setValue(null)
+
+        db.getAnswerById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(answersPath).child(newAnswerId).child(answerIdPath).setValue(newAnswerId)
+
+        db.getAnswerById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(answersPath).child(newAnswerId).child(questionIdPath).setValue("someQuestion")
+
+        db.getAnswerById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+        dbRef.child(answersPath).child(newAnswerId).child(userIdPath).setValue("someUSer")
+
+        db.getAnswerById(newAnswerId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun addNewObjectWithTolerateNullArgsTest(){
+
+        val newAnswer = db.addAnswer(romain.userId, question1.questionId, null)
+        db.getAnswerById(newAnswer.answerId).thenAccept {
+            assertThat(it?.answerText, equalTo(""))
+        }.join()
+
+        val newQuestion = db.addQuestion(romain.userId, question1.questionId, "title", null, "URI")
+        db.getQuestionById(newQuestion.questionId).thenAccept {
+            assertThat(it?.questionText, equalTo(""))
+        }.join()
+    }
 }

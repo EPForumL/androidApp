@@ -37,6 +37,12 @@ class CoursesFragment : Fragment() {
         recyclerView = rootView.findViewById(R.id.recyclerViewCourses)
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
+
+        if (user.userId.length==0) {
+            val textView = rootView.findViewById<TextView>(R.id.notConnectedTextView)
+            textView.visibility = View.VISIBLE
+        }
+
         CompletableFuture.allOf(futureCourses, futureUserSubscriptions).thenAccept {
             courses = futureCourses.get()
             userSubscriptions  = futureUserSubscriptions.get()
@@ -64,23 +70,18 @@ class CoursesFragment : Fragment() {
                 val course = itemView.tag as? Course
                 if(course != null){
                     if (isChecked) {
-                        if(user.userId.isNotEmpty()) {
-                            // add a subscription for this user in the course
-                            db.addSubscription(user.userId, course.courseId)
-                            Toast.makeText(itemView.context,"You subscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
-                        }
-                        else{
-                            Toast.makeText(itemView.context,"You are not logged in",Toast.LENGTH_SHORT).show()
-                        }
+                        // add a subscription for this user in the course
+                        db.addSubscription(user.userId, course.courseId)
+                        Toast.makeText(
+                            itemView.context,
+                            "You subscribed to " + course.courseName,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     else {
-                        if(user.userId.length != 0) {
-                            //TODO update database to unsubscribe
-                            Toast.makeText(itemView.context,"You unsubscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
-                        }
-                        else{
-                            Toast.makeText(itemView.context,"You are not logged in",Toast.LENGTH_SHORT).show()
-                        }
+                        db.removeSubscription(user.userId, course.courseId)
+                        Toast.makeText(itemView.context,"You unsubscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
+
                     }
                 }
             }
@@ -112,7 +113,8 @@ class CoursesFragment : Fragment() {
 
         fun bind(course: Course) {
             courseTitleTextView.text = course.courseName
-            subscriptionSwitch.isChecked = userSubscriptions .map { it.courseId }.contains(course.courseId)
+            subscriptionSwitch.isEnabled = user.userId.length != 0
+            subscriptionSwitch.isChecked = userSubscriptions.map { it.courseId }.contains(course.courseId)
         }
     }
 
