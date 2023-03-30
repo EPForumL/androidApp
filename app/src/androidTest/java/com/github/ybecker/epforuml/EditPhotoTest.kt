@@ -22,6 +22,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class EditPhotoTest {
+    private lateinit var scenario : ActivityScenario<MainActivity>
 
     @Before
     fun initTests() {
@@ -39,7 +40,7 @@ class EditPhotoTest {
             ApplicationProvider.getApplicationContext(),
             MainActivity::class.java
         )
-        ActivityScenario.launch<Activity>(intent)
+        scenario = ActivityScenario.launch(intent)
 
         // go to MainActivity
         //onView(withId(R.id.guestButton)).perform(click())

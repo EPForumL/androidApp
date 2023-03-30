@@ -26,6 +26,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class NewQuestionTest {
+    private lateinit var scenario : ActivityScenario<MainActivity>
 
     @Before
     fun initTests() {
@@ -40,7 +41,7 @@ class NewQuestionTest {
     @Test
     fun goesBackToNewQuestionWhenDone() {
 
-        val scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
 
         onView(withId(R.id.new_question_button)).perform(click())
         onView(withId(R.id.question_title_edittext)).check(matches(isDisplayed()))
@@ -69,7 +70,7 @@ class NewQuestionTest {
         intent.putExtra("questionTitle", "TITLE")
         intent.putExtra("questionDetails", "DETAILS")
 
-        ActivityScenario.launch<Activity>(intent)
+        scenario = ActivityScenario.launch(intent)
 
         onView(withId(R.id.question_title_edittext)).check(matches(withText("TITLE")))
         onView(withId(R.id.question_details_edittext)).check(matches(withText("DETAILS")))
