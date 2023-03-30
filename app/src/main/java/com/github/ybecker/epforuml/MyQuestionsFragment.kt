@@ -30,7 +30,7 @@ class MyQuestionsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MyQuestionsAdapter
     val user = AuthenticatorManager.authenticator?.user
-    private var myQuestionsMap = mutableMapOf<Model.Course, MutableList<Model.Question>>() // switch to questions when able to transfer data from mainActivtiy
+    private var myQuestionsMap = mutableMapOf<Model.Course, List<Model.Question>>() // switch to questions when able to transfer data from mainActivtiy
 
 
 
@@ -39,12 +39,14 @@ class MyQuestionsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        DatabaseManager.useMockDatabase()
+        getMyQuestionsMap()
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_my_questions, container, false)
 
 
         //Uncomment
-        DatabaseManager.useMockDatabase()
+
 
             return view
         }
@@ -78,17 +80,32 @@ class MyQuestionsFragment : Fragment() {
     private fun getMyQuestionsMap() {
         //user?.let { user ->
             val userId = "user1"
-            db.getUserQuestions(userId)
-                .thenAccept { questions ->
-                    myQuestionsMap = mutableMapOf<Model.Course, MutableList<Model.Question>>()
-                    questions.forEach { question ->
-                        db.getCourseById(question.courseId).thenAccept { course ->
-                            val courseQuestions = myQuestionsMap.getOrDefault(course, mutableListOf())
-                            course?.let {
-                                courseQuestions.add(question)
-                                myQuestionsMap[course] = courseQuestions
+            db.getUserQuestions(userId).thenAccept { questions ->
+                    //myQuestionsMap = mutableMapOf<Model.Course, MutableList<Model.Question>>()
+
+                    val courseIds = questions.map { question -> question.courseId  }.toSet().toList()
+                    val futureCourses = mutableListOf<CompletableFuture<Model.Course?>>()
+                    for (id in courseIds){
+                        futureCourses.add(db.getCourseById(id))
+                        }
+                    //complete quand liste de future a complete
+                    CompletableFuture.allOf(*futureCourses.toTypedArray()).thenAccept{
+                        myQuestionsMap = mutableMapOf()
+                        futureCourses.let {
+                            it.forEach { futureCourse ->
+                                val course = futureCourse.get()
+                                if (course != null) {
+                                    val courseQuestion =
+                                        questions.filter { question -> question.courseId == course.courseId }
+                                    myQuestionsMap.set(course, courseQuestion)
+                                }
                             }
                         }
+                        myQuestionsMap = mutableMapOf(Pair(Model.Course("course11","Database", mutableListOf()), mutableListOf<Model.Question>(Model.Question("question2", "course0", "user1", "About Scrum master",
+                            "What is a Scrum Master ?", "" , mutableListOf())) ))
+                        adapter = MyQuestionsAdapter(myQuestionsMap)
+
+                        recyclerView.adapter = adapter
                     }
 
                 }
@@ -102,9 +119,10 @@ class MyQuestionsFragment : Fragment() {
 
 
     private fun myQuestionsDisplay() {
-        adapter = MyQuestionsAdapter(myQuestionsMap)
+        getMyQuestionsMap()
+        //adapter = MyQuestionsAdapter(myQuestionsMap)
 
-        recyclerView.adapter = adapter
+        //recyclerView.adapter = adapter
 
     // move to QuestionDetails when clicking on specific question
     }

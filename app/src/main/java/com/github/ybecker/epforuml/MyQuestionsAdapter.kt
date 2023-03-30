@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.Model
 
-class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, MutableList<Model.Question>>) : RecyclerView.Adapter<MyQuestionsAdapter.MyQuestionsViewHolder>() {
+class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, List<Model.Question>>) : RecyclerView.Adapter<MyQuestionsAdapter.MyQuestionsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyQuestionsViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.my_questions_item, parent, false)
@@ -25,9 +25,9 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Mu
 
         holder.courseTitle.text = course.courseId
 
-        val questionsList = myQuestionsMap[course]
+        val questionsList = myQuestionsMap[course]?.toMutableList()
 
-        holder.forumAdapter = ForumAdapter(questionsList ?: mutableListOf())
+        holder.forumAdapter = ForumAdapter(questionsList ?: mutableListOf<Model.Question>())
 
         holder.questionsRecyclerView.adapter = holder.forumAdapter
     }
