@@ -36,6 +36,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val questionURIPath = "imageURI"
 
     private val emailPath = "email"
+    private val profilePicPath = "profilePic"
+    private val userInfoPath = "userInfo"
+    private val statusPath = "status"
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Course>>()
@@ -185,6 +188,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).removeValue()
     }
 
+    override fun updateUser(user: User) {
+        if (user.userId == DatabaseManager.user?.userId) {
+            db.child(usersPath).child(user.userId).setValue(user)
+        }
+    }
+
     override fun removeSubscription(userId: String, courseId: String) {
         db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).removeValue()
     }
@@ -220,6 +229,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         getAnyById(id, coursesPath) { ds -> getCourse(ds) }
                 //cast the general future to a course one
                 as CompletableFuture<Course?>
+
 
 
 
@@ -281,8 +291,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // Get username
         val username = dataSnapshot.child(usernamePath).getValue(String::class.java)
 
-        val email = dataSnapshot.child(emailPath).getValue(String::class.java) ?: return null
-
+        // Get email
+        val email = dataSnapshot.child(emailPath).getValue(String::class.java)
 
         // save every answers in a List using getAnswers private methode
         val answers = arrayListOf<String>()
@@ -299,8 +309,28 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         dataSnapshot.child(subscriptionsPath).children.forEach {subscriptionSnapshot ->
             subscriptionSnapshot.key?.let { subscriptions.add(it) }
         }
-        if(userId!=null && username!=null){
-            return User(userId, username, email, questions, answers, subscriptions)
+
+        // Get profile picture
+        val profilePic = dataSnapshot.child(profilePicPath).getValue(String::class.java)
+
+        // Get user infos
+        val userInfo = dataSnapshot.child(userInfoPath).getValue(String::class.java)
+
+        // Get user status (is student or teacher)
+        val status = dataSnapshot.child(statusPath).getValue(String::class.java)
+
+        if(userId!=null && username!=null && email!=null){
+            return User(
+                userId,
+                username,
+                email,
+                questions,
+                answers,
+                subscriptions,
+                profilePic ?: "",
+                userInfo ?: "",
+                status ?: ""
+            )
         }
         return null
     }

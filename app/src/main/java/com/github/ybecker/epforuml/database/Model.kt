@@ -92,11 +92,11 @@ class Model {
     data class User(
         val userId: String,
         var username: String,
-        var address: String = "",
+        var email: String = "",
         var questions: List<String> = emptyList(),
         var answers: List<String> = emptyList(),
         var subscriptions: List<String> = emptyList(),
-        var profilePic: Uri = Uri.EMPTY,
+        var profilePic: String = "",
         var userInfo: String = "",
         var status: String = "",
         ) {
@@ -107,7 +107,7 @@ class Model {
             emptyList(),
             emptyList(),
             emptyList(),
-            Uri.EMPTY,
+            "",
             "",
             ""
         )

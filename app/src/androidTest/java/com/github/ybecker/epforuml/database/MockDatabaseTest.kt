@@ -7,7 +7,6 @@ import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
-import java.util.concurrent.CompletableFuture
 
 class MockDatabaseTest {
 
@@ -230,7 +229,7 @@ class MockDatabaseTest {
 
     @Test
     fun addExistingUserReturnOriginalTest(){
-        db.addUser(user.userId, "NEWUSER", user.address).thenAccept {
+        db.addUser(user.userId, "NEWUSER", user.email).thenAccept {
             assertThat(it?.username, equalTo(user.username))
         }
     }

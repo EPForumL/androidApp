@@ -119,6 +119,12 @@ class MockDatabase : Database() {
         users.remove(userId)
     }
 
+    override fun updateUser(user: User) {
+        if (user.userId == DatabaseManager.user?.userId) {
+            users[user.userId] = user
+        }
+    }
+
     override fun addSubscription(userId: String, courseId: String): CompletableFuture<User?> {
         if (users[userId] == null) {
             return CompletableFuture.completedFuture(null)

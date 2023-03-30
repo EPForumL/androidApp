@@ -230,7 +230,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addExistingUserReturnTheUserTest(){
-        val user = db.addUser(romain.userId, "NewRomain", romain.address).get()
+        val user = db.addUser(romain.userId, "NewRomain", romain.email).get()
         assertThat(user.username, equalTo(romain.username))
     }
 

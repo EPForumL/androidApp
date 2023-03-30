@@ -101,6 +101,13 @@ abstract class Database {
     abstract fun removeUser(userId:String)
 
     /**
+     * Updates a user to the database.
+     *
+     * @param user the locally updated user
+     */
+    abstract fun updateUser(user: User)
+
+    /**
      * Adds a subscription to the given user for the specified course.
      *
      * @param user the user that want to subscribe
