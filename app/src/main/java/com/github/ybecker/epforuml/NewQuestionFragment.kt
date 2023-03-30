@@ -61,7 +61,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         user: Model.User?,
     ) {
         setUpArgs(view)
-        val submitButton = view?.findViewById<Button>(R.id.btn_submit)
+        val submitButton = view.findViewById<Button>(R.id.btn_submit)
         submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
         seUploadImage(view)
         setTakeImage(view, questBody, questTitle)
