@@ -35,10 +35,14 @@ class EditPhotoTest {
 
     @Test
     fun displaysEditorOnCorrectWorkflow(){
-        ActivityScenario.launch(LoginActivity::class.java)
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            MainActivity::class.java
+        )
+        ActivityScenario.launch<Activity>(intent)
 
         // go to MainActivity
-        onView(withId(R.id.guestButton)).perform(click())
+        //onView(withId(R.id.guestButton)).perform(click())
         onView(withId(R.id.new_question_button)).perform(click())
 
         onView(withId(R.id.takeImage)).perform(click())
@@ -52,28 +56,8 @@ class EditPhotoTest {
             } catch (e: AssertionError){
             }
         }
-
-        //onView(withId(R.id.ds_photo_editor_top_button_apply)).perform(click())
-
-        //should now navigate to new question fragment
-
-        //onView(withId(R.id.image_uri)).check(matches(isDisplayed()))
-
     }
-    @Test
-    fun failsWithIncorrectUri(){
-        var exception = ExpectedException.none()
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            EditPhotoActivity::class.java
-        )
 
-        intent.putExtra("uri", "INVALIDURI")
-
-        ActivityScenario.launch<Activity>(intent)
-        exception.expect(IllegalArgumentException::class.java)
-
-    }
 
 
     }

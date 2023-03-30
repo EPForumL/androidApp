@@ -14,8 +14,11 @@ import com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity
 import com.dsphotoeditor.sdk.utils.DsPhotoEditorConstants
 import android.net.Uri
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.intent.Intents
 import com.github.ybecker.epforuml.authentication.LoginActivity
+import org.junit.After
 import org.junit.Assert.assertThrows
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
@@ -23,6 +26,16 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class NewQuestionTest {
+
+    @Before
+    fun initTests() {
+        Intents.init()
+    }
+
+    @After
+    fun endTests() {
+        Intents.release()
+    }
 
     @Test
     fun goesBackToNewQuestionWhenDone() {
@@ -61,6 +74,21 @@ class NewQuestionTest {
         onView(withId(R.id.question_details_edittext)).check(matches(withText("DETAILS")))
         onView(withId(R.id.image_uri)).check(matches(withText("URI")))
 
+
+    }
+
+    @Test
+    fun failsWithIncorrectUri(){
+        var exception = ExpectedException.none()
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            EditPhotoActivity::class.java
+        )
+
+        intent.putExtra("uri", "INVALIDURI")
+
+        ActivityScenario.launch<Activity>(intent)
+        exception.expect(IllegalArgumentException::class.java)
 
     }
 }
