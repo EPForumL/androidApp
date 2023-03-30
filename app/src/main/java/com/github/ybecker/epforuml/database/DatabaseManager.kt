@@ -5,17 +5,12 @@ import com.google.firebase.ktx.Firebase
 
 object DatabaseManager {
     var db: Database = FirebaseDatabaseAdapter()
+    var user: Model.User? = null
 
-    private val firebaseUser = Firebase.auth.currentUser
-    var user: Model.User? = firebaseUser?.uid?.let {id ->
-        firebaseUser.displayName?.let { name ->
-            Model.User(
-                id,
-                name,
-                listOf(),
-                listOf(),
-                listOf()
-            )
+    init {
+        val firebaseUser = Firebase.auth.currentUser
+        if (firebaseUser != null) {
+            db.getUserById(firebaseUser.uid).thenAccept { user = it }
         }
     }
 

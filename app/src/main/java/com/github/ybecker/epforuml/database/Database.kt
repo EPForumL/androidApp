@@ -80,7 +80,7 @@ abstract class Database {
      * @param username the name of the user to add
      * @return the user that was added in database
      */
-    abstract fun addUser(userId:String, username:String): CompletableFuture<User>
+    abstract fun addUser(userId:String, username:String, email:String): CompletableFuture<User>
 
     /**
      * Adds a subscription to the given user for the specified course.

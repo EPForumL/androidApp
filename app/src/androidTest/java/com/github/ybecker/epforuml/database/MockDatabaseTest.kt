@@ -14,7 +14,7 @@ class MockDatabaseTest {
 
     private var db: Database = DatabaseManager.getDatabase()
     // these variable are already in the MockDatabase
-    private var user = User("user1", "TestUser", emptyList(), emptyList(), emptyList())
+    private var user = User("user1", "TestUser", "testEmail")
     private val SwEng = Course("course0","Sweng", emptyList())
     private val SDP = Course("course1","SDP", emptyList())
 
@@ -26,8 +26,8 @@ class MockDatabaseTest {
 
     @Test
     fun addAndGetUser(){
-        val user2 = User("user2", "TestUser2", emptyList(), emptyList(), emptyList())
-        db.addUser(user2.userId, user2.username)
+        val user2 = User("user2", "TestUser2", "testEmail")
+        db.addUser(user2.userId, user2.username, user2.address)
         db.getUserById(user2.userId).thenAccept {
             assertThat(db.getUserById(user2.userId), equalTo(user2))
         }

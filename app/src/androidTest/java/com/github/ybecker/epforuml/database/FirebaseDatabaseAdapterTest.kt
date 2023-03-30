@@ -75,8 +75,8 @@ class FirebaseDatabaseAdapterTest {
         val course12 = Course("course11","Database", mutableListOf())
         firebaseDB.child("courses").child(course12.courseId).setValue(course12)
 
-        romain = db.addUser("0", "Romain").get()
-        theo = db.addUser("1","Theo").get()
+        romain = db.addUser("0", "Romain", "testEmail1").get()
+        theo = db.addUser("1","Theo", "testEmail2").get()
 
         question1 = db.addQuestion(romain.userId, sdp.courseId, "About SDP", "I have question about the SDP course !","https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
         question2 = db.addQuestion(romain.userId, sdp.courseId, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !","https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
@@ -84,16 +84,16 @@ class FirebaseDatabaseAdapterTest {
         answer1 = db.addAnswer(romain.userId, question2.questionId, "Yes they are !")
         answer2 = db.addAnswer(romain.userId, question2.questionId, "The exclamation marks are also really great")
 
-        romain = db.addSubscription(romain.userId, sdp.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
-        romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
-        romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", emptyList(), emptyList(), emptyList())
+        romain = db.addSubscription(romain.userId, sdp.courseId).get() ?: User("", "error", "")
+        romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
+        romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
 
     }
 
 
     @Test
     fun addAndGetUser() {
-        val user2 = db.addUser("2","TestUser2").get()
+        val user2 = db.addUser("2","TestUser2", "testEmail").get()
         db.getUserById(user2.userId).thenAccept {
             assertThat(it, equalTo(user2))
         }.join()
@@ -224,7 +224,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addExistingUserReturnTheUserTest(){
-        val user = db.addUser(romain.userId, "NewRomain").get()
+        val user = db.addUser(romain.userId, "NewRomain", romain.address).get()
         assertThat(user.username, equalTo(romain.username))
     }
 

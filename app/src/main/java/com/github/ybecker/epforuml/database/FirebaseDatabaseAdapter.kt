@@ -36,6 +36,8 @@ class FirebaseDatabaseAdapter : Database() {
 
     private val questionURIPath = "imageURI"
 
+    private val emailPath = "email"
+
     override fun availableCourses(): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Course>>()
         // go in "courses" dir
@@ -296,15 +298,14 @@ class FirebaseDatabaseAdapter : Database() {
         return answer
     }
 
-    override fun addUser(userId:String, username: String): CompletableFuture<User> {
-
+    override fun addUser(userId:String, username: String, email: String): CompletableFuture<User> {
         val future = CompletableFuture<User>()
         getUserById(userId).thenAccept {
             if(it != null){
                 future.complete(it)
             }
             else{
-                val newUser = User(userId, username, emptyList(), emptyList(), emptyList())
+                val newUser = User(userId, username, email)
                 db.child(usersPath).child(userId).setValue(newUser)
                 future.complete(newUser)
             }
@@ -391,6 +392,8 @@ class FirebaseDatabaseAdapter : Database() {
         // Get username
         val username = dataSnapshot.child(usernamePath).getValue(String::class.java) ?: return null
 
+        val email = dataSnapshot.child(emailPath).getValue(String::class.java) ?: return null
+
 
         // save every answers in a List using getAnswers private methode
         val answers = arrayListOf<String>()
@@ -408,7 +411,7 @@ class FirebaseDatabaseAdapter : Database() {
             subscriptionSnapshot.key?.let { subscriptions.add(it) }
         }
 
-        return User(userId, username, questions, answers, subscriptions)
+        return User(userId, username, email, questions, answers, subscriptions)
     }
 
     private fun getQuestion(dataSnapshot: DataSnapshot): Question? {
