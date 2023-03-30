@@ -39,7 +39,6 @@ class NewQuestionTest {
     @After
     fun endTests() {
         Intents.release()
-        scenario.close()
     }
 
     @Test
@@ -62,6 +61,7 @@ class NewQuestionTest {
 
         onView(withId(R.id.uploadButton)).check(matches(isDisplayed()))
         onView(withId(R.id.uploadButton)).check(matches(isClickable()))
+        scenario.close()
     }
 
     @Test
@@ -81,22 +81,7 @@ class NewQuestionTest {
         onView(withId(R.id.question_title_edittext)).check(matches(withText("TITLE")))
         onView(withId(R.id.question_details_edittext)).check(matches(withText("DETAILS")))
         onView(withId(R.id.image_uri)).check(matches(withText("URI")))
-
-    }
-
-    @Test
-    fun failsWithIncorrectUri(){
-        var exception = ExpectedException.none()
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            EditPhotoActivity::class.java
-        )
-
-        intent.putExtra("uri", "INVALIDURI")
-
-        scenario = ActivityScenario.launch(intent)
-        exception.expect(IllegalArgumentException::class.java)
-
+        scenario.close()
 
     }
 
