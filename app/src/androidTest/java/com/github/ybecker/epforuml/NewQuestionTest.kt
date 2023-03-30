@@ -55,6 +55,8 @@ class NewQuestionTest {
         onView(withId(R.id.uploadButton)).check(matches(isDisplayed()))
         onView(withId(R.id.uploadButton)).check(matches(isClickable()))
 
+        scenario.close()
+
 
     }
 
@@ -76,7 +78,7 @@ class NewQuestionTest {
         onView(withId(R.id.question_details_edittext)).check(matches(withText("DETAILS")))
         onView(withId(R.id.image_uri)).check(matches(withText("URI")))
 
-
+        scenario.close()
     }
 
     @Test
@@ -89,8 +91,10 @@ class NewQuestionTest {
 
         intent.putExtra("uri", "INVALIDURI")
 
-        ActivityScenario.launch<Activity>(intent)
+        scenario = ActivityScenario.launch(intent)
         exception.expect(IllegalArgumentException::class.java)
+        scenario.close()
 
     }
+
 }

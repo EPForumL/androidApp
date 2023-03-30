@@ -36,18 +36,17 @@ class EditPhotoTest {
 
     @Test
     fun displaysEditorOnCorrectWorkflow(){
+
+
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
             MainActivity::class.java
         )
         scenario = ActivityScenario.launch(intent)
-
         // go to MainActivity
         //onView(withId(R.id.guestButton)).perform(click())
         onView(withId(R.id.new_question_button)).perform(click())
-
         onView(withId(R.id.takeImage)).perform(click())
-
         onView(withId(R.id.image_capture_button)).perform(click())
        var done = false
         while(!done){
@@ -57,6 +56,7 @@ class EditPhotoTest {
             } catch (e: AssertionError){
             }
         }
+        scenario.close()
     }
 
 
