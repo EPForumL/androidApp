@@ -105,8 +105,6 @@ class CoursesFragment : Fragment() {
 
     }
 
-
-
     private inner class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val courseTitleTextView = itemView.findViewById<TextView>(R.id.courseTitleTextView)
         private val subscriptionSwitch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
