@@ -263,7 +263,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun removeUserTest(){
-        val newUser = db.addUser("newID", "newNAME").get()
+        val newUser = db.addUser("newID", "newNAME", "testEmail").get()
         db.getUserById(newUser.userId).thenAccept {
             assertThat(newUser.username, equalTo(it?.username))
             assertThat(newUser.userId, equalTo(it?.userId))
@@ -277,7 +277,7 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun removeSubscription(){
         val testCourse = db.addCourse("NEW TEST COURSE")
-        val testUser = db.addUser("IDID", "TestUser").get()
+        val testUser = db.addUser("IDID", "TestUser", "testEmail").get()
         db.addSubscription(testUser.userId, testCourse.courseId)
         db.getUserSubscriptions(testUser.userId).thenAccept {
             it.contains(testCourse)
