@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml.account
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -45,13 +46,19 @@ class AccountFragment : Fragment() {
         deleteAccountButton.setOnClickListener { authenticator.deleteUser() }
 
         val profilePic = view.findViewById<ImageView>(R.id.profilePicture)
-        profilePic.setImageURI(DatabaseManager.user?.profilePic)
+        val ppUri = DatabaseManager.user?.profilePic
+        if (ppUri != Uri.EMPTY) {
+            profilePic.setImageURI(ppUri)
+        } else {
+            profilePic.setImageResource(R.drawable.nav_account)
+        }
 
         val profilePickEdit = registerForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ) {
             if (it != null) {
                 profilePic.setImageURI(it)
+                // TODO: modify user in database
                 DatabaseManager.user?.profilePic = it
             }
         }
@@ -61,8 +68,6 @@ class AccountFragment : Fragment() {
                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
             )
         }
-
-
 
         return view
     }
