@@ -4,14 +4,15 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -24,6 +25,7 @@ import org.junit.runner.RunWith
 class AnswerAdapterTest {
 
     private lateinit var scenario : ActivityScenario<MainActivity>
+    private var question3 = db.getQuestionById("question3")
 
     @Before
     fun setup() {
@@ -48,75 +50,20 @@ class AnswerAdapterTest {
     }
 
     @Test
+    fun recyclerViewAndCorrespondingQuestionAreDisplayed() {
+        goToThirdElement()
+        onView(withId(R.id.qdetails_title)).check(matches(isDisplayed()))
+        onView(withId(R.id.answers_recycler)).check(matches(isDisplayed()))
+    }
+
+    @Test
     fun properDisplayOfElementsWhenNoAnswer() {
         goToFirstElement()
 
-        //onView(withId(R.id.qdetails_title)).check(matches(withText("Very long question")))
-
-        // go to question details position
-        Espresso.onView(ViewMatchers.withId(R.id.answers_recycler))
-            .perform(RecyclerViewActions.scrollToPosition<ViewHolder>(0))
-
-        /*Espresso.onView(ViewMatchers.withId(R.id.qdetails_question_content))
-            .check(
-                ViewAssertions.matches(
-                    ViewMatchers.withText(
-                        DatabaseManager.db.getQuestionById("question3").get()?.questionText
-                    )
-                )
-            )
-
-         */
-
-        // check that there is no answer displayed
-        /*
-        onView(withId(R.id.answers_recycler))
-            .perform(RecyclerViewActions.scrollToPosition<ViewHolder>(1)).check(matches(null))
-         */
+        question3.thenAccept {
+            onView(withId(R.id.qdetails_title)).check(matches(withText(question3.get()?.questionText)))
+        }
     }
-
-    //@Test
-    fun properDisplayOfElementsWhenSeveralAnswers() {
-        goToThirdElement()
-
-        //onView(withId(R.id.qdetails_title)).check(matches(withText("About ci")))
-
-        // go to question details position
-        /* Espresso.onView(ViewMatchers.withId(R.id.answers_recycler))
-            .perform(RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(2))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2,
-                check(ViewAssertions.matches())
-            ))
-
-        Espresso.onView(ViewMatchers.withId(R.id.qdetails_question_content))
-            .check(
-                ViewAssertions.matches(
-                    ViewMatchers.withText(
-                        DatabaseManager.db.getQuestionById("question1").get()?.questionText
-                    )
-                )
-            )
-
-        // check that answers are displayed
-        Espresso.onView(ViewMatchers.withId(R.id.answers_recycler))
-            .perform(RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(1))
-            .check(ViewAssertions.matches(ViewMatchers.withId(R.id.qdetails_answer_item)))
-
-         */
-
-        /*
-        onView(withId(R.id.qdetails_answer_username))
-            .check(matches(withText(db.getAnswerById("answer3").get()?.userId)))
-
-        onView(withId(R.id.qdetails_answer_text))
-            .check(matches(withText(db.getAnswerById("answer3").get()?.answerText)))
-
-         */
-
-        // how to check text is correct if it not possible to predict which one is going to be
-        // diplayed first
-    }
-
 
     @After
     fun closing() {
