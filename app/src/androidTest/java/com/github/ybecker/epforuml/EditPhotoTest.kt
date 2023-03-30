@@ -6,9 +6,11 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity
@@ -29,8 +31,11 @@ class EditPhotoTest {
         val scenario = ActivityScenario.launch<Activity>(intent)
 
         onView(withId(R.id.new_question_button)).perform(click())
+        onView(withId(R.id.new_question_button)).check(matches(isDisplayed()))
         onView(withId(R.id.takeImage)).perform(click())
+        onView(withId(R.id.takeImage)).check(matches(isDisplayed()))
         onView(withId(R.id.image_capture_button)).perform(click())
+        onView(withId(R.id.image_capture_button)).check(matches(isDisplayed()))
         var done = false
         while(!done){
             try{

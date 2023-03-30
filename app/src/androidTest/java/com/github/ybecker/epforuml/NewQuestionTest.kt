@@ -29,18 +29,6 @@ import org.junit.runner.RunWith
 class NewQuestionTest {
     private lateinit var scenario : ActivityScenario<MainActivity>
 
-    @Before
-    fun initTests() {
-
-        DatabaseManager.useMockDatabase()
-        Intents.init()
-    }
-
-    @After
-    fun endTests() {
-        Intents.release()
-    }
-
     @Test
     fun goesBackToNewQuestionWhenDone() {
 
