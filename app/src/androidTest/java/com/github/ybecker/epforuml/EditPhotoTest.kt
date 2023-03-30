@@ -32,6 +32,7 @@ class EditPhotoTest {
     @After
     fun endTests() {
         Intents.release()
+        scenario.close()
     }
 
     @Test
@@ -43,8 +44,7 @@ class EditPhotoTest {
             MainActivity::class.java
         )
         scenario = ActivityScenario.launch(intent)
-        // go to MainActivity
-        //onView(withId(R.id.guestButton)).perform(click())
+
         onView(withId(R.id.new_question_button)).perform(click())
         onView(withId(R.id.takeImage)).perform(click())
         onView(withId(R.id.image_capture_button)).perform(click())
@@ -56,9 +56,5 @@ class EditPhotoTest {
             } catch (e: AssertionError){
             }
         }
-        scenario.close()
     }
-
-
-
-    }
+}

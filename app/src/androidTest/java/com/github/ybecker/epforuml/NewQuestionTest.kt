@@ -16,6 +16,7 @@ import android.net.Uri
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.intent.Intents
 import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.database.DatabaseManager
 import org.junit.After
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -30,12 +31,15 @@ class NewQuestionTest {
 
     @Before
     fun initTests() {
+
+        DatabaseManager.useMockDatabase()
         Intents.init()
     }
 
     @After
     fun endTests() {
         Intents.release()
+        scenario.close()
     }
 
     @Test
@@ -44,20 +48,20 @@ class NewQuestionTest {
         scenario = ActivityScenario.launch(MainActivity::class.java)
 
         onView(withId(R.id.new_question_button)).perform(click())
+
         onView(withId(R.id.question_title_edittext)).check(matches(isDisplayed()))
         onView(withId(R.id.question_details_edittext)).check(matches(isDisplayed()))
         onView(withId(R.id.subject_spinner)).check(matches(isDisplayed()))
         onView(withId(R.id.image_uri)).check(matches(isDisplayed()))
+
         onView(withId(R.id.btn_submit)).check(matches(isDisplayed()))
         onView(withId(R.id.btn_submit)).check(matches(isClickable()))
+
         onView(withId(R.id.takeImage)).check(matches(isDisplayed()))
         onView(withId(R.id.takeImage)).check(matches(isClickable()))
+
         onView(withId(R.id.uploadButton)).check(matches(isDisplayed()))
         onView(withId(R.id.uploadButton)).check(matches(isClickable()))
-
-        scenario.close()
-
-
     }
 
     @Test
@@ -78,7 +82,6 @@ class NewQuestionTest {
         onView(withId(R.id.question_details_edittext)).check(matches(withText("DETAILS")))
         onView(withId(R.id.image_uri)).check(matches(withText("URI")))
 
-        scenario.close()
     }
 
     @Test
@@ -93,7 +96,7 @@ class NewQuestionTest {
 
         scenario = ActivityScenario.launch(intent)
         exception.expect(IllegalArgumentException::class.java)
-        scenario.close()
+
 
     }
 
