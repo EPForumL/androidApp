@@ -19,12 +19,26 @@ import java.util.concurrent.CompletableFuture
  * A simple [Fragment] subclass.
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
+ *
+ * Hosts the RecyclerView displaying all questions
  */
 class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
+    /**
+     * The questions adapter
+     */
     private lateinit var adapter : ForumAdapter
+
     private lateinit var recyclerView: RecyclerView
+
+    /**
+     * The final list of questions to diplay on the page
+     */
     private var questionsList = mutableListOf<Question>() // switch to questions when able to transfer data from mainActivtiy
+
+    /**
+     * The temporary (to be completed) list of questions
+     */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
     override fun onCreateView(
@@ -56,13 +70,16 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true) // maybe change that later
 
-
-        refresh()
+        getQuestionsList()
     }
 
+    /**
+     * Gets the current list of questions to display from the database
+     */
     private fun getQuestionsList() {
         futureCourseList.thenAccept { it ->
             val futureQuestionList = mutableListOf<CompletableFuture<List<Question>>>()
+
             for (course in it) {
                 futureQuestionList.add(db.getCourseQuestions(course.courseId))
             }
@@ -73,11 +90,15 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
                 futureQuestionList.let { it.forEach {
                     questionsList.addAll(it.get())
                 } }
+
                 questionsDisplay()
             }
         }
     }
 
+    /**
+     * Updates the adapter with the new list of questions and allow each item to be clickable
+     */
     private fun questionsDisplay() {
         adapter = ForumAdapter(questionsList)
         recyclerView.adapter = adapter
@@ -88,9 +109,5 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
             intent.putExtra("question", q)
             startActivity(intent)
         }
-    }
-
-    private fun refresh() {
-        getQuestionsList()
     }
 }

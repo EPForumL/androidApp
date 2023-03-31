@@ -35,6 +35,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     private val questionURIPath = "imageURI"
 
+    private val emailPath = "email"
+    private val profilePicPath = "profilePic"
+    private val userInfoPath = "userInfo"
+    private val statusPath = "status"
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Course>>()
@@ -155,8 +159,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return answer
     }
 
-    override fun addUser(userId:String, username: String): CompletableFuture<User> {
-
+    override fun addUser(userId:String, username: String, email: String): CompletableFuture<User> {
         val future = CompletableFuture<User>()
         //try to get the user with given id
         getUserById(userId).thenAccept {
@@ -166,7 +169,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             }
             else{
                 // it user do not exist create a new one and complete with it
-                val newUser = User(userId, username, emptyList(), emptyList(), emptyList())
+                val newUser = User(userId, username, email)
                 db.child(usersPath).child(userId).setValue(newUser)
                 future.complete(newUser)
             }
@@ -185,44 +188,50 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).removeValue()
     }
 
+    override fun updateUser(user: User) {
+        if (user.userId == DatabaseManager.user?.userId) {
+            db.child(usersPath).child(user.userId).setValue(user)
+        }
+    }
+
     override fun removeSubscription(userId: String, courseId: String) {
         db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).removeValue()
     }
 
-    override fun getQuestionById(id: String): CompletableFuture<Question?> {
-
+    override fun getQuestionById(id: String): CompletableFuture<Question?> =
         //call the private getAnyById with argument for questions
-        return getAnyById(id, questionsPath) {ds -> getQuestion(ds)}
-                //cast the general future to a question one
-                as CompletableFuture<Question?>
+        getAnyById(id, questionsPath) {ds -> getQuestion(ds)}
+            //cast the general future to a question one
+            as CompletableFuture<Question?>
 
-    }
 
-    override fun getAnswerById(id: String): CompletableFuture<Answer?> {
+
+    override fun getAnswerById(id: String): CompletableFuture<Answer?> =
 
         //call the private getAnyById with argument for answers
-        return getAnyById(id, answersPath) {ds -> getAnswer(ds)}
+         getAnyById(id, answersPath) {ds -> getAnswer(ds)}
                 //cast the general future to a answer one
                 as CompletableFuture<Answer?>
-    }
 
-    override fun getUserById(id: String): CompletableFuture<User?> {
+
+    override fun getUserById(id: String): CompletableFuture<User?> =
 
         //call the private getAnyById with argument for users
-        return getAnyById(id, usersPath) {ds -> getUser(ds)}
+        getAnyById(id, usersPath) {ds -> getUser(ds)}
                 //cast the general future to a user one
                 as CompletableFuture<User?>
 
-    }
 
-    override fun getCourseById(id: String): CompletableFuture<Course?> {
+
+    override fun getCourseById(id: String): CompletableFuture<Course?> =
 
         //call the private getAnyById with argument for courses
-        return getAnyById(id, coursesPath) { ds -> getCourse(ds) }
+        getAnyById(id, coursesPath) { ds -> getCourse(ds) }
                 //cast the general future to a course one
                 as CompletableFuture<Course?>
 
-    }
+
+
 
     private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {
         val future = CompletableFuture<Any?>()
@@ -277,10 +286,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private fun getUser(dataSnapshot: DataSnapshot): User? {
 
         // Get user id
-        val userId = dataSnapshot.child(userIdPath).getValue(String::class.java) ?: return null
+        val userId = dataSnapshot.child(userIdPath).getValue(String::class.java)
 
         // Get username
-        val username = dataSnapshot.child(usernamePath).getValue(String::class.java) ?: return null
+        val username = dataSnapshot.child(usernamePath).getValue(String::class.java)
+
+        // Get email
+        val email = dataSnapshot.child(emailPath).getValue(String::class.java)
 
         // save every answers in a List using getAnswers private methode
         val answers = arrayListOf<String>()
@@ -298,58 +310,87 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             subscriptionSnapshot.key?.let { subscriptions.add(it) }
         }
 
-        return User(userId, username, questions, answers, subscriptions)
+        // Get profile picture
+        val profilePic = dataSnapshot.child(profilePicPath).getValue(String::class.java)
+
+        // Get user infos
+        val userInfo = dataSnapshot.child(userInfoPath).getValue(String::class.java)
+
+        // Get user status (is student or teacher)
+        val status = dataSnapshot.child(statusPath).getValue(String::class.java)
+
+        if(userId!=null && username!=null && email!=null){
+            return User(
+                userId,
+                username,
+                email,
+                questions,
+                answers,
+                subscriptions,
+                profilePic ?: "",
+                userInfo ?: "",
+                status ?: ""
+            )
+        }
+        return null
     }
 
     private fun getQuestion(dataSnapshot: DataSnapshot): Question? {
 
-        val questionId = dataSnapshot.child(questionIdPath).getValue(String::class.java) ?: return null
+        val questionId = dataSnapshot.child(questionIdPath).getValue(String::class.java)
 
-        val courseId = dataSnapshot.child(courseIdPath).getValue(String::class.java) ?: return null
+        val courseId = dataSnapshot.child(courseIdPath).getValue(String::class.java)
 
-        val userId = dataSnapshot.child(userIdPath).getValue(String::class.java) ?: return null
+        val userId = dataSnapshot.child(userIdPath).getValue(String::class.java)
 
-        val questionTitle = dataSnapshot.child(questionTitlePath).getValue(String::class.java) ?: return null
+        val questionTitle = dataSnapshot.child(questionTitlePath).getValue(String::class.java)
 
-        val questionText = dataSnapshot.child(questionTextPath).getValue(String::class.java) ?: return null
+        val questionText = dataSnapshot.child(questionTextPath).getValue(String::class.java)
 
-        val questionURI = dataSnapshot.child(questionURIPath).getValue(String::class.java) ?: return null
+        val questionURI = dataSnapshot.child(questionURIPath).getValue(String::class.java)
 
         // save every answers in a List using getAnswers private method
         val answers = arrayListOf<String>()
         dataSnapshot.child(answersPath).children.forEach { answerSnapshot ->
             answerSnapshot.key?.let { answers.add(it) }
         }
-
-        return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers)
+        if(questionId!=null && courseId!=null && userId!=null && questionTitle!=null && questionText!=null && questionURI!=null){
+            return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers)
+        }
+        return null
     }
 
     private fun getAnswer(dataSnapshot: DataSnapshot): Answer?{
         // save every variables of the answer in a map
-        val answerId = dataSnapshot.child(answerIdPath).getValue(String::class.java) ?: return null
+        val answerId = dataSnapshot.child(answerIdPath).getValue(String::class.java)
 
-        val questionId = dataSnapshot.child(questionIdPath).getValue(String::class.java) ?: return null
+        val questionId = dataSnapshot.child(questionIdPath).getValue(String::class.java)
 
-        val userId = dataSnapshot.child(userIdPath).getValue(String::class.java) ?: return null
+        val userId = dataSnapshot.child(userIdPath).getValue(String::class.java)
 
-        val answerText = dataSnapshot.child(answerTextPath).getValue(String::class.java) ?: return null
+        val answerText = dataSnapshot.child(answerTextPath).getValue(String::class.java)
 
-        return Answer(answerId, questionId, userId, answerText)
+        if(answerId!=null && questionId!=null && userId!=null && answerText != null){
+            return Answer(answerId, questionId, userId, answerText)
+        }
+        return null
     }
 
     private fun getCourse(dataSnapshot: DataSnapshot): Course?{
         // save every non list variables of the course in a map
-        val courseId = dataSnapshot.child(courseIdPath).getValue(String::class.java) ?: return null
+        val courseId = dataSnapshot.child(courseIdPath).getValue(String::class.java)
 
-        val courseName = dataSnapshot.child(courseNamePath).getValue(String::class.java) ?: return null
+        val courseName = dataSnapshot.child(courseNamePath).getValue(String::class.java)
 
         // save every questions in a List using getQuestion private method
         val questions = arrayListOf<String>()
         dataSnapshot.child(questionsPath).children.forEach { questionSnapshot ->
             questionSnapshot.key?.let { questions.add(it) }
         }
-
-        return Course(courseId, courseName, questions)
+        if(courseId!=null && courseName!=null){
+            return Course(courseId, courseName, questions)
+        }
+        return null
     }
 
 }

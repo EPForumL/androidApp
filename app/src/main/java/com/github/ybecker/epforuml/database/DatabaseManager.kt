@@ -7,16 +7,15 @@ import com.google.firebase.auth.ktx.auth
 
 object DatabaseManager {
     var db: Database = FirebaseDatabaseAdapter(Firebase.database)
+    var user: Model.User? = null
 
-    private val firebaseUser = Firebase.auth.currentUser
-    var user: Model.User? = firebaseUser?.uid?.let {id ->
-        firebaseUser.displayName?.let { name ->
-            Model.User(
-                id,
-                name,
-                listOf(),
-                listOf(),
-                listOf()
+    init {
+        val firebaseUser = Firebase.auth.currentUser
+        if (firebaseUser != null) {
+            user = Model.User(
+                firebaseUser.uid,
+                firebaseUser.displayName ?: "",
+            firebaseUser.email ?: ""
             )
         }
     }
