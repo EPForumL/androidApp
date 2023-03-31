@@ -5,9 +5,14 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.Model
 
 class QuestionDetailsActivity : AppCompatActivity() {
+
+    private lateinit var answerAdapter : AnswerAdapter
+    private lateinit var answerRecyclerView: RecyclerView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_details)
@@ -19,16 +24,19 @@ class QuestionDetailsActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
+        answerRecyclerView = findViewById(R.id.answers_recycler)
+        answerRecyclerView.layoutManager = LinearLayoutManager(this)
+        answerRecyclerView.setHasFixedSize(true)
+
         val question = intent.getParcelableExtra<Model.Question>("question")
         if (question != null) {
-            val textView : TextView = findViewById(R.id.qdetails_content)
-            textView.text = question.questionText
-
             val title : TextView = findViewById(R.id.qdetails_title)
             title.text = question.questionTitle
 
-            // TODO : implement RecyclerView for answers
-            // var answerDisplay : RecyclerView = findViewById(R.id.answers_recycler)
+            answerRecyclerView.adapter = AnswerAdapter(question.questionId, question.questionText, question.answers)
         }
     }
+
+
 }

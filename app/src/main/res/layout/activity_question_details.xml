@@ -25,17 +25,10 @@
         android:textStyle="bold"
         android:id="@+id/qdetails_title"/>
 
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/new_question_details"
-        android:textSize="30sp"
-        android:id="@+id/qdetails_content"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        tools:listitem="@layout/question_details_answer_item"
         android:id="@+id/answers_recycler"/>
 
 </LinearLayout>
