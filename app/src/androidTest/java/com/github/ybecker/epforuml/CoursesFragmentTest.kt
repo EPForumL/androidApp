@@ -57,7 +57,7 @@ class CoursesFragmentTest {
         Firebase.auth.signOut()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
 
-        val user = db.addUser("0", "TestUser").get()
+        val user = db.addUser("0", "TestUser", "testEmail").get()
         DatabaseManager.user = user
 
         val checkPosition = 0
@@ -93,7 +93,7 @@ class CoursesFragmentTest {
         Firebase.auth.signOut()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
 
-        val user = db.addUser("0", "TestUser").get()
+        val user = db.addUser("0", "TestUser", "testEmail").get()
         DatabaseManager.user = user
 
         val checkPosition = 0
@@ -117,7 +117,7 @@ class CoursesFragmentTest {
         Firebase.auth.signOut()
         val scenario = ActivityScenario.launch(MainActivity::class.java)
 
-        val user = db.addUser("0", "TestUser").get()
+        val user = db.addUser("0", "TestUser", "testEmail").get()
         DatabaseManager.user = user
 
         val checkPosition = 0

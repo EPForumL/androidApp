@@ -35,6 +35,11 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     private val questionURIPath = "imageURI"
 
+    private val emailPath = "email"
+    private val profilePicPath = "profilePic"
+    private val userInfoPath = "userInfo"
+    private val statusPath = "status"
+
     override fun availableCourses(): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Course>>()
         // go in "courses" dir
@@ -154,8 +159,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return answer
     }
 
-    override fun addUser(userId:String, username: String): CompletableFuture<User> {
-
+    override fun addUser(userId:String, username: String, email: String): CompletableFuture<User> {
         val future = CompletableFuture<User>()
         //try to get the user with given id
         getUserById(userId).thenAccept {
@@ -165,7 +169,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             }
             else{
                 // it user do not exist create a new one and complete with it
-                val newUser = User(userId, username, emptyList(), emptyList(), emptyList())
+                val newUser = User(userId, username, email)
                 db.child(usersPath).child(userId).setValue(newUser)
                 future.complete(newUser)
             }
@@ -182,6 +186,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     override fun removeUser(userId: String) {
         db.child(usersPath).child(userId).removeValue()
+    }
+
+    override fun updateUser(user: User) {
+        if (user.userId == DatabaseManager.user?.userId) {
+            db.child(usersPath).child(user.userId).setValue(user)
+        }
     }
 
     override fun removeSubscription(userId: String, courseId: String) {
@@ -219,6 +229,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         getAnyById(id, coursesPath) { ds -> getCourse(ds) }
                 //cast the general future to a course one
                 as CompletableFuture<Course?>
+
 
 
 
@@ -280,6 +291,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // Get username
         val username = dataSnapshot.child(usernamePath).getValue(String::class.java)
 
+        // Get email
+        val email = dataSnapshot.child(emailPath).getValue(String::class.java)
+
         // save every answers in a List using getAnswers private methode
         val answers = arrayListOf<String>()
         dataSnapshot.child(answersPath).children.forEach { answerSnapshot ->
@@ -295,8 +309,28 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         dataSnapshot.child(subscriptionsPath).children.forEach {subscriptionSnapshot ->
             subscriptionSnapshot.key?.let { subscriptions.add(it) }
         }
-        if(userId!=null && username!=null){
-            return User(userId, username, questions, answers, subscriptions)
+
+        // Get profile picture
+        val profilePic = dataSnapshot.child(profilePicPath).getValue(String::class.java)
+
+        // Get user infos
+        val userInfo = dataSnapshot.child(userInfoPath).getValue(String::class.java)
+
+        // Get user status (is student or teacher)
+        val status = dataSnapshot.child(statusPath).getValue(String::class.java)
+
+        if(userId!=null && username!=null && email!=null){
+            return User(
+                userId,
+                username,
+                email,
+                questions,
+                answers,
+                subscriptions,
+                profilePic ?: "",
+                userInfo ?: "",
+                status ?: ""
+            )
         }
         return null
     }

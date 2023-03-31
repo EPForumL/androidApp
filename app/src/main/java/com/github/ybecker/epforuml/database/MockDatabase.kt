@@ -39,7 +39,7 @@ class MockDatabase : Database() {
         val course12 = Course("course11","Database", mutableListOf())
         courses[course12.courseId] = course12
 
-        val user1 = User("user1", "TestUser", emptyList(), emptyList(), emptyList())
+        val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), emptyList())
         users[user1.userId] = user1
 
         val question1 = Question("question1", "course1", "user1", "About ci",
@@ -122,18 +122,24 @@ class MockDatabase : Database() {
         return answer
     }
 
-    override fun addUser(userId:String, username: String): CompletableFuture<User> {
+    override fun addUser(userId:String, username: String, email: String): CompletableFuture<User> {
         var user = users[userId]
         if(user != null){
             return CompletableFuture.completedFuture(user)
         }
-        user = User(userId , username, emptyList(), emptyList(), emptyList())
+        user = User(userId , username, email)
         users[userId] = user
         return CompletableFuture.completedFuture(user)
     }
 
     override fun removeUser(userId: String) {
         users.remove(userId)
+    }
+
+    override fun updateUser(user: User) {
+        if (user.userId == DatabaseManager.user?.userId) {
+            users[user.userId] = user
+        }
     }
 
     override fun addSubscription(userId: String, courseId: String): CompletableFuture<User?> {
