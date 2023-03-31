@@ -63,6 +63,7 @@ class ForumAdapterTest {
             .perform(ViewActions.click())
         onView(withId(R.id.nav_settings)).perform(ViewActions.click())
 
+
         onView(withContentDescription(R.string.open))
             .perform(ViewActions.click())
         onView(withId(R.id.nav_home)).perform(ViewActions.click())
