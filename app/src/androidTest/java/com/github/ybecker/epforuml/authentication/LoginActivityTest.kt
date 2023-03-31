@@ -19,7 +19,7 @@ import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertTrue
-import org.hamcrest.Matchers.*
+import org.hamcrest.CoreMatchers.*
 import org.junit.After
 import org.junit.Before
 

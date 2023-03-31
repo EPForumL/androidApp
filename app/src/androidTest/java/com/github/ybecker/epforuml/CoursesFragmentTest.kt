@@ -22,7 +22,7 @@ import androidx.test.espresso.action.ViewActions.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.fail
-import org.hamcrest.Matchers.*
+import org.hamcrest.CoreMatchers.allOf
 import org.junit.Before
 
 
