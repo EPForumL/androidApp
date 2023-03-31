@@ -1,13 +1,21 @@
 package com.github.ybecker.epforuml.database
 
+import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 
 class Model {
 
     // This class represent a Question
-    data class Question(val questionId: String, val courseId: String, val userId: String, val questionTitle: String, val questionText: String, val imageURI : String, var answers: List<String>)
-        : Parcelable {
+    data class Question(
+        val questionId: String,
+        val courseId: String,
+        val userId: String,
+        val questionTitle: String,
+        val questionText: String,
+        val imageURI : String,
+        var answers: List<String>
+        ) : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
             parcel.readString()!!,
@@ -81,8 +89,28 @@ class Model {
     }
 
     // This class represent a user
-    data class User(val userId: String, val username: String, var questions: List<String>, var answers: List<String>, var subscriptions: List<String>){
-        constructor() : this("", "", emptyList(), emptyList(), emptyList())
+    data class User(
+        val userId: String,
+        var username: String,
+        var email: String = "",
+        var questions: List<String> = emptyList(),
+        var answers: List<String> = emptyList(),
+        var subscriptions: List<String> = emptyList(),
+        var profilePic: String = "",
+        var userInfo: String = "",
+        var status: String = "",
+        ) {
+        constructor() : this(
+            "",
+            "",
+            "",
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            "",
+            "",
+            ""
+        )
     }
 
     //This class represent a course
