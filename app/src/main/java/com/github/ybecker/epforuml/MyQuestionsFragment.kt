@@ -60,7 +60,7 @@ class MyQuestionsFragment : Fragment() {
             val linearLayoutMgr = LinearLayoutManager(context)
             forumRecyclerView = fragmentView.findViewById(R.id.recycler_forum)
             forumRecyclerView.layoutManager = linearLayoutMgr
-            forumRecyclerView.setHasFixedSize(true)
+            forumRecyclerView.setHasFixedSize(false)
 
             // Update questions list
             updateQuestions()
