@@ -7,7 +7,6 @@ import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
-import java.util.concurrent.CompletableFuture
 
 class MockDatabaseTest {
 
@@ -27,8 +26,8 @@ class MockDatabaseTest {
         DatabaseManager.useMockDatabase()
         db = DatabaseManager.getDatabase()
 
-        user = db.addUser("0","TestUser").get()
-        nullUser = db.addUser("1","nullUser").get()
+        user = db.addUser("0","TestUser", "testEmail").get()
+        nullUser = db.addUser("1","nullUser", "testEmail").get()
 
         question1 = db.addQuestion(user.userId, sdp.courseId, "Question about Cirrus CI", "How do I fix the CI ?", "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
         question2 = db.addQuestion(user.userId, sdp.courseId, "About the Scrum master", "What is the exact role of a Scrum Master ?", "")
@@ -50,7 +49,7 @@ class MockDatabaseTest {
 
     @Test
     fun addAndGetUser(){
-        val user2 = db.addUser("user2", "TestUser2").get()
+        val user2 = db.addUser("user2", "TestUser2", "testEmail").get()
         db.getUserById(user2.userId).thenAccept {
             assertThat(it, equalTo(user2))
         }.join()
@@ -189,7 +188,7 @@ class MockDatabaseTest {
 
     @Test
     fun removeUserTest(){
-        val newUser = db.addUser("newID", "newNAME").get()
+        val newUser = db.addUser("newID", "newNAME", "testEmail").get()
         db.getUserById(newUser.userId).thenAccept {
             assertThat(newUser.username, equalTo(it?.username))
             assertThat(newUser.userId, equalTo(it?.userId))
@@ -203,7 +202,7 @@ class MockDatabaseTest {
     @Test
     fun removeSubscription(){
         val testCourse = db.addCourse("NEW TEST COURSE")
-        val testUser = db.addUser("IDID", "TestUser").get()
+        val testUser = db.addUser("IDID", "TestUser", "testEmail").get()
         db.addSubscription(testUser.userId, testCourse.courseId)
         db.getUserSubscriptions(testUser.userId).thenAccept {
             it.contains(testCourse)
@@ -230,7 +229,7 @@ class MockDatabaseTest {
 
     @Test
     fun addExistingUserReturnOriginalTest(){
-        db.addUser(user.userId, "NEWUSER").thenAccept {
+        db.addUser(user.userId, "NEWUSER", user.email).thenAccept {
             assertThat(it?.username, equalTo(user.username))
         }
     }
