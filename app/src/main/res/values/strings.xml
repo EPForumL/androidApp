@@ -60,6 +60,8 @@
     <string name="imagetomodify">imageToModify</string>
     <string name="login_welcome" />
     <string name="continue_as_guest">Continue as guest</string>
+    <string name="my_questions_display">My Questions</string>
+    <string name="you_still_haven_t_asked_any_question">You still haven\'t asked any question</string>
     />
 
 

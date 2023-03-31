@@ -27,12 +27,12 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
 
         holder.forumAdapter = ForumAdapter(questionsList ?: mutableListOf<Model.Question>())
 
-        holder.questionsRecyclerView.adapter = holder.forumAdapter
+        //holder.questionsRecyclerView.adapter = holder.forumAdapter
     }
 
     class MyQuestionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val courseTitle: TextView = itemView.findViewById(R.id.course_title_text_view)
-        val questionsRecyclerView: RecyclerView = itemView.findViewById(R.id.recycler_my_questions)
+        //val questionsRecyclerView: RecyclerView = itemView.findViewById(R.id.recycler_my_questions)
         lateinit var forumAdapter: ForumAdapter
     }
 }
