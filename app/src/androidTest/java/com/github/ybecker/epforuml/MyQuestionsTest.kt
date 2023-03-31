@@ -13,6 +13,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
+import org.junit.After
 import org.junit.Test
 
 class MyQuestionsTest {
@@ -35,7 +36,7 @@ class MyQuestionsTest {
 
         //test if "You are not connected" is displayed
         onView(withId(R.id.not_connected_text_view)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-
+        scenario.close()
         }
 
 //test that the "No question posted" message is displayed when the user is connected but has no question
@@ -43,7 +44,7 @@ class MyQuestionsTest {
     fun connectedNoQuestMessageDisplayed() {
         DatabaseManager.useMockDatabase()
         Firebase.auth.signOut()
-        val user = DatabaseManager.db.addUser("noQuest", "TestUser").get()
+        val user = DatabaseManager.db.addUser("noQuest", "NoQuest",  "").get()
         DatabaseManager.user = user
 
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
@@ -54,8 +55,8 @@ class MyQuestionsTest {
         onView(withId(com.github.ybecker.epforuml.R.id.my_questions_layout_parent)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
         //test if "No question posted" is displayed
-         onView(withId(R.id.no_question)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-
+        onView(withId(R.id.no_question)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        scenario.close()
 
     }
 
@@ -67,7 +68,7 @@ class MyQuestionsTest {
     fun connectedQuestMessageDisplayed() {
         DatabaseManager.useMockDatabase()
         Firebase.auth.signOut()
-        val user = DatabaseManager.db.addUser("user1", "TestUser").get()
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user
 
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
@@ -80,7 +81,7 @@ class MyQuestionsTest {
         //test if questions are displayed
         onView(withId(R.id.recycler_forum)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
-
+        scenario.close()
     }
 
 

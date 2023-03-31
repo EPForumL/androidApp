@@ -43,7 +43,7 @@ class MyQuestionsFragment : Fragment() {
             val fragmentView = inflater.inflate(R.layout.fragment_my_questions, parentContainer, false)
 
             // Utilize the mock database
-            DatabaseManager.useMockDatabase()
+            //DatabaseManager.useMockDatabase()
 
             // Retrieve all available courses
             asyncCourseList = db.availableCourses()
@@ -75,12 +75,12 @@ class MyQuestionsFragment : Fragment() {
             } else {
 
 
-                //val list = DatabaseManager.user?.let {
-                 //   DatabaseManager.db.getUserQuestions(it.userId).get()
-             //  }
+                val list = DatabaseManager.user?.let {
+                   DatabaseManager.db.getUserQuestions(it.userId).get()
+               }
 
                 //COMMENT THIS DEMO VERSION
-                val list = DatabaseManager.db.getUserQuestions("user1").get()
+                //val list = DatabaseManager.db.getUserQuestions("user1").get()
                 ////COMMENT THIS
 
 
