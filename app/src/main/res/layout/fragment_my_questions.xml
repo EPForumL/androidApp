@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="20dp"
-    android:id="@+id/home_layout_parent"
-    tools:context=".HomeFragment">
+    android:id="@+id/my_questions_layout_parent"
+    tools:context=".MyQuestionsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

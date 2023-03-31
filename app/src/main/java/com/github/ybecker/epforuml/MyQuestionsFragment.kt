@@ -19,6 +19,13 @@ import android.util.Log
 import android.widget.ImageButton
 
 // A simple fragment to display the questions list.
+
+//Initially it was supposed make a map with as keys the courses and as value the list of questions posted by
+//the user in that course.
+//For the moment it only displays the list of questions posted by the user in all courses.
+//MyQuestionsAdapter is made to handle the display of a map, and will be used later
+
+
 class MyQuestionsFragment : Fragment() {
 
 // Declare variables
@@ -61,16 +68,33 @@ class MyQuestionsFragment : Fragment() {
 
         // Obtains and displays the list of questions
         private fun fetchQuestions() {
+            //if user is not connected, display a message
+            if (DatabaseManager.user == null) {
+                val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
+                notConnected?.visibility = View.VISIBLE
+            } else {
 
-           val list = DatabaseManager.db.getUserQuestions(userId = "user1").get()
-            if (list.isEmpty()){
-                val noQuestions = view?.findViewById<TextView>(R.id.no_question)
-                noQuestions?.visibility = View.VISIBLE
-            }
-            else {
-                queryList = list as MutableList<Model.Question>
-                // Show the query list
-                displayQuestions()
+
+                //val list = DatabaseManager.user?.let {
+                 //   DatabaseManager.db.getUserQuestions(it.userId).get()
+             //  }
+
+                //COMMENT THIS DEMO VERSION
+                val list = DatabaseManager.db.getUserQuestions("user1").get()
+                ////COMMENT THIS
+
+
+
+                if (list != null) {
+                    if (list.isEmpty()) {
+                        val noQuestions = view?.findViewById<TextView>(R.id.no_question)
+                        noQuestions?.visibility = View.VISIBLE
+                    } else {
+                        queryList = list as MutableList<Model.Question>
+                        // Show the query list
+                        displayQuestions()
+                    }
+                }
             }
         }
 
@@ -79,15 +103,11 @@ class MyQuestionsFragment : Fragment() {
         // Shows the list of questions
         private fun displayQuestions() {
 
-            //if user is not connected, display a message
-            if (DatabaseManager.user == null) {
-                val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
-                notConnected?.visibility = View.VISIBLE
-            }
+
 
 
             //if user has no questions, display a message
-            else if (queryList.isEmpty()) {
+            if (queryList.isEmpty()) {
                 val noQuestions = view?.findViewById<TextView>(R.id.no_question)
                 noQuestions?.visibility = View.VISIBLE
             }

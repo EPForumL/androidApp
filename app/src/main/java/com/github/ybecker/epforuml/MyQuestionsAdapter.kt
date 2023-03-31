@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.Model
 
+//Adapter for the MyQuestionsFragment
+//Not used in the current version of the app
 class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, List<Model.Question>>) : RecyclerView.Adapter<MyQuestionsAdapter.MyQuestionsViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyQuestionsViewHolder {
