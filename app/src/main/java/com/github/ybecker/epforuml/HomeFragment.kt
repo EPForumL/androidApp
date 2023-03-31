@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
+import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture
 
 /**
