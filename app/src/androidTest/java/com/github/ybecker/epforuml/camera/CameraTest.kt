@@ -15,30 +15,18 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class CameraTest {
-    private lateinit var scenario : ActivityScenario<CameraActivity>
-
-    @Before
-    fun launchActivity() {
-        // Launch the CameraActivity
-        scenario = ActivityScenario.launch(CameraActivity::class.java)
-    }
-
-    @After
-    fun closeScenario() {
-        // close the CameraActivity
-        scenario.close()
-
-    }
 
     @Test
     fun testCaptureButtonVisible() {
+        val scenario = ActivityScenario.launch(CameraActivity::class.java)
+
         // Check if the capture button is visible
         onView(withId(com.github.ybecker.epforuml.R.id.image_capture_button)).check(matches(isDisplayed()))
-    }
 
-    @Test
-    fun testPreviewVisible() {
         // Check if the preview is visible
         onView(withId(com.github.ybecker.epforuml.R.id.viewFinder)).check(matches(isDisplayed()))
+
+        scenario.close()
+
     }
 }
