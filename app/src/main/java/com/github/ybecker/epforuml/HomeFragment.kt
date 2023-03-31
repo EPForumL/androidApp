@@ -49,7 +49,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        DatabaseManager.useMockDatabase()
+        //DatabaseManager.useMockDatabase()
 
         futureCourseList = db.availableCourses()
 
