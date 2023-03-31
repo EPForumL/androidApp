@@ -41,7 +41,6 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
      * The temporary (to be completed) list of questions
      */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,7 +68,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_forum)
         recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true) // maybe change that later
+        recyclerView.setHasFixedSize(false) // maybe change that later
 
         getQuestionsList()
     }

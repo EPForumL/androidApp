@@ -77,6 +77,7 @@ class MockDatabase : Database() {
 
         this.addSubscription(user1.userId, course1.courseId)
         this.addSubscription(user1.userId, course2.courseId)
+
     }
 
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {

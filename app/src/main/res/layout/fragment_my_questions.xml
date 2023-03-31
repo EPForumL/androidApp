@@ -7,12 +7,60 @@
     android:id="@+id/my_questions_layout_parent"
     tools:context=".MyQuestionsFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/my_questions_fragment"
-        android:textSize="30sp"
-        android:textStyle="bold"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/forum_layout"
+        android:orientation="vertical">
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/title_forum"
+            android:text= "@string/my_questions_display"
+            android:textSize="30sp"
+            android:layout_marginBottom="20dp"
+            android:textStyle="bold"/>
+
+
+        <TextView
+            android:id="@+id/not_connected_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/you_are_not_connected"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:visibility="gone" />
+
+
+        <TextView
+            android:id="@+id/no_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/you_still_haven_t_asked_any_question"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recycler_forum"
+            tools:listitem="@layout/forum_item"
+            android:clickable="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+    </LinearLayout>
+
+
+
 
 </FrameLayout>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="ds_photo_editor_top_button_apply" type="id" />
+    <item name="my_questions_layout_parent" type="id" />
 </resources>

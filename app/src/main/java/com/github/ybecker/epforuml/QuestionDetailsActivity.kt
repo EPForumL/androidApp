@@ -17,12 +17,14 @@ class QuestionDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_details)
 
+        val originFragment = intent.getStringExtra("originFragment")
+
         val button : Button = findViewById(R.id.back_to_forum_button)
-        button.setOnClickListener {
-            val intent = Intent(application.applicationContext, MainActivity::class.java)
-            // any necessary extra to pass to intent to keep logged in ?
-            startActivity(intent)
-        }
+        button.setOnClickListener{ // Create an intent to return to the previous fragment
+
+
+        startActivity(Intent(applicationContext, MainActivity::class.java))
+    }
 
 
         answerRecyclerView = findViewById(R.id.answers_recycler)
