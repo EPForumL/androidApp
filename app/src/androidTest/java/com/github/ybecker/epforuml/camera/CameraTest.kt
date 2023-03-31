@@ -1,6 +1,10 @@
 package com.github.ybecker.epforuml.camera
 
+import android.app.Activity
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -18,7 +22,9 @@ class CameraTest {
 
     @Test
     fun testCaptureButtonVisible() {
-        val scenario = ActivityScenario.launch(CameraActivity::class.java)
+        val intent = Intent(ApplicationProvider.getApplicationContext(),CameraActivity::class.java)
+
+        val scenario = ActivityScenario.launch<Activity>(intent)
 
         // Check if the capture button is visible
         onView(withId(com.github.ybecker.epforuml.R.id.image_capture_button)).check(matches(isDisplayed()))
