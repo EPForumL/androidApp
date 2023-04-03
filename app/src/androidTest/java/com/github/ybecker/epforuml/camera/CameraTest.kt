@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
@@ -16,6 +17,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.github.ybecker.epforuml.CameraActivity
 import com.github.ybecker.epforuml.R
+import org.hamcrest.Matcher
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -36,15 +39,15 @@ class CameraActivityTest {
         scenario = activityRule.scenario
     }
 
-   /* @Test
+    @Test
     fun checkCameraPermission() {
         // Check if camera permission is granted
         val permissionStatus = ActivityCompat.checkSelfPermission(
-            scenario.getLifecycle().getCurrentState().getContext(),
+            ApplicationProvider.getApplicationContext(),
             Manifest.permission.CAMERA
         )
-        assertThat(permissionStatus,isEqualTo(PackageManager.PERMISSION_GRANTED))
-    }*/
+        assertEquals(permissionStatus,PackageManager.PERMISSION_GRANTED)
+    }
 
     @Test
     fun checkImageCaptureButton() {
