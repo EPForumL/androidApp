@@ -14,29 +14,29 @@ class MockDatabase : Database() {
     private val courses = hashMapOf<String, Course>()
 
     init {
-        val course1 = Course("course0","Sweng", mutableListOf())
+        val course1 = Course("course0","Sweng", mutableListOf(), emptyList())
         courses[course1.courseId] = course1
-        val course2 = Course("course1","SDP", mutableListOf())
+        val course2 = Course("course1","SDP", mutableListOf(), emptyList())
         courses[course2.courseId] = course2
-        val course3 = Course("course2","AnalyseI", mutableListOf())
+        val course3 = Course("course2","AnalyseI", mutableListOf(), emptyList())
         courses[course3.courseId] = course3
-        val course4 = Course("course3","AnalyseII", mutableListOf())
+        val course4 = Course("course3","AnalyseII", mutableListOf(), emptyList())
         courses[course4.courseId] = course4
-        val course5 = Course("course4","AnalyseIII", mutableListOf())
+        val course5 = Course("course4","AnalyseIII", mutableListOf(), emptyList())
         courses[course5.courseId] = course5
-        val course6 = Course("course5","AnalyseIV", mutableListOf())
+        val course6 = Course("course5","AnalyseIV", mutableListOf(), emptyList())
         courses[course6.courseId] = course6
-        val course7 = Course("course6","Algo", mutableListOf())
+        val course7 = Course("course6","Algo", mutableListOf(), emptyList())
         courses[course7.courseId] = course7
-        val course8 = Course("course7","TOC", mutableListOf())
+        val course8 = Course("course7","TOC", mutableListOf(), emptyList())
         courses[course8.courseId] = course8
-        val course9 = Course("course8","POO", mutableListOf())
+        val course9 = Course("course8","POO", mutableListOf(), emptyList())
         courses[course9.courseId] = course9
-        val course10 = Course("course9","POS", mutableListOf())
+        val course10 = Course("course9","POS", mutableListOf(), emptyList())
         courses[course10.courseId] = course10
-        val course11 = Course("course10","OS", mutableListOf())
+        val course11 = Course("course10","OS", mutableListOf(), emptyList())
         courses[course11.courseId] = course11
-        val course12 = Course("course11","Database", mutableListOf())
+        val course12 = Course("course11","Database", mutableListOf(), emptyList())
         courses[course12.courseId] = course12
 
         val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), emptyList())
@@ -90,7 +90,13 @@ class MockDatabase : Database() {
 
     override fun addCourse(courseName: String): Course {
         val courseId = "question${questions.size + 1}"
-        val course = Course(courseId, courseName, emptyList())
+
+        var course = courses[courseId]
+        if(course != null) {
+            return course
+        }
+
+        course = Course(courseId, courseName, emptyList(), emptyList())
         courses[courseId] = course
 
         return course
@@ -166,6 +172,22 @@ class MockDatabase : Database() {
         }
     }
 
+    override fun addNotification(userId: String, courseId: String) {
+        val course = courses[courseId]
+        if(course != null) {
+            val updatedNotification = course.notifications.filter { it != courseId }
+            courses[courseId] = course.copy(notifications = updatedNotification)
+        }
+    }
+
+    override fun removeNotification(userId: String, courseId: String) {
+        val course = courses[courseId]
+        if(course != null) {
+            val updatedNotification = course.notifications.filter { it != courseId }
+            courses[courseId] = course.copy(notifications = updatedNotification)
+        }
+    }
+
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         return CompletableFuture.completedFuture(courses.values.toList())
@@ -205,6 +227,10 @@ class MockDatabase : Database() {
         return allFutures.thenApply {
             list.map { it.join() }
         }
+    }
+
+    override fun getCourseNotifications(courseId: String): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(courses[courseId]?.notifications)
     }
 
 

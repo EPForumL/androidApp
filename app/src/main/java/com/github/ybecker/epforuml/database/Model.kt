@@ -114,7 +114,7 @@ class Model {
     }
 
     //This class represent a course
-    data class Course(val courseId: String, val courseName: String, var questions: List<String>){
-        constructor() : this("", "", emptyList())
+    data class Course(val courseId: String, val courseName: String, var questions: List<String>, var notifications: List<String>){
+        constructor() : this("", "", emptyList(), emptyList())
     }
 }

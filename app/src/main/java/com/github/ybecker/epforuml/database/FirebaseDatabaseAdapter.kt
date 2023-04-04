@@ -20,6 +20,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val questionsPath = "questions"
     private val answersPath = "answers"
     private val subscriptionsPath = "subscriptions"
+    private val notificationsPath = "notifications"
 
     private val courseIdPath = "courseId"
     private val userIdPath = "userId"
@@ -107,6 +108,23 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 as CompletableFuture<List<Course>>
     }
 
+    override fun getCourseNotifications(courseId: String): CompletableFuture<List<String>> {
+        val future = CompletableFuture<List<String>>()
+
+        db.child(coursesPath).child(courseId).child(notificationsPath).get().addOnSuccessListener(){
+            val userIds = mutableListOf<String>()
+
+            for(courseSnapshot in it.children){
+                val userId = courseSnapshot.key
+                if(userId!=null){
+                    userIds.add(userId)
+                }
+            }
+            future.complete(userIds)
+        }
+        return future
+    }
+
 
     override fun addCourse(courseName: String): Course {
         // create a space for the new course in db and save its id
@@ -114,7 +132,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val courseId = newChildRef.key ?: error("Failed to generate course ID")
 
         // create the new course using given parameters
-        val course = Course(courseId, courseName, emptyList())
+        val course = Course(courseId, courseName, emptyList(), emptyList())
 
         // add the new course in the db
         newChildRef.setValue(course)
@@ -196,6 +214,14 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     override fun removeSubscription(userId: String, courseId: String) {
         db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).removeValue()
+    }
+
+    override fun addNotification(userId: String, courseId: String) {
+        db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).setValue(userId)
+    }
+
+    override fun removeNotification(userId: String, courseId: String) {
+        db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).removeValue()
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> =
@@ -387,8 +413,14 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         dataSnapshot.child(questionsPath).children.forEach { questionSnapshot ->
             questionSnapshot.key?.let { questions.add(it) }
         }
+
+        val notifications = arrayListOf<String>()
+        dataSnapshot.child(questionsPath).children.forEach { questionSnapshot ->
+            questionSnapshot.key?.let { questions.add(it) }
+        }
+
         if(courseId!=null && courseName!=null){
-            return Course(courseId, courseName, questions)
+            return Course(courseId, courseName, questions, notifications)
         }
         return null
     }

@@ -64,11 +64,15 @@ class CoursesFragmentTest {
 
         onView(withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_courses)).perform(click())
+        onView(withId(R.id.recyclerViewCourses))
+            .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(checkPosition, click()))
         ClickOnSwitch(checkPosition)
         onView(withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_home)).perform(click())
         onView(withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_courses)).perform(click())
+        onView(withId(R.id.recyclerViewCourses))
+            .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(checkPosition, click()))
         SwitchIsChecked(checkPosition)
 
         scenario.close()

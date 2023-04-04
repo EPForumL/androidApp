@@ -35,6 +35,7 @@ abstract class Database {
     /**
      * Returns a list of every questions asked by a user.
      *
+     * @param user the user from which to get the questions list
      * @return a list of every questions asked by a user
      */
     abstract fun getUserQuestions(userId: String): CompletableFuture<List<Question>>
@@ -42,6 +43,7 @@ abstract class Database {
     /**
      * Returns a list of every answers asked by a user.
      *
+     * @param user the user from which to get the answers list
      * @return a list of every answers asked by a user
      */
     abstract fun getUserAnswers(userId: String): CompletableFuture<List<Answer>>
@@ -49,9 +51,18 @@ abstract class Database {
     /**
      * Returns a list of every courses the user is subscribed to.
      *
+     * @param user the user from which to get the subscription list
      * @return a list of every courses the user is subscribed to
      */
     abstract fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>>
+
+    /**
+     * Returns a list of every user that subscribed to notification for the given course.
+     *
+     * @param course the course from which to get the notification list
+     * @return a list of userId of every user that subscribed to notification for the given course
+     */
+    abstract fun getCourseNotifications(courseId: String): CompletableFuture<List<String>>
 
     /**
      * Posts a new course in the forum
@@ -117,12 +128,28 @@ abstract class Database {
     abstract fun addSubscription(userId: String, courseId: String): CompletableFuture<User?>
 
     /**
-     * REmoves a subscription of the given user for a specified course.
+     * Removes a subscription of the given user for a specified course.
      *
      * @param user the user that want to subscribe
      * @param course the course to which the user is subscribing
      */
     abstract fun removeSubscription(userId:String, courseId: String)
+
+    /**
+     * Adds the user in the list of the user to notify.
+     *
+     * @param user the user that want to have notification
+     * @param course the course to which the user want the notifications
+     */
+    abstract fun addNotification(userId: String, courseId: String)
+
+    /**
+     * remove the user from the list of the user to notify.
+     *
+     * @param user the user that want to have notification
+     * @param course the course to which the user want the notifications
+     */
+    abstract fun removeNotification(userId:String, courseId: String)
 
     /**
      * Returns the question with the given ID.

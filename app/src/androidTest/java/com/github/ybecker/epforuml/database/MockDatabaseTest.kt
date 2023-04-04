@@ -11,8 +11,8 @@ import org.junit.Before
 class MockDatabaseTest {
 
     private lateinit var db: Database
-    private var swEng = Course("course0","Sweng", emptyList())
-    private var sdp = Course("course1","SDP", emptyList())
+    private var swEng = Course("course0","Sweng", emptyList(), emptyList())
+    private var sdp = Course("course1","SDP", emptyList(), emptyList())
     private lateinit var user: User
     private lateinit var nullUser: User
     private lateinit var question1: Question
