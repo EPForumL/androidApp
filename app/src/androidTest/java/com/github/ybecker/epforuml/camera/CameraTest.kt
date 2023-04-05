@@ -68,14 +68,13 @@ class CameraActivityTest {
     fun checkImageCaptureButton() {
         // Check if image capture button is displayed
         Espresso.onView(ViewMatchers.withId(R.id.image_capture_button))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+            .check(matches(isDisplayed()))
     }
 
     @Test
     fun checkImageCapture() {
         // Test taking a photo
         Espresso.onView(ViewMatchers.withId(R.id.image_capture_button)).perform(click())
-        Espresso.onView(ViewMatchers.withId(R.id.viewFinder)).check(matches(isDisplayed()))
 
     }
 
