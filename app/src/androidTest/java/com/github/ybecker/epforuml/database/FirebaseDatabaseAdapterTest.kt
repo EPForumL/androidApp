@@ -68,6 +68,7 @@ class FirebaseDatabaseAdapterTest {
         firebaseDB.child("users").setValue(null)
         firebaseDB.child("questions").setValue(null)
         firebaseDB.child("answers").setValue(null)
+        firebaseDB.child("chats").setValue(null)
 
         swEng = db.addCourse("SwEng")
         sdp = db.addCourse("SDP")

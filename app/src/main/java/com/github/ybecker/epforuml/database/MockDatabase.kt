@@ -77,7 +77,7 @@ class MockDatabase : Database() {
         val answer5 = Answer("answer5", "question1", "user1", "Nan mais je suis pas d'accord non plus")
         addAnswer(answer5.userId, answer5.questionId, answer5.answerText)
 
-        val chat1 = Chat("chat0",LocalDateTime.now(), user1.userId, user1.userId, "Hey me!")
+        val chat1 = Chat("chat0",LocalDateTime.now().toString(), user1.userId, user1.userId, "Hey me!")
         addChat(chat1.senderId, chat1.receiverId, chat1.text)
         this.addSubscription(user1.userId, course1.courseId)
         this.addSubscription(user1.userId, course2.courseId)
@@ -89,7 +89,7 @@ class MockDatabase : Database() {
 
     override fun addChat(senderId: String, receiverId: String, text: String?): Chat {
         val chatId = "chats${chats.size + 1}"
-        val chat = Chat(chatId, LocalDateTime.now(),receiverId,senderId,text)
+        val chat = Chat(chatId, LocalDateTime.now().toString(),receiverId,senderId,text)
         chats[chatId] = chat
 
         return chat

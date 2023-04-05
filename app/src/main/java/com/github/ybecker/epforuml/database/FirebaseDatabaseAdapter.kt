@@ -139,7 +139,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         Log.i("ADD", "adding chat")
         val newChildRef = db.child(chatsPath).push()
         val chatId = newChildRef.key ?: error("Failed to generate course ID")
-        val chat = Chat(chatId,LocalDateTime.now(),receiverId,senderId,text)
+        val chat = Chat(chatId,LocalDateTime.now().toString(),receiverId,senderId,text)
         newChildRef.setValue(chat)
         return chat
     }
@@ -254,23 +254,20 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     override fun getChat(userId1: String, userId2: String): CompletableFuture<List<Chat>> {
-
         Log.i("GET CHAT", "starting get chat")
         val future = CompletableFuture<List<Chat>>()
-
-        db.child(chatsPath).get().addOnCompleteListener{
+        db.child(chatsPath).get().addOnSuccessListener{
             val chats =  mutableListOf<Chat>()
             Log.i("SUCCESS", "on success")
-            for(chatSnapshot in it.result.children){
+            for(chatSnapshot in it.children){
                 Log.i("TEST", "found on in chat")
-                if(chatSnapshot!=null &&(
-                    (chatSnapshot.child(senderIdPath).value == userId1 && chatSnapshot.child(receiverIdPath).value == userId2) ||
-                    (chatSnapshot.child(senderIdPath).value == userId2 && chatSnapshot.child(receiverIdPath).value == userId1))){
-                    val chat = getChat(chatSnapshot)
+                val chat = getChat(chatSnapshot)
+                if(chatSnapshot!=null &&((chat!!.senderId == userId1 && chat!!.receiverId == userId2) ||
+                    (chat!!.senderId == userId2 && chat!!.receiverId == userId1))){
                     Log.i("TEST","found one in cond")
                     chats.add(chat!!)
                 }
-                }
+            }
             future.complete(chats)
         }.addOnFailureListener{
             Log.i("FAIL", "find chats")
@@ -446,7 +443,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val senderId = dataSnapshot.child(senderIdPath).getValue(String::class.java)
         val receiverId = dataSnapshot.child(receiverIdPath).getValue(String::class.java)
         val text = dataSnapshot.child(textPath).getValue(String::class.java)
-        val date = dataSnapshot.child(datePath).getValue(LocalDateTime::class.java)
+        val date = dataSnapshot.child(datePath).getValue(String::class.java)
         if(senderId!=null && receiverId!=null){
             return Chat(chatId,date,receiverId,senderId,text)
         }

@@ -47,7 +47,7 @@ class MockDatabaseTest {
         db.addSubscription(user.userId, swEng.courseId)
         db.addSubscription(user.userId, sdp.courseId)
 
-        val chat2 = Chat("chat0", LocalDateTime.now(), user.userId, user.userId, "Hey me!")
+        val chat2 = Chat("chat0", LocalDateTime.now().toString(), user.userId, user.userId, "Hey me!")
 
         db.addChat(chat2.senderId, chat2.receiverId, chat2.text)
     }

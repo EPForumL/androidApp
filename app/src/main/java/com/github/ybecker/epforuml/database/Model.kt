@@ -119,6 +119,6 @@ class Model {
     }
 
     data class Chat(
-        val chatId: String?, val date: LocalDateTime?,val receiverId:String, val senderId:String,  val text: String?){
+        val chatId: String?, val date: String?,val receiverId:String, val senderId:String,  val text: String?){
     }
 }
