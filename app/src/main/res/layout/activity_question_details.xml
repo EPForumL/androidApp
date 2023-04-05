@@ -26,9 +26,9 @@
         android:id="@+id/qdetails_title"/>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/answers_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/question_details_answer_item"
-        android:id="@+id/answers_recycler"/>
+        tools:listitem="@layout/question_details_answer_item" />
 
 </LinearLayout>

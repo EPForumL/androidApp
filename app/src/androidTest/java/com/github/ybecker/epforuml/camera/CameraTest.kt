@@ -20,6 +20,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity
 import com.github.ybecker.epforuml.CameraActivity
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import org.hamcrest.Matcher
 import org.junit.After
@@ -32,17 +33,13 @@ import kotlin.concurrent.thread
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class CameraActivityTest {
-
-    @get:Rule
-    var activityRule: ActivityScenarioRule<CameraActivity> =
-        ActivityScenarioRule(CameraActivity::class.java)
+class CameraTest {
 
     private lateinit var scenario: ActivityScenario<CameraActivity>
 
     @Before
     fun setUp() {
-        scenario = activityRule.scenario
+        scenario = ActivityScenario.launch(CameraActivity::class.java)
         Intents.init()
     }
 
