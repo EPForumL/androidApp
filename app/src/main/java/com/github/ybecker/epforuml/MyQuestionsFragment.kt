@@ -103,9 +103,6 @@ class MyQuestionsFragment : Fragment() {
         // Shows the list of questions
         private fun displayQuestions() {
 
-
-
-
             //if user has no questions, display a message
             if (queryList.isEmpty()) {
                 val noQuestions = view?.findViewById<TextView>(R.id.no_question)

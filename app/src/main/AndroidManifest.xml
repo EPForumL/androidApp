@@ -38,11 +38,11 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
-            android:name=".CameraActivity"
+            android:name=".sensor.CameraActivity"
             android:exported="false">
         </activity>
         <activity
-            android:name=".EditPhotoActivity"
+            android:name=".sensor.EditPhotoActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
