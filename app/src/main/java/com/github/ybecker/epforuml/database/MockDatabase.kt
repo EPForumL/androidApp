@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -12,6 +13,7 @@ class MockDatabase : Database() {
     private val answers = hashMapOf<String, Answer>()
     private val users = hashMapOf<String, User>()
     private val courses = hashMapOf<String, Course>()
+    private val chats = hashMapOf<String, Chat>()
 
     init {
         val course1 = Course("course0","Sweng", mutableListOf())
@@ -75,9 +77,22 @@ class MockDatabase : Database() {
         val answer5 = Answer("answer5", "question1", "user1", "Nan mais je suis pas d'accord non plus")
         addAnswer(answer5.userId, answer5.questionId, answer5.answerText)
 
+        val chat1 = Chat("chat0",LocalDateTime.now(), user1.userId, user1.userId, "Hey me!")
+        addChat(chat1.senderId, chat1.receiverId, chat1.text)
         this.addSubscription(user1.userId, course1.courseId)
         this.addSubscription(user1.userId, course2.courseId)
 
+    }
+    override fun getChat(userId1: String, userId2:String): CompletableFuture<List<Chat>> {
+        return CompletableFuture.completedFuture(chats.filterValues { it.senderId == userId1 && it.receiverId == userId2}.values.toList().reversed())
+    }
+
+    override fun addChat(senderId: String, receiverId: String, text: String?): Chat {
+        val chatId = "chats${chats.size + 1}"
+        val chat = Chat(chatId, LocalDateTime.now(),receiverId,senderId,text)
+        chats[chatId] = chat
+
+        return chat
     }
 
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {

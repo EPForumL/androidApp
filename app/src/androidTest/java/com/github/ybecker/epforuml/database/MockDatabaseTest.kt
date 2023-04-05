@@ -7,6 +7,7 @@ import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
+import java.time.LocalDateTime
 
 class MockDatabaseTest {
 
@@ -45,6 +46,10 @@ class MockDatabaseTest {
 
         db.addSubscription(user.userId, swEng.courseId)
         db.addSubscription(user.userId, sdp.courseId)
+
+        val chat2 = Chat("chat0", LocalDateTime.now(), user.userId, user.userId, "Hey me!")
+
+        db.addChat(chat2.senderId, chat2.receiverId, chat2.text)
     }
 
     @Test
@@ -53,6 +58,14 @@ class MockDatabaseTest {
         db.getUserById(user2.userId).thenAccept {
             assertThat(it, equalTo(user2))
         }.join()
+    }
+    @Test
+    fun addAndGetChat(){
+        db.addChat("0", "0", "hey")
+        db.getChat(user.userId,user.userId).thenAccept {
+            assertThat(it.size, equalTo(2))
+        }.join()
+
     }
 
     @Test
