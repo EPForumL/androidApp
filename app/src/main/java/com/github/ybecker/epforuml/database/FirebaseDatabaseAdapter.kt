@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml.database
 
-import android.util.Log
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
 import java.time.LocalDateTime
@@ -135,8 +134,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         receiverId: String,
         text: String?
     ): Chat{
-
-        Log.i("ADD", "adding chat")
         val newChildRef = db.child(chatsPath).push()
         val chatId = newChildRef.key ?: error("Failed to generate course ID")
         val chat = Chat(chatId,LocalDateTime.now().toString(),receiverId,senderId,text)
@@ -254,23 +251,18 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     override fun getChat(userId1: String, userId2: String): CompletableFuture<List<Chat>> {
-        Log.i("GET CHAT", "starting get chat")
         val future = CompletableFuture<List<Chat>>()
         db.child(chatsPath).get().addOnSuccessListener{
             val chats =  mutableListOf<Chat>()
-            Log.i("SUCCESS", "on success")
             for(chatSnapshot in it.children){
-                Log.i("TEST", "found on in chat")
-                val chat = getChat(chatSnapshot)
+                val chat = retrieveChat(chatSnapshot)
                 if(chatSnapshot!=null &&((chat!!.senderId == userId1 && chat!!.receiverId == userId2) ||
                     (chat!!.senderId == userId2 && chat!!.receiverId == userId1))){
-                    Log.i("TEST","found one in cond")
                     chats.add(chat!!)
                 }
             }
             future.complete(chats)
         }.addOnFailureListener{
-            Log.i("FAIL", "find chats")
             future.completeExceptionally(it)
 
         }
@@ -438,7 +430,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return null
     }
 
-    private fun getChat(dataSnapshot: DataSnapshot): Chat?{
+    private fun retrieveChat(dataSnapshot: DataSnapshot): Chat?{
         val chatId = dataSnapshot.child(chatIdPath).getValue(String::class.java)
         val senderId = dataSnapshot.child(senderIdPath).getValue(String::class.java)
         val receiverId = dataSnapshot.child(receiverIdPath).getValue(String::class.java)
