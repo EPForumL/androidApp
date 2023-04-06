@@ -9,9 +9,8 @@ import java.util.concurrent.CompletableFuture
 object DatabaseManager {
     var db: Database = FirebaseDatabaseAdapter(Firebase.database)
     var user: Model.User? = null
-    // used only during the login phase
-    var futureUser: CompletableFuture<Model.User> = CompletableFuture.completedFuture(null)
 
+    /*
     init {
         val firebaseUser = Firebase.auth.currentUser
         if (firebaseUser != null) {
@@ -21,7 +20,7 @@ object DatabaseManager {
             firebaseUser.email ?: ""
             )
         }
-    }
+    }*/
 
     /**
      * Retrieves the current instance of the Database

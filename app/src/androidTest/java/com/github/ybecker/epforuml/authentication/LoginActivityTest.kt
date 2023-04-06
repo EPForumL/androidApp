@@ -51,9 +51,12 @@ class LoginActivityTest {
 
     @Test
     fun checkAppSkipsLoginActivityWhenConnected() {
-        DatabaseManager.user = Model.User()
-        scenario = ActivityScenario.launch(LoginActivity::class.java)
-        intended(hasComponent(MainActivity::class.java.name))
+        DatabaseManager.db.addUser("testId", "Test User", "test.user@email.com").thenAccept {
+            DatabaseManager.user = it
+            scenario = ActivityScenario.launch(LoginActivity::class.java)
+            intended(hasComponent(MainActivity::class.java.name))
+            DatabaseManager.db.removeUser(it.userId)
+        }
     }
 
     @Test
