@@ -142,8 +142,7 @@ class FirebaseAuthenticator(
                 // Adds user to the database
                 val user = DatabaseManager.user
                 if (user == null || user.userId != firebaseUser.uid) {
-                    val futureUser = DatabaseManager.db.addUser(firebaseUser.uid, it, firebaseUser.email ?: "")
-                    futureUser.thenAccept { user -> DatabaseManager.user = user }
+                    DatabaseManager.futureUser  = DatabaseManager.db.addUser(firebaseUser.uid, it, firebaseUser.email ?: "")
                 }
             }
 

@@ -24,39 +24,42 @@ class MainActivity : AppCompatActivity() {
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
 
-        drawerLayout = findViewById(R.id.drawer_layout)
-        val navView : NavigationView = findViewById(R.id.nav_view)
+        DatabaseManager.futureUser.thenAccept {
+            DatabaseManager.user = it
+            drawerLayout = findViewById(R.id.drawer_layout)
+            val navView : NavigationView = findViewById(R.id.nav_view)
 
-        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+            toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
+            drawerLayout.addDrawerListener(toggle)
+            toggle.syncState()
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
-        }
-
-        if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
-        }
-
-        navView.setNavigationItemSelectedListener {
-            when(it.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment(this))
-                R.id.nav_courses -> replaceFragment(CoursesFragment())
-                R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
-                R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())
-                R.id.nav_account ->
-                    if (DatabaseManager.user == null) {
-                        replaceFragment(AccountFragmentGuest())
-                    } else {
-                        replaceFragment(AccountFragment())
-                    }
-                R.id.nav_settings -> replaceFragment(SettingsFragment())
+            if(savedInstanceState == null) {
+                supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
             }
 
-            true
+            if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
+                supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
+            }
+
+            navView.setNavigationItemSelectedListener {
+                when(it.itemId) {
+                    R.id.nav_home -> replaceFragment(HomeFragment(this))
+                    R.id.nav_courses -> replaceFragment(CoursesFragment())
+                    R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
+                    R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())
+                    R.id.nav_account ->
+                        if (DatabaseManager.user == null) {
+                            replaceFragment(AccountFragmentGuest())
+                        } else {
+                            replaceFragment(AccountFragment())
+                        }
+                    R.id.nav_settings -> replaceFragment(SettingsFragment())
+                }
+
+                true
+            }
         }
     }
 

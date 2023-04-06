@@ -4,10 +4,13 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 import com.google.firebase.auth.ktx.auth
+import java.util.concurrent.CompletableFuture
 
 object DatabaseManager {
     var db: Database = FirebaseDatabaseAdapter(Firebase.database)
     var user: Model.User? = null
+    // used only during the login phase
+    var futureUser: CompletableFuture<Model.User> = CompletableFuture.completedFuture(null)
 
     init {
         val firebaseUser = Firebase.auth.currentUser
