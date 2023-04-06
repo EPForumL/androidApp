@@ -4,8 +4,11 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.firebase.ui.auth.KickoffActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
@@ -28,11 +31,13 @@ class AccountFragmentsTest {
         Firebase.auth.signOut()
         DatabaseManager.user = null
         scenario = ActivityScenario.launch(LoginActivity::class.java)
+        Intents.init()
     }
 
     @After
     fun closeScenario() {
         scenario.close()
+        Intents.release()
     }
 
     @Test
@@ -45,6 +50,12 @@ class AccountFragmentsTest {
             .perform(click())
 
         checkGuest()
+    }
+
+    @Test
+    fun checkSignInOpensSignInIntent() {
+        onView(ViewMatchers.withId(R.id.signInButton)).perform(click())
+        Intents.intended(IntentMatchers.hasComponent(KickoffActivity::class.java.name))
     }
 
     @Test
