@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
+import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 
@@ -20,11 +21,17 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val questionsPath = "questions"
     private val answersPath = "answers"
     private val subscriptionsPath = "subscriptions"
-
+    private val chatsPath = "chats"
     private val courseIdPath = "courseId"
     private val userIdPath = "userId"
     private val questionIdPath = "questionId"
     private val answerIdPath = "answerId"
+    private val receiverIdPath ="receiverId"
+    private val textPath = "text"
+    private val senderIdPath = "senderId"
+    private val datePath = "date"
+    private val chatIdPath = "chatId"
+
 
     private val courseNamePath = "courseName"
     private val usernamePath = "username"
@@ -40,26 +47,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val userInfoPath = "userInfo"
     private val statusPath = "status"
 
-    override fun availableCourses(): CompletableFuture<List<Course>> {
-        val future = CompletableFuture<List<Course>>()
-        // go in "courses" dir
-        db.child(coursesPath).get().addOnSuccessListener {
-            val courses = mutableListOf<Course>()
-            // add every course that in not null in "courses" in the map
-            for (courseSnapshot in it.children) {
-                val course = getCourse(courseSnapshot)
-                if (course != null) {
-                    courses.add(course)
-                }
-            }
-            //complete the future when every children has been added
-            future.complete(courses)
-        }.addOnFailureListener {
-            future.completeExceptionally(it)
-        }
-
-        return future
-    }
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
@@ -140,6 +127,18 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
 
         return question
+    }
+
+    override fun addChat(
+        senderId: String,
+        receiverId: String,
+        text: String?
+    ): Chat{
+        val newChildRef = db.child(chatsPath).push()
+        val chatId = newChildRef.key ?: error("Failed to generate course ID")
+        val chat = Chat(chatId,LocalDateTime.now().toString(),receiverId,senderId,text)
+        newChildRef.setValue(chat)
+        return chat
     }
 
     override fun addAnswer(userId: String, questionId: String, answerText: String?): Answer {
@@ -230,7 +229,45 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 //cast the general future to a course one
                 as CompletableFuture<Course?>
 
+    override fun availableCourses(): CompletableFuture<List<Course>> {
+        val future = CompletableFuture<List<Course>>()
+        // go in "courses" dir
+        db.child(coursesPath).get().addOnSuccessListener {
+            val courses = mutableListOf<Course>()
+            // add every course that in not null in "courses" in the map
+            for (courseSnapshot in it.children) {
+                val course = getCourse(courseSnapshot)
+                if (course != null) {
+                    courses.add(course)
+                }
+            }
+            //complete the future when every children has been added
+            future.complete(courses)
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
 
+        return future
+    }
+
+    override fun getChat(userId1: String, userId2: String): CompletableFuture<List<Chat>> {
+        val future = CompletableFuture<List<Chat>>()
+        db.child(chatsPath).get().addOnSuccessListener{
+            val chats =  mutableListOf<Chat>()
+            for(chatSnapshot in it.children){
+                val chat = retrieveChat(chatSnapshot)
+                if(chatSnapshot!=null &&((chat!!.senderId == userId1 && chat!!.receiverId == userId2) ||
+                    (chat!!.senderId == userId2 && chat!!.receiverId == userId1))){
+                    chats.add(chat!!)
+                }
+            }
+            future.complete(chats)
+        }.addOnFailureListener{
+            future.completeExceptionally(it)
+
+        }
+        return future
+    }
 
 
     private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {
@@ -248,7 +285,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private fun getListOfAny(listPath: List<String>, objectPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<List<Any>>{
 
         val future = CompletableFuture<List<Any>>()
-        //creat path by joining the given list
+        //create path by joining the given list
         val path = listPath.joinToString(separator = "/")
         db.child(path).get().addOnSuccessListener {
             val modelFutures = mutableListOf<CompletableFuture<Any?>>()
@@ -389,6 +426,18 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         if(courseId!=null && courseName!=null){
             return Course(courseId, courseName, questions)
+        }
+        return null
+    }
+
+    private fun retrieveChat(dataSnapshot: DataSnapshot): Chat?{
+        val chatId = dataSnapshot.child(chatIdPath).getValue(String::class.java)
+        val senderId = dataSnapshot.child(senderIdPath).getValue(String::class.java)
+        val receiverId = dataSnapshot.child(receiverIdPath).getValue(String::class.java)
+        val text = dataSnapshot.child(textPath).getValue(String::class.java)
+        val date = dataSnapshot.child(datePath).getValue(String::class.java)
+        if(senderId!=null && receiverId!=null){
+            return Chat(chatId,date,receiverId,senderId,text)
         }
         return null
     }
