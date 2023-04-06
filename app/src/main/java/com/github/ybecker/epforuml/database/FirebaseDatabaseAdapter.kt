@@ -1,9 +1,10 @@
 package com.github.ybecker.epforuml.database
 
+import com.firebase.ui.auth.AuthUI.getApplicationContext
+import com.github.ybecker.epforuml.NotificationUtils
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
 import java.util.concurrent.CompletableFuture
-
 
 /**
  * This class represents a database that uses Firebase Realtime Database
@@ -156,6 +157,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         //add the question in the user's questions list
         db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
+
+        NotificationUtils.sendNotification(questionTitle, userId, questionText ?: "")
 
         return question
     }
@@ -424,5 +427,4 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return null
     }
-
 }

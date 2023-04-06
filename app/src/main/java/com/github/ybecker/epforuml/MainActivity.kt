@@ -1,7 +1,7 @@
 package com.github.ybecker.epforuml
 
+import android.content.Context
 import android.os.Bundle
-import android.provider.ContactsContract.RawContacts.Data
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        NotificationUtils.init(applicationContext)
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()

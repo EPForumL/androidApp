@@ -37,8 +37,6 @@ class CoursesFragmentTest {
         )
         )
     }
-
-
     private fun SwitchIsChecked(itemPosition:Int){
         onView(withId(R.id.recyclerViewCourses))
             .perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(itemPosition,
