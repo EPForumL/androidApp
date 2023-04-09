@@ -33,20 +33,6 @@ class FirebaseAuthenticator(
         FirebaseAuthUIActivityResultContract()
     ) { res -> this.onSignInResult(res) }
 
-    /*
-    init {
-        // If the user is already connected set the user to the corresponding value
-        val firebaseUser = Firebase.auth.currentUser
-        if (firebaseUser != null) {
-            DatabaseManager.user =
-                Model.User(
-                    firebaseUser.uid,
-                    firebaseUser.displayName ?: "",
-                    firebaseUser.email ?: ""
-                )
-        }
-    }*/
-
     override fun signIn() {
         // Adds the authentication means
         val providers = arrayListOf(
