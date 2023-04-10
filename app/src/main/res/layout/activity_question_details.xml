@@ -81,13 +81,14 @@
             app:cardUseCompatPadding="true"
             app:cardCornerRadius="3dp"
             app:cardElevation="5dp"
-            android:backgroundTint="@color/shade0">
+            android:backgroundTint="@color/shade0"
+            android:id="@+id/post_reply_button"
+            android:clickable="true">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:id="@+id/post_reply_button"
                 android:src="@drawable/send_icon"
                 app:tint="@color/white"
                 android:layout_margin="8dp"
