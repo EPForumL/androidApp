@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.Model
@@ -13,6 +14,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var answerAdapter : AnswerAdapter
     private lateinit var answerRecyclerView: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_details)
@@ -21,10 +23,11 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         val button : Button = findViewById(R.id.back_to_forum_button)
         button.setOnClickListener{ // Create an intent to return to the previous fragment
+            startActivity(Intent(applicationContext, MainActivity::class.java))
+        }
 
-
-        startActivity(Intent(applicationContext, MainActivity::class.java))
-    }
+        val sendButton : CardView =  findViewById(R.id.post_reply_button)
+        sendButton.setOnClickListener(sendReply())
 
 
         answerRecyclerView = findViewById(R.id.answers_recycler)
@@ -40,5 +43,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
+    private fun sendReply() {
 
+    }
 }
