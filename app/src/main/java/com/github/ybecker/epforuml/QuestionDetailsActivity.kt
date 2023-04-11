@@ -19,6 +19,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var answerAdapter : AnswerAdapter
     private lateinit var answerRecyclerView: RecyclerView
     private var question : Model.Question? = null
+    private lateinit var questionId : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,11 +37,13 @@ class QuestionDetailsActivity : AppCompatActivity() {
         answerRecyclerView.layoutManager = LinearLayoutManager(this)
         answerRecyclerView.setHasFixedSize(true)
 
+        question = intent.getParcelableExtra("question")
         if (question != null) {
+            questionId = question!!.questionId
             val title : TextView = findViewById(R.id.qdetails_title)
             title.text = question!!.questionTitle
 
-            updateRecycler(question!!)
+            updateRecycler()
         }
 
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
@@ -50,20 +53,35 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
             if (question != null) {
                 val replyText : String =  replyBox.text.toString()
-                replyBox.setText("")
 
-                // TODO : retrieve userId
-                db.addAnswer("user", question!!.questionId, replyText)
-                updateRecycler(question!!)
+                if (replyText != "") {
+                    replyBox.setText("")
+
+                    // TODO : retrieve userId
+                    db.addAnswer("user", question!!.questionId, replyText)
+                    updateRecycler()
+                }
             } else {
                 Toast.makeText(applicationContext, "Could not load this question.", Toast.LENGTH_SHORT)
                     .show()
             }
+
+            //getSystemService(INPUT_METHOD_SERVICE).hideSoft
         }
     }
 
 
-    private fun updateRecycler(question : Model.Question) {
-        answerRecyclerView.adapter = AnswerAdapter(question.questionId, question.questionText, question.answers)
+    private fun updateRecycler() {
+        db.getQuestionById(questionId).thenAccept {
+            question = it
+            answerRecyclerView.adapter = AnswerAdapter(question!!.questionId, question!!.questionText, question!!.answers)
+        }
+
+    }
+
+    private fun reloadQuestion() {
+        db.getQuestionById(questionId).thenAccept {
+            question = it
+        }
     }
 }

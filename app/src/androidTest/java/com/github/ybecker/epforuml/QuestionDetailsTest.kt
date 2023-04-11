@@ -55,6 +55,10 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
     }
 
+    // if text is empty, no new answer is posted
+    // edittext is visible, so is the button
+    // if the text is not empty, new answer is posted upon button click + edittext ends up empty
+
     @After
     fun closing() {
         scenario.close()
