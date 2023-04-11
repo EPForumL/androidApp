@@ -17,13 +17,14 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var answerAdapter : AnswerAdapter
     private lateinit var answerRecyclerView: RecyclerView
-    private var question = intent.getParcelableExtra<Model.Question>("question")
+    private var question : Model.Question? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_details)
 
         //val originFragment = intent.getStringExtra("originFragment")
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val button : Button = findViewById(R.id.back_to_forum_button)
         button.setOnClickListener{ // Create an intent to return to the previous fragment

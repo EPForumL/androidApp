@@ -41,6 +41,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             app:cardUseCompatPadding="true"
             app:cardCornerRadius="3dp"
             app:cardElevation="5dp"
@@ -74,29 +75,17 @@
 
         </androidx.cardview.widget.CardView>
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            app:cardUseCompatPadding="true"
-            app:cardCornerRadius="3dp"
-            app:cardElevation="5dp"
-            android:backgroundTint="@color/shade0"
+        <ImageButton
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:id="@+id/post_reply_button"
-            android:clickable="true">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/send_icon"
-                app:tint="@color/white"
-                android:layout_margin="8dp"
-                android:backgroundTint="@color/light_gray"/>
-
-        </androidx.cardview.widget.CardView>
-
-
+            android:clickable="true"
+            android:layout_gravity="center"
+            android:src="@drawable/send_icon"
+            android:background="@drawable/round_corner"
+            app:tint="@color/white"
+            android:layout_margin="8dp"
+            />
 
     </LinearLayout>
 
