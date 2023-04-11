@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -42,7 +43,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             updateRecycler(question!!)
         }
 
-        val sendButton : CardView =  findViewById(R.id.post_reply_button)
+        val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         // store content of box as a new answer to corresponding question
         sendButton.setOnClickListener {
