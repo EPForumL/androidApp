@@ -58,6 +58,8 @@ class QuestionDetailsTest {
     // if text is empty, no new answer is posted
     // edittext is visible, so is the button
     // if the text is not empty, new answer is posted upon button click + edittext ends up empty
+    // check if connected user is current
+    // check if guest cannot post any answer
 
     @After
     fun closing() {

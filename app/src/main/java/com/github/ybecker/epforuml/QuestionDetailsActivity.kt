@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 
@@ -20,6 +21,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var answerRecyclerView: RecyclerView
     private var question : Model.Question? = null
     private lateinit var questionId : String
+
+    private lateinit var user : Model.User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,28 +49,31 @@ class QuestionDetailsActivity : AppCompatActivity() {
             updateRecycler()
         }
 
-        val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
-        // store content of box as a new answer to corresponding question
-        sendButton.setOnClickListener {
-            val replyBox : EditText = findViewById(R.id.write_reply_box)
 
-            if (question != null) {
-                val replyText : String =  replyBox.text.toString()
+        user = DatabaseManager.user ?: Model.User()
 
-                if (replyText != "") {
-                    replyBox.setText("")
+        // only allow posting answer if user is connected
+        if (user.userId.isNotEmpty()) {
+            val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
+            // store content of box as a new answer to corresponding question
+            sendButton.setOnClickListener {
+                val replyBox : EditText = findViewById(R.id.write_reply_box)
 
-                    // TODO : retrieve userId
-                    db.addAnswer("user", question!!.questionId, replyText)
-                    updateRecycler()
+                if (question != null) {
+                    val replyText : String =  replyBox.text.toString()
+
+                    // allow only non-empty answers
+                    if (replyText != "") {
+                        replyBox.setText("")
+
+                        db.addAnswer(user.userId, question!!.questionId, replyText)
+                        updateRecycler()
+                    }
                 }
-            } else {
-                Toast.makeText(applicationContext, "Could not load this question.", Toast.LENGTH_SHORT)
-                    .show()
             }
 
-            //getSystemService(INPUT_METHOD_SERVICE).hideSoft
         }
+
     }
 
 
