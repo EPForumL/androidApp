@@ -44,9 +44,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
 
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
-        val replyBox : EditText = findViewById(R.id.write_reply_box)
         // store content of box as a new answer to corresponding question
         sendButton.setOnClickListener {
+            val replyBox : EditText = findViewById(R.id.write_reply_box)
+
             if (question != null) {
                 val replyText : String =  replyBox.text.toString()
                 replyBox.setText("")
