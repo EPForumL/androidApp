@@ -64,7 +64,7 @@ class ChatHomeTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Thread.sleep(5000)
+        Thread.sleep(10000)
 
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
@@ -80,7 +80,7 @@ class ChatHomeTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Thread.sleep(5000)
+        Thread.sleep(10000)
 
         Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed())).perform(scrollTo()).perform(click())
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))

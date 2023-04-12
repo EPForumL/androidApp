@@ -111,7 +111,7 @@ class RealChatTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Thread.sleep(5000)
+        Thread.sleep(10000)
         Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
 
         Espresso.onView(withId(R.id.send_text)).perform(click())
