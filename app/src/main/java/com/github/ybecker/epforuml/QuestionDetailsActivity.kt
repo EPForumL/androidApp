@@ -30,7 +30,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_details)
 
-        //val originFragment = intent.getStringExtra("originFragment")
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val button : Button = findViewById(R.id.back_to_forum_button)
@@ -40,7 +39,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         answerRecyclerView = findViewById(R.id.answers_recycler)
         answerRecyclerView.layoutManager = LinearLayoutManager(this)
-        //answerRecyclerView.setHasFixedSize(true)
 
         // create answer view
         question = intent.getParcelableExtra("question")
