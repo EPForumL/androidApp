@@ -1,10 +1,13 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -73,7 +76,13 @@ class QuestionDetailsActivity : AppCompatActivity() {
             }
 
         } else {
-            replyBox.setHint("Please login to post an answer.")
+            //replyBox.setHint("Please login to post an answer.")
+
+            val layout : LinearLayout = findViewById(R.id.reply_box_and_button)
+            layout.visibility = View.GONE
+
+            val textView : TextView = findViewById(R.id.not_loggedin_text)
+            textView.visibility = View.VISIBLE
         }
 
     }

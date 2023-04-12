@@ -12,8 +12,13 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.authentication.Authenticator
+import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Before
@@ -58,71 +63,65 @@ class QuestionDetailsTest {
     }
 
     // if text is empty, no new answer is posted
-    /*@Test
+    @Test
     fun guestUserCannotPostAnswers() {
-        otherScenario = ActivityScenario.launch(LoginActivity::class.java)
-
-        // guest
-        onView(withId(R.id.guestButton)).perform(click())
-
         // go to second question
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-
         // check button is not clickable
-        onView(withId(R.id.post_reply_button)).check(matches(isNotClickable()))
+        onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
+        onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
+    }
 
-        // check hint is adequate
-        onView(withId(R.id.write_reply_box)).check(matches(withText("Please login to post an answer.")))
-
-        otherScenario.close()
-    }*/
-
+    /*
     @Test
-    fun writeAnswerAndPost() {
+    fun loggedInCanPost() {
+        // authentication
+
+
+        // go to last question
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
 
+        onView(withId(R.id.reply_box)).check(matches(isDisplayed()))
+        onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
+    }
+     */
+
+    /*@Test
+    fun writeAnswerAndPostIsDisplayed() {
+        // authentication
+
+
+        // go to last question
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+
+        // post write answer
         onView(withId(R.id.write_reply_box))
             .perform(click())
             .perform(typeText("New answer"))
             .perform(closeSoftKeyboard())
 
+        // post answer
         onView(withId(R.id.post_reply_button)).perform(click())
 
+        // check displayed
         onView(withId(R.id.answers_recycler))
             .perform(RecyclerViewActions.scrollToLastPosition<ViewHolder>())
             .check(matches(hasDescendant(withText("New answer"))))
-    }
+
+        // check edittext is now empty (check works)
+        onView(withId(R.id.reply_box)).check(matches(withText("")))
+    }*/
 
 
-    // edittext is visible, so is the button
-    // if the text is not empty, new answer is posted upon button click + edittext ends up empty
     // check if connected user is current
 
 
     @After
     fun closing() {
         scenario.close()
-    }
-
-
-    // TODO : see if can make use of that
-    fun checkAnswerContent(id: Int, position: Int): ViewAction {
-        return object : ViewAction {
-            override fun getConstraints(): Matcher<View>? {
-                return null
-            }
-
-            override fun getDescription(): String {
-                return "Click on a child view with specified id."
-            }
-
-            override fun perform(uiController: UiController, view: View) {
-                val v = view.findViewById<View>(id) as View
-                v.performClick()
-            }
-        }
     }
 }
