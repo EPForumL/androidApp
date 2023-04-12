@@ -55,11 +55,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         user = DatabaseManager.user ?: Model.User()
         val replyBox : EditText = findViewById(R.id.write_reply_box)
+        val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
         // only allow posting answer if user is connected
         if (user.userId.isNotEmpty()) {
-
-            val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
             // store content of box as a new answer to corresponding question
             sendButton.setOnClickListener {
                 if (question != null) {
@@ -78,8 +77,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
         } else {
             //replyBox.setHint("Please login to post an answer.")
 
-            val layout : LinearLayout = findViewById(R.id.reply_box_and_button)
-            layout.visibility = View.GONE
+            val cardView : CardView = findViewById(R.id.write_reply_card)
+            cardView.visibility = View.GONE
+            sendButton.visibility = View.GONE
 
             val textView : TextView = findViewById(R.id.not_loggedin_text)
             textView.visibility = View.VISIBLE

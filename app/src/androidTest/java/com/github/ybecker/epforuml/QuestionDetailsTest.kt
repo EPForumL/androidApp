@@ -15,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.authentication.Authenticator
 import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -70,6 +71,7 @@ class QuestionDetailsTest {
     @Test
     fun loggedInCanPost() {
         // authentication
+        scenario.onActivity { MockAuthenticator(it).signIn() }
 
 
         // go to last question
@@ -84,7 +86,7 @@ class QuestionDetailsTest {
     @Test
     fun writeAnswerAndPostIsDisplayed() {
         // authentication
-
+        scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to last question
         onView(withId(R.id.recycler_forum))
@@ -111,8 +113,7 @@ class QuestionDetailsTest {
 
     @Test
     fun guestUserCannotPostAnswers() {
-        Firebase.auth.signOut()
-        scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity { MockAuthenticator(it).signOut() }
 
         // go to second question
         onView(withId(R.id.recycler_forum))
