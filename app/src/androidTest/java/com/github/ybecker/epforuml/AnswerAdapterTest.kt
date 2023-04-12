@@ -35,7 +35,7 @@ class AnswerAdapterTest {
     }
 
     private fun goToFirstElement() {
-        Espresso.onView(ViewMatchers.withId(R.id.recycler_forum))
+        onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.scrollToPosition<RecyclerView.ViewHolder>(0))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0,
                 ViewActions.click()

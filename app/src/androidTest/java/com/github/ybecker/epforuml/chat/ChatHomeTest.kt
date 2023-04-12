@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.chat
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Handler
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -21,6 +22,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.concurrent.thread
 
 
 @RunWith(AndroidJUnit4::class)
@@ -44,6 +46,12 @@ class ChatHomeTest {
 
         scenario = ActivityScenario.launch(intent)
 
+        Espresso.onView(withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        Thread.sleep(5000)
+
+
     }
     @After
     fun tearDown(){
@@ -57,9 +65,6 @@ class ChatHomeTest {
         DatabaseManager.db.addChat("0","2", "Hey")
         DatabaseManager.db.addChat("0","3", "Hey")
 
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
@@ -72,21 +77,16 @@ class ChatHomeTest {
     fun chatHomeSwitchesFragmentsCorrectly(){
         DatabaseManager.user = host
         DatabaseManager.db.addChat("0","1", "Hey")
+        Thread.sleep(5000)
 
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(scrollTo()).perform(click())
+        Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed())).perform(scrollTo()).perform(click())
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))
+
     }
 
     @Test
     fun noMessageWhenSignedOut(){
         DatabaseManager.user = null
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
-
         Espresso.onView(withId(R.id.not_connected_text_view)).check(matches(isDisplayed()))
 
 
@@ -94,10 +94,6 @@ class ChatHomeTest {
     @Test
     fun noMessageWhenNoChat(){
         DatabaseManager.user = host
-
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
         Espresso.onView(withId(R.id.no_chats)).check(matches(isDisplayed()))
 

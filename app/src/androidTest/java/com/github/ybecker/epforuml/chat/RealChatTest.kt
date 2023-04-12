@@ -61,8 +61,9 @@ class RealChatTest {
         DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
 
         Espresso.onView(withContentDescription(R.string.open))
-            .perform(ViewActions.click())
+            .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(ViewActions.click())
+        Thread.sleep(5000)
         Espresso.onView(withId(R.id.buttonChatWith)).perform(scrollTo()).perform(click())
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
         Espresso.onView(withId(R.id.send_text)).check(matches(isClickable()))
@@ -110,6 +111,7 @@ class RealChatTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        Thread.sleep(5000)
         Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
 
         Espresso.onView(withId(R.id.send_text)).perform(click())
