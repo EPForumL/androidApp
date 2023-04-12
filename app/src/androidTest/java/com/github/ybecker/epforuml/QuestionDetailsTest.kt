@@ -36,6 +36,7 @@ class QuestionDetailsTest {
     @Before
     fun setup() {
         DatabaseManager.useMockDatabase()
+        Firebase.auth.signInWithEmailAndPassword("jdupont@epfl.ch", "jdpoutn")
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 
@@ -110,6 +111,9 @@ class QuestionDetailsTest {
 
     @Test
     fun guestUserCannotPostAnswers() {
+        Firebase.auth.signOut()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+
         // go to second question
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
