@@ -63,18 +63,9 @@ class QuestionDetailsTest {
     }
 
     // if text is empty, no new answer is posted
-    @Test
-    fun guestUserCannotPostAnswers() {
-        // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        // check button is not clickable
-        onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
-        onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
-    }
 
-    /*
+
     @Test
     fun loggedInCanPost() {
         // authentication
@@ -84,12 +75,12 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
 
-        onView(withId(R.id.reply_box)).check(matches(isDisplayed()))
+        onView(withId(R.id.write_reply_box)).check(matches(isDisplayed()))
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
     }
-     */
 
-    /*@Test
+
+    @Test
     fun writeAnswerAndPostIsDisplayed() {
         // authentication
 
@@ -113,8 +104,20 @@ class QuestionDetailsTest {
             .check(matches(hasDescendant(withText("New answer"))))
 
         // check edittext is now empty (check works)
-        onView(withId(R.id.reply_box)).check(matches(withText("")))
-    }*/
+        onView(withId(R.id.write_reply_box)).check(matches(withText("")))
+    }
+
+
+    @Test
+    fun guestUserCannotPostAnswers() {
+        // go to second question
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+
+        // check button is not clickable
+        onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
+        onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
+    }
 
 
     // check if connected user is current
