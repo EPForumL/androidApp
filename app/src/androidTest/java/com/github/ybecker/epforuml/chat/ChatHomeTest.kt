@@ -82,7 +82,8 @@ class ChatHomeTest {
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
         Thread.sleep(10000)
 
-        Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed())).perform(closeSoftKeyboard()).perform(scrollTo()).perform(click())
+        Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed()))
+        Espresso.onView(withId(R.id.buttonChatWith)).perform(closeSoftKeyboard()).perform(scrollTo()).perform(click())
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))
 
     }
