@@ -51,6 +51,8 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
                     currentAnswerItem = it[position-1]
 
                     holder.answerText.text = currentAnswerItem.answerText
+
+                    // TODO : change userId to username (need to use future)
                     holder.username.text = currentAnswerItem.userId
                 }
             }
