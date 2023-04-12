@@ -64,7 +64,7 @@ class RealChatTest {
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(ViewActions.click())
         Thread.sleep(5000)
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(scrollTo()).perform(click())
+        Espresso.onView(withId(R.id.buttonChatWith)).perform(closeSoftKeyboard()).perform(scrollTo()).perform(click())
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
         Espresso.onView(withId(R.id.send_text)).check(matches(isClickable()))
         Espresso.onView(withId(R.id.edit_text_message)).check(matches(isDisplayed())).check(matches(
@@ -112,7 +112,7 @@ class RealChatTest {
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
         Thread.sleep(10000)
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
+        Espresso.onView(withId(R.id.buttonChatWith)).perform(closeSoftKeyboard()).perform(scrollTo()).perform(click())
 
         Espresso.onView(withId(R.id.send_text)).perform(click())
         scenario.onActivity { activity ->
