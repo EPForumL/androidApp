@@ -46,10 +46,6 @@ class ChatHomeTest {
 
         scenario = ActivityScenario.launch(intent)
 
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Thread.sleep(5000)
 
 
     }
@@ -65,6 +61,10 @@ class ChatHomeTest {
         DatabaseManager.db.addChat("0","2", "Hey")
         DatabaseManager.db.addChat("0","3", "Hey")
 
+        Espresso.onView(withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        Thread.sleep(5000)
 
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
@@ -77,6 +77,9 @@ class ChatHomeTest {
     fun chatHomeSwitchesFragmentsCorrectly(){
         DatabaseManager.user = host
         DatabaseManager.db.addChat("0","1", "Hey")
+        Espresso.onView(withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
         Thread.sleep(5000)
 
         Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed())).perform(scrollTo()).perform(click())
@@ -87,6 +90,10 @@ class ChatHomeTest {
     @Test
     fun noMessageWhenSignedOut(){
         DatabaseManager.user = null
+        Espresso.onView(withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        Thread.sleep(5000)
         Espresso.onView(withId(R.id.not_connected_text_view)).check(matches(isDisplayed()))
 
 
@@ -94,7 +101,10 @@ class ChatHomeTest {
     @Test
     fun noMessageWhenNoChat(){
         DatabaseManager.user = host
-
+        Espresso.onView(withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        Thread.sleep(5000)
         Espresso.onView(withId(R.id.no_chats)).check(matches(isDisplayed()))
 
     }

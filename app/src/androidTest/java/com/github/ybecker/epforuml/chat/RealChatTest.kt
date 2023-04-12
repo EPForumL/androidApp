@@ -82,7 +82,7 @@ class RealChatTest {
         DatabaseManager.user = null
 
         Espresso.onView(withContentDescription(R.string.open))
-            .perform(ViewActions.click())
+            .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(ViewActions.click())
 
         Espresso.onView(withId(R.id.not_connected_text_view)).check(matches(isDisplayed()))
