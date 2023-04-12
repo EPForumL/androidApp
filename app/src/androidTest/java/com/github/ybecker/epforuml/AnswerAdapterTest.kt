@@ -27,6 +27,7 @@ class AnswerAdapterTest {
     private lateinit var scenario : ActivityScenario<MainActivity>
     private var question3 = db.getQuestionById("question3")
 
+
     @Before
     fun setup() {
         DatabaseManager.useMockDatabase()
