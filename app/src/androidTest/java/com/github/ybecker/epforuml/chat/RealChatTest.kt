@@ -110,12 +110,8 @@ class RealChatTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
 
- /*       Espresso.onView(withId(R.id.edit_text_message))
-            .perform(click())
-            .perform(clearText())
-            .perform(typeText("How are you doing?"))
-            .perform(closeSoftKeyboard())*/
         Espresso.onView(withId(R.id.send_text)).perform(click())
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
