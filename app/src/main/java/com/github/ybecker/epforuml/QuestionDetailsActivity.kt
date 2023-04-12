@@ -20,7 +20,6 @@ import com.github.ybecker.epforuml.database.Model
 
 class QuestionDetailsActivity : AppCompatActivity() {
 
-    private lateinit var answerAdapter : AnswerAdapter
     private lateinit var answerRecyclerView: RecyclerView
     private var question : Model.Question? = null
     private lateinit var questionId : String

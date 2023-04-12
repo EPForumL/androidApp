@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.hamcrest.Matcher
+import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -82,6 +83,25 @@ class QuestionDetailsTest {
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
     }
 
+    @Test
+    fun cannotPostEmptyAnswer() {
+        // authentication
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+
+        // go to last question
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+
+        // post answer
+        onView(withId(R.id.post_reply_button)).perform(click())
+
+        // check displayed
+        onView(withId(R.id.answers_recycler))
+            .perform(RecyclerViewActions.scrollToLastPosition<ViewHolder>())
+            .check(matches(hasDescendant(not(withText("")))))
+    }
+
 
     @Test
     fun writeAnswerAndPostIsDisplayed() {
@@ -105,9 +125,12 @@ class QuestionDetailsTest {
         onView(withId(R.id.answers_recycler))
             .perform(RecyclerViewActions.scrollToLastPosition<ViewHolder>())
             .check(matches(hasDescendant(withText("New answer"))))
+                // check correct userId
+            .check(matches(hasDescendant(withText("0"))))
 
         // check edittext is now empty (check works)
         onView(withId(R.id.write_reply_box)).check(matches(withText("")))
+
     }
 
 
