@@ -17,6 +17,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     // save every useful path to navigate in the database
     private val usersPath = "users"
+    private val chatsWith = "chatsWith"
     private val coursesPath = "courses"
     private val questionsPath = "questions"
     private val answersPath = "answers"
@@ -26,6 +27,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val userIdPath = "userId"
     private val questionIdPath = "questionId"
     private val answerIdPath = "answerId"
+
     private val receiverIdPath ="receiverId"
     private val textPath = "text"
     private val senderIdPath = "senderId"
@@ -135,8 +137,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         text: String?
     ): Chat{
         val newChildRef = db.child(chatsPath).push()
-        val chatId = newChildRef.key ?: error("Failed to generate course ID")
+        val chatId = newChildRef.key ?: error("Failed to generate chat ID")
         val chat = Chat(chatId,LocalDateTime.now().toString(),receiverId,senderId,text)
+
+        //reference that these users chatted with eachother
+        db.child(usersPath).child(senderId).child(chatsWith).child(chatId).setValue(receiverId)
+        db.child(usersPath).child(receiverId).child(chatsWith).child(chatId).setValue(senderId)
+
         newChildRef.setValue(chat)
         return chat
     }
@@ -347,6 +354,14 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             subscriptionSnapshot.key?.let { subscriptions.add(it) }
         }
 
+        val chatsWith = arrayListOf<String>()
+        dataSnapshot.child("chatsWith").children.forEach {chatsWithSnapshot -> chatsWithSnapshot.key?.let {
+            chatsWith.add(
+                it
+            )
+        }
+        }
+
         // Get profile picture
         val profilePic = dataSnapshot.child(profilePicPath).getValue(String::class.java)
 
@@ -364,6 +379,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 questions,
                 answers,
                 subscriptions,
+                chatsWith,
                 profilePic ?: "",
                 userInfo ?: "",
                 status ?: ""

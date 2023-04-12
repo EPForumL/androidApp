@@ -84,14 +84,22 @@ class MockDatabase : Database() {
 
     }
     override fun getChat(userId1: String, userId2:String): CompletableFuture<List<Chat>> {
-        return CompletableFuture.completedFuture(chats.filterValues { it.senderId == userId1 && it.receiverId == userId2}.values.toList().reversed())
+        return CompletableFuture.completedFuture(chats.filterValues {
+            (it.senderId == userId1 && it.receiverId == userId2)
+                ||(it.senderId == userId2 && it.receiverId == userId1)
+        }.values.toList().reversed())
     }
 
     override fun addChat(senderId: String, receiverId: String, text: String?): Chat {
         val chatId = "chats${chats.size + 1}"
         val chat = Chat(chatId, LocalDateTime.now().toString(),receiverId,senderId,text)
         chats[chatId] = chat
-
+        if(!users[senderId]?.chatsWith?.contains(receiverId)!!){
+            users[senderId]?.chatsWith = users[senderId]?.chatsWith?.plus(receiverId) ?: listOf(receiverId)
+        }
+        if(!users[receiverId]?.chatsWith?.contains(senderId)!!){
+            users[receiverId]?.chatsWith = users[receiverId]?.chatsWith?.plus(senderId) ?: listOf(senderId)
+        }
         return chat
     }
 

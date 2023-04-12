@@ -27,6 +27,11 @@
             android:title="@string/saved_questions"
             android:icon="@drawable/nav_saved_questions" />
 
+        <item
+            android:id="@+id/nav_chat"
+            android:title="@string/saved_questions"
+            android:icon="@drawable/nav_chat" />
+
     </group>
 
     <item android:title="@string/profile">

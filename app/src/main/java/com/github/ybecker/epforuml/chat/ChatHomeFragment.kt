@@ -2,61 +2,66 @@ package com.github.ybecker.epforuml.chat
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
-import com.github.ybecker.epforuml.chat.placeholder.PlaceholderContent
+import com.github.ybecker.epforuml.R.*
+import com.github.ybecker.epforuml.database.DatabaseManager.user
 
 /**
  * A fragment representing a list of Items.
  */
-class ChatHomeFragment : Fragment() {
+class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
-    private var columnCount = 1
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
-    }
+    private lateinit var chatList: List<String>
+    private lateinit var chatHomeAdapter: ChatHomeAdapter
+    private lateinit var chatHomeRecyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_chat_home_list, container, false)
-
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                adapter = MyItemRecyclerViewAdapter(PlaceholderContent.ITEMS)
-            }
+        val view = inflater.inflate(layout.fragment_chat_home_list, container, false)
+        if (user == null) {
+            val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
+            notConnected?.visibility = View.VISIBLE
+        } else {
+            chatList = user!!.chatsWith
         }
+
+
         return view
     }
 
-    companion object {
+    override fun onViewCreated(fragmentView: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(fragmentView, savedInstanceState)
+        // Configure recycler view and adapter
+        val linearLayoutMgr = LinearLayoutManager(context)
+        chatHomeRecyclerView = fragmentView.findViewById(R.id.recycler_chat_home)
+        chatHomeRecyclerView.layoutManager = linearLayoutMgr
+        chatHomeRecyclerView.setHasFixedSize(false)
+        // Update questions list
+        if(user!=null) {
+            updateChats()
+        }
+    }
 
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
+    private fun updateChats() {
+        fetchChats()
+    }
+    private fun fetchChats() {
+        if(user!!.chatsWith.isNotEmpty()) {
+            chatHomeAdapter = ChatHomeAdapter(user!!.chatsWith as MutableList<String>,this.mainActivity)
+            chatHomeRecyclerView.adapter = chatHomeAdapter
+        }else{
+            val noChats = view?.findViewById<TextView>(R.id.no_chats)
+            noChats?.visibility = View.VISIBLE
+        }
 
-        // TODO: Customize parameter initialization
-        @JvmStatic
-        fun newInstance(columnCount: Int) =
-            ChatHomeFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
     }
 }

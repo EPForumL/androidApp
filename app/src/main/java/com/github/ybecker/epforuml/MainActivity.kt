@@ -1,7 +1,6 @@
 package com.github.ybecker.epforuml
 
 import android.os.Bundle
-import android.provider.ContactsContract.RawContacts.Data
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
+import com.github.ybecker.epforuml.chat.ChatHomeFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.android.material.navigation.NavigationView
 
@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                         replaceFragment(AccountFragment())
                     }
                 R.id.nav_settings -> replaceFragment(SettingsFragment())
+                R.id.nav_chat -> replaceFragment(ChatHomeFragment(this))
             }
 
             true

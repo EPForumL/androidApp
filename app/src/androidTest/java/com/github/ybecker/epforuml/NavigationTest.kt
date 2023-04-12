@@ -66,7 +66,13 @@ class NavigationTest {
         onView(withId(R.id.nav_home)).perform(click())
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
+        onView(withContentDescription(R.string.open))
+            .perform(click())
+        onView(withId(R.id.nav_chat)).perform(click())
+        onView(withId(R.id.chat_layout_parent)).check(matches(isDisplayed()))
+
         scenario.close()
+
     }
 }
 
