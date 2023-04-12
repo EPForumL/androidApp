@@ -168,7 +168,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         //add the question in the user's questions list
         db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
 
-        NotificationUtils.sendNotification(questionTitle, userId, questionText ?: "")
+        this.getCourseNotifications(courseId).thenAccept {
+            NotificationUtils.sendNotification(questionTitle, it ,userId, questionText ?: "")
+        }
 
         return question
     }
@@ -280,6 +282,25 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         getAnyById(id, coursesPath) { ds -> getCourse(ds) }
                 //cast the general future to a course one
                 as CompletableFuture<Course?>
+
+    override fun getChat(userId1: String, userId2: String): CompletableFuture<List<Chat>> {
+        val future = CompletableFuture<List<Chat>>()
+        db.child(chatsPath).get().addOnSuccessListener{
+            val chats =  mutableListOf<Chat>()
+            for(chatSnapshot in it.children){
+                val chat = retrieveChat(chatSnapshot)
+                if(chatSnapshot!=null &&((chat!!.senderId == userId1 && chat!!.receiverId == userId2) ||
+                            (chat!!.senderId == userId2 && chat!!.receiverId == userId1))){
+                    chats.add(chat!!)
+                }
+            }
+            future.complete(chats)
+        }.addOnFailureListener{
+            future.completeExceptionally(it)
+
+        }
+        return future
+    }
 
 
     private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {
