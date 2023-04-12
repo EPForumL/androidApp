@@ -68,6 +68,7 @@ class FirebaseDatabaseAdapterTest {
         firebaseDB.child("users").setValue(null)
         firebaseDB.child("questions").setValue(null)
         firebaseDB.child("answers").setValue(null)
+        firebaseDB.child("chats").setValue(null)
 
         swEng = db.addCourse("SwEng")
         sdp = db.addCourse("SDP")
@@ -95,6 +96,7 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
 
+        db.addChat(romain.userId, theo.userId ,"Hi Theo this is Romain!")
     }
 
     @Test
@@ -102,6 +104,14 @@ class FirebaseDatabaseAdapterTest {
         val user2 = db.addUser("2","TestUser2", "testEmail").get()
         db.getUserById(user2.userId).thenAccept {
             assertThat(it, equalTo(user2))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetChat() {
+        val chat2 = db.addChat("1","0", "Hi theo")
+        db.getChat("1","0").thenAccept {
+            assertThat(it.size, equalTo(2))
         }.join()
     }
 

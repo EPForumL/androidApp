@@ -1,12 +1,14 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 /**
  * An abstract class that defines a set of methods to be implemented by concrete database implementations.
  */
 abstract class Database {
+
 
     /**
      * Returns a list of all available courses in the current database.
@@ -183,4 +185,25 @@ abstract class Database {
      * @return the course with the given ID
      */
     abstract fun getCourseById(id: String): CompletableFuture<Course?>
+
+    /**
+     * Returns all the chats between two users
+     *
+     * @param userId1 Id of the logged user
+     * @param userId2 Id of the external user
+     * @returnList of all exchanged messages
+     */
+    abstract fun getChat(userId1:String, userId2:String): CompletableFuture<List<Chat>>
+
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param senderId the user that sent the chat
+     * @param receiverId user that will receive the chat
+     * @param text content of the chat
+     * @param date time of the chat
+     * @return the question that was posted in database
+     */
+    abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
+
 }

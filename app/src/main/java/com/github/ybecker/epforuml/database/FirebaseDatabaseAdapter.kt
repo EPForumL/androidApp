@@ -4,7 +4,9 @@ import com.firebase.ui.auth.AuthUI.getApplicationContext
 import com.github.ybecker.epforuml.NotificationUtils
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
+import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
+
 
 /**
  * This class represents a database that uses Firebase Realtime Database
@@ -21,12 +23,20 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val questionsPath = "questions"
     private val answersPath = "answers"
     private val subscriptionsPath = "subscriptions"
+    private val chatsPath = "chats"
     private val notificationsPath = "notifications"
 
     private val courseIdPath = "courseId"
     private val userIdPath = "userId"
     private val questionIdPath = "questionId"
     private val answerIdPath = "answerId"
+
+    private val receiverIdPath ="receiverId"
+    private val textPath = "text"
+    private val senderIdPath = "senderId"
+    private val datePath = "date"
+    private val chatIdPath = "chatId"
+
 
     private val courseNamePath = "courseName"
     private val usernamePath = "username"
@@ -163,6 +173,18 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return question
     }
 
+    override fun addChat(
+        senderId: String,
+        receiverId: String,
+        text: String?
+    ): Chat{
+        val newChildRef = db.child(chatsPath).push()
+        val chatId = newChildRef.key ?: error("Failed to generate course ID")
+        val chat = Chat(chatId,LocalDateTime.now().toString(),receiverId,senderId,text)
+        newChildRef.setValue(chat)
+        return chat
+    }
+
     override fun addAnswer(userId: String, questionId: String, answerText: String?): Answer {
         // create a space for the new answer in sb and save its id
         val newChildRef = db.child(answersPath).push()
@@ -260,8 +282,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 as CompletableFuture<Course?>
 
 
-
-
     private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {
         val future = CompletableFuture<Any?>()
         // go in the given path
@@ -277,7 +297,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private fun getListOfAny(listPath: List<String>, objectPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<List<Any>>{
 
         val future = CompletableFuture<List<Any>>()
-        //creat path by joining the given list
+        //create path by joining the given list
         val path = listPath.joinToString(separator = "/")
         db.child(path).get().addOnSuccessListener {
             val modelFutures = mutableListOf<CompletableFuture<Any?>>()
@@ -427,4 +447,17 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return null
     }
+
+    private fun retrieveChat(dataSnapshot: DataSnapshot): Chat?{
+        val chatId = dataSnapshot.child(chatIdPath).getValue(String::class.java)
+        val senderId = dataSnapshot.child(senderIdPath).getValue(String::class.java)
+        val receiverId = dataSnapshot.child(receiverIdPath).getValue(String::class.java)
+        val text = dataSnapshot.child(textPath).getValue(String::class.java)
+        val date = dataSnapshot.child(datePath).getValue(String::class.java)
+        if(senderId!=null && receiverId!=null){
+            return Chat(chatId,date,receiverId,senderId,text)
+        }
+        return null
+    }
+
 }

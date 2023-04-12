@@ -1,8 +1,8 @@
 package com.github.ybecker.epforuml.database
 
-import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
+import java.time.LocalDateTime
 
 class Model {
 
@@ -116,5 +116,9 @@ class Model {
     //This class represent a course
     data class Course(val courseId: String, val courseName: String, var questions: List<String>, var notifications: List<String>){
         constructor() : this("", "", emptyList(), emptyList())
+    }
+
+    data class Chat(
+        val chatId: String?, val date: String?,val receiverId:String, val senderId:String,  val text: String?){
     }
 }
