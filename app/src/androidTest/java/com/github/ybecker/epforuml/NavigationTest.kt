@@ -69,7 +69,7 @@ class NavigationTest {
         onView(withContentDescription(R.string.open))
             .perform(click())
         onView(withId(R.id.nav_chat)).perform(click())
-        onView(withId(R.id.chat_layout_parent)).check(matches(isDisplayed()))
+        onView(withId(R.id.chat_home__layout)).check(matches(isDisplayed()))
 
         scenario.close()
 

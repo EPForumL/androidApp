@@ -63,7 +63,7 @@ class RealChatTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(ViewActions.click())
         Espresso.onView(withId(R.id.nav_chat)).perform(ViewActions.click())
-
+        Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
         Espresso.onView(withId(R.id.send_text)).check(matches(isClickable()))
         Espresso.onView(withId(R.id.edit_text_message)).check(matches(isDisplayed())).check(matches(
