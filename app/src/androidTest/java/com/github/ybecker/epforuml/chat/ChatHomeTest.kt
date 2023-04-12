@@ -76,7 +76,7 @@ class ChatHomeTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
+        Espresso.onView(withId(R.id.buttonChatWith)).perform(scrollTo()).perform(click())
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))
     }
 
