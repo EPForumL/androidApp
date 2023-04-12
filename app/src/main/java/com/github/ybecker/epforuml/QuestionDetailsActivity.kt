@@ -40,7 +40,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         answerRecyclerView = findViewById(R.id.answers_recycler)
         answerRecyclerView.layoutManager = LinearLayoutManager(this)
-        answerRecyclerView.setHasFixedSize(true)
+        //answerRecyclerView.setHasFixedSize(true)
 
         question = intent.getParcelableExtra("question")
         if (question != null) {
