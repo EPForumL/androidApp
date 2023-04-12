@@ -42,15 +42,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
         answerRecyclerView.layoutManager = LinearLayoutManager(this)
         //answerRecyclerView.setHasFixedSize(true)
 
+        // create answer view
         question = intent.getParcelableExtra("question")
-        if (question != null) {
-            questionId = question!!.questionId
-            val title : TextView = findViewById(R.id.qdetails_title)
-            title.text = question!!.questionTitle
-
-            updateRecycler()
-        }
-
+        questionId = question!!.questionId
+        val title : TextView = findViewById(R.id.qdetails_title)
+        title.text = question!!.questionTitle
+        updateRecycler()
 
         user = DatabaseManager.user ?: Model.User()
         val replyBox : EditText = findViewById(R.id.write_reply_box)
@@ -74,8 +71,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
             }
 
         } else {
-            //replyBox.setHint("Please login to post an answer.")
-
             val cardView : CardView = findViewById(R.id.write_reply_card)
             cardView.visibility = View.GONE
             sendButton.visibility = View.GONE

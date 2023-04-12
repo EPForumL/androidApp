@@ -31,9 +31,6 @@ import org.junit.runner.RunWith
 class QuestionDetailsTest {
 
     private lateinit var scenario : ActivityScenario<MainActivity>
-    private lateinit var otherScenario : ActivityScenario<LoginActivity>
-    private val EXPECTED_COUNT_WHEN_NO_NEW_ANSWER = 5
-    private val EXPECTED_COUNT_WHEN_NEW_ANSWER = 6
 
     @Before
     fun setup() {
@@ -64,10 +61,6 @@ class QuestionDetailsTest {
 
         onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
     }
-
-    // if text is empty, no new answer is posted
-
-
 
     @Test
     fun loggedInCanPost() {
@@ -102,7 +95,6 @@ class QuestionDetailsTest {
             .check(matches(hasDescendant(not(withText("")))))
     }
 
-
     @Test
     fun writeAnswerAndPostIsDisplayed() {
         // authentication
@@ -133,7 +125,6 @@ class QuestionDetailsTest {
 
     }
 
-
     @Test
     fun guestUserCannotPostAnswers() {
         scenario.onActivity { MockAuthenticator(it).signOut() }
@@ -146,10 +137,6 @@ class QuestionDetailsTest {
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
         onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
     }
-
-
-    // check if connected user is current
-
 
     @After
     fun closing() {
