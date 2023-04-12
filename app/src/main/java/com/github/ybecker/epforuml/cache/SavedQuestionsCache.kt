@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml
+package com.github.ybecker.epforuml.cache
 
 import com.github.ybecker.epforuml.database.Model
 

@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.cache.MockSavedQuestionsCache
+import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 
@@ -20,7 +22,7 @@ import com.github.ybecker.epforuml.database.Model
  */
 class SavedQuestionsFragment : Fragment() {
 
-    private val savedQuestions = SavedQuestionsCache()
+    private val savedQuestions = MockSavedQuestionsCache()
 
     private lateinit var recyclerView: RecyclerView
 
