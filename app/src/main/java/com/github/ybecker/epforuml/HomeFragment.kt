@@ -33,9 +33,9 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
     private lateinit var recyclerView: RecyclerView
 
     /**
-     * The final list of questions to diplay on the page
+     * The final list of questions to display on the page
      */
-    private var questionsList = mutableListOf<Question>() // switch to questions when able to transfer data from mainActivtiy
+    private var questionsList = mutableListOf<Question>()
 
     /**
      * The temporary (to be completed) list of questions
@@ -68,7 +68,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_forum)
         recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(false) // maybe change that later
+        recyclerView.setHasFixedSize(false)
 
         getQuestionsList()
     }

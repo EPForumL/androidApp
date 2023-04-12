@@ -23,6 +23,15 @@ class SavedQuestionsCache : Cache {
     override fun clear() {
         cache.clear()
     }
+
+    fun toList() : MutableList<Model.Question> {
+        var list = mutableListOf<Model.Question>()
+        for ((k, v) in cache) {
+            list.add(v)
+        }
+
+        return list
+    }
 }
 
 
