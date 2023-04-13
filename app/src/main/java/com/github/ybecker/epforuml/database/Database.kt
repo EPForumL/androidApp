@@ -179,4 +179,31 @@ abstract class Database {
      */
     abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
 
+    /**
+     * Gets the user's saved questions.
+     *
+     * @param userId the user
+     * @return the list of questions that has been saved by the user
+     */
+    abstract fun getSavedQuestions(userId: String) : CompletableFuture<List<Question>>
+
+
+    /**
+     * Add a question to the list of saved questions.
+     *
+     * @param userId the user
+     * @param questionId the question to be saved
+     * @return the saved question
+     */
+    abstract fun addSavedQuestion(userId: String, questionId: String) : CompletableFuture<Question?>
+
+
+    /**
+     * Remove a question from the list of saved questions.
+     *
+     * @param userId the user
+     * @param questionId the question to be removed
+     */
+    abstract fun removeSavedQuestion(userId: String, questionId: String)
+
 }

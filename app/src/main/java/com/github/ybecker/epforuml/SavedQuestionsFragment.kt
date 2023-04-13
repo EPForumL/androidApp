@@ -15,6 +15,8 @@ import com.github.ybecker.epforuml.cache.MockSavedQuestionsCache
 import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 /**
@@ -27,6 +29,8 @@ class SavedQuestionsFragment : Fragment() {
     private var savedQuestions = SavedQuestionsCache()
     private var numberOfQuestions = savedQuestions.size
 
+    private lateinit var databaseReference : DatabaseReference
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var user : Model.User
 
@@ -35,7 +39,12 @@ class SavedQuestionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_saved_questions, container, false)
+        val view = inflater.inflate(R.layout.fragment_saved_questions, container, false)
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("SavedQuestions")
+        databaseReference.keepSynced(true)
+
+        return view
     }
 
     @SuppressLint("SetTextI18n")

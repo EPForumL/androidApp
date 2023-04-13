@@ -41,10 +41,9 @@ class MockDatabase : Database() {
         val course12 = Course("course11","Database", mutableListOf())
         courses[course12.courseId] = course12
 
-        val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), emptyList())
+        val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), emptyList(), emptyList())
         users[user1.userId] = user1
-        val userWithCredentials = User("userX", "Jean Dupont", "jdupont@epfl.ch")
-        users[userWithCredentials.userId] = userWithCredentials
+        val user2 = User("user2", "UserWithSavedQuestions", "", emptyList(), emptyList(), listOf("question2"), emptyList())
 
         val question1 = Question("question1", "course1", "user1", "About ci",
                                 "How do I fix the CI ?",
@@ -224,5 +223,26 @@ class MockDatabase : Database() {
         }
     }
 
+    override fun getSavedQuestions(userId: String): CompletableFuture<List<Question>> {
+        val savedQuestions = users.get(userId)?.savedQuestions
+        return CompletableFuture.completedFuture(questions.filterValues { savedQuestions!!.contains(it.questionId) }.values.toList().reversed())
+    }
 
+    override fun addSavedQuestion(
+        userId: String,
+        questionId: String
+    ): CompletableFuture<Question?> {
+        val user = users[userId]
+        user!!.savedQuestions = user.savedQuestions.plus(questionId)
+
+        return CompletableFuture.completedFuture(questions[questionId])
+    }
+
+    override fun removeSavedQuestion(userId: String, questionId: String) {
+        val user = users[userId]
+        if (user != null) {
+            val updatedSavedQuestions = user.savedQuestions.filter { it != questionId }
+            users[userId] = user.copy(savedQuestions = updatedSavedQuestions)
+        }
+    }
 }
