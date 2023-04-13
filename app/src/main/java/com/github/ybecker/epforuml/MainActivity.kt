@@ -11,12 +11,20 @@ import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.database.DatabaseReference
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var toggle : ActionBarDrawerToggle
     lateinit var drawerLayout: DrawerLayout
+
+    private lateinit var user : Model.User
+
+    private lateinit var savedQuestions : SavedQuestionsCache
+    private var numberOfQuestions = savedQuestions.size
+    private lateinit var reference : DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +32,8 @@ class MainActivity : AppCompatActivity() {
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
+
+        user = DatabaseManager.user ?: Model.User()
 
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView : NavigationView = findViewById(R.id.nav_view)
@@ -59,6 +69,11 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
+
+
+        // activate sync with Firebase for saved questions
+        reference = DatabaseManager.db.getReference().child("users").child(user.userId).child("savedQuestions")
+        reference.keepSynced(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

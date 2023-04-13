@@ -1,6 +1,8 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -205,5 +207,9 @@ abstract class Database {
      * @param questionId the question to be removed
      */
     abstract fun removeSavedQuestion(userId: String, questionId: String)
+
+    abstract fun getReference() : DatabaseReference
+
+    abstract fun getInstance() : FirebaseDatabase
 
 }

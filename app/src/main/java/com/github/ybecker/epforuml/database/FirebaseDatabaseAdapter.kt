@@ -467,4 +467,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     override fun removeSavedQuestion(userId: String, questionId: String) {
         db.child(usersPath).child(userId).child(savedQuestionsPath).child(questionId).removeValue()
     }
+
+    override fun getReference() : DatabaseReference {
+        return db
+    }
+
+    override fun getInstance(): FirebaseDatabase {
+        return dbInstance
+    }
 }

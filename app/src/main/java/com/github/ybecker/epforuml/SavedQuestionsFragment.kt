@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.cache.MockSavedQuestionsCache
 import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -25,12 +26,11 @@ import com.google.firebase.database.FirebaseDatabase
  * create an instance of this fragment.
  */
 class SavedQuestionsFragment : Fragment() {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var user : Model.User
 
     private lateinit var savedQuestions : SavedQuestionsCache
     private var numberOfQuestions = savedQuestions.size
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var user : Model.User
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +44,7 @@ class SavedQuestionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // TODO : retrieve saved questions from db
+        // TODO : retrieve saved from main activity
 
 
         // initialize recycler with saved questions
