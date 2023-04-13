@@ -62,8 +62,7 @@ class RealChatTest {
 
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(ViewActions.click())
-        Thread.sleep(5000)
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
         Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed()))
         Espresso.onView(withId(R.id.buttonChatWith)).perform(closeSoftKeyboard())
@@ -114,14 +113,13 @@ class RealChatTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Thread.sleep(10000)
 
         Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed()))
         Espresso.onView(withId(R.id.buttonChatWith)).perform(closeSoftKeyboard())
         Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
 
 
-        Espresso.onView(withId(R.id.send_text)).perform(click())
+        Espresso.onView(withId(R.id.send_text)).perform(scrollTo()).perform(click())
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
             assertEquals(3, view.adapter?.itemCount ?:0 )
