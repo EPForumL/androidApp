@@ -63,6 +63,7 @@
     <string name="my_questions_display">My Questions</string>
     <string name="you_still_haven_t_asked_any_question">You still haven\'t asked any question</string>
     <string name="please_login_to_post_answers">Please login to post answers.</string>
+    <string name="please_log_in_to_be_able_to_save_questions">Please log in to be able to save questions.</string>
     />
 
 
