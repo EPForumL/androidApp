@@ -22,8 +22,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var user : Model.User
 
-    private lateinit var savedQuestions : SavedQuestionsCache
-    private var numberOfQuestions = savedQuestions.size
     private lateinit var reference : DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +33,11 @@ class MainActivity : AppCompatActivity() {
 
         user = DatabaseManager.user ?: Model.User()
 
+        // activate sync with Firebase for saved questions
+        reference = DatabaseManager.db.getReference().child("users").child(user.userId).child("savedQuestions")
+        reference.keepSynced(true)
+
+        // enable navigation drawer
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView : NavigationView = findViewById(R.id.nav_view)
 
@@ -43,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         if(savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
@@ -69,11 +73,6 @@ class MainActivity : AppCompatActivity() {
 
             true
         }
-
-
-        // activate sync with Firebase for saved questions
-        reference = DatabaseManager.db.getReference().child("users").child(user.userId).child("savedQuestions")
-        reference.keepSynced(true)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

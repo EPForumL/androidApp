@@ -29,8 +29,7 @@ class SavedQuestionsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var user : Model.User
 
-    private lateinit var savedQuestions : SavedQuestionsCache
-    private var numberOfQuestions = savedQuestions.size
+    private lateinit var savedQuestions : List<Model.Question>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,34 +48,43 @@ class SavedQuestionsFragment : Fragment() {
 
         // initialize recycler with saved questions
         user = DatabaseManager.user ?: Model.User()
-        if (user.userId.isNotEmpty() && numberOfQuestions != 0) {
-            val layoutManager = LinearLayoutManager(context)
-            recyclerView = view.findViewById(R.id.recycler_forum)
-            recyclerView.layoutManager = layoutManager
+        db.getSavedQuestions(user.userId).thenAccept {
 
-            // display saved questions
-            val adapter = ForumAdapter(savedQuestions.toList())
-            recyclerView.adapter = adapter
+            val list : MutableList<Model.Question> = mutableListOf()
 
-            // move to QuestionDetails when clicking on specific question
-            adapter.onItemClick = {q ->
-                val intent = Intent(this.context, QuestionDetailsActivity::class.java)
-                intent.putExtra("question", q)
-                startActivity(intent)
+            for (q in it) {
+                list.plus(q)
             }
-        // if no question to display
-        } else {
-            val questions : RecyclerView = view.findViewById(R.id.recycler_saved_questions)
-            questions.visibility = View.GONE
 
-            val text : TextView = view.findViewById(R.id.text_login_to_save)
-            text.visibility = View.VISIBLE
+            if (user.userId.isNotEmpty() && list.isNotEmpty()) {
+                val layoutManager = LinearLayoutManager(context)
+                recyclerView = view.findViewById(R.id.recycler_forum)
+                recyclerView.layoutManager = layoutManager
 
-            // user is logged in but no questions to display
-            if (user.userId.isNotEmpty()) {
-                text.text = "No saved questions."
+                // display saved questions
+                val adapter = ForumAdapter(list)
+                recyclerView.adapter = adapter
+
+                // move to QuestionDetails when clicking on specific question
+                adapter.onItemClick = {q ->
+                    val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+                    intent.putExtra("question", q)
+                    startActivity(intent)
+                }
+                // if no question to display
+            } else {
+                val questions : RecyclerView = view.findViewById(R.id.recycler_saved_questions)
+                questions.visibility = View.GONE
+
+                val text : TextView = view.findViewById(R.id.text_login_to_save)
+                text.visibility = View.VISIBLE
+
+                // user is logged in but no questions to display
+                if (user.userId.isNotEmpty()) {
+                    text.text = "No saved questions."
+                }
             }
+
         }
     }
-
 }

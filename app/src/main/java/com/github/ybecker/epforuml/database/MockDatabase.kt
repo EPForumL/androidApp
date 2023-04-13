@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.database.DatabaseReference
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -244,5 +245,9 @@ class MockDatabase : Database() {
             val updatedSavedQuestions = user.savedQuestions.filter { it != questionId }
             users[userId] = user.copy(savedQuestions = updatedSavedQuestions)
         }
+    }
+
+    override fun getReference(): DatabaseReference {
+
     }
 }
