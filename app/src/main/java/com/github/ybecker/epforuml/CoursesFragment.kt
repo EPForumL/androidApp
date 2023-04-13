@@ -62,47 +62,6 @@ class CoursesFragment : Fragment() {
         //this methode put the different courses in the recycler view
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_course, parent, false)
-            val sub_switch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
-            val notif_switch = itemView.findViewById<Switch>(R.id.notificationSwitch)
-
-            // add a listener to every switches
-            sub_switch.setOnCheckedChangeListener { _, isChecked ->
-                val course = itemView.tag as? Course
-                if(course != null){
-                    if (isChecked) {
-                        // add a subscription for this user in the course
-                        db.addSubscription(user.userId, course.courseId)
-                        notif_switch.isEnabled = true
-                        Toast.makeText(itemView.context,"You subscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
-                    }
-                    else {
-                        db.removeSubscription(user.userId, course.courseId)
-                        db.removeNotification(user.userId, course.courseId)
-                        notif_switch.isEnabled = false
-                        notif_switch.isChecked = false
-                        Toast.makeText(itemView.context,"You unsubscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
-
-                    }
-                }
-                notif_switch.setOnCheckedChangeListener {_, isChecked ->
-                    val course = itemView.tag as? Course
-                    if(course != null){
-                        if (isChecked) {
-                            // add a subscription for this user in the course
-                            db.addNotification(user.userId, course.courseId)
-                            Toast.makeText(
-                                itemView.context,
-                                "You allow notifications for " + course.courseName,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        else {
-                            db.removeNotification(user.userId, course.courseId)
-                            Toast.makeText(itemView.context,"You reject notifications for " + course.courseName,Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
 
             return CourseViewHolder(itemView)
         }
@@ -128,7 +87,6 @@ class CoursesFragment : Fragment() {
 
         override fun getItemCount() = courses.size
 
-
     }
 
     private inner class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -142,14 +100,43 @@ class CoursesFragment : Fragment() {
             val is_subscribed = userSubscriptions.map { it.courseId }.contains(course.courseId)
             subscriptionSwitch.isChecked = is_subscribed
             notificationSwitch.isEnabled = is_subscribed
-            db.getCourseNotifications(course.courseId).thenAccept {
+            db.getCourseNotificationUserIds(course.courseId).thenAccept {
+
                 notificationSwitch.isChecked = it.contains(user.userId)
+
+                // add a listener to every switches
+                subscriptionSwitch.setOnCheckedChangeListener { _, isChecked ->
+                    if(course != null){
+                        if (isChecked) {
+                            // add a subscription for this user in the course
+                            db.addSubscription(user.userId, course.courseId)
+                            notificationSwitch.isEnabled = true
+                            Toast.makeText(itemView.context,"You subscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
+                        }
+                        else {
+                            db.removeSubscription(user.userId, course.courseId)
+                            db.removeNotification(user.userId, course.courseId)
+                            notificationSwitch.isEnabled = false
+                            notificationSwitch.isChecked = false
+                            Toast.makeText(itemView.context,"You unsubscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+                }
+                notificationSwitch.setOnCheckedChangeListener {_, isChecked ->
+                    if(course != null){
+                        if (isChecked) {
+                            // add a subscription for this user in the course
+                            db.addNotification(user.userId, course.courseId)
+                            Toast.makeText(itemView.context, "You allow notifications for " + course.courseName, Toast.LENGTH_SHORT).show()
+                        }
+                        else {
+                            db.removeNotification(user.userId, course.courseId)
+                            Toast.makeText(itemView.context,"You reject notifications for " + course.courseName,Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         }
     }
-
-    private fun onSwitchClick(){
-
-    }
-
 }

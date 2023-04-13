@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.github.ybecker.epforuml.Notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 
@@ -21,8 +22,8 @@ class SavedQuestionsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-        NotificationUtils.init(requireContext())
-        DatabaseManager.user?.let { db.addQuestion(it.userId, "-NSLO02aJWeSt28xmtiH", "newQuestion", "this is a new question", "") }
+        FirebaseCouldMessagingAdapter.init(requireContext())
+        DatabaseManager.user?.let { db.addQuestion(it.userId, "-NSvYgOTEiHc6DMm994C", "newQuestion", "this is a new question", "") }
 
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
 

@@ -246,7 +246,11 @@ class MockDatabase : Database() {
         }
     }
 
-    override fun getCourseNotifications(courseId: String): CompletableFuture<List<String>> {
+    override fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>> {
         return CompletableFuture.completedFuture(courses[courseId]?.notifications)
     }
 

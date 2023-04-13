@@ -1,9 +1,11 @@
 package com.github.ybecker.epforuml.database
 
-import com.firebase.ui.auth.AuthUI.getApplicationContext
-import com.github.ybecker.epforuml.NotificationUtils
+import android.content.ContentValues.TAG
+import android.util.Log
+import com.github.ybecker.epforuml.Notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
+import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -119,7 +121,24 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 as CompletableFuture<List<Course>>
     }
 
-    override fun getCourseNotifications(courseId: String): CompletableFuture<List<String>> {
+    override fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>> {
+        val future = CompletableFuture<List<String>>()
+
+        db.child(coursesPath).child(courseId).child(notificationsPath).get().addOnSuccessListener(){
+            val tokens = mutableListOf<String>()
+
+            for(courseSnapshot in it.children){
+                val token = courseSnapshot.value as String
+                if(token!=null){
+                    tokens.add(token)
+                }
+            }
+            future.complete(tokens)
+        }
+        return future
+    }
+
+    override fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>> {
         val future = CompletableFuture<List<String>>()
 
         db.child(coursesPath).child(courseId).child(notificationsPath).get().addOnSuccessListener(){
@@ -135,7 +154,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return future
     }
-
 
     override fun addCourse(courseName: String): Course {
         // create a space for the new course in db and save its id
@@ -168,9 +186,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         //add the question in the user's questions list
         db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
 
-        this.getCourseNotifications(courseId).thenAccept {
-            NotificationUtils.sendNotification(questionTitle, it ,userId, questionText ?: "")
-        }
+        FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
 
         return question
     }
@@ -244,7 +260,11 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     override fun addNotification(userId: String, courseId: String) {
-        db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).setValue(userId)
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).setValue(it)
+        }.addOnFailureListener { e ->
+            Log.e(TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
+        }
     }
 
     override fun removeNotification(userId: String, courseId: String) {
