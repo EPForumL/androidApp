@@ -118,7 +118,8 @@ class RealChatTest {
 
         Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed()))
         Espresso.onView(withId(R.id.buttonChatWith)).perform(closeSoftKeyboard())
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(scrollTo()).perform(click())
+        Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
+
 
         Espresso.onView(withId(R.id.send_text)).perform(click())
         scenario.onActivity { activity ->
