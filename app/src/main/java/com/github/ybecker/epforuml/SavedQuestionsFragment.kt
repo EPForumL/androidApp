@@ -39,12 +39,7 @@ class SavedQuestionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_saved_questions, container, false)
-
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("SavedQuestions")
-        databaseReference.keepSynced(true)
-
-        return view
+        return inflater.inflate(R.layout.fragment_saved_questions, container, false)
     }
 
     @SuppressLint("SetTextI18n")

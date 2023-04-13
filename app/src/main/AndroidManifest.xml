@@ -19,7 +19,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.EPForumL"
-        android:name=".cache.Setup"
         tools:targetApi="31"
         android:largeHeap="true">
         <activity
