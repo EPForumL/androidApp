@@ -26,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase
  */
 class SavedQuestionsFragment : Fragment() {
 
-    var savedQuestions = SavedQuestionsCache()
+    private lateinit var savedQuestions : SavedQuestionsCache
     private var numberOfQuestions = savedQuestions.size
 
     private lateinit var recyclerView: RecyclerView
@@ -44,6 +44,10 @@ class SavedQuestionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // TODO : retrieve saved questions from db
+
+
+        // initialize recycler with saved questions
         user = DatabaseManager.user ?: Model.User()
         if (user.userId.isNotEmpty() && numberOfQuestions != 0) {
             val layoutManager = LinearLayoutManager(context)
@@ -60,6 +64,7 @@ class SavedQuestionsFragment : Fragment() {
                 intent.putExtra("question", q)
                 startActivity(intent)
             }
+        // if no question to display
         } else {
             val questions : RecyclerView = view.findViewById(R.id.recycler_saved_questions)
             questions.visibility = View.GONE

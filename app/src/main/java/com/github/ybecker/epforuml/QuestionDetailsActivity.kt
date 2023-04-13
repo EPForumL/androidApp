@@ -111,12 +111,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     }
 
-    private fun reloadQuestion() {
-        db.getQuestionById(questionId).thenAccept {
-            question = it
-        }
-    }
-
     private fun checkSavedQuestion(): Boolean {
         return user.savedQuestions.contains(questionId)
     }
