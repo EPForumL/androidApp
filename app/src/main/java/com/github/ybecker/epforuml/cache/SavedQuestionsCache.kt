@@ -24,13 +24,21 @@ class SavedQuestionsCache : Cache {
         cache.clear()
     }
 
-    fun toList() : MutableList<Model.Question> {
+    override fun toList() : MutableList<Model.Question> {
         var list = mutableListOf<Model.Question>()
         for ((k, v) in cache) {
             list.add(v)
         }
 
         return list
+    }
+
+    override fun isQuestionSaved(key: String): Boolean {
+        val question = get(key)
+        if (question != null)
+            return true
+
+        return false
     }
 }
 
@@ -45,4 +53,8 @@ interface Cache {
     fun remove(key: String): Model.Question?
 
     fun clear()
+
+    fun toList(): MutableList<Model.Question>
+
+    fun isQuestionSaved(key: String): Boolean
 }

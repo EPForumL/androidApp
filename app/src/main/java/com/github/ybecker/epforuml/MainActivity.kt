@@ -9,6 +9,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
+import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.android.material.navigation.NavigationView
 

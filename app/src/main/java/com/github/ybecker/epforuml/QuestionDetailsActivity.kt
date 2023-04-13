@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
@@ -25,6 +26,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var questionId : String
 
     private lateinit var user : Model.User
+    private lateinit var userId : String
+
+    private lateinit var saveToggle : ImageButton
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +53,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
         updateRecycler()
 
         user = DatabaseManager.user ?: Model.User()
+        userId = user.userId
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
         // only allow posting answer if user is connected
-        if (user.userId.isNotEmpty()) {
+        if (userId.isNotEmpty()) {
             // store content of box as a new answer to corresponding question
             sendButton.setOnClickListener {
                 if (question != null) {
@@ -62,7 +68,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
                     if (replyText != "") {
                         replyBox.setText("")
 
-                        db.addAnswer(user.userId, question!!.questionId, replyText)
+                        db.addAnswer(userId, question!!.questionId, replyText)
                         updateRecycler()
                     }
                 }
@@ -77,6 +83,23 @@ class QuestionDetailsActivity : AppCompatActivity() {
             textView.visibility = View.VISIBLE
         }
 
+
+        // save question button
+        saveToggle = findViewById(R.id.toggle_save_question)
+        switchImageButton()
+
+        saveToggle.setOnClickListener {
+            // question is saved, will be unsaved after click
+            if (checkSavedQuestion()) {
+                db.removeSavedQuestion(userId, questionId)
+            }
+            // question is not yet saved, will be saved after click
+            else {
+                db.addSavedQuestion(userId, questionId)
+            }
+
+            switchImageButton()
+        }
     }
 
 
@@ -92,5 +115,19 @@ class QuestionDetailsActivity : AppCompatActivity() {
         db.getQuestionById(questionId).thenAccept {
             question = it
         }
+    }
+
+    private fun checkSavedQuestion(): Boolean {
+        return user.savedQuestions.contains(questionId)
+    }
+
+    private fun switchImageButton() {
+        saveToggle.setBackgroundResource(
+            when(checkSavedQuestion()) {
+                true -> R.drawable.checkmark
+                false -> R.drawable.nav_saved_questions
+            }
+        )
+
     }
 }

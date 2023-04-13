@@ -26,10 +26,8 @@ import com.google.firebase.database.FirebaseDatabase
  */
 class SavedQuestionsFragment : Fragment() {
 
-    private var savedQuestions = SavedQuestionsCache()
+    var savedQuestions = SavedQuestionsCache()
     private var numberOfQuestions = savedQuestions.size
-
-    private lateinit var databaseReference : DatabaseReference
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var user : Model.User
