@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // initialize DB to Mock
-        //DatabaseManager.useMockDatabase()
+        DatabaseManager.useMockDatabase()
 
         user = DatabaseManager.user ?: Model.User()
 
@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity() {
 
 
         // set value to transmit to Fragments
-        // TODO : check if actually transmits or if extra Bundle is needed
         bundle.putParcelable("savedQuestions", cache)
 
 

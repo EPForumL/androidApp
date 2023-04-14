@@ -29,7 +29,7 @@ class SavedQuestionsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var user : Model.User
 
-    private var savedQuestions : SavedQuestionsCache? = null
+    private lateinit var savedQuestions : SavedQuestionsCache
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +38,7 @@ class SavedQuestionsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_saved_questions, container, false)
 
-        savedQuestions = savedInstanceState!!.getParcelable("savedQuestions")
+        savedQuestions = arguments?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
 
         return view
     }
@@ -52,11 +52,11 @@ class SavedQuestionsFragment : Fragment() {
         val userId = user.userId
 
 
-        val list = savedQuestions?.toList()
+        val list = savedQuestions.toList()
 
-        if (userId.isNotEmpty() && list != null && list.isNotEmpty()) {
+        if (userId.isNotEmpty() && list.isNotEmpty()) {
             val layoutManager = LinearLayoutManager(context)
-            recyclerView = view.findViewById(R.id.recycler_forum)
+            recyclerView = view.findViewById(R.id.recycler_saved_questions)
             recyclerView.layoutManager = layoutManager
 
             // display saved questions
@@ -66,11 +66,13 @@ class SavedQuestionsFragment : Fragment() {
             // move to QuestionDetails when clicking on specific question
             adapter.onItemClick = {q ->
                 val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+                intent.putExtra("savedQuestions", savedQuestions)
                 intent.putExtra("question", q)
                 startActivity(intent)
             }
-            // if no question to display
+
         } else {
+            // if no question to display
             val questions : RecyclerView = view.findViewById(R.id.recycler_saved_questions)
             questions.visibility = View.GONE
 
@@ -82,6 +84,5 @@ class SavedQuestionsFragment : Fragment() {
                 text.text = "No saved questions."
             }
         }
-
     }
 }

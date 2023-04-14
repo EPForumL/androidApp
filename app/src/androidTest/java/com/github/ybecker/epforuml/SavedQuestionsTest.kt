@@ -65,6 +65,10 @@ class SavedQuestionsTest {
     // TODO(check cache is properly transmitted and retrieved)
 
     // TODO(check if saved questions are still there after restarting the app)
+
+    // TODO(only logged in can save questions)
+
+    // TODO(not logged in does not see save button)
     @After
     fun finish() {
         scenario.close()

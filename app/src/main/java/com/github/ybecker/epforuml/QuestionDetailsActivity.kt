@@ -42,8 +42,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // retrieve cache of saved questions
-        savedQuestions = savedInstanceState?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
-        updateBundle()
+        savedQuestions = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
+        //updateBundle()
+        updateIntent()
 
         // enable back button
         val button : Button = findViewById(R.id.back_to_forum_button)
@@ -84,6 +85,28 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 }
             }
 
+            // save question button
+            saveToggle = findViewById(R.id.toggle_save_question)
+            switchImageButton()
+
+            // TODO : fix toggle image
+            saveToggle.setOnClickListener {
+                // question is saved, will be unsaved after click
+                if (checkSavedQuestion()) {
+                    savedQuestions.remove(questionId)
+                }
+                // question is not yet saved, will be saved after click
+                else {
+                    savedQuestions.set(questionId, question!!)
+                }
+
+                // update cache to send
+                //updateBundle()
+                updateIntent()
+
+                switchImageButton()
+            }
+
         } else {
             val cardView : CardView = findViewById(R.id.write_reply_card)
             cardView.visibility = View.GONE
@@ -91,27 +114,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
             val textView : TextView = findViewById(R.id.not_loggedin_text)
             textView.visibility = View.VISIBLE
-        }
 
-
-        // save question button
-        saveToggle = findViewById(R.id.toggle_save_question)
-        switchImageButton()
-
-        saveToggle.setOnClickListener {
-            // question is saved, will be unsaved after click
-            if (checkSavedQuestion()) {
-                savedQuestions?.remove(questionId)
-            }
-            // question is not yet saved, will be saved after click
-            else {
-                savedQuestions?.set(questionId, question!!)
-            }
-
-            // update cache to send
-            updateBundle()
-
-            switchImageButton()
+            val saveLayout : LinearLayout = findViewById(R.id.save_question_layout)
+            saveLayout.visibility = View.GONE
         }
     }
 
@@ -125,7 +130,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun checkSavedQuestion(): Boolean {
-        savedQuestions?.get(questionId) ?: return false
+
+        // TODO : fix
+        savedQuestions.get(questionId) ?: return false
 
         return true
     }
@@ -142,5 +149,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun updateBundle() {
         bundle.putParcelable("savedQuestions", savedQuestions)
+    }
+
+    private fun updateIntent() {
+        intent.putExtra("savedQuestions", savedQuestions)
     }
 }

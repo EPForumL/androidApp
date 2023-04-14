@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
+import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture
 
@@ -41,6 +42,10 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
      * The temporary (to be completed) list of questions
      */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
+
+
+    //private lateinit var savedQuestions : SavedQuestionsCache
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +54,8 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         //DatabaseManager.useMockDatabase()
+        // TODO : cleanup
+        //savedQuestions = savedInstanceState?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
 
         futureCourseList = db.availableCourses()
 
@@ -106,6 +113,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // move to QuestionDetails when clicking on specific question
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+            //intent.putExtra("savedQuestions", savedQuestions)
             intent.putExtra("question", q)
             startActivity(intent)
         }
