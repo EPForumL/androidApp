@@ -22,7 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var user : Model.User
 
-    private var cache : SavedQuestionsCache? = SavedQuestionsCache()
+    private lateinit var cache : SavedQuestionsCache
+    private var bundle = Bundle()
 
     //private lateinit var reference : DatabaseReference
 
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         user = DatabaseManager.user ?: Model.User()
 
         // retrieve saved questions if any
-        cache = savedInstanceState!!.getParcelable("savedQuestions")
+        cache = savedInstanceState?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
 
         // enable navigation drawer
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -51,14 +52,14 @@ class MainActivity : AppCompatActivity() {
 
         // set value to transmit to Fragments
         // TODO : check if actually transmits or if extra Bundle is needed
-        savedInstanceState.putParcelable("savedQuestions", cache)
+        bundle.putParcelable("savedQuestions", cache)
 
 
         if(savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
         }
 
-        if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
+        if(intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
         }
 
@@ -90,6 +91,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragment(fragment: Fragment) {
+        fragment.arguments = bundle
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
     }

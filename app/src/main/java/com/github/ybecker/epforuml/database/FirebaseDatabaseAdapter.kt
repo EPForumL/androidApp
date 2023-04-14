@@ -31,7 +31,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val senderIdPath = "senderId"
     private val datePath = "date"
     private val chatIdPath = "chatId"
-    private val savedQuestionsPath = "savedQuestions"
+    //private val savedQuestionsPath = "savedQuestions"
 
 
     private val courseNamePath = "courseName"
@@ -48,13 +48,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val userInfoPath = "userInfo"
     private val statusPath = "status"
 
-    init {
+    /*init {
         dbInstance.setPersistenceEnabled(true)
 
         // activate sync with Firebase for saved questions
         val reference = db.child("savedQuestions")
         reference.keepSynced(true)
-    }
+    }*/
 
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
@@ -351,11 +351,14 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             questionSnapshot.key?.let { questions.add(it) }
         }
 
+        /*
         val savedQuestions = arrayListOf<String>()
         dataSnapshot.child(savedQuestionsPath).children.forEach { savedQSnapshot ->
             savedQSnapshot.key?.let { savedQuestions.add(it) }
 
         }
+
+         */
         // save every subscriptions in a List using getCourse private method
         val subscriptions = arrayListOf<String>()
         dataSnapshot.child(subscriptionsPath).children.forEach {subscriptionSnapshot ->
@@ -378,7 +381,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 email,
                 questions,
                 answers,
-                savedQuestions,
+                //savedQuestions,
                 subscriptions,
                 profilePic ?: "",
                 userInfo ?: "",
@@ -457,7 +460,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return null
     }
-
+/*
     override fun getUserSavedQuestions(userId: String): CompletableFuture<List<Question>> {
         // use private getListOfAny methode with correct arguments
         return getListOfAny(listOf(usersPath, userId, savedQuestionsPath), savedQuestionsPath) { ds -> getQuestion(ds) }
@@ -475,6 +478,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     override fun removeUserSavedQuestion(userId: String, questionId: String) {
         db.child(usersPath).child(userId).child(savedQuestionsPath).child(questionId).removeValue()
     }
+
+ */
 
     /*
 

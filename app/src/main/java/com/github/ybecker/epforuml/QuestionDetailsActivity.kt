@@ -31,7 +31,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var saveToggle : ImageButton
 
-    private var savedQuestions : SavedQuestionsCache? = null
+    private lateinit var savedQuestions : SavedQuestionsCache
+    private var bundle = Bundle()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +42,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // retrieve cache of saved questions
-        savedQuestions = savedInstanceState!!.getParcelable("savedQuestions")
+        savedQuestions = savedInstanceState?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
+        updateBundle()
 
         // enable back button
         val button : Button = findViewById(R.id.back_to_forum_button)
@@ -107,7 +109,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             }
 
             // update cache to send
-            savedInstanceState.putParcelable("savedQuestions", savedQuestions)
+            updateBundle()
 
             switchImageButton()
         }
@@ -123,7 +125,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun checkSavedQuestion(): Boolean {
-        return user.savedQuestions.contains(questionId)
+        savedQuestions?.get(questionId) ?: return false
+
+        return true
     }
 
     private fun switchImageButton() {
@@ -134,5 +138,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
             }
         )
 
+    }
+
+    private fun updateBundle() {
+        bundle.putParcelable("savedQuestions", savedQuestions)
     }
 }

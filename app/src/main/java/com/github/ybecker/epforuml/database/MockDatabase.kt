@@ -43,9 +43,8 @@ class MockDatabase : Database() {
         val course12 = Course("course11","Database", mutableListOf())
         courses[course12.courseId] = course12
 
-        val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), emptyList(), emptyList())
+        val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), /*emptyList(), */emptyList())
         users[user1.userId] = user1
-        val user2 = User("user2", "UserWithSavedQuestions", "", emptyList(), emptyList(), listOf("question2"), emptyList())
 
         val question1 = Question("question1", "course1", "user1", "About ci",
                                 "How do I fix the CI ?",
@@ -224,7 +223,7 @@ class MockDatabase : Database() {
             list.map { it.join() }
         }
     }
-
+/*
     override fun getUserSavedQuestions(userId: String): CompletableFuture<List<Question>> {
         val savedQuestions = users.get(userId)?.savedQuestions
         return CompletableFuture.completedFuture(questions.filterValues { savedQuestions!!.contains(it.questionId) }.values.toList().reversed())
@@ -247,4 +246,6 @@ class MockDatabase : Database() {
             users[userId] = user.copy(savedQuestions = updatedSavedQuestions)
         }
     }
+
+ */
 }

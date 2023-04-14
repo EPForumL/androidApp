@@ -180,7 +180,7 @@ abstract class Database {
      * @return the question that was posted in database
      */
     abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
-
+/*
     /**
      * Gets the user's saved questions.
      *
@@ -207,6 +207,8 @@ abstract class Database {
      * @param questionId the question to be removed
      */
     abstract fun removeUserSavedQuestion(userId: String, questionId: String)
+
+ */
 
     /*
     abstract fun getReference() : DatabaseReference
