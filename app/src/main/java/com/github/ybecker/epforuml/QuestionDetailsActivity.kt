@@ -43,8 +43,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         // retrieve cache of saved questions
         savedQuestions = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
-        //updateBundle()
-        updateIntent()
+        updateBundle()
+        //updateIntent()
 
         // enable back button
         val button : Button = findViewById(R.id.back_to_forum_button)
@@ -101,8 +101,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 }
 
                 // update cache to send
-                //updateBundle()
-                updateIntent()
+                updateBundle()
+                //updateIntent()
 
                 switchImageButton()
             }

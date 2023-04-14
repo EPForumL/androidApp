@@ -44,7 +44,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
 
-    //private lateinit var savedQuestions : SavedQuestionsCache
+    private lateinit var savedQuestions : SavedQuestionsCache
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +55,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
         //DatabaseManager.useMockDatabase()
         // TODO : cleanup
-        //savedQuestions = savedInstanceState?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
+        savedQuestions = arguments?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
 
         futureCourseList = db.availableCourses()
 
@@ -113,7 +113,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // move to QuestionDetails when clicking on specific question
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
-            //intent.putExtra("savedQuestions", savedQuestions)
+            intent.putExtra("savedQuestions", savedQuestions)
             intent.putExtra("question", q)
             startActivity(intent)
         }
