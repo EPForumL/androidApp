@@ -1,12 +1,16 @@
 package com.github.ybecker.epforuml.cache
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.github.ybecker.epforuml.database.Model
 
-class SavedQuestionsCache : Cache {
+class SavedQuestionsCache() : Cache, Parcelable {
     private var cache = HashMap<String, Model.Question>()
 
     override val size: Int
         get() = cache.size
+
+    constructor(parcel: Parcel) : this() {}
 
     override fun set(key: String, value: Model.Question) {
         cache[key] = value
@@ -40,6 +44,26 @@ class SavedQuestionsCache : Cache {
 
         return false
     }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<SavedQuestionsCache> {
+        override fun createFromParcel(parcel: Parcel): SavedQuestionsCache {
+            return SavedQuestionsCache(parcel)
+        }
+
+        override fun newArray(size: Int): Array<SavedQuestionsCache?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+
 }
 
 

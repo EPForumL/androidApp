@@ -138,7 +138,7 @@ class QuestionDetailsTest {
         onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
     }
 
-    // TODO : test toggle is correct
+    // TODO : test toggle is correct and display properly (add and remove)
     // TODO : test saved info is send to database
 
     @After

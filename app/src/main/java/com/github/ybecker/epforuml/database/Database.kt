@@ -187,7 +187,7 @@ abstract class Database {
      * @param userId the user
      * @return the list of questions that has been saved by the user
      */
-    abstract fun getSavedQuestions(userId: String) : CompletableFuture<List<Question>>
+    abstract fun getUserSavedQuestions(userId: String) : CompletableFuture<List<Question>>
 
 
     /**
@@ -197,7 +197,7 @@ abstract class Database {
      * @param questionId the question to be saved
      * @return the saved question
      */
-    abstract fun addSavedQuestion(userId: String, questionId: String) : CompletableFuture<Question?>
+    abstract fun addUserSavedQuestion(userId: String, questionId: String) : CompletableFuture<Question?>
 
 
     /**
@@ -206,10 +206,13 @@ abstract class Database {
      * @param userId the user
      * @param questionId the question to be removed
      */
-    abstract fun removeSavedQuestion(userId: String, questionId: String)
+    abstract fun removeUserSavedQuestion(userId: String, questionId: String)
 
+    /*
     abstract fun getReference() : DatabaseReference
 
     abstract fun getInstance() : FirebaseDatabase
+
+     */
 
 }

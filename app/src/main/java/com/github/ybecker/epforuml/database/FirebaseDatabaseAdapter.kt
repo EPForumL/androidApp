@@ -48,6 +48,14 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val userInfoPath = "userInfo"
     private val statusPath = "status"
 
+    init {
+        dbInstance.setPersistenceEnabled(true)
+
+        // activate sync with Firebase for saved questions
+        val reference = db.child("savedQuestions")
+        reference.keepSynced(true)
+    }
+
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
@@ -450,7 +458,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return null
     }
 
-    override fun getSavedQuestions(userId: String): CompletableFuture<List<Question>> {
+    override fun getUserSavedQuestions(userId: String): CompletableFuture<List<Question>> {
         // use private getListOfAny methode with correct arguments
         return getListOfAny(listOf(usersPath, userId, savedQuestionsPath), savedQuestionsPath) { ds -> getQuestion(ds) }
                 //cast the future to the a list of question future
@@ -458,15 +466,17 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
 
-    override fun addSavedQuestion(userId: String, questionId: String): CompletableFuture<Question?> {
+    override fun addUserSavedQuestion(userId: String, questionId: String): CompletableFuture<Question?> {
         db.child(usersPath).child(userId).child(savedQuestionsPath).child(questionId).setValue(questionId)
 
         return getQuestionById(questionId)
     }
 
-    override fun removeSavedQuestion(userId: String, questionId: String) {
+    override fun removeUserSavedQuestion(userId: String, questionId: String) {
         db.child(usersPath).child(userId).child(savedQuestionsPath).child(questionId).removeValue()
     }
+
+    /*
 
     override fun getReference() : DatabaseReference {
         return db
@@ -475,4 +485,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     override fun getInstance(): FirebaseDatabase {
         return dbInstance
     }
+
+     */
 }

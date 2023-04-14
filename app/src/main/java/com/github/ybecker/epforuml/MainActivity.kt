@@ -22,7 +22,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var user : Model.User
 
-    private lateinit var reference : DatabaseReference
+    private var cache : SavedQuestionsCache? = SavedQuestionsCache()
+
+    //private lateinit var reference : DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +35,8 @@ class MainActivity : AppCompatActivity() {
 
         user = DatabaseManager.user ?: Model.User()
 
-        // activate sync with Firebase for saved questions
-        reference = DatabaseManager.db.getReference().child("users").child(user.userId).child("savedQuestions")
-        reference.keepSynced(true)
+        // retrieve saved questions if any
+        cache = savedInstanceState!!.getParcelable("savedQuestions")
 
         // enable navigation drawer
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -46,6 +47,11 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
+        // set value to transmit to Fragments
+        // TODO : check if actually transmits or if extra Bundle is needed
+        savedInstanceState.putParcelable("savedQuestions", cache)
 
 
         if(savedInstanceState == null) {

@@ -58,10 +58,13 @@ class SavedQuestionsTest {
             .check(matches(withText("No saved questions.")))
     }
 
-    // logged in can see questions if any
+    // TODO(logged in can see questions if any)
 
-    // logged in can click on question to see details
+    // TODO(logged in can click on question to see details)
 
+    // TODO(check cache is properly transmitted and retrieved)
+
+    // TODO(check if saved questions are still there after restarting the app)
     @After
     fun finish() {
         scenario.close()

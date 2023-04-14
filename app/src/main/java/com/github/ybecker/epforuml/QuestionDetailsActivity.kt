@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
@@ -30,6 +31,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var saveToggle : ImageButton
 
+    private var savedQuestions : SavedQuestionsCache? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,11 +40,16 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // retrieve cache of saved questions
+        savedQuestions = savedInstanceState!!.getParcelable("savedQuestions")
+
+        // enable back button
         val button : Button = findViewById(R.id.back_to_forum_button)
         button.setOnClickListener{ // Create an intent to return to the previous fragment
             startActivity(Intent(applicationContext, MainActivity::class.java))
         }
 
+        // enable answer view
         answerRecyclerView = findViewById(R.id.answers_recycler)
         answerRecyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -91,12 +99,15 @@ class QuestionDetailsActivity : AppCompatActivity() {
         saveToggle.setOnClickListener {
             // question is saved, will be unsaved after click
             if (checkSavedQuestion()) {
-                db.removeSavedQuestion(userId, questionId)
+                savedQuestions?.remove(questionId)
             }
             // question is not yet saved, will be saved after click
             else {
-                db.addSavedQuestion(userId, questionId)
+                savedQuestions?.set(questionId, question!!)
             }
+
+            // update cache to send
+            savedInstanceState.putParcelable("savedQuestions", savedQuestions)
 
             switchImageButton()
         }

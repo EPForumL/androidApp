@@ -71,6 +71,8 @@ class ForumAdapterTest {
         displayQuestionTest()
     }
 
+    // TODO(check cache is properly sent to other fragments)
+
     @After
     fun closeScenario() {
         scenario.close()

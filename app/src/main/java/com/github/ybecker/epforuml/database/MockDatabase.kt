@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -224,12 +225,12 @@ class MockDatabase : Database() {
         }
     }
 
-    override fun getSavedQuestions(userId: String): CompletableFuture<List<Question>> {
+    override fun getUserSavedQuestions(userId: String): CompletableFuture<List<Question>> {
         val savedQuestions = users.get(userId)?.savedQuestions
         return CompletableFuture.completedFuture(questions.filterValues { savedQuestions!!.contains(it.questionId) }.values.toList().reversed())
     }
 
-    override fun addSavedQuestion(
+    override fun addUserSavedQuestion(
         userId: String,
         questionId: String
     ): CompletableFuture<Question?> {
@@ -239,15 +240,11 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(questions[questionId])
     }
 
-    override fun removeSavedQuestion(userId: String, questionId: String) {
+    override fun removeUserSavedQuestion(userId: String, questionId: String) {
         val user = users[userId]
         if (user != null) {
             val updatedSavedQuestions = user.savedQuestions.filter { it != questionId }
             users[userId] = user.copy(savedQuestions = updatedSavedQuestions)
         }
-    }
-
-    override fun getReference(): DatabaseReference {
-
     }
 }

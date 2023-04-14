@@ -8,7 +8,5 @@ import com.github.ybecker.epforuml.database.Model
 class Setup : Application() {
     override fun onCreate() {
         super.onCreate()
-
-        db.getInstance().setPersistenceEnabled(true)
     }
 }
