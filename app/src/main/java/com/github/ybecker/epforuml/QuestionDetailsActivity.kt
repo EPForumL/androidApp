@@ -27,6 +27,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var saveToggle : ImageButton
 
+    private var cache = LocalCache()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +81,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
             saveToggle.setOnClickListener {
                 // question is saved, will be unsaved after click
                 if (questionIsSaved) {
-                    LocalCache().getSavedQuestions().remove(questionId)
+                    cache.getSavedQuestions().remove(questionId)
                     savedBecomesInverse()
                 }
                 // question is not yet saved, will be saved after click
                 else {
-                    LocalCache().getSavedQuestions().set(questionId, question!!)
+                    cache.getSavedQuestions().set(questionId, question!!)
                     savedBecomesInverse()
                 }
 
@@ -104,6 +106,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
+
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {
             question = it
@@ -112,7 +115,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun checkSavedQuestion(): Boolean {
-        LocalCache().getSavedQuestions().get(questionId) ?: return false
+        cache.getSavedQuestions().get(questionId) ?: return false
 
         return true
     }
@@ -129,5 +132,13 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun savedBecomesInverse() {
         questionIsSaved = !questionIsSaved
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+
+        return true
     }
 }

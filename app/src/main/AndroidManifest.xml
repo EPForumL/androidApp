@@ -24,8 +24,7 @@
         android:largeHeap="true">
         <activity
             android:name=".QuestionDetailsActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity"/>
+            android:exported="false"/>
         <activity
             android:name=".authentication.LoginActivity"
             android:exported="true"
