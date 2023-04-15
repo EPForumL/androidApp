@@ -48,7 +48,7 @@
             android:id="@+id/recycler_chat"
             android:name="com.github.ybecker.epforuml.chat.RealChatFragment"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="520dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
@@ -66,18 +66,19 @@
 
             <EditText
                 android:id="@+id/edit_text_message"
-                android:layout_width="323dp"
+                android:layout_width="280dp"
                 android:layout_height="match_parent"
                 android:autofillHints=""
                 android:ems="10"
+                android:layout_gravity="bottom|end"
                 android:inputType="textLongMessage"
-                android:minHeight="48dp"
+                android:minHeight="50dp"
                 android:text="@string/type_your_message_here" />
 
             <Button
                 android:id="@+id/send_text"
-                android:layout_width="wrap_content"
-                android:layout_height="126dp"
+                android:layout_width="109dp"
+                android:layout_height="match_parent"
                 android:layout_gravity="bottom|end"
                 android:minHeight="50dp"
                 android:text="@string/send" />
