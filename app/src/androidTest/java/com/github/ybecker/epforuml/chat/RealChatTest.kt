@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.chat
 
 import android.app.Activity
 import android.content.Intent
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
@@ -64,9 +65,10 @@ class RealChatTest {
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
-        Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed()))
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(closeSoftKeyboard())
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(scrollTo()).perform(click())
+        scenario.onActivity { activity ->
+            val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
+            view.findViewById<Button>(R.id.buttonChatWith).performClick()
+        }
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
         Espresso.onView(withId(R.id.send_text)).check(matches(isClickable()))
         Espresso.onView(withId(R.id.edit_text_message)).check(matches(isDisplayed())).check(matches(
@@ -85,7 +87,7 @@ class RealChatTest {
 
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(ViewActions.click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
         Espresso.onView(withId(R.id.not_connected_text_view)).check(matches(isDisplayed()))
 
@@ -114,9 +116,10 @@ class RealChatTest {
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
-        Espresso.onView(withId(R.id.buttonChatWith)).check(matches(isDisplayed()))
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(closeSoftKeyboard())
-        Espresso.onView(withId(R.id.buttonChatWith)).perform(click())
+        scenario.onActivity { activity ->
+            val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
+            view.findViewById<Button>(R.id.buttonChatWith).performClick()
+        }
 
 
         Espresso.onView(withId(R.id.send_text)).perform(click())

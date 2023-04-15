@@ -62,8 +62,7 @@ class ChatHomeTest {
         DatabaseManager.db.addChat("0","2", "Hey")
         DatabaseManager.db.addChat("0","3", "Hey")
 
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
+        Espresso.onView(withContentDescription(R.string.open)).perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
         scenario.onActivity { activity ->
