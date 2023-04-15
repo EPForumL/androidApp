@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.*
@@ -18,6 +19,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.github.ybecker.epforuml.authentication.Authenticator
 import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.authentication.LoginActivity
@@ -137,6 +139,7 @@ class QuestionDetailsTest {
         onView(withId(R.id.write_reply_box)).check(matches(withText("")))
     }
 
+
     @Test
     fun guestUserCannotPostAnswers() {
         logOutDetailsActivity()
@@ -145,10 +148,6 @@ class QuestionDetailsTest {
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
         onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
     }
-
-    // TODO : test toggle is correct and display properly (add and remove)
-
-    // test properly navigates between activities
 
 
     @Test
@@ -187,13 +186,26 @@ class QuestionDetailsTest {
         onView(withId(R.id.toggle_save_question))
             .perform(click())
 
-        onView(withId(R.id.back_to_forum_button))
+        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().targetContext)
+
+        // try OverflowMenuButton
+        onView(withContentDescription("More options"))
             .perform(click())
 
         val mainCache = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
 
         assertFalse(mainCache.isEmpty())
         assertTrue(mainCache.isQuestionSaved(QUESTION_ID))
+    }
+
+    @Test
+    fun questionCheckIsCorrect() {
+        logInDetailsActivity()
+
+        localScenario.onActivity {
+
+        }
+
     }
 
     @Test
@@ -216,6 +228,7 @@ class QuestionDetailsTest {
     }
 
 
+    // TODO complete test
     @Test
     fun toggleOnWhenQuestionSaved() {
         val intent = Intent(

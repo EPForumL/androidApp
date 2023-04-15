@@ -36,9 +36,6 @@ class MainActivity : AppCompatActivity() {
 
         user = DatabaseManager.user ?: Model.User()
 
-        // retrieve saved questions if any
-        cache = savedInstanceState?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
-
         // enable navigation drawer
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView : NavigationView = findViewById(R.id.nav_view)
@@ -50,14 +47,11 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        // set value to transmit to Fragments
-        bundle.putParcelable("savedQuestions", cache)
-
-
         if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
+            replaceFragment(HomeFragment(this))
         }
 
+        // TODO change to replace
         if(intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
         }
@@ -90,9 +84,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragment(fragment: Fragment) {
+        getCacheFromIntent()
         fragment.arguments = bundle
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
+    }
+
+    private fun getCacheFromIntent() {
+        cache = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
+        // set value to transmit to Fragments
+        bundle.putParcelable("savedQuestions", cache)
     }
 }
 

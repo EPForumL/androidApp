@@ -1,16 +1,10 @@
 package com.github.ybecker.epforuml
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,13 +37,17 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         // retrieve cache of saved questions
         savedQuestions = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
-        updateBundle()
+        //updateBundle()
         //updateIntent()
+
 
         // enable back button
         val button : Button = findViewById(R.id.back_to_forum_button)
         button.setOnClickListener{ // Create an intent to return to the previous fragment
-            startActivity(Intent(applicationContext, MainActivity::class.java))
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            intent.putExtra("savedQuestions", savedQuestions)
+
+            startActivity(intent)
         }
 
         // enable answer view
@@ -89,7 +87,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             saveToggle = findViewById(R.id.toggle_save_question)
             switchImageButton()
 
-            // TODO : fix toggle image
+            // TODO : fix save upon click
             saveToggle.setOnClickListener {
                 // question is saved, will be unsaved after click
                 if (checkSavedQuestion()) {
@@ -101,7 +99,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 }
 
                 // update cache to send
-                updateBundle()
+                //updateBundle()
                 //updateIntent()
 
                 switchImageButton()
@@ -120,6 +118,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+        }
+        return true
+    }
 
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {
@@ -130,8 +134,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun checkSavedQuestion(): Boolean {
-
-        // TODO : fix
         savedQuestions.get(questionId) ?: return false
 
         return true

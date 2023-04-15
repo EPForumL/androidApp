@@ -10,6 +10,10 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -18,6 +22,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import junit.framework.TestCase
 import junit.framework.TestCase.assertTrue
+import org.hamcrest.Matchers.allOf
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -85,6 +90,38 @@ class MainActivityTest {
 
         TestCase.assertFalse(newCache.isEmpty())
         assertTrue(newCache.isQuestionSaved(QUESTION_ID))
+    }
+
+
+    @Test
+    fun cacheSentToDetailsActivityComesBackTheSame() {
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            MainActivity::class.java
+        )
+
+        // initialize cache
+        intent.putExtra("savedQuestions", cache)
+
+        scenario = ActivityScenario.launch(intent)
+
+        Intents.init()
+
+        // go to last QuestionDetailsActivity
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+
+        // go back to main
+        onView(withId(R.id.back_to_forum_button))
+            .perform(click())
+
+        intended(allOf(hasExtra("savedQuestions", cache), hasComponent(MainActivity::class.simpleName)))
+        val newCache : SavedQuestionsCache = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
+
+        TestCase.assertFalse(newCache.isEmpty())
+        assertTrue(newCache.isQuestionSaved(QUESTION_ID))
+
+        Intents.release()
     }
 
     @Test
