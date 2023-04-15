@@ -56,21 +56,10 @@
             app:layoutManager="LinearLayoutManager"
             tools:context=".chat.RealChatFragment"
             tools:listitem="@layout/chat_item" />
-
-        <LinearLayout
-            android:id="@+id/newchat_layout"
-            android:layout_width="500dp"
-            android:layout_height="100dp"
-            android:layout_gravity="bottom|center_vertical"
-            android:layout_margin="5dp"
-            android:layout_weight="5"
-            android:orientation="horizontal">
-
-
-            <EditText
+        <EditText
             android:id="@+id/edit_text_message"
-            android:layout_width="350dp"
-            android:layout_height="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:autofillHints=""
             android:ems="10"
@@ -78,14 +67,12 @@
             android:minHeight="100dp"
             android:text="@string/type_your_message_here" />
 
-            <Button
-                android:id="@+id/send_text"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="bottom"
-                android:text="@string/send" />
+        <Button
+            android:id="@+id/send_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="@string/send" />
         </LinearLayout>
-    </LinearLayout>
-
 
 </FrameLayout>
