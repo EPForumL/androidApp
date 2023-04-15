@@ -45,6 +45,10 @@ class SavedQuestionsCache() : Cache, Parcelable {
         return false
     }
 
+    override fun isEmpty(): Boolean {
+        return cache.isEmpty()
+    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
 
     }
@@ -81,4 +85,6 @@ interface Cache {
     fun toList(): MutableList<Model.Question>
 
     fun isQuestionSaved(key: String): Boolean
+
+    fun isEmpty() : Boolean
 }
