@@ -22,6 +22,7 @@
             android:id="@+id/title_chat"
             android:text= "@string/chat"
             android:textSize="30sp"
+            android:layout_weight="0"
             android:layout_marginBottom="20dp"
             android:textStyle="bold"/>
 
@@ -49,6 +50,7 @@
             android:name="com.github.ybecker.epforuml.chat.RealChatFragment"
             android:layout_width="wrap_content"
             android:layout_height="520dp"
+            android:layout_weight="1"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
@@ -58,29 +60,28 @@
         <LinearLayout
             android:id="@+id/newchat_layout"
             android:layout_width="match_parent"
-            android:layout_height="88dp"
-            android:layout_gravity="bottom"
+            android:layout_height="300dp"
+            android:layout_gravity="bottom|center_vertical"
             android:layout_margin="10dp"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:orientation="horizontal">
 
             <EditText
                 android:id="@+id/edit_text_message"
-                android:layout_width="280dp"
+                android:layout_width="306dp"
                 android:layout_height="match_parent"
+                android:layout_gravity="bottom|end"
                 android:autofillHints=""
                 android:ems="10"
-                android:layout_gravity="bottom|end"
                 android:inputType="textLongMessage"
-                android:minHeight="50dp"
+                android:minHeight="100dp"
                 android:text="@string/type_your_message_here" />
 
             <Button
                 android:id="@+id/send_text"
-                android:layout_width="109dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="bottom|end"
-                android:minHeight="50dp"
+                android:layout_gravity="bottom"
                 android:text="@string/send" />
         </LinearLayout>
 
