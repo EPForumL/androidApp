@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var user : Model.User
 
+    private lateinit var testtext : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+
+        testtext = intent.getStringExtra("testtext") ?: "FAIL IN MAIN"
 
 
         if(savedInstanceState == null) {
@@ -79,6 +84,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragment(fragment: Fragment) {
+        val bundle = Bundle()
+        bundle.putString("testtext", testtext)
+        fragment.arguments = bundle
+
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
     }

@@ -19,6 +19,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import org.w3c.dom.Text
 
 
 /**
@@ -30,10 +31,15 @@ class SavedQuestionsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var user : Model.User
 
+    private lateinit var testtext : String
+    private lateinit var newIntentMain : Intent
+    private lateinit var newIntentDetails : Intent
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        testtext = this.arguments?.getString("testtext") ?: "FAIL IN SAVED"
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
     }
@@ -46,6 +52,15 @@ class SavedQuestionsFragment : Fragment() {
         user = DatabaseManager.user ?: Model.User()
         val userId = user.userId
 
+        val testTextView : TextView = view.findViewById(R.id.test_testview)
+        testTextView.text = testtext
+
+        // TODO check if still in main
+        newIntentMain = Intent(context?.applicationContext, MainActivity::class.java)
+        intent.putExtra("testtext", testtext)
+
+        newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
+        newIntentDetails.putExtra("testtext", testtext)
 
         val list = LocalCache().getSavedQuestions().toList()
 
@@ -60,9 +75,9 @@ class SavedQuestionsFragment : Fragment() {
 
             // move to QuestionDetails when clicking on specific question
             adapter.onItemClick = {q ->
-                val intent = Intent(this.context, QuestionDetailsActivity::class.java)
-                intent.putExtra("question", q)
-                startActivity(intent)
+                //val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+                newIntentDetails.putExtra("question", q)
+                startActivity(newIntentDetails)
             }
 
         } else {

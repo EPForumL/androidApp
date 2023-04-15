@@ -17,6 +17,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.cache.LocalCache
 import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
@@ -32,7 +33,7 @@ import org.junit.runner.RunWith
 class MainActivityTest {
     private lateinit var scenario: ActivityScenario<MainActivity>
 
-    private lateinit var cache : SavedQuestionsCache
+    private var cache = LocalCache()
     private val QUESTION_ID = "question1"
     private lateinit var question : Model.Question
 
@@ -40,9 +41,8 @@ class MainActivityTest {
     fun setup() {
         DatabaseManager.useMockDatabase()
 
-        cache = SavedQuestionsCache()
         DatabaseManager.db.getQuestionById(QUESTION_ID).thenAccept {
-            cache.set(QUESTION_ID, it!!)
+            cache.getSavedQuestions().set(QUESTION_ID, it!!)
             question = it
         }
 

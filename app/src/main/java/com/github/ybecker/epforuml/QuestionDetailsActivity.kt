@@ -29,6 +29,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private var cache = LocalCache()
 
+    private lateinit var newIntent : Intent
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +48,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val title : TextView = findViewById(R.id.qdetails_title)
         title.text = question!!.questionTitle
         updateRecycler()
+
+        newIntent = Intent(applicationContext, MainActivity::class.java)
 
         // check if question is saved locally
         questionIsSaved = checkSavedQuestion()
@@ -81,11 +85,13 @@ class QuestionDetailsActivity : AppCompatActivity() {
             saveToggle.setOnClickListener {
                 // question is saved, will be unsaved after click
                 if (questionIsSaved) {
+                    newIntent.putExtra("testtext", "NOT SAVED")
                     cache.getSavedQuestions().remove(questionId)
                     savedBecomesInverse()
                 }
                 // question is not yet saved, will be saved after click
                 else {
+                    newIntent.putExtra("testtext", "SAVED")
                     cache.getSavedQuestions().set(questionId, question!!)
                     savedBecomesInverse()
                 }
@@ -136,7 +142,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            finish()
+            startActivity(newIntent)
         }
 
         return true
