@@ -39,7 +39,7 @@
         android:largeHeap="true">
 
         <service
-            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+            android:name=".notifications.RemoteNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -58,7 +58,7 @@
         </receiver>
 
         <service
-            android:name=".Notifications.RemoteNotificationService"
+            android:name=".notifications.TokenUpdateService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />

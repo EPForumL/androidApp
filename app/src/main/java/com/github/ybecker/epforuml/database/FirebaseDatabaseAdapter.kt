@@ -2,7 +2,7 @@ package com.github.ybecker.epforuml.database
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.github.ybecker.epforuml.Notifications.FirebaseCouldMessagingAdapter
+import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
