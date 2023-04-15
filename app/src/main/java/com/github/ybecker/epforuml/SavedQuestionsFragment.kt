@@ -34,11 +34,11 @@ class SavedQuestionsFragment : Fragment() {
             //.addData("click_action", notification.extras.getString(NotificationCompat.EXTRA_NOTIFICATION_CLICK_ACTION))
             .build()
 
-//        Thread(Runnable {
-//            RemoteNotificationService().onMessageReceived(message)
-//        }).start()
+        Thread(Runnable {
+            RemoteNotificationService().onMessageReceived(message)
+        }).start()
 
-        FirebaseCouldMessagingAdapter.sendQuestionNotifications(Model.Question("hihi", "-NT4bmu0pHU3XPM6qx7W","0", "NEW QUESTION", "JSPR QUE CA MARCHE","", emptyList()))
+        //FirebaseCouldMessagingAdapter.sendQuestionNotifications(Model.Question("hihi", "-NT4bmu0pHU3XPM6qx7W","0", "NEW QUESTION", "JSPR QUE CA MARCHE","", emptyList()))
 
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
 
