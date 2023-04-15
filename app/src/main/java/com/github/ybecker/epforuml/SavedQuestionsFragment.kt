@@ -11,6 +11,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.cache.LocalCache
 import com.github.ybecker.epforuml.cache.MockSavedQuestionsCache
 import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
@@ -29,18 +30,12 @@ class SavedQuestionsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var user : Model.User
 
-    private lateinit var savedQuestions : SavedQuestionsCache
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_saved_questions, container, false)
-
-        savedQuestions = arguments?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
-
-        return view
+        return inflater.inflate(R.layout.fragment_saved_questions, container, false)
     }
 
     @SuppressLint("SetTextI18n")
@@ -52,7 +47,7 @@ class SavedQuestionsFragment : Fragment() {
         val userId = user.userId
 
 
-        val list = savedQuestions.toList()
+        val list = LocalCache().getSavedQuestions().toList()
 
         if (userId.isNotEmpty() && list.isNotEmpty()) {
             val layoutManager = LinearLayoutManager(context)
@@ -66,7 +61,6 @@ class SavedQuestionsFragment : Fragment() {
             // move to QuestionDetails when clicking on specific question
             adapter.onItemClick = {q ->
                 val intent = Intent(this.context, QuestionDetailsActivity::class.java)
-                intent.putExtra("savedQuestions", savedQuestions)
                 intent.putExtra("question", q)
                 startActivity(intent)
             }

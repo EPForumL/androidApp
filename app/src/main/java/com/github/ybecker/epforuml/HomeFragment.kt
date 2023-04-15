@@ -43,19 +43,12 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
      */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
-
-    private lateinit var savedQuestions : SavedQuestionsCache
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
-
-        //DatabaseManager.useMockDatabase()
-        // TODO : cleanup
-        savedQuestions = arguments?.getParcelable("savedQuestions") ?: SavedQuestionsCache()
 
         futureCourseList = db.availableCourses()
 
@@ -113,7 +106,6 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // move to QuestionDetails when clicking on specific question
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
-            intent.putExtra("savedQuestions", savedQuestions)
             intent.putExtra("question", q)
             startActivity(intent)
         }

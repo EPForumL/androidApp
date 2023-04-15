@@ -22,11 +22,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var user : Model.User
 
-    private lateinit var cache : SavedQuestionsCache
-    private var bundle = Bundle()
-
-    //private lateinit var reference : DatabaseReference
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -84,16 +79,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragment(fragment: Fragment) {
-        getCacheFromIntent()
-        fragment.arguments = bundle
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
-    }
-
-    private fun getCacheFromIntent() {
-        cache = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
-        // set value to transmit to Fragments
-        bundle.putParcelable("savedQuestions", cache)
     }
 }
 

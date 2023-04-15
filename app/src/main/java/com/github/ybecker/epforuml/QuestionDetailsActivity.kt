@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.cache.LocalCache
 import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
@@ -19,14 +20,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var answerRecyclerView: RecyclerView
     private var question : Model.Question? = null
     private lateinit var questionId : String
+    private var questionIsSaved = false
 
     private lateinit var user : Model.User
     private lateinit var userId : String
 
     private lateinit var saveToggle : ImageButton
-
-    private lateinit var savedQuestions : SavedQuestionsCache
-    private var bundle = Bundle()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,21 +33,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_question_details)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        // retrieve cache of saved questions
-        savedQuestions = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
-        //updateBundle()
-        //updateIntent()
-
-
-        // enable back button
-        val button : Button = findViewById(R.id.back_to_forum_button)
-        button.setOnClickListener{ // Create an intent to return to the previous fragment
-            val intent = Intent(applicationContext, MainActivity::class.java)
-            intent.putExtra("savedQuestions", savedQuestions)
-
-            startActivity(intent)
-        }
 
         // enable answer view
         answerRecyclerView = findViewById(R.id.answers_recycler)
@@ -61,6 +45,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
         title.text = question!!.questionTitle
         updateRecycler()
 
+        // check if question is saved locally
+        questionIsSaved = checkSavedQuestion()
+
+        // load user
         user = DatabaseManager.user ?: Model.User()
         userId = user.userId
         val replyBox : EditText = findViewById(R.id.write_reply_box)
@@ -90,17 +78,15 @@ class QuestionDetailsActivity : AppCompatActivity() {
             // TODO : fix save upon click
             saveToggle.setOnClickListener {
                 // question is saved, will be unsaved after click
-                if (checkSavedQuestion()) {
-                    savedQuestions.remove(questionId)
+                if (questionIsSaved) {
+                    LocalCache().getSavedQuestions().remove(questionId)
+                    savedBecomesInverse()
                 }
                 // question is not yet saved, will be saved after click
                 else {
-                    savedQuestions.set(questionId, question!!)
+                    LocalCache().getSavedQuestions().set(questionId, question!!)
+                    savedBecomesInverse()
                 }
-
-                // update cache to send
-                //updateBundle()
-                //updateIntent()
 
                 switchImageButton()
             }
@@ -118,30 +104,22 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        }
-        return true
-    }
-
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {
             question = it
             answerRecyclerView.adapter = AnswerAdapter(question!!.questionId, question!!.questionText, question!!.answers)
         }
-
     }
 
     private fun checkSavedQuestion(): Boolean {
-        savedQuestions.get(questionId) ?: return false
+        LocalCache().getSavedQuestions().get(questionId) ?: return false
 
         return true
     }
 
     private fun switchImageButton() {
         saveToggle.setBackgroundResource(
-            when(checkSavedQuestion()) {
+            when(questionIsSaved) {
                 true -> R.drawable.checkmark
                 false -> R.drawable.nav_saved_questions
             }
@@ -149,11 +127,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     }
 
-    private fun updateBundle() {
-        bundle.putParcelable("savedQuestions", savedQuestions)
-    }
-
-    private fun updateIntent() {
-        intent.putExtra("savedQuestions", savedQuestions)
+    private fun savedBecomesInverse() {
+        questionIsSaved = !questionIsSaved
     }
 }

@@ -17,14 +17,15 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".cache.Setup"
+        android:name=".cache.LocalCache"
         android:supportsRtl="true"
         android:theme="@style/Theme.EPForumL"
         tools:targetApi="31"
         android:largeHeap="true">
         <activity
             android:name=".QuestionDetailsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".authentication.LoginActivity"
             android:exported="true"
