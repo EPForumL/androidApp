@@ -3,6 +3,7 @@ package com.github.ybecker.epforuml
 import android.os.Bundle
 import android.provider.ContactsContract.RawContacts.Data
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
@@ -22,7 +23,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var user : Model.User
 
-    private lateinit var testtext : String
+    private var cache = ArrayList<Model.Question>()//SavedQuestionsCache()
+    // TODO remove all related
+    private var test = "EMPTY FROM MAIN"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +47,14 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
-        testtext = intent.getStringExtra("testtext") ?: "FAIL IN MAIN"
+        val newCache : ArrayList<Model.Question>? = intent.getParcelableArrayListExtra("savedQuestions")
+        if (newCache != null) {
+            cache = newCache
+        }
+        val newTest : String? = intent.getStringExtra("test")
+        if (newTest != null) {
+            test = newTest
+        }
 
 
         if(savedInstanceState == null) {
@@ -85,11 +95,28 @@ class MainActivity : AppCompatActivity() {
 
     fun replaceFragment(fragment: Fragment) {
         val bundle = Bundle()
-        bundle.putString("testtext", testtext)
+        bundle.putParcelableArrayList("savedQuestions", cache)
+        //sendCache(bundle)
+        bundle.putString("test", test)
         fragment.arguments = bundle
 
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
+    }
+/*
+    fun sendCache(bundle : Bundle) {
+        val list = cache.toListOfQuestions()
+
+        for (q in list) {
+            bundle.putParcelable(q.questionId, q)
+        }
+    }
+
+ */
+
+    // faire en sorte de n'envoyer que des booleans (true/false pour save) entre les fragment.
+    fun updateCache() {
+
     }
 }
 

@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.ybecker.epforuml.cache.LocalCache
-import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
@@ -20,14 +18,15 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var answerRecyclerView: RecyclerView
     private var question : Model.Question? = null
     private lateinit var questionId : String
-    private var questionIsSaved = false
 
     private lateinit var user : Model.User
     private lateinit var userId : String
 
     private lateinit var saveToggle : ImageButton
 
-    private var cache = LocalCache()
+    private lateinit var cache : ArrayList<Model.Question>
+    // TODO remove all related
+    private lateinit var test : String
 
     private lateinit var newIntent : Intent
 
@@ -49,10 +48,18 @@ class QuestionDetailsActivity : AppCompatActivity() {
         title.text = question!!.questionTitle
         updateRecycler()
 
-        newIntent = Intent(applicationContext, MainActivity::class.java)
+        // retrieve cache value
+        cache = intent.getParcelableArrayListExtra("savedQuestions")!!
 
-        // check if question is saved locally
-        questionIsSaved = checkSavedQuestion()
+
+        test = intent.getStringExtra("test")!!
+        // create new intent to resend to home (mandatory)
+        newIntent = Intent(applicationContext, MainActivity::class.java)
+        newIntent.putExtra("test", test)
+        newIntent.putParcelableArrayListExtra("savedQuestions", cache)
+
+        val testText : TextView = findViewById(R.id.test_details)
+        testText.text = test
 
         // load user
         user = DatabaseManager.user ?: Model.User()
@@ -84,16 +91,17 @@ class QuestionDetailsActivity : AppCompatActivity() {
             // TODO : fix save upon click
             saveToggle.setOnClickListener {
                 // question is saved, will be unsaved after click
-                if (questionIsSaved) {
-                    newIntent.putExtra("testtext", "NOT SAVED")
-                    cache.getSavedQuestions().remove(questionId)
-                    savedBecomesInverse()
+                //if (questionIsSaved) {
+                if (isSavedQuestion()) {
+                    cache.remove(question)
+                    test = "NOT SAVED"
+                    update()
                 }
                 // question is not yet saved, will be saved after click
                 else {
-                    newIntent.putExtra("testtext", "SAVED")
-                    cache.getSavedQuestions().set(questionId, question!!)
-                    savedBecomesInverse()
+                    cache.add(question!!)
+                    test = "SAVED"
+                    update()
                 }
 
                 switchImageButton()
@@ -120,25 +128,29 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkSavedQuestion(): Boolean {
-        cache.getSavedQuestions().get(questionId) ?: return false
-
-        return true
+    private fun isSavedQuestion(): Boolean {
+        //return cache.isQuestionSaved(questionId)
+        return cache.contains(question)
     }
 
     private fun switchImageButton() {
         saveToggle.setBackgroundResource(
-            when(questionIsSaved) {
+            when(isSavedQuestion()) {
                 true -> R.drawable.checkmark
                 false -> R.drawable.nav_saved_questions
             }
         )
 
-    }
+        val testView : TextView = findViewById(R.id.test_details)
+        testView.text = test
 
+    }
+/*
     private fun savedBecomesInverse() {
         questionIsSaved = !questionIsSaved
     }
+
+ */
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
@@ -146,5 +158,16 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+
+    private fun updateNewIntent() {
+        newIntent.putParcelableArrayListExtra("savedQuestions", cache)
+        newIntent.putExtra("test", test)
+    }
+
+    private fun update() {
+        updateNewIntent()
+        //savedBecomesInverse()
     }
 }

@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/test_testview"
+            android:id="@+id/test_saved"
             android:text="no question saved"
             android:textSize="30sp"
             android:textStyle="bold"/>

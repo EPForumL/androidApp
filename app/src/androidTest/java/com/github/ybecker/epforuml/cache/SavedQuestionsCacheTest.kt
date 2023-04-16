@@ -37,7 +37,7 @@ class SavedQuestionsCacheTest {
 
     @Test
     fun clearIsEmpty() {
-        assertTrue(cache.toList().isEmpty())
+        assertTrue(cache.toListOfQuestions().isEmpty())
     }
 
     @Test
@@ -52,7 +52,7 @@ class SavedQuestionsCacheTest {
         cache.set(ID1, question1)
         cache.set(ID2, question2)
 
-        val list = cache.toList()
+        val list = cache.toListOfQuestions()
 
         assertTrue(list.contains(question1))
         assertTrue(list.contains(question2))

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
+import android.widget.TextView
 import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture
@@ -43,6 +44,11 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
      */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
+
+    private lateinit var cache : ArrayList<Question>
+    // TODO remove all related
+    private lateinit var test : String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,10 +56,18 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
+        // retrieve cache
+        cache = this.requireArguments().getParcelableArrayList("savedQuestions")!!
+        test = this.requireArguments().getString("test")!!
+
+        val testText : TextView = view.findViewById(R.id.test_forum)
+        testText.text = test
+
         futureCourseList = db.availableCourses()
 
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         // Set click listener for the circular button with the "+" sign
+        // TODO send cache to this fragment as well (HOW)
         newQuestionButton.setOnClickListener {
             // Navigate to the new fragment to add a new question
             mainActivity.replaceFragment(NewQuestionFragment(mainActivity))
@@ -106,6 +120,8 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // move to QuestionDetails when clicking on specific question
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
+            intent.putExtra("test", test)
             intent.putExtra("question", q)
             startActivity(intent)
         }

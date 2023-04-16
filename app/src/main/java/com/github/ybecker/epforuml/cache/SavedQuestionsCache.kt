@@ -5,7 +5,7 @@ import android.os.Parcelable
 import com.github.ybecker.epforuml.database.Model
 
 class SavedQuestionsCache() : Cache, Parcelable {
-    private var cache = HashMap<String, Model.Question>()
+    private var cache : HashMap<String, Model.Question> = hashMapOf()
 
     override val size: Int
         get() = cache.size
@@ -28,7 +28,7 @@ class SavedQuestionsCache() : Cache, Parcelable {
         cache.clear()
     }
 
-    override fun toList() : MutableList<Model.Question> {
+    override fun toListOfQuestions() : MutableList<Model.Question> {
         var list = mutableListOf<Model.Question>()
         for ((k, v) in cache) {
             list.add(v)
@@ -82,7 +82,7 @@ interface Cache {
 
     fun clear()
 
-    fun toList(): MutableList<Model.Question>
+    fun toListOfQuestions(): MutableList<Model.Question>
 
     fun isQuestionSaved(key: String): Boolean
 

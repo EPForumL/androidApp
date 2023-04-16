@@ -7,19 +7,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.ybecker.epforuml.cache.LocalCache
-import com.github.ybecker.epforuml.cache.MockSavedQuestionsCache
-import com.github.ybecker.epforuml.cache.SavedQuestionsCache
 import com.github.ybecker.epforuml.database.DatabaseManager
-import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import org.w3c.dom.Text
 
 
 /**
@@ -31,15 +23,18 @@ class SavedQuestionsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var user : Model.User
 
-    private lateinit var testtext : String
-    private lateinit var newIntentMain : Intent
+    private lateinit var cache : ArrayList<Model.Question>
     private lateinit var newIntentDetails : Intent
+    // TODO remove all related
+    private lateinit var test : String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        testtext = this.arguments?.getString("testtext") ?: "FAIL IN SAVED"
+        cache = this.requireArguments().getParcelableArrayList("savedQuestions")!!
+        test = this.requireArguments().getString("test")!!
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
     }
@@ -52,30 +47,24 @@ class SavedQuestionsFragment : Fragment() {
         user = DatabaseManager.user ?: Model.User()
         val userId = user.userId
 
-        val testTextView : TextView = view.findViewById(R.id.test_testview)
-        testTextView.text = testtext
+        val testText : TextView = view.findViewById(R.id.test_saved)
+        testText.text = test
 
-        // TODO check if still in main
-        newIntentMain = Intent(context?.applicationContext, MainActivity::class.java)
-        intent.putExtra("testtext", testtext)
-
-        newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
-        newIntentDetails.putExtra("testtext", testtext)
-
-        val list = LocalCache().getSavedQuestions().toList()
-
-        if (userId.isNotEmpty() && list.isNotEmpty()) {
+        if (userId.isNotEmpty() && cache.isNotEmpty()) {
             val layoutManager = LinearLayoutManager(context)
             recyclerView = view.findViewById(R.id.recycler_saved_questions)
             recyclerView.layoutManager = layoutManager
 
             // display saved questions
-            val adapter = ForumAdapter(list)
+            val adapter = ForumAdapter(cache)
             recyclerView.adapter = adapter
 
             // move to QuestionDetails when clicking on specific question
             adapter.onItemClick = {q ->
                 //val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+                newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
+                newIntentDetails.putParcelableArrayListExtra("savedQuestions", cache)
+                newIntentDetails.putExtra("test", test)
                 newIntentDetails.putExtra("question", q)
                 startActivity(newIntentDetails)
             }
