@@ -4,10 +4,14 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Handler
 import android.widget.Button
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.input.key.Key
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.EspressoKey
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -105,9 +109,21 @@ class ChatHomeTest {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Thread.sleep(5000)
         Espresso.onView(withId(R.id.no_chats)).check(matches(isDisplayed()))
 
+    }
+
+    @Test
+    fun chatWithNewUser(){
+
+        DatabaseManager.user = host
+        Espresso.onView(withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        Espresso.onView(withId(R.id.searchView)).perform(click())
+            .perform(typeText("ExternUser1"))
+            .perform(pressKey(66)).perform(closeSoftKeyboard())
+        //Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))
     }
 
 
