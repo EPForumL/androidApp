@@ -37,6 +37,7 @@
     <string name="repeat_password">repeat_password</string>
     <string name="share_localisation">share_localisation</string>
     <string name="preferences">preferences</string>
+    <string name="no_match">No match found</string>
 
     ///Objects of the new fragment page:
     <string name="preview_question">Preview Question</string>
@@ -66,6 +67,7 @@
     <string name="chat">Chat:</string>
     <string name="send">Send</string>
     <string name="type_your_message_here">Type your message here</string>
+    <string name="chats" />
     />
 
 

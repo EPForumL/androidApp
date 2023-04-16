@@ -18,6 +18,12 @@ abstract class Database {
     abstract fun availableCourses(): CompletableFuture<List<Course>>
 
     /**
+     * Returns a list of all available courses in the current database.
+     *
+     * @return a list of every available courses
+     */
+    abstract fun registeredUsers(): CompletableFuture<List<User>>
+    /**
      * Retrieves a list of questions for a given course.
      *
      * @param course the course for which to retrieve questions
@@ -179,4 +185,5 @@ abstract class Database {
      */
     abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
 
+    abstract fun addChatsWith(senderId: String, receiverId: String): String
 }

@@ -148,6 +148,19 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return chat
     }
 
+    override fun addChatsWith(
+        senderId: String,
+        receiverId: String,
+    ): String{
+        val newChildRef = db.child(chatsPath).push()
+        val chatId = newChildRef.key ?: error("Failed to generate chat ID")
+
+        //reference that these users chatted with eachother
+        db.child(usersPath).child(senderId).child(chatsWith).child(chatId).setValue(receiverId)
+        db.child(usersPath).child(receiverId).child(chatsWith).child(chatId).setValue(senderId)
+        return chatId
+    }
+
     override fun addAnswer(userId: String, questionId: String, answerText: String?): Answer {
         // create a space for the new answer in sb and save its id
         val newChildRef = db.child(answersPath).push()
@@ -250,6 +263,27 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             }
             //complete the future when every children has been added
             future.complete(courses)
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
+
+        return future
+    }
+
+    override fun registeredUsers(): CompletableFuture<List<User>> {
+        val future = CompletableFuture<List<User>>()
+        // go in "users" dir
+        db.child(usersPath).get().addOnSuccessListener {
+            val users = mutableListOf<User>()
+            // add every user that is not null in "users" in the map
+            for (userSnapshot in it.children) {
+                val user = getUser(userSnapshot)
+                if (user != null) {
+                    users.add(user)
+                }
+            }
+            //complete the future when every children has been added
+            future.complete(users)
         }.addOnFailureListener {
             future.completeExceptionally(it)
         }

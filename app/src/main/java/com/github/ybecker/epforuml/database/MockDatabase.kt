@@ -103,6 +103,17 @@ class MockDatabase : Database() {
         return chat
     }
 
+    override fun addChatsWith(senderId: String, receiverId: String): String {
+
+        if(!users[senderId]?.chatsWith?.contains(receiverId)!!){
+            users[senderId]?.chatsWith = users[senderId]?.chatsWith?.plus(receiverId) ?: listOf(receiverId)
+        }
+        if(!users[receiverId]?.chatsWith?.contains(senderId)!!){
+            users[receiverId]?.chatsWith = users[receiverId]?.chatsWith?.plus(senderId) ?: listOf(senderId)
+        }
+        return ""
+    }
+
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
         return CompletableFuture.completedFuture(questions.filterValues { it.courseId == courseId }.values.toList().reversed())
     }
@@ -192,6 +203,10 @@ class MockDatabase : Database() {
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         return CompletableFuture.completedFuture(courses.values.toList())
+    }
+
+    override fun registeredUsers(): CompletableFuture<List<User>> {
+        return CompletableFuture.completedFuture(users.values.toList())
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> {

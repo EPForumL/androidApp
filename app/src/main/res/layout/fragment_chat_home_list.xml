@@ -15,6 +15,18 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/title_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="0"
+            android:text="Chats"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+
+        <TextView
             android:id="@+id/not_connected_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,13 +44,30 @@
             android:padding="16dp"
             android:visibility="gone" />
 
-        <androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="true"
+            android:queryHint="Who do you want to chat with?"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchView" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_chat_home"
             android:name="com.github.ybecker.epforuml.chat.ChatHomeFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="538dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
