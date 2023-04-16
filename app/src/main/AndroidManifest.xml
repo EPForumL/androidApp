@@ -22,7 +22,7 @@
         android:theme="@style/Theme.EPForumL"
         tools:targetApi="31">
         <activity
-            android:name=".SearchActivity"
+            android:name=".chat.SearchActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
