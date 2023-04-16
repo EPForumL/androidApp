@@ -41,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
                 if (list_.isNotEmpty()) {
                     if(list_.size==1){
 
-                        val id : String = db.getUserId(list_[0])
+                        val id : String = db.getUserId(list_[0]).get()
                         db.addChatsWith(user!!.userId, id)
                         val intent = Intent(
                             searchActivity,

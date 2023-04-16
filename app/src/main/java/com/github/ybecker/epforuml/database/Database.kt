@@ -200,5 +200,5 @@ abstract class Database {
      * @param userName the name of the useer
      * @return the user's ID
      */
-    abstract fun getUserId(userName: String): String
+    abstract fun getUserId(userName: String): CompletableFuture<String>
 }

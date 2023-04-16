@@ -83,13 +83,14 @@ class SearchActivityTest {
 
     }
 
-/*    @Test
+
+     @Test
     fun correctSearchLeadsToChat(){
 
         val searchText = "ExternUser"
         onView(withId(R.id.searchView)).perform(typeText(searchText))
         onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
 
-    }*/
+    }
 
 }

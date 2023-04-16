@@ -67,6 +67,16 @@ class MockDatabaseTest {
         }.join()
 
     }
+    @Test
+    fun addAndGetChatWith(){
+        db.addChatsWith("0", "0")
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("TestUser").get(),equalTo("0"))
+    }
 
     @Test
     fun getCourseByIdTest(){
@@ -74,6 +84,11 @@ class MockDatabaseTest {
             assertThat(it?.courseId, equalTo(sdp.courseId))
             assertThat(it?.courseName, equalTo(sdp.courseName))
         }.join()
+    }
+
+    @Test
+    fun retrieveRegisteredUsers(){
+        assertThat( db.registeredUsers().get().size, equalTo(3))
     }
 
     @Test

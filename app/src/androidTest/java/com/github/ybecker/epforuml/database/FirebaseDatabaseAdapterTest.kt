@@ -337,6 +337,22 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
+    fun addAndGetChatWith(){
+        db.addChatsWith("0", "1")
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(2))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("Romain").get(),equalTo("0"))
+    }
+
+    @Test
+    fun registeredUsers(){
+        assertThat(db.registeredUsers().get().size, equalTo(2))
+    }
+
+    @Test
     fun getMalformedQuestionIsNull(){
         val dbRef = database.reference
         val newQuestionId = "test"
