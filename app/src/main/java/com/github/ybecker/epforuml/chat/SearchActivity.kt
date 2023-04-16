@@ -61,10 +61,10 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
                 listAdapter.filter.filter(newText)
                 return false
             }
         })
     }
 }
+

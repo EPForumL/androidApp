@@ -5,6 +5,7 @@ import androidx.core.view.size
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.pressKey
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -35,7 +36,7 @@ class SearchActivityTest {
         //set up database
         host = db.addUser("0", "HostUser", "testEmail").get()
         extern = db.addUser("1", "ExternUser", "testEmail").get()
-
+        DatabaseManager.user = host
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
             SearchActivity::class.java)
@@ -84,13 +85,13 @@ class SearchActivityTest {
     }
 
 
-/*     @Test
+  @Test
     fun correctSearchLeadsToChat(){
 
         val searchText = "ExternUser"
-        onView(withId(R.id.searchView)).perform(typeText(searchText))
+        onView(withId(R.id.searchView)).perform(typeText(searchText)).perform(pressKey(66))
         onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
 
-    }*/
+    }
 
 }
