@@ -1,15 +1,9 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -50,6 +44,33 @@ class QuestionDetailsActivity : AppCompatActivity() {
         user = DatabaseManager.user ?: Model.User()
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
+
+        db.getQuestionEndorsements(questionId).thenAccept {
+            val endorsementButton = findViewById<ToggleButton>(R.id.endorsementButton)
+            val endorsementCounter = findViewById<TextView>(R.id.endorsementCount)
+            val count = it.size
+
+            endorsementCounter.text = (count).toString()
+
+            endorsementButton.tag = count
+            endorsementButton.isChecked = it.contains(user.userId)
+
+            endorsementButton.setOnClickListener {
+                val count = endorsementButton.tag as Int
+                if (endorsementButton.isChecked) {
+                    db.addQuestionEndorsement(user.userId, questionId)
+                    val newCount = count+1
+                    endorsementCounter.text = (newCount).toString()
+                    endorsementButton.tag = newCount
+                } else {
+                    db.removeQuestionEndorsement(user.userId, questionId)
+                    val newCount = count-1
+                    endorsementCounter.text =(newCount).toString()
+                    endorsementButton.tag = newCount
+                }
+            }
+        }
+
 
         // only allow posting answer if user is connected
         if (user.userId.isNotEmpty()) {
