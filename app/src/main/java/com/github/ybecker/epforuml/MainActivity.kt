@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.chat.ChatHomeFragment
+import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.android.material.navigation.NavigationView
 
@@ -39,6 +40,9 @@ class MainActivity : AppCompatActivity() {
 
         if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
+        }
+        if( intent.extras?.getString("fragment").equals("RealChat")) {
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, RealChatFragment()).commit()
         }
 
         navView.setNavigationItemSelectedListener {

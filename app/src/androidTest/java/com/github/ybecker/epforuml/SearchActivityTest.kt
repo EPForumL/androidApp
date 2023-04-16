@@ -2,7 +2,6 @@ import android.app.Activity
 import android.content.Intent
 import android.widget.ListView
 import androidx.core.view.size
-import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -10,7 +9,6 @@ import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.chat.SearchActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
@@ -84,5 +82,14 @@ class SearchActivityTest {
         }
 
     }
+
+/*    @Test
+    fun correctSearchLeadsToChat(){
+
+        val searchText = "ExternUser"
+        onView(withId(R.id.searchView)).perform(typeText(searchText))
+        onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
+
+    }*/
 
 }

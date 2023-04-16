@@ -161,6 +161,15 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return chatId
     }
 
+    override fun getUserId(userName: String): String {
+        val future = CompletableFuture<String>()
+        // go in the given path
+        db.child(usersPath).get().addOnSuccessListener {
+            val future = it.children.filter { ds -> ds.child(usernamePath).value == userName }
+        }
+        return future.get()
+    }
+
     override fun addAnswer(userId: String, questionId: String, answerText: String?): Answer {
         // create a space for the new answer in sb and save its id
         val newChildRef = db.child(answersPath).push()

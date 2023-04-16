@@ -185,5 +185,20 @@ abstract class Database {
      */
     abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
 
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param senderId the user that sent the chat
+     * @param receiverId user that will receive the chat
+     * @return a string
+     */
     abstract fun addChatsWith(senderId: String, receiverId: String): String
+
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param userName the name of the useer
+     * @return the user's ID
+     */
+    abstract fun getUserId(userName: String): String
 }

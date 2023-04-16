@@ -114,6 +114,11 @@ class MockDatabase : Database() {
         return ""
     }
 
+    override fun getUserId(userName: String): String {
+        val user : Map<String, User> = users.filter{ u -> u.value.username == userName }
+        return user.getValue(userName).userId
+    }
+
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
         return CompletableFuture.completedFuture(questions.filterValues { it.courseId == courseId }.values.toList().reversed())
     }
