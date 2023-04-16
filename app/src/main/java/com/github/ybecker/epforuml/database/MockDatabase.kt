@@ -205,8 +205,8 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(courses.values.toList())
     }
 
-    override fun registeredUsers(): CompletableFuture<List<User>> {
-        return CompletableFuture.completedFuture(users.values.toList())
+    override fun registeredUsers(): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(users.values.toList().map { u -> u.username })
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> {

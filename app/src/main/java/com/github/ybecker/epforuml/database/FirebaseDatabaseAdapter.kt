@@ -270,8 +270,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
-    override fun registeredUsers(): CompletableFuture<List<User>> {
-        val future = CompletableFuture<List<User>>()
+    override fun registeredUsers(): CompletableFuture<List<String>> {
+        val future = CompletableFuture<List<String>>()
         // go in "users" dir
         db.child(usersPath).get().addOnSuccessListener {
             val users = mutableListOf<User>()
@@ -283,7 +283,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 }
             }
             //complete the future when every children has been added
-            future.complete(users)
+            future.complete(users.map { u -> u.username })
         }.addOnFailureListener {
             future.completeExceptionally(it)
         }

@@ -22,7 +22,7 @@ abstract class Database {
      *
      * @return a list of every available courses
      */
-    abstract fun registeredUsers(): CompletableFuture<List<User>>
+    abstract fun registeredUsers(): CompletableFuture<List<String>>
     /**
      * Retrieves a list of questions for a given course.
      *

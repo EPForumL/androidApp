@@ -1,17 +1,16 @@
 package com.github.ybecker.epforuml.chat
 
+import android.R as R1
 import android.app.Activity
 import android.content.Intent
-import android.os.Handler
 import android.widget.Button
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.input.key.Key
+import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.EspressoKey
-import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.Espresso.onData
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -22,12 +21,12 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import org.hamcrest.CoreMatchers.*
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.concurrent.thread
 
 
 @RunWith(AndroidJUnit4::class)
@@ -66,8 +65,8 @@ class ChatHomeTest {
         DatabaseManager.db.addChat("0","2", "Hey")
         DatabaseManager.db.addChat("0","3", "Hey")
 
-        Espresso.onView(withContentDescription(R.string.open)).perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        onView(withContentDescription(R.string.open)).perform(click())
+        onView(withId(R.id.nav_chat)).perform(click())
 
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
@@ -80,51 +79,49 @@ class ChatHomeTest {
     fun chatHomeSwitchesFragmentsCorrectly(){
         DatabaseManager.user = host
         DatabaseManager.db.addChat("0","1", "Hey")
-        Espresso.onView(withContentDescription(R.string.open))
+        onView(withContentDescription(R.string.open))
             .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        onView(withId(R.id.nav_chat)).perform(click())
 
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
             view.findViewById<Button>(R.id.buttonChatWith).performClick()
         }
-        Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))
+        onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))
 
     }
 
     @Test
     fun noMessageWhenSignedOut(){
         DatabaseManager.user = null
-        Espresso.onView(withContentDescription(R.string.open))
+        onView(withContentDescription(R.string.open))
             .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+        onView(withId(R.id.nav_chat)).perform(click())
         Thread.sleep(5000)
-        Espresso.onView(withId(R.id.not_connected_text_view)).check(matches(isDisplayed()))
+        onView(withId(R.id.not_connected_text_view)).check(matches(isDisplayed()))
 
 
     }
     @Test
     fun noMessageWhenNoChat(){
         DatabaseManager.user = host
-        Espresso.onView(withContentDescription(R.string.open))
+        onView(withContentDescription(R.string.open))
             .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Espresso.onView(withId(R.id.no_chats)).check(matches(isDisplayed()))
+        onView(withId(R.id.nav_chat)).perform(click())
+        onView(withId(R.id.no_chats)).check(matches(isDisplayed()))
 
     }
 
     @Test
-    fun chatWithNewUser(){
+    fun chatWithNewUserSwitchesActivity(){
 
         DatabaseManager.user = host
-        Espresso.onView(withContentDescription(R.string.open))
+        onView(withContentDescription(R.string.open))
             .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
-        Espresso.onView(withId(R.id.searchView)).perform(click())
-            .perform(typeText("ExternUser1"))
-            .perform(pressKey(66)).perform(closeSoftKeyboard())
-        //Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))
+        onView(withId(R.id.nav_chat)).perform(click())
+        onView(withId(R.id.newChatWith)).perform(click())
+        onView(withId(R.id.searchView)).check(matches(isDisplayed()))
+        onView(withId(R.id.listView)).check(matches(isDisplayed()))
+
     }
-
-
 }

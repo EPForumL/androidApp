@@ -1,22 +1,18 @@
 package com.github.ybecker.epforuml.chat
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import android.widget.SearchView.OnQueryTextListener
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.R.*
-import com.github.ybecker.epforuml.database.DatabaseManager
-import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
-import com.github.ybecker.epforuml.database.Model
-import com.github.ybecker.epforuml.databinding.ActivityMainBinding
 
 /**
  * A fragment representing a list of Items.
@@ -26,8 +22,6 @@ class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
     private lateinit var chatList: List<String>
     private lateinit var chatHomeAdapter: ChatHomeAdapter
     private lateinit var chatHomeRecyclerView: RecyclerView
-    private lateinit var adapter: ArrayAdapter<Model.User>
-    private lateinit var usersList : List<Model.User>
 
 
 
@@ -42,38 +36,13 @@ class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
         } else {
             chatList = user!!.chatsWith
         }
-
-        usersList = db.registeredUsers().get();
-        setupListView(view)
-        setupSearchView(view)
+        view.findViewById<Button>(R.id.newChatWith).setOnClickListener{
+            val switchActivityIntent = Intent(this.mainActivity, SearchActivity::class.java)
+            startActivity(switchActivityIntent)
+        }
         return view
     }
 
-    private fun setupListView(view: View) {
-        adapter = ArrayAdapter(this.requireContext(), android.R.layout.simple_list_item_1, usersList)
-        view.findViewById<ListView>(R.id.listView).adapter = adapter
-    }
-
-    private fun setupSearchView(view: View) {
-        val searchView = view.findViewById<SearchView>(R.id.searchView)
-        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(p0: String?): Boolean {
-                val isMatchFound = usersList.filter { user -> user.username.contains(p0!!) }
-                if (isMatchFound.size == 1) {
-                    //create new chat with this person
-                    db.addChatsWith(user!!.userId, isMatchFound[0].userId)
-
-                }
-                return false
-            }
-
-            override fun onQueryTextChange(p0: String?): Boolean {
-                adapter.filter.filter(p0)
-                return false
-            }
-        })
-
-    }
 
     override fun onViewCreated(fragmentView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(fragmentView, savedInstanceState)
@@ -84,12 +53,8 @@ class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
         chatHomeRecyclerView.setHasFixedSize(false)
         // Update questions list
         if(user!=null) {
-            updateChats()
+            fetchChats()
         }
-    }
-
-    private fun updateChats() {
-        fetchChats()
     }
     private fun fetchChats() {
         if(user!!.chatsWith.isNotEmpty()) {
