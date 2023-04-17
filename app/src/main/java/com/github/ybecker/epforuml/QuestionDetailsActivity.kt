@@ -1,15 +1,11 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
+import android.net.Uri
 import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,7 +40,14 @@ class QuestionDetailsActivity : AppCompatActivity() {
         question = intent.getParcelableExtra("question")
         questionId = question!!.questionId
         val title : TextView = findViewById(R.id.qdetails_title)
-        title.text = question!!.questionTitle
+        val image : ImageView = findViewById(R.id.image_question)
+        if(question!!.imageURI == ""){
+            image.visibility = View.INVISIBLE
+
+        }else{
+            image.setImageURI(Uri.parse(question!!.imageURI))
+            title.text = question!!.questionTitle
+        }
         updateRecycler()
 
         user = DatabaseManager.user ?: Model.User()
