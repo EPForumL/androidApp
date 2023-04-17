@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a chat which is a list of messages.
  */
 class RealChatFragment : Fragment() {
 
@@ -46,6 +46,7 @@ class RealChatFragment : Fragment() {
             notConnected?.visibility = View.VISIBLE
             textMsg?.visibility = View.INVISIBLE
             button?.visibility = View.INVISIBLE
+
         } else {
             hostId = user!!.userId
             externId = this.activity?.intent?.getStringExtra("externID").toString()
@@ -93,7 +94,7 @@ class RealChatFragment : Fragment() {
             noChats?.visibility = View.VISIBLE
         } else {
             queryList.sortBy { LocalDateTime.parse(it.date) }
-            chatAdapter = ChatAdapter(queryList,hostUser, externUser)
+            chatAdapter = ChatAdapter(queryList, externUser)
             chatRecyclerView.adapter = chatAdapter
         }
     }

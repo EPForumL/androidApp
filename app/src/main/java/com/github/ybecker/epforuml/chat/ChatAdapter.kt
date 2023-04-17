@@ -8,10 +8,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.R
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 
-class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val hostUser: Model.User, private val externUser : Model.User ) :
+/**
+ * This class is an adapter for the Chat Fragment
+ * @param chatList representents the list of chats between the logged user and chosen pal
+ * @param externUser the User the host is chatting with
+ * It will create a recycler view, treating each chat correctly and outputing the correct view
+ */
+class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val externUser : Model.User ) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         val itemViewHost = LayoutInflater.from(parent.context).inflate(R.layout.chat_item, parent, false)
@@ -22,6 +30,7 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ho
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
+        val hostUser = DatabaseManager.user!!
         val currentItem = chatList[position]
         if(currentItem.senderId == hostUser.userId){
             holder.currentText.text = currentItem.text
@@ -33,6 +42,7 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ho
             if(externUser.profilePic!="")
                 holder.chatImage.setImageURI(Uri.parse(externUser.profilePic))
             holder.itemView.scaleX = -1f
+            holder.itemView.findViewById<TextView>(R.id.textChat).scaleX = -1f
 
         }
     }

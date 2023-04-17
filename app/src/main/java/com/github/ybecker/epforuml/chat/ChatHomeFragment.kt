@@ -15,7 +15,7 @@ import com.github.ybecker.epforuml.R.*
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list of Chats.
  */
 class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
@@ -30,13 +30,15 @@ class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(layout.fragment_chat_home_list, container, false)
+        val newChatButton = view.findViewById<Button>(R.id.newChatWith)
         if (user == null) {
             val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
             notConnected?.visibility = View.VISIBLE
+            newChatButton.visibility = View.INVISIBLE
         } else {
             chatList = user!!.chatsWith
         }
-        view.findViewById<Button>(R.id.newChatWith).setOnClickListener{
+        newChatButton.setOnClickListener{
             val switchActivityIntent = Intent(this.mainActivity, SearchActivity::class.java)
             startActivity(switchActivityIntent)
         }

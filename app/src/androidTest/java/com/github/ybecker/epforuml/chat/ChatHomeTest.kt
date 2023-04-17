@@ -99,6 +99,7 @@ class ChatHomeTest {
         onView(withId(R.id.nav_chat)).perform(click())
         Thread.sleep(5000)
         onView(withId(R.id.not_connected_text_view)).check(matches(isDisplayed()))
+        onView(withId(R.id.newChatWith)).check(matches(not(isDisplayed())))
 
 
     }

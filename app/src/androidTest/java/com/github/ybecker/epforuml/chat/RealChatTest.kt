@@ -127,6 +127,5 @@ class RealChatTest {
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
             assertEquals(3, view.adapter?.itemCount ?:0 )
         }
-
     }
 }

@@ -12,6 +12,12 @@ import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 
+/**
+ * This class is an adapter for the Chat Fragment
+ * @param chatList representents the list of chats between the logged user and chosen pal
+ * @param mainActivity the parent activity of the fragment calling the adapter
+ * It will create a recycler view, treating each chat correctly and outputing the correct view
+ */
 class ChatHomeAdapter(private val chatList : MutableList<String>,private val mainActivity: MainActivity) :
     RecyclerView.Adapter<ChatHomeAdapter.ChatHomeViewHolder>() {
 

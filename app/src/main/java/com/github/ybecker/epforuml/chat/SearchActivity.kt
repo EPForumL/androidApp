@@ -13,6 +13,10 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 
 
+/**
+ * This activity represents a search view taking a list and treating the results as asked
+ * In the future, I would like to make Generic so that it can be reused with other lists
+ */
 class SearchActivity : AppCompatActivity() {
 
     lateinit var listView: ListView
