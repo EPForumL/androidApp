@@ -43,6 +43,8 @@ class MockDatabase : Database() {
 
         val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), emptyList())
         users[user1.userId] = user1
+        val userWithCredentials = User("userX", "Jean Dupont", "jdupont@epfl.ch")
+        users[userWithCredentials.userId] = userWithCredentials
 
         val question1 = Question("question1", "course1", "user1", "About ci",
                                 "How do I fix the CI ?",

@@ -27,8 +27,84 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:listitem="@layout/question_details_answer_item"
-        android:id="@+id/answers_recycler"/>
+        android:id="@+id/answers_recycler"
+        android:layout_weight="2"/>
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/reply_box_and_button"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/not_loggedin_text"
+            android:text="@string/please_login_to_post_answers"
+            android:layout_marginVertical="5dp"
+            android:textColor="@color/gray"
+            android:layout_gravity="end"
+            android:background="@color/white"
+            android:visibility="gone"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:cardUseCompatPadding="true"
+            android:id="@+id/write_reply_card"
+            app:cardCornerRadius="3dp"
+            android:visibility="visible"
+            app:cardElevation="5dp"
+            android:paddingVertical="5dp"
+            android:layout_weight="2">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center"
+                    android:layout_weight="2">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:id="@+id/write_reply_box"
+                        android:hint="Write an answer..."
+                        android:layout_gravity="center"
+                        android:background="@color/fui_transparent"
+                        android:textColorHint="@color/courseColor"
+                        android:textSize="20sp"
+                        android:layout_weight="2"
+                        android:paddingStart="15dp"
+                        android:layout_margin="8dp"
+                        android:paddingEnd="5dp">
+
+                    </EditText>
+
+                </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <ImageButton
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:id="@+id/post_reply_button"
+            android:clickable="true"
+            android:visibility="visible"
+            android:layout_gravity="center"
+            android:src="@drawable/send_icon"
+            android:background="@drawable/round_corner"
+            app:tint="@color/white"
+            android:layout_margin="8dp"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -33,19 +33,6 @@ class FirebaseAuthenticator(
         FirebaseAuthUIActivityResultContract()
     ) { res -> this.onSignInResult(res) }
 
-    init {
-        // If the user is already connected set the user to the corresponding value
-        val firebaseUser = Firebase.auth.currentUser
-        if (firebaseUser != null) {
-            DatabaseManager.user =
-                Model.User(
-                    firebaseUser.uid,
-                    firebaseUser.displayName ?: "",
-                    firebaseUser.email ?: ""
-                )
-        }
-    }
-
     override fun signIn() {
         // Adds the authentication means
         val providers = arrayListOf(
@@ -78,7 +65,7 @@ class FirebaseAuthenticator(
             AuthUI.getInstance()
                 .delete(activity)
                 .addOnCompleteListener {
-                    // TODO: Remove user from database
+                    DatabaseManager.db.removeUser(user.userId)
                     DatabaseManager.user = null
                     logout("Successfully deleted user : ${user.username}")
                 }
@@ -137,34 +124,45 @@ class FirebaseAuthenticator(
     private fun signInSucceeds() {
         val firebaseUser = Firebase.auth.currentUser
         if (firebaseUser != null) {
-            val username = firebaseUser.displayName
-            username?.let {
-                // Adds user to the database
-                val user = DatabaseManager.user
-                if (user == null || user.userId != firebaseUser.uid) {
-                    val futureUser = DatabaseManager.db.addUser(firebaseUser.uid, it, firebaseUser.email ?: "")
-                    futureUser.thenAccept { user -> DatabaseManager.user = user }
+            DatabaseManager.db.getUserById(firebaseUser.uid).thenAccept { user ->
+                if (user == null) {
+                    DatabaseManager.db.addUser(
+                        firebaseUser.uid,
+                        firebaseUser.displayName!!,
+                        firebaseUser.email!!
+                    ).thenAccept { newUser ->
+                        DatabaseManager.user = newUser
+                        gotToActivity(newUser.username)
+                    }
+                } else {
+                    DatabaseManager.user = user
+                    gotToActivity(user.username)
                 }
             }
+        }
+    }
 
-            Toast.makeText(
-                activity,
-                "Successfully signed in as $username",
-                Toast.LENGTH_LONG
-            ).show()
+    /**
+     * Shows sign-in Toast and goes to MainActivity or AccountFragment
+     */
+    private fun gotToActivity(username: String) {
+        Toast.makeText(
+            activity,
+            "Successfully signed in as $username",
+            Toast.LENGTH_LONG
+        ).show()
 
-            // If this is the login activity go to main otherwise switch from guest fragment to
-            // account fragment.
-            if (activity::class.java == LoginActivity::class.java) {
-                activity.startActivity(Intent(activity, MainActivity::class.java))
-                activity.finish()
-            } else {
-                val fragment = caller as Fragment
-                fragment.parentFragmentManager
-                    .beginTransaction()
-                    .replace(fragment.id, AccountFragment())
-                    .commit()
-            }
+        // If this is the login activity go to main otherwise switch from guest fragment to
+        // account fragment.
+        if (activity::class.java == LoginActivity::class.java) {
+            activity.startActivity(Intent(activity, MainActivity::class.java))
+            activity.finish()
+        } else {
+            val fragment = caller as Fragment
+            fragment.parentFragmentManager
+                .beginTransaction()
+                .replace(fragment.id, AccountFragment())
+                .commit()
         }
     }
 }
