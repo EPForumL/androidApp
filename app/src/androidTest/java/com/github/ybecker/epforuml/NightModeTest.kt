@@ -10,6 +10,9 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -17,9 +20,15 @@ import org.junit.runner.RunWith
 class NightModeTest {
     @Test
     fun testFragmentSettingsDarkMode() {
+        DatabaseManager.useMockDatabase()
+        Firebase.auth.signOut()
+        DatabaseManager.user = null
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
+        Thread.sleep(2000)
         onView(withId(R.id.guestButton)).perform(click())
+
+        Thread.sleep(2000)
 
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
         // open navigation drawer

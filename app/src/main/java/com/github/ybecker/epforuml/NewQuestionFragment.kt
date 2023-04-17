@@ -34,8 +34,9 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val user = DatabaseManager.user ?: Model.User()
+        val user = DatabaseManager.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
+
 
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
         // Get the set of available courses from the MockDatabase
@@ -72,42 +73,54 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         coursesList: List<Model.Course>,
         user: Model.User?
     ): (v: View) -> Unit = {
-        if (questBody.text.isBlank() || questTitle.text.isBlank()) {
+
+        if (user == null) {
+            Toast.makeText(
+                requireContext(), "You must be logged in to post a question",
+                Toast.LENGTH_SHORT
+            ).show()
+
+        }
+        else if (questBody.text.isBlank() || questTitle.text.isBlank()) {
             Toast.makeText(
                 requireContext(), "Question title or body cannot be empty",
                 Toast.LENGTH_SHORT
             ).show()
-        } else {
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val questionSubject = parent.getItemAtPosition(position) as String
-                    val course =
-                        coursesList.filter { course -> course.courseName == questionSubject }[0]
-                    if (user != null) {
-                        db.addQuestion(
-                            user.userId,
-                            course.courseId,
-                            questTitle.toString(),
-                            questBody.toString(),
-                            imageURI.toString()
-                        )
-                    }
 
+        }
 
+        else {
+            val selectedItemPosition = spinner.selectedItemPosition
+            if (selectedItemPosition == Spinner.INVALID_POSITION) {
+                // No item is selected from the spinner
+                Toast.makeText(
+                    requireContext(), "Please select a course",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                val questionSubject = spinner.getItemAtPosition(selectedItemPosition) as String
+                val course = coursesList.firstOrNull { course -> course.courseName == questionSubject }
+                if (course == null) {
+                    // This should never happen, but it's better to handle it just in case
+                    Toast.makeText(
+                        requireContext(), "Invalid course selected",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    // Add the question to the database
+                    DatabaseManager.db.addQuestion(
+                        user.userId,
+                        course.courseId, questTitle.text.toString(),
+                        questBody.text.toString(),
+                        imageURI.toString()
+                    )
+                    // Navigate to the home screen
                     mainActivity.replaceFragment(HomeFragment(mainActivity))
                 }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         }
-        mainActivity.replaceFragment(HomeFragment(this.mainActivity))
-    }
 
+    }
     private fun setTakeImage(
         view: View,
         questBody: EditText,
@@ -135,6 +148,11 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
          questBody = view.findViewById(R.id.question_details_edittext)
          questTitle = view.findViewById(R.id.question_title_edittext)
          imageURI = view.findViewById(R.id.image_uri)
+
+        println(questBody)
+
+
+
 
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
