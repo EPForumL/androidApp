@@ -25,8 +25,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var saveToggle : ImageButton
 
     private lateinit var cache : ArrayList<Model.Question>
-    // TODO remove all related
-    private lateinit var test : String
 
     private lateinit var newIntent : Intent
 
@@ -52,14 +50,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
         cache = intent.getParcelableArrayListExtra("savedQuestions")!!
 
 
-        test = intent.getStringExtra("test")!!
         // create new intent to resend to home (mandatory)
         newIntent = Intent(applicationContext, MainActivity::class.java)
-        newIntent.putExtra("test", test)
         newIntent.putParcelableArrayListExtra("savedQuestions", cache)
-
-        val testText : TextView = findViewById(R.id.test_details)
-        testText.text = test
 
         // load user
         user = DatabaseManager.user ?: Model.User()
@@ -94,13 +87,11 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 //if (questionIsSaved) {
                 if (isSavedQuestion()) {
                     cache.remove(question)
-                    test = "NOT SAVED"
                     update()
                 }
                 // question is not yet saved, will be saved after click
                 else {
                     cache.add(question!!)
-                    test = "SAVED"
                     update()
                 }
 
@@ -140,10 +131,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 false -> R.drawable.nav_saved_questions
             }
         )
-
-        val testView : TextView = findViewById(R.id.test_details)
-        testView.text = test
-
     }
 /*
     private fun savedBecomesInverse() {
@@ -163,7 +150,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun updateNewIntent() {
         newIntent.putParcelableArrayListExtra("savedQuestions", cache)
-        newIntent.putExtra("test", test)
     }
 
     private fun update() {

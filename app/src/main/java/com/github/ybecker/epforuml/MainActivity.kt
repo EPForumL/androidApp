@@ -23,9 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var user : Model.User
 
-    private var cache = ArrayList<Model.Question>()//SavedQuestionsCache()
-    // TODO remove all related
-    private var test = "EMPTY FROM MAIN"
+    private var cache = ArrayList<Model.Question>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,11 +49,6 @@ class MainActivity : AppCompatActivity() {
         if (newCache != null) {
             cache = newCache
         }
-        val newTest : String? = intent.getStringExtra("test")
-        if (newTest != null) {
-            test = newTest
-        }
-
 
         if(savedInstanceState == null) {
             replaceFragment(HomeFragment(this))
@@ -97,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         val bundle = Bundle()
         bundle.putParcelableArrayList("savedQuestions", cache)
         //sendCache(bundle)
-        bundle.putString("test", test)
         fragment.arguments = bundle
 
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()

@@ -42,9 +42,6 @@ class MyQuestionsFragment : Fragment() {
             // Inflate the layout for this fragment
             val fragmentView = inflater.inflate(R.layout.fragment_my_questions, parentContainer, false)
 
-            // Utilize the mock database
-            //DatabaseManager.useMockDatabase()
-
             // Retrieve all available courses
             asyncCourseList = db.availableCourses()
 

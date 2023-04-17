@@ -18,6 +18,7 @@ import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.util.ImageHasDrawableMatcher
 import junit.framework.TestCase.*
 import org.hamcrest.Matchers.not
 import org.junit.After
@@ -50,10 +51,9 @@ class QuestionDetailsTest {
 
             // add question to intent
             intent.putExtra("question", question)
+            // add empty list of saved questions
+            cache.clear()
             intent.putParcelableArrayListExtra("savedQuestions", cache)
-
-            // TODO : remove
-            intent.putExtra("test", "")
         }
 
         localScenario = ActivityScenario.launch(intent)
@@ -72,26 +72,6 @@ class QuestionDetailsTest {
             it.startActivity(intent)
         }
     }
-
-    // TODO fix
-
-    /*
-    @Test
-    fun backToMainIsCorrect() {
-        //openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getInstrumentation().targetContext)
-        //onView(withId(android.R.id.home))
-        //onView(withContentDescription(R.string.abc_action_bar_up_description))
-         //   .perform(click())
-        var bar : ActionBar?
-
-        localScenario.onActivity {
-            bar = it.actionBar
-        }
-
-        onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
-    }
-
-     */
 
     @Test
     fun loggedInCanPost() {
@@ -147,29 +127,19 @@ class QuestionDetailsTest {
         onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
     }
 
-    // TODO fix
-/*
-    @Test
-    fun cacheIsProperlySentToMain() {
-        // go back to main
-        onView(withId(R.id.back_to_forum_button))
-            .perform(click())
-
-        val mainCache : SavedQuestionsCache = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
-
-        assertFalse(mainCache.isEmpty())
-        assertTrue(mainCache.isQuestionSaved(QUESTION_ID))
-    }
-
- */
-
-
     @Test
     fun clickingToggleAltersDrawable() {
         logInDetailsActivity()
 
         onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
+
+        onView(withId(R.id.toggle_save_question))
             .perform(click())
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+
 
         // TODO : complete test
         //assertTrue(cache.getSavedQuestions().isQuestionSaved(QUESTION_ID))
@@ -202,17 +172,13 @@ class QuestionDetailsTest {
     // TODO complete test
     @Test
     fun toggleOnWhenQuestionSaved() {
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            QuestionDetailsActivity::class.java
-        )
+        cache.add(question)
+        intent.putParcelableArrayListExtra("savedQuestions", cache)
 
         logInDetailsActivity()
 
-        //assertTrue(cache.getSavedQuestions().isQuestionSaved(QUESTION_ID))
-
         onView(withId(R.id.toggle_save_question))
-            //.check(matches(withResourceName(R.drawable.checkmark)))
+            .check(matches(ImageHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
 
     // test guest cannot save

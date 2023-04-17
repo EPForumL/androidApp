@@ -46,8 +46,6 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
 
     private lateinit var cache : ArrayList<Question>
-    // TODO remove all related
-    private lateinit var test : String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,10 +56,6 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
         // retrieve cache
         cache = this.requireArguments().getParcelableArrayList("savedQuestions")!!
-        test = this.requireArguments().getString("test")!!
-
-        val testText : TextView = view.findViewById(R.id.test_forum)
-        testText.text = test
 
         futureCourseList = db.availableCourses()
 
@@ -121,7 +115,6 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
             intent.putParcelableArrayListExtra("savedQuestions", cache)
-            intent.putExtra("test", test)
             intent.putExtra("question", q)
             startActivity(intent)
         }

@@ -50,7 +50,6 @@ class MainActivityTest {
             .check(ViewAssertions.matches(ViewMatchers.isClickable()))
     }
 
-
     @Test
     fun newActivityContainsCorrectData() {
         onView(withId(R.id.recycler_forum))
@@ -79,14 +78,17 @@ class MainActivityTest {
 
         // go to last QuestionDetailsActivity
         onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                    2,
+                    click()
+                )
+            )
 
         intended(hasExtra("savedQuestions", cache))
 
         Intents.release()
     }
-
-    // TODO test if can also access cache info ?
 
     @After
     fun end() {

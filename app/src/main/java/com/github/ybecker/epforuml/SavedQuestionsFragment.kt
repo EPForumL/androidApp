@@ -25,8 +25,6 @@ class SavedQuestionsFragment : Fragment() {
 
     private lateinit var cache : ArrayList<Model.Question>
     private lateinit var newIntentDetails : Intent
-    // TODO remove all related
-    private lateinit var test : String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +57,6 @@ class SavedQuestionsFragment : Fragment() {
             adapter.onItemClick = {q ->
                 newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
                 newIntentDetails.putParcelableArrayListExtra("savedQuestions", cache)
-                newIntentDetails.putExtra("test", "test")
                 newIntentDetails.putExtra("question", q)
                 startActivity(newIntentDetails)
             }

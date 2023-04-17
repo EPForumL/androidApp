@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml
 
 import android.content.Intent
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -13,6 +14,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -20,6 +22,7 @@ import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
@@ -33,29 +36,26 @@ class SavedQuestionsTest {
     private lateinit var scenario : ActivityScenario<MainActivity>
 
     private lateinit var question : Model.Question
-    private lateinit var cache : ArrayList<Model.Question>
+    private var cache = arrayListOf<Model.Question>()
 
     private lateinit var intent : Intent
 
-    @BeforeClass
-    fun getDB() {
+    @Before
+    fun setup() {
         DatabaseManager.useMockDatabase()
+
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+
+        intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            MainActivity::class.java
+        )
 
         db.getQuestionById("question1").thenAccept {
             question = it!!
             cache.add(it)
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
         }
-    }
-
-
-    @Before
-    fun setup() {
-        scenario = ActivityScenario.launch(MainActivity::class.java)
-
-        intent = Intent(
-                ApplicationProvider.getApplicationContext(),
-                QuestionDetailsActivity::class.java
-        )
     }
 
     // TODO : fix --> add cache
@@ -90,13 +90,12 @@ class SavedQuestionsTest {
     @Test
     fun loggedCanSeeSavedQuestion() {
         // fill cache
-        scenario = ActivityScenario.launch(intent)
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInIntent()
 
         goToSavedFragment()
 
         onView(withId(R.id.recycler_saved_questions))
-            .perform(RecyclerViewActions.scrollToLastPosition<RecyclerView.ViewHolder>())
+            .check(matches(isDisplayed()))
 
         onView(withText(question.questionTitle))
             .check(matches(isDisplayed()))
@@ -105,30 +104,33 @@ class SavedQuestionsTest {
     @Test
     fun loggedCanClickOnSavedQuestionToSeeDetails() {
         // fill cache
-        scenario = ActivityScenario.launch(intent)
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInIntent()
 
         Intents.init()
 
         goToSavedFragment()
 
         onView(withId(R.id.recycler_saved_questions))
-            .perform(RecyclerViewActions.scrollToLastPosition<RecyclerView.ViewHolder>())
-            .perform(click())
+            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0, click()))
 
-        intended(hasComponent(QuestionDetailsActivity::class.java.name))
+        intended(allOf(hasExtra("savedQuestions", cache), hasExtra("question", question), hasComponent(QuestionDetailsActivity::class.java.name)))
 
         Intents.release()
     }
 
-    // TODO(check cache is properly transmitted and retrieved)
-
     // TODO(check if saved questions are still there after restarting the app)
 
-    fun goToSavedFragment() {
+    private fun goToSavedFragment() {
         onView(withContentDescription(R.string.open))
             .perform(click())
         onView(withId(R.id.nav_saved_questions)).perform(click())
+    }
+
+    private fun logInIntent() {
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+            it.startActivity(intent)
+        }
     }
 
     @After
