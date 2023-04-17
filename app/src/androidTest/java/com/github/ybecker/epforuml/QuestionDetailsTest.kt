@@ -18,7 +18,7 @@ import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
-import com.github.ybecker.epforuml.util.ImageHasDrawableMatcher
+import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
 import junit.framework.TestCase.*
 import org.hamcrest.Matchers.not
 import org.junit.After
@@ -132,44 +132,16 @@ class QuestionDetailsTest {
         logInDetailsActivity()
 
         onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
 
         onView(withId(R.id.toggle_save_question))
             .perform(click())
 
         onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
-
-
-        // TODO : complete test
-        //assertTrue(cache.getSavedQuestions().isQuestionSaved(QUESTION_ID))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
 
-    // TODO fix
-    /*
-    @Test
-    fun cacheSentToMainComesBackTheSame() {
-        logInDetailsActivity()
 
-        onView(withId(R.id.back_to_forum_button))
-            .perform(click())
-
-        onView(withId(R.id.recycler_forum))
-            .perform(
-                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0,
-                    click()
-                ))
-
-        val localCache = intent.getParcelableExtra("savedQuestions") ?: SavedQuestionsCache()
-
-        assertFalse(localCache.isEmpty())
-        assertTrue(localCache.isQuestionSaved(QUESTION_ID))
-    }
-
-     */
-
-
-    // TODO complete test
     @Test
     fun toggleOnWhenQuestionSaved() {
         cache.add(question)
@@ -178,10 +150,10 @@ class QuestionDetailsTest {
         logInDetailsActivity()
 
         onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
 
-    // test guest cannot save
+
     @Test
     fun guestCannotSaveQuestion() {
         logOutDetailsActivity()

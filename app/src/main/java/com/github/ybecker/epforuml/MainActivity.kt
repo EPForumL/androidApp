@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     private var cache = ArrayList<Model.Question>()
 
+    // TODO : check if cache goes through process of posting a new question
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
