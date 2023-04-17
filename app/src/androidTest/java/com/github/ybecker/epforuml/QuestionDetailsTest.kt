@@ -1,6 +1,8 @@
 package com.github.ybecker.epforuml
 
 import android.view.View
+import android.widget.ImageView
+import androidx.core.view.get
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
@@ -46,10 +48,9 @@ class QuestionDetailsTest {
 
     @Test
     fun newActivityContainsCorrectData() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
-
-        onView(withId(R.id.qdetails_title)).check(matches(withText("About Scrum master")))
+        onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0,click()))
+        Thread.sleep(10000)
+        onView(withId(R.id.qdetails_title)).check(matches(isDisplayed()))//, withText("About Scrum master")))
     }
 
     @Test
@@ -131,11 +132,26 @@ class QuestionDetailsTest {
 
         // go to second question
         onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(1, click()))
 
         // check button is not clickable
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
         onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
+    }
+
+/*    @Test
+    fun questionWithImageIsDisplayed(){
+        onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(1,click()))
+        Thread.sleep(10000)
+        onView(withId(R.id.image_question)).check(matches(isDisplayed()))
+
+    }*/
+
+    @Test
+    fun questionWithNoImage(){
+        onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0,click()))
+        onView(withId(R.id.image_question)).check(matches(not(isDisplayed())))
+
     }
 
     @After

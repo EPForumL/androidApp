@@ -60,7 +60,7 @@ class MockDatabase : Database() {
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long " +
-                    "question" ,"", mutableListOf())
+                    "question" ,"https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg", mutableListOf())
         questions[question3.questionId] = question3
 
         val answer1 = Answer("answer1", "question1", "user1", "première réponse")

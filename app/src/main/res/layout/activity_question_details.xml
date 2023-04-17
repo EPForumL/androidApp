@@ -26,19 +26,18 @@
         android:id="@+id/qdetails_title"/>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/image_question"
-        />
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_weight="1"
+        android:contentDescription="@string/image" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:listitem="@layout/question_details_answer_item"
         android:id="@+id/answers_recycler"
-        android:layout_weight="2"/>
-
-
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_weight="2"
+        tools:listitem="@layout/question_details_answer_item" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,56 +59,57 @@
             android:visibility="gone"/>
 
         <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:cardUseCompatPadding="true"
             android:id="@+id/write_reply_card"
-            app:cardCornerRadius="3dp"
-            android:visibility="visible"
-            app:cardElevation="5dp"
+            android:layout_width="0dp"
+            android:layout_height="85dp"
+            android:layout_gravity="center"
+            android:layout_weight="2"
             android:paddingVertical="5dp"
-            android:layout_weight="2">
+            android:visibility="visible"
+            app:cardCornerRadius="3dp"
+            app:cardElevation="5dp"
+            app:cardUseCompatPadding="true">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/write_reply_box"
+                    android:layout_width="313dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="center"
-                    android:layout_weight="2">
+                    android:layout_margin="8dp"
+                    android:layout_weight="2"
+                    android:background="@color/fui_transparent"
+                    android:hint="Write an answer..."
+                    android:paddingStart="15dp"
+                    android:paddingEnd="5dp"
+                    android:textColorHint="@color/courseColor"
+                    android:textSize="20sp"
+                    tools:ignore="TouchTargetSizeCheck">
 
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:id="@+id/write_reply_box"
-                        android:hint="Write an answer..."
-                        android:layout_gravity="center"
-                        android:background="@color/fui_transparent"
-                        android:textColorHint="@color/courseColor"
-                        android:textSize="20sp"
-                        android:layout_weight="2"
-                        android:paddingStart="15dp"
-                        android:layout_margin="8dp"
-                        android:paddingEnd="5dp">
+                </EditText>
 
-                    </EditText>
-
-                </LinearLayout>
+            </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 
         <ImageButton
-            android:layout_width="45dp"
-            android:layout_height="45dp"
             android:id="@+id/post_reply_button"
-            android:clickable="true"
-            android:visibility="visible"
+            android:layout_width="48dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:src="@drawable/send_icon"
-            android:background="@drawable/round_corner"
-            app:tint="@color/white"
             android:layout_margin="8dp"
-            />
+            android:background="@drawable/round_corner"
+            android:clickable="true"
+            android:src="@drawable/send_icon"
+            android:visibility="visible"
+            app:tint="@color/white"
+            tools:ignore="SpeakableTextPresentCheck" />
 
     </LinearLayout>
 

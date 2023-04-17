@@ -43,11 +43,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val image : ImageView = findViewById(R.id.image_question)
         if(question!!.imageURI == ""){
             image.visibility = View.INVISIBLE
-
         }else{
-            image.setImageURI(Uri.parse(question!!.imageURI))
-            title.text = question!!.questionTitle
+            val uri = Uri.parse(question!!.imageURI)
+            image.visibility = View.VISIBLE
+            image.setImageURI(uri)
         }
+        title.text = question!!.questionTitle
         updateRecycler()
 
         user = DatabaseManager.user ?: Model.User()
