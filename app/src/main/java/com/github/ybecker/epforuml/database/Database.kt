@@ -18,9 +18,9 @@ abstract class Database {
     abstract fun availableCourses(): CompletableFuture<List<Course>>
 
     /**
-     * Returns a list of all available courses in the current database.
+     * Returns a list of all registered user in the current database.
      *
-     * @return a list of every available courses
+     * @return a list of every registered user
      */
     abstract fun registeredUsers(): CompletableFuture<List<String>>
     /**

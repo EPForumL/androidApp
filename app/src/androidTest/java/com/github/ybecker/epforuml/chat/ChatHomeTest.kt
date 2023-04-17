@@ -115,7 +115,6 @@ class ChatHomeTest {
 
     @Test
     fun chatWithNewUserSwitchesActivity(){
-
         DatabaseManager.user = host
         onView(withContentDescription(R.string.open))
             .perform(click())
@@ -123,6 +122,5 @@ class ChatHomeTest {
         onView(withId(R.id.newChatWith)).perform(click())
         onView(withId(R.id.searchView)).check(matches(isDisplayed()))
         onView(withId(R.id.listView)).check(matches(isDisplayed()))
-
     }
 }

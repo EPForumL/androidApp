@@ -17,12 +17,13 @@ import com.github.ybecker.epforuml.database.DatabaseManager.user
  * This activity represents a search view taking a list and treating the results as asked
  * In the future, I would like to make Generic so that it can be reused with other lists
  */
-class SearchActivity : AppCompatActivity() {
+class SearchActivity() : AppCompatActivity() {
 
-    lateinit var listView: ListView
-    lateinit var listAdapter: ArrayAdapter<String>
-    lateinit var list: ArrayList<String>;
-    lateinit var searchView: SearchView
+    private lateinit var list: ArrayList<String>
+
+    private lateinit var listView: ListView
+    private lateinit var listAdapter: ArrayAdapter<String>
+    private lateinit var searchView: SearchView
     val searchActivity = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,8 +31,11 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
         listView = findViewById(R.id.listView)
         searchView = findViewById(R.id.searchView)
-        list = db.registeredUsers().get() as ArrayList<String>
 
+        val futureList = db.registeredUsers()
+        futureList.thenAccept {
+            list = futureList.get() as ArrayList<String>
+        }
         listAdapter = ArrayAdapter<String>(
             this,
             android.R.layout.simple_list_item_1,

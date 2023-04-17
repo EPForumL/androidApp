@@ -12,17 +12,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.R.*
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
+import java.util.concurrent.TimeUnit
 
 /**
  * A fragment representing a list of Chats.
  */
-class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
+class ChatHomeFragment : Fragment() {
 
     private lateinit var chatList: List<String>
     private lateinit var chatHomeAdapter: ChatHomeAdapter
     private lateinit var chatHomeRecyclerView: RecyclerView
-
 
 
     override fun onCreateView(
@@ -38,10 +40,6 @@ class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
         } else {
             chatList = user!!.chatsWith
         }
-        newChatButton.setOnClickListener{
-            val switchActivityIntent = Intent(this.mainActivity, SearchActivity::class.java)
-            startActivity(switchActivityIntent)
-        }
         return view
     }
 
@@ -53,19 +51,33 @@ class ChatHomeFragment(private val mainActivity: MainActivity) : Fragment() {
         chatHomeRecyclerView = fragmentView.findViewById(R.id.recycler_chat_home)
         chatHomeRecyclerView.layoutManager = linearLayoutMgr
         chatHomeRecyclerView.setHasFixedSize(false)
+        val newChatButton = view?.findViewById<Button>(R.id.newChatWith)
+        newChatButton?.setOnClickListener(listener)
         // Update questions list
-        if(user!=null) {
+        if (user != null) {
             fetchChats()
         }
     }
+
     private fun fetchChats() {
-        if(user!!.chatsWith.isNotEmpty()) {
-            chatHomeAdapter = ChatHomeAdapter(user!!.chatsWith as MutableList<String>,this.mainActivity)
+        if (user!!.chatsWith.isNotEmpty()) {
+            chatHomeAdapter = ChatHomeAdapter(
+                user!!.chatsWith as MutableList<String>,
+                this.activity as MainActivity
+            )
             chatHomeRecyclerView.adapter = chatHomeAdapter
-        }else{
+        } else {
             val noChats = view?.findViewById<TextView>(R.id.no_chats)
             noChats?.visibility = View.VISIBLE
         }
+
+
+    }
+
+    private val listener: View.OnClickListener? = View.OnClickListener {
+        val switchActivityIntent = Intent(this.activity, SearchActivity::class.java)
+        startActivity(switchActivityIntent)
+
 
     }
 }

@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
-
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView : NavigationView = findViewById(R.id.nav_view)
 
@@ -58,9 +57,8 @@ class MainActivity : AppCompatActivity() {
                         replaceFragment(AccountFragment())
                     }
                 R.id.nav_settings -> replaceFragment(SettingsFragment())
-                R.id.nav_chat -> replaceFragment(ChatHomeFragment(this))
+                R.id.nav_chat -> replaceFragment(ChatHomeFragment())
             }
-
             true
         }
     }

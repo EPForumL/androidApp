@@ -37,9 +37,10 @@ class SearchActivityTest {
         host = db.addUser("0", "HostUser", "testEmail").get()
         extern = db.addUser("1", "ExternUser", "testEmail").get()
         DatabaseManager.user = host
+        val list = db.registeredUsers().get() as ArrayList<String>
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
-            SearchActivity::class.java)
+            SearchActivity(list)::class.java)
 
         scenario = ActivityScenario.launch(intent)
 

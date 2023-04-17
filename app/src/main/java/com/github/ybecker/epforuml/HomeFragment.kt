@@ -46,7 +46,6 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         //DatabaseManager.useMockDatabase()
-
         futureCourseList = db.availableCourses()
 
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
