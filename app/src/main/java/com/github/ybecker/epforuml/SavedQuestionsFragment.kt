@@ -33,7 +33,6 @@ class SavedQuestionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         cache = this.requireArguments().getParcelableArrayList("savedQuestions")!!
-        test = this.requireArguments().getString("test")!!
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
@@ -47,9 +46,6 @@ class SavedQuestionsFragment : Fragment() {
         user = DatabaseManager.user ?: Model.User()
         val userId = user.userId
 
-        val testText : TextView = view.findViewById(R.id.test_saved)
-        testText.text = test
-
         if (userId.isNotEmpty() && cache.isNotEmpty()) {
             val layoutManager = LinearLayoutManager(context)
             recyclerView = view.findViewById(R.id.recycler_saved_questions)
@@ -61,10 +57,9 @@ class SavedQuestionsFragment : Fragment() {
 
             // move to QuestionDetails when clicking on specific question
             adapter.onItemClick = {q ->
-                //val intent = Intent(this.context, QuestionDetailsActivity::class.java)
                 newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
                 newIntentDetails.putParcelableArrayListExtra("savedQuestions", cache)
-                newIntentDetails.putExtra("test", test)
+                newIntentDetails.putExtra("test", "test")
                 newIntentDetails.putExtra("question", q)
                 startActivity(newIntentDetails)
             }

@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // initialize DB to Mock
-        DatabaseManager.useMockDatabase()
+        //DatabaseManager.useMockDatabase()
 
         user = DatabaseManager.user ?: Model.User()
 
