@@ -89,7 +89,9 @@ class MockDatabaseTest {
     @Test
     fun retrieveRegisteredUsers(){
         val user2 = db.addUser("user2", "TestUser2", "testEmail").get()
-        assertThat( db.registeredUsers().get().size, equalTo(3))
+        val testUser = db.addUser("IDID", "TestUser", "testEmail").get()
+
+        assertThat( db.registeredUsers().get().size, equalTo(5))
     }
 
     @Test
