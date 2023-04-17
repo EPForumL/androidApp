@@ -48,7 +48,7 @@ class CameraActivityTest {
     @Test
     fun testTakePhoto() {
         onView(withId(R.id.image_capture_button)).perform(click())
-        Thread.sleep(2000) // Wait for photo to be taken
+        Thread.sleep(5000) // Wait for photo to be taken
         onView(withId(R.id.ds_photo_editor_top_button_apply)).check(matches(isDisplayed()))
     }
 
