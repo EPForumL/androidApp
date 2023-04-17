@@ -139,13 +139,13 @@ class QuestionDetailsTest {
         onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
     }
 
-/*    @Test
+    @Test
     fun questionWithImageIsDisplayed(){
         onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(1,click()))
         Thread.sleep(10000)
         onView(withId(R.id.image_question)).check(matches(isDisplayed()))
 
-    }*/
+    }
 
     @Test
     fun questionWithNoImage(){
