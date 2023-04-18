@@ -110,8 +110,9 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun addAndGetChat() {
         val chat2 = db.addChat("1","0", "Hi theo")
+        val chat3 = db.addChat("0","1", "Hi theo")
         db.getChat("1","0").thenAccept {
-            assertThat(it.size, equalTo(2))
+            assertThat(it.size, equalTo(3))
         }.join()
     }
 

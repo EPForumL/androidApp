@@ -17,7 +17,9 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
 import java.time.LocalDateTime
+import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.ArrayList
 
 /**
  * A fragment representing a chat which is a list of messages.
@@ -34,6 +36,7 @@ class RealChatFragment : Fragment() {
 
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var chatRecyclerView: RecyclerView
+    private lateinit var timer: Timer
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,22 +72,41 @@ class RealChatFragment : Fragment() {
                 }
             }
         }
-
-
         return view
     }
 
     override fun onViewCreated(fragmentView: View, savedInstanceState: Bundle?) {
         super.onViewCreated(fragmentView, savedInstanceState)
-
         // Configure recycler view and adapter
         val linearLayoutMgr = LinearLayoutManager(context)
         chatRecyclerView = fragmentView.findViewById(R.id.recycler_chat)
         chatRecyclerView.layoutManager = linearLayoutMgr
         chatRecyclerView.setHasFixedSize(false)
         // Update questions list
-        if(user!=null) fetchChats()
+        if (user != null) fetchChats()
+        startTimer()
     }
+        override fun onDestroyView() {
+            super.onDestroyView()
+            stopTimer()
+        }
+
+        private fun startTimer() {
+            timer = Timer()
+            timer.scheduleAtFixedRate(object : TimerTask() {
+                override fun run() {
+                    // Code to refresh the fragment goes here
+                    activity?.runOnUiThread {
+                        // Update the UI
+                        fetchChats()
+                    }
+                }
+            }, 0, 2000)
+        }
+
+        private fun stopTimer() {
+            timer.cancel()
+        }
 
 
     private fun fetchChats() {
