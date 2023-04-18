@@ -139,11 +139,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val newChildRef = db.child(chatsPath).push()
         val chatId = newChildRef.key ?: error("Failed to generate chat ID")
         val chat = Chat(chatId,LocalDateTime.now().toString(),receiverId,senderId,text)
-
-        //reference that these users chatted with eachother
-        db.child(usersPath).child(senderId).child(chatsWith).child(chatId).setValue(receiverId)
-        db.child(usersPath).child(receiverId).child(chatsWith).child(chatId).setValue(senderId)
-
         newChildRef.setValue(chat)
         return chat
     }

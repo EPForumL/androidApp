@@ -71,8 +71,9 @@ class RealChatFragment : Fragment() {
                     val button = view.findViewById<Button>(R.id.send_text)
                     button?.visibility = View.VISIBLE
                     button.setOnClickListener{
-                        db.addChat(hostId, externId,textMsg.text.toString())
-                        fetchChats()
+                        val chat = db.addChat(hostId, externId,textMsg.text.toString())
+                        queryList.add(chat)
+                        displayChats()
                     }
                 }else{
                     val notFound = view?.findViewById<TextView>(R.id.not_found)
@@ -107,7 +108,7 @@ class RealChatFragment : Fragment() {
                 // Code to refresh the fragment goes here
                 activity?.runOnUiThread {
                     // Update the UI
-                    //fetchChats()
+                    fetchChats()
                 }
 
             }
