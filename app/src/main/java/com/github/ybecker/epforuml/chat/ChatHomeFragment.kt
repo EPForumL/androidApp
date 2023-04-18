@@ -38,7 +38,11 @@ class ChatHomeFragment : Fragment() {
             notConnected?.visibility = View.VISIBLE
             newChatButton.visibility = View.GONE
         } else {
-            chatList = user!!.chatsWith
+            db.getUserById(user!!.userId).thenAccept{
+                if (it != null) {
+                    chatList=it.chatsWith
+                }
+            }
         }
         return view
     }
