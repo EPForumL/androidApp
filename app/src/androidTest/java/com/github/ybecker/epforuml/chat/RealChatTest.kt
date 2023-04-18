@@ -58,6 +58,8 @@ class RealChatTest {
     @Test
     fun chatGetsSetCorrectly(){
         DatabaseManager.user = host
+        DatabaseManager.db.addChatsWith(host.userId,extern.userId)
+        DatabaseManager.db.addChatsWith(extern.userId,host.userId)
         DatabaseManager.db.addChat(host.userId,extern.userId,"Hey Extern!")
         DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
 
@@ -109,6 +111,9 @@ class RealChatTest {
     @Test
     fun addMessageWorks(){
         DatabaseManager.user = host
+
+        DatabaseManager.db.addChatsWith(host.userId,extern.userId)
+        DatabaseManager.db.addChatsWith(extern.userId,host.userId)
         DatabaseManager.db.addChat(host.userId,extern.userId,"Hey Extern!")
         DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
 

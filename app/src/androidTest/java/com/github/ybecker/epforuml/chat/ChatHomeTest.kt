@@ -61,9 +61,9 @@ class ChatHomeTest {
     @Test
     fun chatHomeGetsSetCorrectly(){
         DatabaseManager.user = host
-        DatabaseManager.db.addChat("0","1", "Hey")
-        DatabaseManager.db.addChat("0","2", "Hey")
-        DatabaseManager.db.addChat("0","3", "Hey")
+        DatabaseManager.db.addChatsWith("0","1")
+        DatabaseManager.db.addChatsWith("0","2")
+        DatabaseManager.db.addChatsWith("0","3")
 
         onView(withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_chat)).perform(click())
@@ -78,7 +78,7 @@ class ChatHomeTest {
     @Test
     fun chatHomeSwitchesFragmentsCorrectly(){
         DatabaseManager.user = host
-        DatabaseManager.db.addChat("0","1", "Hey")
+        DatabaseManager.db.addChatsWith("0","1")
         onView(withContentDescription(R.string.open))
             .perform(click())
         onView(withId(R.id.nav_chat)).perform(click())
