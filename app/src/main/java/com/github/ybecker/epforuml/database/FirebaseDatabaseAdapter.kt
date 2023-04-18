@@ -147,12 +147,15 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         senderId: String,
         receiverId: String,
     ): String{
-        val newChildRef = db.child(chatsPath).push()
-        val chatId = newChildRef.key ?: error("Failed to generate chat ID")
+        val newChildRefSender = db.child(usersPath).child(senderId).child(chatsWith).push()
+        val chatIdSender = newChildRefSender.key ?: error("Failed to generate chat ID")
+        db.child(usersPath).child(senderId).child(chatsWith).child(chatIdSender).setValue(receiverId)
+
+        val newChildRefReceiver = db.child(usersPath).child(receiverId).child(chatsWith).push()
+        val chatIdReceiver = newChildRefReceiver.key ?: error("Failed to generate chat ID")
+        db.child(usersPath).child(receiverId).child(chatsWith).child(chatIdReceiver).setValue(senderId)
         //reference that these users chatted with eachother
-        db.child(usersPath).child(senderId).child(chatsWith).child(chatId).setValue(receiverId)
-        db.child(usersPath).child(receiverId).child(chatsWith).child(chatId).setValue(senderId)
-        return chatId
+        return chatIdSender
     }
 
     override fun getUserId(userName: String): CompletableFuture<String> {
