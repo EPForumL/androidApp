@@ -12,10 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.R.*
-import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
-import java.util.concurrent.TimeUnit
 
 /**
  * A fragment representing a list of Chats.
@@ -64,9 +62,13 @@ class ChatHomeFragment : Fragment() {
     }
 
     private fun fetchChats() {
-        if (user!!.chatsWith.isNotEmpty()) {
+        var chatsWith : List<String> = listOf()
+        db.getUserById(user!!.userId).thenAccept{
+             chatsWith = it?.chatsWith!!
+        }
+        if (chatsWith.isNotEmpty()) {
             chatHomeAdapter = ChatHomeAdapter(
-                user!!.chatsWith as MutableList<String>,
+                chatsWith as MutableList<String>,
                 this.activity as MainActivity
             )
             chatHomeRecyclerView.adapter = chatHomeAdapter
