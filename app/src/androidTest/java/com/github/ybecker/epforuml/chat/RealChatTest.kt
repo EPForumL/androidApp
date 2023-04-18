@@ -126,7 +126,6 @@ class RealChatTest {
             view.findViewById<Button>(R.id.buttonChatWith).performClick()
         }
 
-
         Espresso.onView(withId(R.id.send_text)).perform(click())
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat)

@@ -96,6 +96,7 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
 
+        db.addChatsWith(romain.userId, theo.userId)
         db.addChat(romain.userId, theo.userId ,"Hi Theo this is Romain!")
     }
 
