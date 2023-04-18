@@ -1,6 +1,8 @@
 package com.github.ybecker.epforuml.authentication
 
+import android.content.ContentValues
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCaller
@@ -16,6 +18,10 @@ import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -43,6 +49,7 @@ class FirebaseAuthenticator(
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
+            .setIsSmartLockEnabled(false)
             .build()
 
         // Shows to the user the authentication means
@@ -136,6 +143,7 @@ class FirebaseAuthenticator(
                     }
                 } else {
                     DatabaseManager.user = user
+                    userPresence()
                     gotToActivity(user.username)
                 }
             }
@@ -163,6 +171,39 @@ class FirebaseAuthenticator(
                 .beginTransaction()
                 .replace(fragment.id, AccountFragment())
                 .commit()
+        }
+    }
+
+    /**
+     * Adds presence to users. With this, we can know if a user is connected or not and Firebase
+     * will deal with clean and dirty disconnections (for example lost connection).
+     */
+    private fun userPresence() {
+        val uid = DatabaseManager.user?.userId
+        if (uid != null) {
+            val database = Firebase.database
+            val connectionRef = database.getReference("users/$uid/connections")
+
+            val connectionStateRef = database.getReference(".info/connected")
+            connectionStateRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val connected = snapshot.getValue(Boolean::class.java) ?: false
+                    if (connected) {
+                        val con = connectionRef.push()
+
+                        // When this device disconnects set it to false
+                        con.onDisconnect().removeValue()
+
+                        // Add this device to my connections list
+                        // this value could contain info about the device or a timestamp too
+                        con.setValue(java.lang.Boolean.TRUE)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(ContentValues.TAG, "Listener was cancelled at .info/connected")
+                }
+            })
         }
     }
 }

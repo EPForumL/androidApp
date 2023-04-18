@@ -99,6 +99,7 @@ class Model {
         var profilePic: String = "",
         var userInfo: String = "",
         var status: String = "",
+        var connected: List<Boolean> = emptyList()
         ) {
         constructor() : this(
             "",
@@ -109,7 +110,8 @@ class Model {
             emptyList(),
             "",
             "",
-            ""
+            "",
+            emptyList()
         )
     }
 

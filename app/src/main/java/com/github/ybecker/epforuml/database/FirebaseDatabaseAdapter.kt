@@ -46,6 +46,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val profilePicPath = "profilePic"
     private val userInfoPath = "userInfo"
     private val statusPath = "status"
+    private val connectedPath = "connected"
 
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
@@ -356,6 +357,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // Get user status (is student or teacher)
         val status = dataSnapshot.child(statusPath).getValue(String::class.java)
 
+        // Get user connection status (is connected or not)
+        val connected = dataSnapshot.child(connectedPath).getValue(Boolean::class.java)
+
         if(userId!=null && username!=null && email!=null){
             return User(
                 userId,
@@ -366,7 +370,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 subscriptions,
                 profilePic ?: "",
                 userInfo ?: "",
-                status ?: ""
+                status ?: "",
+                connected ?: emptyList<>()
             )
         }
         return null
