@@ -309,8 +309,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             val chats =  mutableListOf<Chat>()
             for(chatSnapshot in it.children){
                 val chat = retrieveChat(chatSnapshot)
-                if(chat!=null &&((chat!!.senderId == userId1 && chat!!.receiverId == userId2) ||
-                    (chat!!.senderId == userId2 && chat!!.receiverId == userId1))){
+                if((chat!!.senderId == userId1 && chat!!.receiverId == userId2) ||
+                    (chat!!.senderId == userId2 && chat!!.receiverId == userId1)){
                     chats.add(chat!!)
                 }
             }

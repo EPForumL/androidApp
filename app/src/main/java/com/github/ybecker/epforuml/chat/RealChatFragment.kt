@@ -30,6 +30,9 @@ class RealChatFragment : Fragment() {
     private var queryList = mutableListOf<Model.Chat>()
     private lateinit var hostId:String
     private lateinit var externId: String
+    private lateinit var noChats : TextView
+    private lateinit var notConnected : TextView
+
 
     private lateinit var hostUser :Model.User
     private lateinit var externUser : Model.User
@@ -45,13 +48,18 @@ class RealChatFragment : Fragment() {
         val view = inflater.inflate(layout.fragment_chat_list, container, false)
         val button = view.findViewById<Button>(R.id.send_text)
         val textMsg = view.findViewById<EditText>(R.id.edit_text_message)
+        noChats = view?.findViewById(R.id.no_chats)!!
+        notConnected = view?.findViewById(R.id.not_connected_text_view)!!
+
         if (user == null) {
-            val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
-            notConnected?.visibility = View.VISIBLE
+            notConnected.visibility = View.VISIBLE
             textMsg?.visibility = View.GONE
             button?.visibility = View.GONE
 
         } else {
+            notConnected.visibility = View.GONE
+            textMsg?.visibility = View.VISIBLE
+            button?.visibility = View.VISIBLE
             hostId = user!!.userId
             externId = this.activity?.intent?.getStringExtra("externID").toString()
             hostUser = user!!
@@ -86,28 +94,29 @@ class RealChatFragment : Fragment() {
         if (user != null) fetchChats()
         startTimer()
     }
-        override fun onDestroyView() {
-            super.onDestroyView()
-            stopTimer()
-        }
 
-        private fun startTimer() {
-            timer = Timer()
-            timer.scheduleAtFixedRate(object : TimerTask() {
-                override fun run() {
-                    // Code to refresh the fragment goes here
-                    activity?.runOnUiThread {
-                        // Update the UI
-                        fetchChats()
-                    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopTimer()
+    }
 
+    private fun startTimer() {
+        timer = Timer()
+        timer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                // Code to refresh the fragment goes here
+                activity?.runOnUiThread {
+                    // Update the UI
+                    //fetchChats()
                 }
-            }, 0, 2000)
-        }
 
-        private fun stopTimer() {
-            timer.cancel()
-        }
+            }
+        }, 0, 2000)
+    }
+
+    private fun stopTimer() {
+        timer.cancel()
+    }
 
 
     private fun fetchChats() {
@@ -124,9 +133,9 @@ class RealChatFragment : Fragment() {
 
     private fun displayChats() {
         if (queryList.isEmpty()) {
-            val noChats = view?.findViewById<TextView>(R.id.no_chats)
-            noChats?.visibility = View.VISIBLE
+            noChats.visibility = View.VISIBLE
         } else {
+            noChats.visibility = View.GONE
             queryList.sortBy { LocalDateTime.parse(it.date) }
             chatAdapter = ChatAdapter(queryList, externUser)
             chatRecyclerView.adapter = chatAdapter
