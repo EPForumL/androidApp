@@ -100,6 +100,7 @@ class RealChatFragment : Fragment() {
                         // Update the UI
                         fetchChats()
                     }
+
                 }
             }, 0, 2000)
         }
