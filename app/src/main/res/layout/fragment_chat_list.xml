@@ -37,6 +37,15 @@
             android:visibility="gone" />
 
         <TextView
+            android:id="@+id/not_found"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/User_not_found"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/no_chats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

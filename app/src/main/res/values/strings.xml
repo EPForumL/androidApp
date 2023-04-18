@@ -69,6 +69,7 @@
     <string name="type_your_message_here">Type your message here</string>
     <string name="chats" />
     <string name="please_login_to_post_answers">Please login to post answers.</string>
+    <string name="User_not_found" />
 
 
 </resources>

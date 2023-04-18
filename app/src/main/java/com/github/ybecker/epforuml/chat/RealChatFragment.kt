@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.chat
 
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,15 +55,18 @@ class RealChatFragment : Fragment() {
             db.getUserById(externId).thenAccept{
                 if (it != null) {
                     externUser = it
+                    chatList = db.getChat(hostId, externId)
+                    view.findViewById<TextView>(R.id.title_chat).text = externUser.username
+                    val button = view.findViewById<Button>(R.id.send_text)
+                    button?.visibility = View.VISIBLE
+                    button.setOnClickListener{
+                        db.addChat(hostId, externId,textMsg.text.toString())
+                        fetchChats()
+                    }
+                }else{
+                    val notFound = view?.findViewById<TextView>(R.id.not_found)
+                    notFound?.visibility = View.VISIBLE
                 }
-            }
-            chatList = db.getChat(hostId, externId)
-            view.findViewById<TextView>(R.id.title_chat).text = externUser.username
-            val button = view.findViewById<Button>(R.id.send_text)
-            button?.visibility = View.VISIBLE
-            button.setOnClickListener{
-                db.addChat(hostId, externId,textMsg.text.toString())
-                fetchChats()
             }
         }
 
