@@ -1,14 +1,20 @@
 package com.github.ybecker.epforuml
 
+import android.app.Activity
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 
-class AnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<String>)
+class AnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<String>,private val mainActivity: Activity)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -51,6 +57,16 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
                     currentAnswerItem = it[position-1]
 
                     holder.answerText.text = currentAnswerItem.answerText
+/*                    holder.button.setOnClickListener{
+                        db.addChatsWith(DatabaseManager.user!!.userId, currentAnswerItem.userId)
+                        val intent = Intent(
+                            mainActivity,
+                            MainActivity::class.java
+                        )
+                        intent.putExtra("fragment", "RealChat")
+                        intent.putExtra("externID", currentAnswerItem.userId)
+                        startActivity(mainActivity,intent,null)
+                    }*/
 
                     // TODO : change userId to username (need to use future)
                     holder.username.text = currentAnswerItem.userId
@@ -75,6 +91,7 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val username : TextView = itemView.findViewById(R.id.qdetails_answer_username)
         val answerText : TextView = itemView.findViewById(R.id.qdetails_answer_text)
+        val button : Button = itemView.findViewById(R.id.chatWithUser)
     }
 
 

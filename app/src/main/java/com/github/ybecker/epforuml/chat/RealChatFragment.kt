@@ -44,8 +44,8 @@ class RealChatFragment : Fragment() {
         if (user == null) {
             val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
             notConnected?.visibility = View.VISIBLE
-            textMsg?.visibility = View.INVISIBLE
-            button?.visibility = View.INVISIBLE
+            textMsg?.visibility = View.GONE
+            button?.visibility = View.GONE
 
         } else {
             hostId = user!!.userId
@@ -84,10 +84,13 @@ class RealChatFragment : Fragment() {
 
 
     private fun fetchChats() {
-        if(db.getChat(hostId,externId).get().isNotEmpty())
-            db.getChat(hostId,externId).thenAccept{
-                queryList =  it as MutableList<Model.Chat>
-                displayChats()
+        var chats : ArrayList<Model.Chat> = arrayListOf()
+        db.getChat(hostId,externId).thenAccept{
+            chats = it as ArrayList<Model.Chat>
+        }
+        if(chats.isNotEmpty()) {
+            queryList =  chats
+            displayChats()
             }
 
     }

@@ -22,7 +22,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var listView: ListView
     private lateinit var listAdapter: ArrayAdapter<String>
     private lateinit var searchView: SearchView
-    val searchActivity = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +38,7 @@ class SearchActivity : AppCompatActivity() {
 
         val futureList = db.registeredUsers()
         futureList.thenAccept {
-            list = futureList.get() as ArrayList<String>
+            list = it as ArrayList<String>
 
             listAdapter = ArrayAdapter<String>(
                 this,
@@ -55,7 +54,7 @@ class SearchActivity : AppCompatActivity() {
                 }
                 db.addChatsWith(user!!.userId, id)
                 val intent = Intent(
-                    searchActivity,
+                    this,
                     MainActivity::class.java
                 )
                 intent.putExtra("fragment", "RealChat")

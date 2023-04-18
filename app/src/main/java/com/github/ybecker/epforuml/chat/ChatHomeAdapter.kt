@@ -33,8 +33,6 @@ class ChatHomeAdapter(private val chatList : MutableList<String>,private val mai
         holder.chatWithButton.text = "Chat with " + user?.username
         if(user?.profilePic!="") holder.chatImage.setImageURI(Uri.parse(user?.profilePic))
         holder.chatWithButton.setOnClickListener{
-
-
             mainActivity.intent.putExtra("externID", currentItem)
             mainActivity.replaceFragment(RealChatFragment())
         }

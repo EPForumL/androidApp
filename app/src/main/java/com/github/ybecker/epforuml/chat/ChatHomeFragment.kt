@@ -36,7 +36,7 @@ class ChatHomeFragment : Fragment() {
         if (user == null) {
             val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
             notConnected?.visibility = View.VISIBLE
-            newChatButton.visibility = View.INVISIBLE
+            newChatButton.visibility = View.GONE
         } else {
             chatList = user!!.chatsWith
         }
@@ -77,7 +77,5 @@ class ChatHomeFragment : Fragment() {
     private val listener: View.OnClickListener? = View.OnClickListener {
         val switchActivityIntent = Intent(this.activity, SearchActivity::class.java)
         startActivity(switchActivityIntent)
-
-
     }
 }
