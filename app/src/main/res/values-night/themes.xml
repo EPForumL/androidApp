@@ -2,15 +2,22 @@
     <!-- Base application theme. -->
     <style name="Theme.EPForumL" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/shade3</item>
-        <item name="colorPrimaryVariant">@color/shade3</item>
+        <item name="colorPrimary">@color/shade1</item>
+        <item name="colorPrimaryVariant">@color/shade2</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/shade4</item>
+        <item name="colorSecondary">@color/shade3</item>
         <item name="colorSecondaryVariant">@color/shade4</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="actionBarTabTextStyle">@style/MyActionBarTitleText</item>
         <!-- Customize your theme here. -->
+    </style>
+
+    <style name="MyActionBarTitleText"
+        parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <!-- The textColor property is backward compatible with the Support Library -->
     </style>
 </resources>
