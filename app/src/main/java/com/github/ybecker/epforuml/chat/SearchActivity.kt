@@ -32,7 +32,7 @@ class SearchActivity : AppCompatActivity() {
 
         val button: Button = findViewById(R.id.back_to_home_button)
         button.setOnClickListener { // Create an intent to return to the previous fragment
-            val intent = Intent(applicationContext, MainActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("fragment", "chatHome")
             startActivity(intent)
         }
