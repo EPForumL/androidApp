@@ -36,30 +36,28 @@ class SearchActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val futureList = db.registeredUsers()
-        futureList.thenAccept {
-            list = it as ArrayList<String>
+        db.registeredUsers().thenAccept { listIt ->
+            list = listIt as ArrayList<String>
 
             listAdapter = ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
                 list
             )
-            listView.adapter = listAdapter
+            listView.adapter = this.listAdapter
 
             listView.setOnItemClickListener { _, _, position, _ ->
-                var id = ""
                 db.getUserId(listAdapter.getItem(position)!!).thenAccept {
-                    id = it
+                    db.addChatsWith(user!!.userId, it)
+                    val intent = Intent(
+                        this,
+                        MainActivity::class.java
+                    )
+                    intent.putExtra("fragment", "RealChat")
+                    intent.putExtra("externID", it)
+                    startActivity(intent)
                 }
-                db.addChatsWith(user!!.userId, id)
-                val intent = Intent(
-                    this,
-                    MainActivity::class.java
-                )
-                intent.putExtra("fragment", "RealChat")
-                intent.putExtra("externID", id)
-                startActivity(intent)
+
 
             }
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
