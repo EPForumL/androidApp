@@ -2,12 +2,14 @@ import android.app.Activity
 import android.content.Intent
 import android.widget.ListView
 import androidx.core.view.size
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.pressKey
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.R
@@ -37,19 +39,13 @@ class SearchActivityTest {
         host = db.addUser("0", "HostUser", "testEmail").get()
         extern = db.addUser("1", "ExternUser", "testEmail").get()
         DatabaseManager.user = host
-        val list = db.registeredUsers().get() as ArrayList<String>
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
-            SearchActivity(list)::class.java)
-
+            SearchActivity::class.java)
         scenario = ActivityScenario.launch(intent)
 
     }
 
-    @After
-    fun tearDown(){
-        scenario.close()
-    }
     @Test
     fun testSearchViewDisplayed() {
         onView(withId(R.id.searchView)).check(matches(isDisplayed()))
@@ -62,7 +58,6 @@ class SearchActivityTest {
 
     @Test
     fun testListViewContainsDataFromDatabase() {
-        val db = db.registeredUsers().get() as ArrayList<String>
         onView(withText("ExternUser")).check(matches(isDisplayed()))
         onView(withText("HostUser")).check(matches(isDisplayed()))
     }
@@ -73,7 +68,13 @@ class SearchActivityTest {
         onView(withId(R.id.searchView)).perform(typeText(searchText))
         onView(withText("ExternUser")).check(matches(isDisplayed()))
     }
+    @Test
+    fun backToHomeIsCorrect() {
 
+        onView(withId(R.id.back_to_home_button)).perform(ViewActions.click())
+
+        onView(withId(R.id.recycler_chat_home)).check(matches(isDisplayed()))
+    }
     @Test
     fun testNoResultsFound() {
         val searchText = "non-existing-user"
@@ -90,9 +91,15 @@ class SearchActivityTest {
     fun correctSearchLeadsToChat(){
 
         val searchText = "ExternUser"
-        onView(withId(R.id.searchView)).perform(typeText(searchText)).perform(pressKey(66))
+        onView(withId(R.id.searchView)).perform(typeText(searchText))
+        onView(withParent(withId(R.id.listView)).also { withText("ExternUser")}).perform(click())
         onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
 
+    }
+
+    @After
+    fun tearDown(){
+        scenario.close()
     }
 
 }

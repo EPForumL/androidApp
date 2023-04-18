@@ -43,6 +43,9 @@ class MainActivity : AppCompatActivity() {
         if( intent.extras?.getString("fragment").equals("RealChat")) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, RealChatFragment()).commit()
         }
+        if( intent.extras?.getString("fragment").equals("chatHome")) {
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, ChatHomeFragment()).commit()
+        }
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {

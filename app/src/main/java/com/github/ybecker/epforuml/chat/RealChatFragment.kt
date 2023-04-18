@@ -51,14 +51,18 @@ class RealChatFragment : Fragment() {
             hostId = user!!.userId
             externId = this.activity?.intent?.getStringExtra("externID").toString()
             hostUser = user!!
-            externUser = db.getUserById(externId).get()!!
+            db.getUserById(externId).thenAccept{
+                if (it != null) {
+                    externUser = it
+                }
+            }
             chatList = db.getChat(hostId, externId)
             view.findViewById<TextView>(R.id.title_chat).text = externUser.username
             val button = view.findViewById<Button>(R.id.send_text)
             button?.visibility = View.VISIBLE
             button.setOnClickListener{
                 db.addChat(hostId, externId,textMsg.text.toString())
-                updateChats()
+                fetchChats()
             }
         }
 
@@ -75,16 +79,16 @@ class RealChatFragment : Fragment() {
         chatRecyclerView.layoutManager = linearLayoutMgr
         chatRecyclerView.setHasFixedSize(false)
         // Update questions list
-        if(user!=null) updateChats()
+        if(user!=null) fetchChats()
     }
 
-    private fun updateChats() {
-        fetchChats()
-    }
+
     private fun fetchChats() {
         if(db.getChat(hostId,externId).get().isNotEmpty())
-            queryList = db.getChat(hostId,externId).get() as MutableList<Model.Chat>
-        displayChats()
+            db.getChat(hostId,externId).thenAccept{
+                queryList =  it as MutableList<Model.Chat>
+                displayChats()
+            }
 
     }
 

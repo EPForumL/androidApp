@@ -53,7 +53,7 @@ class ChatHomeFragment : Fragment() {
         chatHomeRecyclerView.setHasFixedSize(false)
         val newChatButton = view?.findViewById<Button>(R.id.newChatWith)
         newChatButton?.setOnClickListener(listener)
-        // Update questions list
+        // Update chats list
         if (user != null) {
             fetchChats()
         }

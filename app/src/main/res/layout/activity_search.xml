@@ -1,26 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".chat.SearchActivity">
+    tools:context=".chat.SearchActivity"
+    android:orientation="vertical">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/back"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:id="@+id/back_to_home_button"/>
 
     <!--Search view for filtering list view-->
+
+    <!--List View from which data is to be searched-->
+
     <SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginBottom="8dp"
         android:iconifiedByDefault="false"
         android:padding="4dp"
         android:queryHint="Search" />
 
-    <!--List View from which data is to be searched-->
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/searchView" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchView"/>
 
-</RelativeLayout>
+</LinearLayout>
