@@ -65,16 +65,16 @@ class ChatHomeFragment : Fragment() {
         var chatsWith : List<String> = listOf()
         db.getUserById(user!!.userId).thenAccept{
              chatsWith = it?.chatsWith!!
-        }
-        if (chatsWith.isNotEmpty()) {
-            chatHomeAdapter = ChatHomeAdapter(
-                chatsWith as MutableList<String>,
-                this.activity as MainActivity
-            )
-            chatHomeRecyclerView.adapter = chatHomeAdapter
-        } else {
-            val noChats = view?.findViewById<TextView>(R.id.no_chats)
-            noChats?.visibility = View.VISIBLE
+            if (chatsWith.isNotEmpty()) {
+                chatHomeAdapter = ChatHomeAdapter(
+                    chatsWith as MutableList<String>,
+                    this.activity as MainActivity
+                )
+                chatHomeRecyclerView.adapter = chatHomeAdapter
+            } else {
+                val noChats = view?.findViewById<TextView>(R.id.no_chats)
+                noChats?.visibility = View.VISIBLE
+            }
         }
 
 

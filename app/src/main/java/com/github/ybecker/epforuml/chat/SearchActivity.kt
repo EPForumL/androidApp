@@ -8,7 +8,6 @@ import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
-import java.util.Objects
 
 
 /**
