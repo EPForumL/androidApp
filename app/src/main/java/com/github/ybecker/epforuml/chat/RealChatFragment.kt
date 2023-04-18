@@ -61,7 +61,7 @@ class RealChatFragment : Fragment() {
                     button?.visibility = View.VISIBLE
                     button.setOnClickListener{
                         db.addChat(hostId, externId,textMsg.text.toString())
-                        fetchChats()
+                        displayChats()
                     }
                 }else{
                     val notFound = view?.findViewById<TextView>(R.id.not_found)
