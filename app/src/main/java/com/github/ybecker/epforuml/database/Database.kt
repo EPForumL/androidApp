@@ -177,6 +177,11 @@ abstract class Database {
      * @param date time of the chat
      * @return the question that was posted in database
      */
-    abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
+    abstract fun addChat(senderId:String,  receiverId:String,  text: String?) : Chat
+
+    /**
+     * Sets user's connected attribute to true and adds a listener to it to detect disconnection.
+     */
+    abstract fun setUserPresence()
 
 }

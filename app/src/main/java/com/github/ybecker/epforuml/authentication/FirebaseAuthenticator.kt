@@ -139,11 +139,12 @@ class FirebaseAuthenticator(
                         firebaseUser.email!!
                     ).thenAccept { newUser ->
                         DatabaseManager.user = newUser
+                        DatabaseManager.db.setUserPresence()
                         gotToActivity(newUser.username)
                     }
                 } else {
                     DatabaseManager.user = user
-                    userPresence()
+                    DatabaseManager.db.setUserPresence()
                     gotToActivity(user.username)
                 }
             }
@@ -171,39 +172,6 @@ class FirebaseAuthenticator(
                 .beginTransaction()
                 .replace(fragment.id, AccountFragment())
                 .commit()
-        }
-    }
-
-    /**
-     * Adds presence to users. With this, we can know if a user is connected or not and Firebase
-     * will deal with clean and dirty disconnections (for example lost connection).
-     */
-    private fun userPresence() {
-        val uid = DatabaseManager.user?.userId
-        if (uid != null) {
-            val database = Firebase.database
-            val connectionRef = database.getReference("users/$uid/connections")
-
-            val connectionStateRef = database.getReference(".info/connected")
-            connectionStateRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val connected = snapshot.getValue(Boolean::class.java) ?: false
-                    if (connected) {
-                        val con = connectionRef.push()
-
-                        // When this device disconnects set it to false
-                        con.onDisconnect().removeValue()
-
-                        // Add this device to my connections list
-                        // this value could contain info about the device or a timestamp too
-                        con.setValue(java.lang.Boolean.TRUE)
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.w(ContentValues.TAG, "Listener was cancelled at .info/connected")
-                }
-            })
         }
     }
 }

@@ -1,7 +1,11 @@
 package com.github.ybecker.epforuml.database
 
+import android.content.ContentValues
+import android.util.Log
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -270,6 +274,35 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
+    override fun setUserPresence() {
+        val uid = DatabaseManager.user?.userId
+        if (uid != null) {
+            val database = Firebase.database
+            val connectionRef = database.getReference("users/$uid/connected")
+
+            val connectionStateRef = database.getReference(".info/connected")
+            connectionStateRef.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val connected = snapshot.getValue(Boolean::class.java) ?: false
+                    if (connected) {
+                        val con = connectionRef
+
+                        // When this device disconnects set it to false
+                        con.onDisconnect().removeValue()
+
+                        // Add this device to my connections list
+                        // this value could contain info about the device or a timestamp too
+                        con.setValue(true)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.w(ContentValues.TAG, "Listener was cancelled at .info/connected")
+                }
+            })
+        }
+    }
+
 
     private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {
         val future = CompletableFuture<Any?>()
@@ -371,7 +404,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 profilePic ?: "",
                 userInfo ?: "",
                 status ?: "",
-                connected ?: emptyList<>()
+                connected ?: false
             )
         }
         return null

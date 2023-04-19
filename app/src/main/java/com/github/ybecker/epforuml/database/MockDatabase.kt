@@ -222,5 +222,7 @@ class MockDatabase : Database() {
         }
     }
 
-
+    override fun setUserPresence() {
+        TODO("Not yet implemented")
+    }
 }
