@@ -29,14 +29,15 @@ class ChatHomeAdapter(private val chatList : MutableList<String>,private val mai
 
     override fun onBindViewHolder(holder: ChatHomeViewHolder, position: Int) {
         val currentItem = chatList[position]
-        val user : Model.User? = DatabaseManager.db.getUserById(currentItem).get()
-        holder.chatWithButton.text = "Chat with " + user?.username
-        if(user?.profilePic!="") holder.chatImage.setImageURI(Uri.parse(user?.profilePic))
-        holder.chatWithButton.setOnClickListener{
-            mainActivity.intent.putExtra("externID", currentItem)
-            mainActivity.replaceFragment(RealChatFragment())
-        }
-
+         DatabaseManager.db.getUserById(currentItem).thenAccept{
+             val user : Model.User? = it
+             holder.chatWithButton.text = "Chat with " + user?.username
+             if(user?.profilePic!="") holder.chatImage.setImageURI(Uri.parse(user?.profilePic))
+             holder.chatWithButton.setOnClickListener{
+                 mainActivity.intent.putExtra("externID", currentItem)
+                 mainActivity.replaceFragment(RealChatFragment())
+             }
+         }
     }
     class ChatHomeViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView) {
         val chatImage : ImageView = itemView.findViewById(R.id.profilePicture)

@@ -147,16 +147,18 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         senderId: String,
         receiverId: String,
     ): String{
-        val newChildRefSender = db.child(usersPath).child(senderId).child(chatsWith).push()
-        val chatIdSender = newChildRefSender.key ?: error("Failed to generate chat ID")
-        db.child(usersPath).child(senderId).child(chatsWith).child(chatIdSender).setValue(receiverId)
 
-        val newChildRefReceiver = db.child(usersPath).child(receiverId).child(chatsWith).push()
-        val chatIdReceiver = newChildRefReceiver.key ?: error("Failed to generate chat ID")
-        db.child(usersPath).child(receiverId).child(chatsWith).child(chatIdReceiver).setValue(senderId)
+        ///val newChildRefSender = db.child(usersPath).child(senderId).child(chatsWith).push()
+        //val chatIdSender = newChildRefSender.key ?: error("Failed to generate chat ID")
+        db.child(usersPath).child(senderId).child(chatsWith).child(receiverId).setValue(receiverId)
+
+        //val newChildRefReceiver = db.child(usersPath).child(receiverId).child(chatsWith).push()
+        //val chatIdReceiver = newChildRefReceiver.key ?: error("Failed to generate chat ID")
+        db.child(usersPath).child(receiverId).child(chatsWith).child(senderId).setValue(senderId)
         //reference that these users chatted with eachother
-        return chatIdSender
+        return "chatIdSender"
     }
+
 
     override fun getUserId(userName: String): CompletableFuture<String> {
         val future = CompletableFuture<String>()
@@ -170,6 +172,20 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return future
 
+    }
+
+    override fun getChatsWith(userID: String): CompletableFuture<List<String>> {
+        val future = CompletableFuture<List<String>>()
+        db.child(usersPath).child(userID).child(chatsWith).get().addOnSuccessListener{
+            val chats =  mutableListOf<String>()
+            for(chatSnapshot in it.children){
+                    chats.add(chatSnapshot.value!! as String)
+                }
+            future.complete(chats)
+        }.addOnFailureListener{
+            future.completeExceptionally(it)
+        }
+        return future
     }
 
     override fun addAnswer(userId: String, questionId: String, answerText: String?): Answer {

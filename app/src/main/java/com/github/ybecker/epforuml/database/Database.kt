@@ -201,4 +201,12 @@ abstract class Database {
      * @return the user's ID
      */
     abstract fun getUserId(userName: String): CompletableFuture<String>
+
+    /**
+     * Gets list of users the hist chatted with
+     *
+     * @param userID the id of the useer
+     * @return id list of all users he chats with
+     */
+    abstract fun getChatsWith(userID: String): CompletableFuture<List<String>>
 }

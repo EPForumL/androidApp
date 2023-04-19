@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 
 /**
@@ -30,20 +31,21 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        val hostUser = DatabaseManager.user!!
-        val currentItem = chatList[position]
-        if(currentItem.senderId == hostUser.userId){
-            holder.currentText.text = currentItem.text
+        db.getUserById(DatabaseManager.user!!.userId).thenAccept{
+            val hostUser = it!!
+            val currentItem = chatList[position]
+            if(currentItem.senderId == hostUser.userId){
+                holder.currentText.text = currentItem.text
+                if(hostUser.profilePic!="")
+                    holder.chatImage.setImageURI(Uri.parse(hostUser.profilePic))
+            }else{
+                holder.currentText.text = currentItem.text
+                if(externUser.profilePic!="")
+                    holder.chatImage.setImageURI(Uri.parse(externUser.profilePic))
+                holder.itemView.scaleX = -1f
+                holder.itemView.findViewById<TextView>(R.id.textChat).scaleX = -1f
 
-            if(hostUser.profilePic!="")
-                holder.chatImage.setImageURI(Uri.parse(hostUser.profilePic))
-        }else{
-            holder.currentText.text = currentItem.text
-            if(externUser.profilePic!="")
-                holder.chatImage.setImageURI(Uri.parse(externUser.profilePic))
-            holder.itemView.scaleX = -1f
-            holder.itemView.findViewById<TextView>(R.id.textChat).scaleX = -1f
-
+            }
         }
     }
     class ChatViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView) {

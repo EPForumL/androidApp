@@ -110,7 +110,6 @@ class RealChatFragment : Fragment() {
                     // Update the UI
                     fetchChats()
                 }
-
             }
         }, 0, 2000)
     }
@@ -124,11 +123,11 @@ class RealChatFragment : Fragment() {
         var chats : ArrayList<Model.Chat> = arrayListOf()
         db.getChat(hostId,externId).thenAccept{
             chats = it as ArrayList<Model.Chat>
-        }
-        if(chats.isNotEmpty()) {
-            queryList =  chats
-            displayChats()
+            if(chats.isNotEmpty()) {
+                queryList =  chats
+                displayChats()
             }
+        }
 
     }
 

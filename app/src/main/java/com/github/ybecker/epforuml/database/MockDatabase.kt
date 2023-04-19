@@ -114,6 +114,10 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(users.filterValues { it.username== userName}.values.toList().reversed()[0].userId)
     }
 
+    override fun getChatsWith(userID: String): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(users[userID]!!.chatsWith)
+    }
+
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
         return CompletableFuture.completedFuture(questions.filterValues { it.courseId == courseId }.values.toList().reversed())
     }

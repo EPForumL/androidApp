@@ -62,9 +62,8 @@ class ChatHomeFragment : Fragment() {
     }
 
     private fun fetchChats() {
-        var chatsWith : List<String> = listOf()
-        db.getUserById(user!!.userId).thenAccept{
-             chatsWith = it?.chatsWith!!
+        db.getChatsWith(user!!.userId).thenAccept{
+            var chatsWith : List<String> =  it
             if (chatsWith.isNotEmpty()) {
                 chatHomeAdapter = ChatHomeAdapter(
                     chatsWith as MutableList<String>,
