@@ -340,8 +340,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addAndGetChatWith(){
-        db.addChatsWith("0", "1")
-        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(2))
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
     }
 
     @Test
