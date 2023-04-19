@@ -89,15 +89,11 @@ class NewQuestionTest {
         // Click on the submit button
         onView(withId(R.id.btn_submit)).perform(click())
 
-        val dataBaseCourse= db.getCourseById("course11")
-
-        val courseQuestions = db.getCourseQuestions("Database")
-        val addedQuestion = courseQuestions.thenAccept{
-            it.filter { quest -> quest.questionText == questBody }
-        }
-
-        assertNotNull(addedQuestion)
-
+        val dataBaseCourse= db.getCourseById("course11").get()
+        db.getCourseQuestions(dataBaseCourse!!.courseId).thenAccept{
+            val addedQuestion = it.filter { quest -> quest.questionText == questBody }
+            assertNotNull(addedQuestion)
+        }.join()
 
         //Return home
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
