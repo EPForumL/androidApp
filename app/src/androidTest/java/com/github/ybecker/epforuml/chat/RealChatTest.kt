@@ -107,6 +107,13 @@ class RealChatTest {
         Espresso.onView(withId(R.id.no_chats)).check(matches(isDisplayed()))
 
     }
+    @Test
+    fun backToHomeIsCorrect() {
+
+        Espresso.onView(withId(R.id.back_to_home_button)).perform(ViewActions.click())
+
+        Espresso.onView(withId(R.id.recycler_chat_home)).check(matches(isDisplayed()))
+    }
 
     @Test
     fun addMessageWorks(){

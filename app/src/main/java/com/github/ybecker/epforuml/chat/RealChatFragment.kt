@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.chat
 
+import android.content.Intent
 import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.R.*
 import com.github.ybecker.epforuml.database.DatabaseManager.db
@@ -50,6 +52,13 @@ class RealChatFragment : Fragment() {
         val textMsg = view.findViewById<EditText>(R.id.edit_text_message)
         noChats = view?.findViewById(R.id.no_chats)!!
         notConnected = view?.findViewById(R.id.not_connected_text_view)!!
+
+        val buttonHome: Button = view.findViewById(R.id.back_to_home_button)
+        buttonHome.setOnClickListener { // Create an intent to return to the previous fragment
+            val intent = Intent(this.context, MainActivity::class.java)
+            intent.putExtra("fragment", "chatHome")
+            startActivity(intent)
+        }
 
         if (user == null) {
             notConnected.visibility = View.VISIBLE
