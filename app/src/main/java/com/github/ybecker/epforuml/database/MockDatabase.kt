@@ -223,6 +223,18 @@ class MockDatabase : Database() {
     }
 
     override fun setUserPresence() {
-        TODO("Not yet implemented")
+        val uid = DatabaseManager.user?.userId
+        if (uid != null) {
+            users[uid]?.connections?.add(true)
+        }
+    }
+
+    override fun removeUserConnection() {
+        val uid = DatabaseManager.user?.userId
+        if (uid != null) {
+            if (users[uid]?.connections?.size!! > 0) {
+                users[uid]?.connections?.removeAt(0)
+            }
+        }
     }
 }

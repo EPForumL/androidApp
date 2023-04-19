@@ -184,4 +184,9 @@ abstract class Database {
      */
     abstract fun setUserPresence()
 
+    /**
+     * Remove a connection from the user's connection list
+     */
+    abstract fun removeUserConnection()
+
 }

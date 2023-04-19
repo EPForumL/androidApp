@@ -50,7 +50,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val profilePicPath = "profilePic"
     private val userInfoPath = "userInfo"
     private val statusPath = "status"
-    private val connectedPath = "connected"
+    private val connectionsPath = "connections"
 
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
@@ -278,21 +278,21 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val uid = DatabaseManager.user?.userId
         if (uid != null) {
             val database = Firebase.database
-            val connectionRef = database.getReference("users/$uid/connected")
+            val connectionRef = database.getReference("$usersPath/$uid/$connectionsPath")
 
             val connectionStateRef = database.getReference(".info/connected")
             connectionStateRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val connected = snapshot.getValue(Boolean::class.java) ?: false
                     if (connected) {
-                        val con = connectionRef
+                        val con = connectionRef.push()
 
                         // When this device disconnects set it to false
                         con.onDisconnect().removeValue()
 
                         // Add this device to my connections list
                         // this value could contain info about the device or a timestamp too
-                        con.setValue(true)
+                        con.setValue(java.lang.Boolean.TRUE)
                     }
                 }
 
@@ -300,6 +300,15 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                     Log.w(ContentValues.TAG, "Listener was cancelled at .info/connected")
                 }
             })
+        }
+    }
+
+    override fun removeUserConnection() {
+        val uid = DatabaseManager.user?.userId
+        if (uid != null) {
+            val connectionsRef =
+                Firebase.database.getReference("$usersPath/$uid/$connectionsPath")
+            connectionsRef.removeValue()
         }
     }
 
@@ -391,7 +400,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val status = dataSnapshot.child(statusPath).getValue(String::class.java)
 
         // Get user connection status (is connected or not)
-        val connected = dataSnapshot.child(connectedPath).getValue(Boolean::class.java)
+        val connections = arrayListOf<Boolean>()
+        dataSnapshot.child(connectionsPath).children.forEach { conSnapshot ->
+            conSnapshot.key?.let { connections.add(it.toBoolean()) }
+        }
 
         if(userId!=null && username!=null && email!=null){
             return User(
@@ -404,7 +416,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 profilePic ?: "",
                 userInfo ?: "",
                 status ?: "",
-                connected ?: false
+                connections
             )
         }
         return null

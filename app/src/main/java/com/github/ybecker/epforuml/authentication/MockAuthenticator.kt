@@ -9,16 +9,20 @@ import com.github.ybecker.epforuml.database.Model
 class MockAuthenticator(private val activity: AppCompatActivity) : Authenticator {
     override fun signIn() {
         val futureUser = DatabaseManager.getDatabase().addUser("0", "TestUser", "testEmail")
-        futureUser.thenAccept { DatabaseManager.user = futureUser.get() }
-        activity.startActivity(Intent(activity, MainActivity::class.java))
+        futureUser.thenAccept {
+            DatabaseManager.user = it
+            activity.startActivity(Intent(activity, MainActivity::class.java))
+        }
     }
 
     override fun signOut() {
+        DatabaseManager.db.removeUserConnection()
         DatabaseManager.user = null
     }
 
     override fun deleteUser() {
+        DatabaseManager.db.removeUserConnection()
         DatabaseManager.user = null
-        // TODO: Remove user from database
+        DatabaseManager.db.removeUser("0")
     }
 }

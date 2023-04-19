@@ -85,6 +85,7 @@ class FirebaseAuthenticator(
      * @param txt: The text to show on the toast
      */
     private fun logout(txt: String) {
+        DatabaseManager.db.removeUserConnection()
         // User is logged out
         DatabaseManager.user = null
 
