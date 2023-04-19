@@ -91,9 +91,18 @@ abstract class Database {
      *
      * @param userId the id of the user to add
      * @param username the name of the user to add
+     * @param email the email of the user to add
      * @return the user that was added in database
      */
     abstract fun addUser(userId:String, username:String, email:String): CompletableFuture<User>
+
+    /**
+     * Adds a user to the database.
+     *
+     * @param user the user to add
+     * @return the user that was added in database
+     */
+    abstract fun addUser(user: User): CompletableFuture<User>
 
     /**
      * Removes a user to the database.
@@ -182,11 +191,11 @@ abstract class Database {
     /**
      * Sets user's connected attribute to true and adds a listener to it to detect disconnection.
      */
-    abstract fun setUserPresence()
+    abstract fun setUserPresence(userId: String)
 
     /**
      * Remove a connection from the user's connection list
      */
-    abstract fun removeUserConnection()
+    abstract fun removeUserConnection(userId: String)
 
 }

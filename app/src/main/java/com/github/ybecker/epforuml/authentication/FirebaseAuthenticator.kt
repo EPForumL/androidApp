@@ -85,7 +85,7 @@ class FirebaseAuthenticator(
      * @param txt: The text to show on the toast
      */
     private fun logout(txt: String) {
-        DatabaseManager.db.removeUserConnection()
+        DatabaseManager.user?.let { DatabaseManager.db.removeUserConnection(it.userId) }
         // User is logged out
         DatabaseManager.user = null
 
@@ -140,14 +140,13 @@ class FirebaseAuthenticator(
                         firebaseUser.email!!
                     ).thenAccept { newUser ->
                         DatabaseManager.user = newUser
-                        DatabaseManager.db.setUserPresence()
-                        gotToActivity(newUser.username)
                     }
                 } else {
                     DatabaseManager.user = user
-                    DatabaseManager.db.setUserPresence()
-                    gotToActivity(user.username)
                 }
+                DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)
+                DatabaseManager.user!!.connections.add(true)
+                gotToActivity(DatabaseManager.user!!.username)
             }
         }
     }

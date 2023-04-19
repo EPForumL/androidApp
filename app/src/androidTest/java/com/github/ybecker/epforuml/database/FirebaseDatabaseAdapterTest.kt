@@ -417,4 +417,26 @@ class FirebaseDatabaseAdapterTest {
             assertThat(it?.questionText, equalTo(""))
         }.join()
     }
+
+    @Test
+    fun setUserPresenceAddsConnection() {
+        db.addUser("0", "test", "testEmail").thenAccept { user ->
+            db.setUserPresence(user.userId)
+            db.getUserById(user.userId).thenAccept {
+                assertTrue(it!!.connections.size == 1)
+            }
+        }
+    }
+
+    @Test
+    fun removeUserConnectionRemovesAConnection() {
+        db.addUser("0", "test", "testEmail").thenAccept { user ->
+            db.setUserPresence(user.userId)
+            db.getUserById(user.userId).thenAccept {
+                assertTrue(it!!.connections.size == 1)
+                db.removeUserConnection(it.userId)
+                assertTrue(it.connections.size == 0)
+            }
+        }
+    }
 }

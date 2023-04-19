@@ -60,6 +60,7 @@ class AccountFragmentsTest {
 
     @Test
     fun checkAccountFragmentLayout() {
+        DatabaseManager.useMockDatabase()
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         onView(ViewMatchers.withContentDescription(R.string.open))
@@ -77,6 +78,7 @@ class AccountFragmentsTest {
 
     @Test
     fun checkSignOutRemovesCurrentUserAndGoesToGuestFragment() {
+        DatabaseManager.useMockDatabase()
         scenario.onActivity { MockAuthenticator(it).signIn() }
         assertTrue(DatabaseManager.user != null)
 
@@ -93,6 +95,7 @@ class AccountFragmentsTest {
 
     @Test
     fun checkDeleteAccountDeletesUserAndGoesToGuestFragment() {
+        DatabaseManager.useMockDatabase()
         scenario.onActivity { MockAuthenticator(it).signIn() }
         assertTrue(DatabaseManager.user != null)
 
