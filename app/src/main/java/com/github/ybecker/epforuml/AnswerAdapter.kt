@@ -50,7 +50,7 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
 
             is AnswerViewHolder -> {
                 //holder.answerText.text = currentAnswerItem
-                val answerId = answerList.get(position -1)
+                val answerId = answerList.get(position-1)
                 val futureAnswer = db.getAnswerById(answerId)
                 val futureEndorsementList = db.getAnswerEndorsements(answerId)
                 CompletableFuture.allOf(futureAnswer, futureEndorsementList).thenAccept {

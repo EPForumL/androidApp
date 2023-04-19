@@ -76,7 +76,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
 
         // only allow posting answer if user is connected
-        if (user.userId.isNotEmpty()) {
+        if (user != null && user.userId.isNotEmpty()) {
             // store content of box as a new answer to corresponding question
             sendButton.setOnClickListener {
                 if (question != null) {

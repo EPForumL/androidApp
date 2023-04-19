@@ -140,7 +140,7 @@ class MockDatabase : Database() {
         val answerId = "answer${answers.size + 1}"
         val answer = Answer(answerId, questionId, userId, answerText ?: "", emptyList())
         answers[answerId] = answer
-        questions[questionId]?.answers = questions[questionId]?.answers?.plus(answer.answerText) ?: mutableListOf(answer.answerText)
+        questions[questionId]?.answers = questions[questionId]?.answers?.plus(answer.answerId) ?: mutableListOf(answer.answerId)
 
         users[userId]?.let {
             val updatedAnswers = it.answers + answer.answerId
