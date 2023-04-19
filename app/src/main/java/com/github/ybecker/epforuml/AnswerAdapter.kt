@@ -57,7 +57,7 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
                     currentAnswerItem = it[position-1]
 
                     holder.answerText.text = currentAnswerItem.answerText
-/*                    holder.button.setOnClickListener{
+                    holder.button.setOnClickListener{
                         db.addChatsWith(DatabaseManager.user!!.userId, currentAnswerItem.userId)
                         val intent = Intent(
                             mainActivity,
@@ -66,8 +66,7 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
                         intent.putExtra("fragment", "RealChat")
                         intent.putExtra("externID", currentAnswerItem.userId)
                         startActivity(mainActivity,intent,null)
-                    }*/
-
+                    }
                     // TODO : change userId to username (need to use future)
                     holder.username.text = currentAnswerItem.userId
                 }
