@@ -417,4 +417,26 @@ class FirebaseDatabaseAdapterTest {
             assertThat(it?.questionText, equalTo(""))
         }.join()
     }
+
+    @Test
+    fun addAndGetNewQuestionEndorsement(){
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addQuestionEndorsement(romain.userId, question1.questionId)
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewAnswerEndorsement(){
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addAnswerEndorsement(romain.userId, answer1.answerId)
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+    }
 }

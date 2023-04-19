@@ -19,6 +19,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        DatabaseManager.useMockDatabase()
+
         val authenticator = FirebaseAuthenticator(this)
 
         val signInButton = findViewById<Button>(R.id.signInButton)

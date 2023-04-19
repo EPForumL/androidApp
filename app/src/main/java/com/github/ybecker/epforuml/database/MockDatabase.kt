@@ -91,11 +91,11 @@ class MockDatabase : Database() {
     }
 
     override fun getQuestionEndorsements(questionId: String): CompletableFuture<List<String>> {
-        TODO("Not yet implemented")
+        return CompletableFuture.completedFuture(questions[questionId]?.endorsements)
     }
 
     override fun getAnswerEndorsements(answerId: String): CompletableFuture<List<String>> {
-        TODO("Not yet implemented")
+        return CompletableFuture.completedFuture(answers[answerId]?.endorsements)
     }
 
 

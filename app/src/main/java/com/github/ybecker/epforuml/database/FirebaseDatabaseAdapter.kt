@@ -5,7 +5,6 @@ import com.google.firebase.database.*
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
-
 /**
  * This class represents a database that uses Firebase Realtime Database
  */

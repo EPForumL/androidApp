@@ -50,6 +50,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
             val endorsementCounter = findViewById<TextView>(R.id.endorsementCount)
             val count = it.size
 
+            if(user == null || user.userId.isEmpty()){
+                endorsementButton.isEnabled = false
+            }
             endorsementCounter.text = (count).toString()
 
             endorsementButton.tag = count
