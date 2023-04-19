@@ -107,8 +107,14 @@ class RealChatTest {
         Espresso.onView(withId(R.id.no_chats)).check(matches(isDisplayed()))
 
     }
+
     @Test
     fun backToHomeIsCorrect() {
+        DatabaseManager.user = host
+
+        Espresso.onView(withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
         Espresso.onView(withId(R.id.back_to_home_button)).perform(ViewActions.click())
 
