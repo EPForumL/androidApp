@@ -112,9 +112,19 @@ class RealChatTest {
     fun backToHomeIsCorrect() {
         DatabaseManager.user = host
 
+        DatabaseManager.db.addChatsWith(host.userId,extern.userId)
+        DatabaseManager.db.addChatsWith(extern.userId,host.userId)
+        DatabaseManager.db.addChat(host.userId,extern.userId,"Hey Extern!")
+        DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
+
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
+
+        scenario.onActivity { activity ->
+            val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
+            view.findViewById<Button>(R.id.buttonChatWith).performClick()
+        }
 
         Espresso.onView(withId(R.id.back_to_home_button)).perform(ViewActions.click())
 
