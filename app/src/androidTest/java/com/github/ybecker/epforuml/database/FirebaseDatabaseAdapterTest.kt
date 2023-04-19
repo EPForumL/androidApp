@@ -53,7 +53,7 @@ class FirebaseDatabaseAdapterTest {
 
         database = Firebase.database
 
-        //local tests works on the emulator but the CI fails
+        // local tests works on the emulator but the CI fails
         // so with the try-catch it work but on the real database...
         try{
             database.useEmulator("10.0.2.2", 9000)

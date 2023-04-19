@@ -24,6 +24,7 @@ class RemoteNotificationService : FirebaseMessagingService() {
         val author = remoteMessage.data["author"]
         val title = remoteMessage.data["title"]
         val text = remoteMessage.data["text"]
+        //val uri = remoteMessage.data["URI"]
         val channelId = "my_channel_id"
 
         // creat new channel

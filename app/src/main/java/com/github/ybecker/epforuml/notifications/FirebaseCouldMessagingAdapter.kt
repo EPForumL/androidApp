@@ -55,6 +55,11 @@ object FirebaseCouldMessagingAdapter {
 
                 try {
                     FirebaseMessaging.getInstance().send(message)
+
+                    Thread(Runnable {
+                        RemoteNotificationService().onMessageReceived(message)
+                    }).start()
+
                     Log.d(TAG, "Message sent to $token")
                 } catch (e: Exception) {
                     Log.e(TAG, "Error sending message to $token: $e")
