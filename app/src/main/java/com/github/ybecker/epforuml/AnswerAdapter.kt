@@ -1,12 +1,17 @@
 package com.github.ybecker.epforuml
 
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import java.util.concurrent.CompletableFuture
 
 class AnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<String>)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -44,16 +49,54 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
             }
 
             is AnswerViewHolder -> {
-                var currentAnswerItem : Model.Answer //= answerList[position-1]
                 //holder.answerText.text = currentAnswerItem
+                val answerId = answerList.get(position-1)
+                val futureAnswer = db.getAnswerById(answerId)
+                val futureEndorsementList = db.getAnswerEndorsements(answerId)
+                CompletableFuture.allOf(futureAnswer, futureEndorsementList).thenAccept {
 
-                db.getQuestionAnswers(questionId).thenAccept {
-                    currentAnswerItem = it[position-1]
+                    val currentAnswerItem = futureAnswer.get() ?: Model.Answer()
+                    val endorsementList = futureEndorsementList.get()
 
                     holder.answerText.text = currentAnswerItem.answerText
 
                     // TODO : change userId to username (need to use future)
                     holder.username.text = currentAnswerItem.userId
+
+                    val like = holder.itemView.findViewById<ImageButton>(R.id.likeButton)
+                    val counter = holder.itemView.findViewById<TextView>(R.id.likeCount)
+                    val endorsementCount = endorsementList.size
+                    val isEndorsed = endorsementList.contains(DatabaseManager.user?.userId)
+                    counter.text = (endorsementCount).toString()
+                    if(isEndorsed) {
+                        like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.red), PorterDuff.Mode.SRC_IN)
+                    } else {
+                        like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
+                    }
+
+                    like.tag = listOf(isEndorsed, endorsementCount)
+
+                    like.setOnClickListener {
+                        val userId = DatabaseManager.user?.userId
+                        if (userId != null) {
+                            val tags = like.tag as List<*>
+                            val isEndorsed = tags[0] as Boolean
+                            val count = tags[1] as Int
+                            if (!isEndorsed) {
+                                db.addAnswerEndorsement(userId, currentAnswerItem.answerId)
+                                //turn like color to red ans increment counter
+                                like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.red), PorterDuff.Mode.SRC_IN)
+                                counter.setText((count + 1).toString())
+                                it.tag = listOf(true, count + 1)
+                            } else {
+                                db.removeAnswerEndorsement(userId, currentAnswerItem.answerId)
+                                // turn like color to light gray and decrement counter
+                                like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
+                                counter.setText((count - 1).toString())
+                                it.tag = listOf(false, count - 1)
+                            }
+                        }
+                    }
                 }
             }
         }

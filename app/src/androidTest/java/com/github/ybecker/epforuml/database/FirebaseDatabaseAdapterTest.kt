@@ -56,7 +56,7 @@ class FirebaseDatabaseAdapterTest {
         // local tests works on the emulator but the CI fails
         // so with the try-catch it work but on the real database...
         try{
-            database.useEmulator("10.0.2.2", 9000)
+            //database.useEmulator("10.0.2.2", 9000)
         }
         catch (r : IllegalStateException){ }
 
@@ -415,6 +415,28 @@ class FirebaseDatabaseAdapterTest {
         val newQuestion = db.addQuestion(romain.userId, question1.questionId, "title", null, "URI")
         db.getQuestionById(newQuestion.questionId).thenAccept {
             assertThat(it?.questionText, equalTo(""))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewQuestionEndorsement(){
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addQuestionEndorsement(romain.userId, question1.questionId)
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewAnswerEndorsement(){
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addAnswerEndorsement(romain.userId, answer1.answerId)
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
         }.join()
     }
 }
