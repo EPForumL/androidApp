@@ -5,13 +5,19 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.Intents.intending
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import com.firebase.ui.auth.KickoffActivity
+import com.github.ybecker.epforuml.HomeFragment
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
@@ -50,10 +56,29 @@ class LoginActivityTest {
     }
 
     @Test
-    fun checkAppSkipsLoginActivityWhenConnected() {
-        DatabaseManager.user = Model.User()
+    fun checkSignInOpensSignInIntent() {
         scenario = ActivityScenario.launch(LoginActivity::class.java)
-        intended(hasComponent(MainActivity::class.java.name))
+        onView(ViewMatchers.withId(R.id.signInButton)).perform(click())
+
+        intended(hasComponent(KickoffActivity::class.java.name))
+
+        /*
+        onView(ViewMatchers.withText("Sign in with email")).perform(click())
+        onView(ViewMatchers.withHint("Email"))
+            .perform(typeText("yann.beckerjd@gmail.com"))
+            .perform(ViewActions.closeSoftKeyboard())
+        onView(ViewMatchers.withText("NEXT")).perform(click())
+        onView(ViewMatchers.withText("SIGN IN")).perform(click())*/
+    }
+
+    @Test
+    fun checkAppSkipsLoginActivityWhenConnected() {
+        DatabaseManager.db.addUser("testId", "Test User", "test.user@email.com").thenAccept {
+            DatabaseManager.user = it
+            scenario = ActivityScenario.launch(LoginActivity::class.java)
+            intended(hasComponent(MainActivity::class.java.name))
+            DatabaseManager.db.removeUser(it.userId)
+        }
     }
 
     @Test

@@ -27,11 +27,7 @@ class LoginActivity : AppCompatActivity() {
         val guestButton = findViewById<Button>(R.id.guestButton)
         guestButton.setOnClickListener { continueAsGuest() }
 
-        // Skips the login activity if there is already a user logged in
-        if (DatabaseManager.user != null) {
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
-        }
+        checkIfAlreadySignedIn()
     }
 
     /**
@@ -40,5 +36,25 @@ class LoginActivity : AppCompatActivity() {
     private fun continueAsGuest() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
+    }
+
+    /**
+     * If there is already a user logged in, skip to the main activity
+     */
+    private fun checkIfAlreadySignedIn() {
+        var userId: String? = null
+        if (Firebase.auth.currentUser != null) userId = Firebase.auth.currentUser!!.uid
+        else if (DatabaseManager.user != null) userId = DatabaseManager.user!!.userId
+
+        if (userId != null) {
+            DatabaseManager.db.getUserById(userId).thenAccept {
+                DatabaseManager.user = it
+                // Skips the login activity if there is already a user logged in
+                if (it != null) {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                }
+            }
+        }
     }
 }
