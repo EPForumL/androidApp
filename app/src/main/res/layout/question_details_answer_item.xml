@@ -31,5 +31,38 @@
         android:text="Answer"
         android:textSize="19sp"
         android:id="@+id/qdetails_answer_text"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chatWithUser"
+        android:text="@string/chat"
+        />
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right">
+
+        <TextView
+            android:id="@+id/likeCount"
+            android:layout_width="296dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="12.5sp"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="0" />
+
+        <ImageButton
+            android:id="@+id/likeButton"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:layout_margin="8dp"
+            android:background="@color/shade1"
+            android:clickable="true"
+            android:src="@drawable/endorment_heart"
+            app:tint="@color/light_gray" />
+    </LinearLayout>
 
 </LinearLayout>

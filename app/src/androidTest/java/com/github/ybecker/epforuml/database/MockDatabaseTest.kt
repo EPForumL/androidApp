@@ -7,6 +7,7 @@ import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
+import java.time.LocalDateTime
 
 class MockDatabaseTest {
 
@@ -45,6 +46,10 @@ class MockDatabaseTest {
 
         db.addSubscription(user.userId, swEng.courseId)
         db.addSubscription(user.userId, sdp.courseId)
+
+        val chat2 = Chat("chat0", LocalDateTime.now().toString(), user.userId, user.userId, "Hey me!")
+
+        db.addChat(chat2.senderId, chat2.receiverId, chat2.text)
     }
 
     @Test
@@ -54,6 +59,24 @@ class MockDatabaseTest {
             assertThat(it, equalTo(user2))
         }.join()
     }
+    @Test
+    fun addAndGetChat(){
+        db.addChat("0", "0", "hey")
+        db.getChat(user.userId,user.userId).thenAccept {
+            assertThat(it.size, equalTo(2))
+        }.join()
+
+    }
+    @Test
+    fun addAndGetChatWith(){
+        db.addChatsWith("0", "0")
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("TestUser").get(),equalTo("0"))
+    }
 
     @Test
     fun getCourseByIdTest(){
@@ -61,6 +84,14 @@ class MockDatabaseTest {
             assertThat(it?.courseId, equalTo(sdp.courseId))
             assertThat(it?.courseName, equalTo(sdp.courseName))
         }.join()
+    }
+
+    @Test
+    fun retrieveRegisteredUsers(){
+        val user2 = db.addUser("user2", "TestUser2", "testEmail").get()
+        val testUser = db.addUser("IDID", "TestUser", "testEmail").get()
+
+        assertThat( db.registeredUsers().get().size, equalTo(6))
     }
 
     @Test
@@ -247,4 +278,27 @@ class MockDatabaseTest {
             assertThat(it?.questionText, equalTo(""))
         }
     }
+
+    @Test
+    fun addAndGetNewQuestionEndorsement(){
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addQuestionEndorsement(user.userId, question1.questionId)
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewAnswerEndorsement(){
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addAnswerEndorsement(user.userId, answer1.answerId)
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+    }
+
 }

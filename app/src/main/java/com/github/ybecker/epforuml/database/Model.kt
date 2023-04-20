@@ -1,8 +1,8 @@
 package com.github.ybecker.epforuml.database
 
-import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
+import java.time.LocalDateTime
 
 class Model {
 
@@ -14,7 +14,8 @@ class Model {
         val questionTitle: String,
         val questionText: String,
         val imageURI : String,
-        var answers: List<String>
+        var answers: List<String>,
+        var endorsements: List<String>
         ) : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
@@ -23,6 +24,7 @@ class Model {
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
+            parcel.createStringArrayList()!!,
             parcel.createStringArrayList()!!
         ) {
         }
@@ -54,17 +56,18 @@ class Model {
     }
 
     // This class represent a user an answer
-    data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String)
+    data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String, var endorsements: List<String>)
         : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
-            parcel.readString()!!
+            parcel.readString()!!,
+            parcel.createStringArrayList()!!
         ) {
         }
 
-        constructor() : this("", "", "", "")
+        constructor() : this("", "", "", "", emptyList())
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {
             parcel.writeString(answerId)
@@ -96,6 +99,7 @@ class Model {
         var questions: List<String> = emptyList(),
         var answers: List<String> = emptyList(),
         var subscriptions: List<String> = emptyList(),
+        var chatsWith: List<String> = emptyList(),
         var profilePic: String = "",
         var userInfo: String = "",
         var status: String = "",
@@ -104,6 +108,7 @@ class Model {
             "",
             "",
             "",
+            emptyList(),
             emptyList(),
             emptyList(),
             emptyList(),
@@ -116,5 +121,9 @@ class Model {
     //This class represent a course
     data class Course(val courseId: String, val courseName: String, var questions: List<String>){
         constructor() : this("", "", emptyList())
+    }
+
+    data class Chat(
+        val chatId: String?, val date: String?,val receiverId:String, val senderId:String,  val text: String?){
     }
 }

@@ -1,12 +1,14 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.database.Model.*
+import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 /**
  * An abstract class that defines a set of methods to be implemented by concrete database implementations.
  */
 abstract class Database {
+
 
     /**
      * Returns a list of all available courses in the current database.
@@ -15,6 +17,12 @@ abstract class Database {
      */
     abstract fun availableCourses(): CompletableFuture<List<Course>>
 
+    /**
+     * Returns a list of all registered user in the current database.
+     *
+     * @return a list of every registered user
+     */
+    abstract fun registeredUsers(): CompletableFuture<List<String>>
     /**
      * Retrieves a list of questions for a given course.
      *
@@ -94,6 +102,22 @@ abstract class Database {
     abstract fun addUser(userId:String, username:String, email:String): CompletableFuture<User>
 
     /**
+     * Adds an endorsement to a question
+     *
+     * @param userId the id of the user that endorsed
+     * @param questionId the id of the question that is endorsed
+     */
+    abstract fun addQuestionEndorsement(userId:String, questionId: String)
+
+    /**
+     * Adds an endorsement to a question
+     *
+     * @param userId the id of the user that endorsed
+     * @param answerId the id of the question that is endorsed
+     */
+    abstract fun addAnswerEndorsement(userId:String, answerId: String)
+
+    /**
      * Removes a user to the database.
      *
      * @param userId the id of the user to remove
@@ -123,6 +147,23 @@ abstract class Database {
      * @param course the course to which the user is subscribing
      */
     abstract fun removeSubscription(userId:String, courseId: String)
+
+
+    /**
+     * Removes an endorsement to a question
+     *
+     * @param userId the id of the user that removes his endorsement
+     * @param answerId the id of the question that lost its endorsement
+     */
+    abstract fun removeQuestionEndorsement(userId:String, questionId: String)
+
+    /**
+     * Removes an endorsement to a answer
+     *
+     * @param userId the id of the user that removes his endorsement
+     * @param answerId the id of the answer that lost its endorsement
+     */
+    abstract fun removeAnswerEndorsement(userId:String, answerId: String)
 
     /**
      * Returns the question with the given ID.
@@ -156,4 +197,66 @@ abstract class Database {
      * @return the course with the given ID
      */
     abstract fun getCourseById(id: String): CompletableFuture<Course?>
+
+    /**
+     * Returns all the chats between two users
+     *
+     * @param userId1 Id of the logged user
+     * @param userId2 Id of the external user
+     * @return List of all exchanged messages
+     */
+    abstract fun getChat(userId1:String, userId2:String): CompletableFuture<List<Chat>>
+
+    /**
+     * Returns the list of all the userIds that endorsed the given question.
+     *
+     * @param questionId Id of the question from which we want the endorsements
+     * @return List the list of all the userIds that endorsed the given question
+     */
+    abstract fun getQuestionEndorsements(questionId: String): CompletableFuture<List<String>>
+
+    /**
+     * Returns the list of all the userIds that endorsed the given answer.
+     *
+     * @param answerId Id of the answer from which we want the endorsements
+     * @return List the list of all the userIds that endorsed the given answer
+     */
+    abstract fun getAnswerEndorsements(answerId: String): CompletableFuture<List<String>>
+
+
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param senderId the user that sent the chat
+     * @param receiverId user that will receive the chat
+     * @param text content of the chat
+     * @param date time of the chat
+     * @return the question that was posted in database
+     */
+    abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
+
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param senderId the user that sent the chat
+     * @param receiverId user that will receive the chat
+     * @return a string
+     */
+    abstract fun addChatsWith(senderId: String, receiverId: String): String
+
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param userName the name of the useer
+     * @return the user's ID
+     */
+    abstract fun getUserId(userName: String): CompletableFuture<String>
+
+    /**
+     * Gets list of users the hist chatted with
+     *
+     * @param userID the id of the useer
+     * @return id list of all users he chats with
+     */
+    abstract fun getChatsWith(userID: String): CompletableFuture<List<String>>
 }

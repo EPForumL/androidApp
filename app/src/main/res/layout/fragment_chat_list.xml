@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="20dp"
+    android:id="@+id/real_chat_layout_parent"
+    tools:context=".chat.RealChatFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/chat_layout"
+        android:orientation="vertical">
+
+        <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/back"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:id="@+id/back_to_home_button"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/title_chat"
+            android:text= "@string/chat"
+            android:textSize="30sp"
+            android:layout_weight="0"
+            android:layout_marginBottom="20dp"
+            android:textStyle="bold"/>
+
+
+        <TextView
+            android:id="@+id/not_connected_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/you_are_not_connected"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/not_found"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/User_not_found"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/no_chats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/you_have_not_started_a_conversation_yet"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_chat"
+            android:name="com.github.ybecker.epforuml.chat.RealChatFragment"
+            android:layout_width="445dp"
+            android:layout_height="520dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="1"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".chat.RealChatFragment"
+            tools:listitem="@layout/chat_item" />
+
+        <EditText
+            android:id="@+id/edit_text_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:autofillHints=""
+            android:ems="10"
+            android:inputType="textLongMessage"
+            android:minHeight="100dp"
+            android:text="@string/type_your_message_here" />
+
+        <Button
+            android:id="@+id/send_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="@string/send" />
+        </LinearLayout>
+
+</FrameLayout>

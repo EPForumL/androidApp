@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml
+package com.github.ybecker.epforuml.sensor
 
 import android.Manifest
 import android.content.ContentValues
