@@ -9,13 +9,39 @@
     android:id="@+id/question_details_layout"
     tools:context=".QuestionDetailsActivity">
 
-    <Button
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/back"
-        android:textStyle="bold"
-        android:clickable="true"
-        android:id="@+id/back_to_forum_button"/>
+        android:orientation="horizontal"
+        tools:context=".QuestionDetailsActivity">
+
+        <Button
+            android:id="@+id/back_to_forum_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:text="@string/back"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/endorsementCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_weight="1"
+            android:text="0" />
+
+        <ToggleButton
+            android:id="@+id/endorsementButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:textOff="Endorse this"
+            android:textOn="Endorsed" />
+
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -47,8 +73,9 @@
             android:id="@+id/not_loggedin_text"
             android:text="@string/please_login_to_post_answers"
             android:layout_marginVertical="5dp"
-            android:textColor="@color/gray"
-            android:layout_gravity="end"
+            android:textColor="@color/red"
+            android:textSize="13sp"
+            android:layout_gravity="center"
             android:background="@color/white"
             android:visibility="gone"/>
 

@@ -79,34 +79,43 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         } else {
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val questionSubject = parent.getItemAtPosition(position) as String
+//            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//                override fun onItemSelected(
+//                    parent: AdapterView<*>,
+//                    view: View?,
+//                    position: Int,
+//                    id: Long
+//                ) {
+//                    val questionSubject = parent.getItemAtPosition(position) as String
+//                    val course =
+//                        coursesList.filter { course -> course.courseName == questionSubject }[0]
+//                    if (user != null) {
+//                        db.addQuestion(
+//                            user.userId,
+//                            course.courseId,
+//                            questTitle.toString(),
+//                            questBody.toString(),
+//                            imageURI.toString()
+//                        )
+//                    }
+//                }
+//          override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+                    val questionSubject = spinner.selectedItem.toString()
                     val course =
                         coursesList.filter { course -> course.courseName == questionSubject }[0]
                     if (user != null) {
                         db.addQuestion(
                             user.userId,
                             course.courseId,
-                            questTitle.toString(),
-                            questBody.toString(),
-                            imageURI.toString()
+                            questTitle.text.toString(),
+                            questBody.text.toString(),
+                            imageURI.text.toString()
                         )
-                    }
-
-
                     mainActivity.replaceFragment(HomeFragment(mainActivity))
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    }
             }
-        }
-        mainActivity.replaceFragment(HomeFragment(this.mainActivity))
+            mainActivity.replaceFragment(HomeFragment(this.mainActivity))
     }
 
     private fun setTakeImage(

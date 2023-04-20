@@ -14,7 +14,8 @@ class Model {
         val questionTitle: String,
         val questionText: String,
         val imageURI : String,
-        var answers: List<String>
+        var answers: List<String>,
+        var endorsements: List<String>
         ) : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
@@ -23,6 +24,7 @@ class Model {
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
+            parcel.createStringArrayList()!!,
             parcel.createStringArrayList()!!
         ) {
         }
@@ -54,17 +56,18 @@ class Model {
     }
 
     // This class represent a user an answer
-    data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String)
+    data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String, var endorsements: List<String>)
         : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
-            parcel.readString()!!
+            parcel.readString()!!,
+            parcel.createStringArrayList()!!
         ) {
         }
 
-        constructor() : this("", "", "", "")
+        constructor() : this("", "", "", "", emptyList())
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {
             parcel.writeString(answerId)
