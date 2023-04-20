@@ -29,6 +29,7 @@ class AccountFragmentsTest {
     @Before
     fun initScenario() {
         Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
         DatabaseManager.user = null
         scenario = ActivityScenario.launch(LoginActivity::class.java)
         Intents.init()
