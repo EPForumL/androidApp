@@ -1,6 +1,9 @@
 package com.github.ybecker.epforuml.database
 
+import android.content.ContentValues
+import android.util.Log
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -218,8 +221,12 @@ class MockDatabase : Database() {
     override fun addNotification(userId: String, courseId: String) {
         val course = courses[courseId]
         if(course != null) {
-            val updatedNotification = course.notifications.filter { it != courseId }
-            courses[courseId] = course.copy(notifications = updatedNotification)
+            FirebaseMessaging.getInstance().token.addOnSuccessListener {
+                val updatedNotification = course.notifications + (userId+"/"+it)
+                courses[courseId] = course.copy(notifications = updatedNotification)
+            }.addOnFailureListener { e ->
+                Log.e(ContentValues.TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
+            }
         }
     }
 
@@ -289,11 +296,11 @@ class MockDatabase : Database() {
     }
 
     override fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>> {
-        TODO("Not yet implemented")
+        return CompletableFuture.completedFuture(courses[courseId]?.notifications?.map { it.split("/") }?.get(0))
     }
 
     override fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>> {
-        return CompletableFuture.completedFuture(courses[courseId]?.notifications)
+        return CompletableFuture.completedFuture(courses[courseId]?.notifications?.map { it.split("/") }?.get(1))
     }
 
 

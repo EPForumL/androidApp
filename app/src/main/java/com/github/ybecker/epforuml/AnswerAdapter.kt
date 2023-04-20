@@ -120,6 +120,5 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
         val answerText : TextView = itemView.findViewById(R.id.qdetails_answer_text)
     }
 
-
 }
 

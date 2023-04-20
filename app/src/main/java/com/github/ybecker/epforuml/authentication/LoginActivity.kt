@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.MockDatabase
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
