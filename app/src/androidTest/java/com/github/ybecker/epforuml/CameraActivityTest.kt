@@ -25,7 +25,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CameraActivityTest {
 
-    private lateinit var scenario : ActivityScenario<CameraActivity>
+    private lateinit var scenario : ActivityScenario<MainActivity>
 
     @Before
     fun setUp() {
