@@ -171,12 +171,15 @@ class MockDatabase : Database() {
     }
 
     override fun addUser(userId:String, username: String, email: String): CompletableFuture<User> {
-        var user = users[userId]
-        if(user != null){
-            return CompletableFuture.completedFuture(user)
+        return addUser(User(userId, username, email))
+    }
+
+    override fun addUser(user: User): CompletableFuture<User> {
+        val dbUser = users[user.userId]
+        if(dbUser != null){
+            return CompletableFuture.completedFuture(dbUser)
         }
-        user = User(userId , username, email)
-        users[userId] = user
+        users[user.userId] = user
         return CompletableFuture.completedFuture(user)
     }
 
@@ -291,5 +294,13 @@ class MockDatabase : Database() {
         }
     }
 
+    override fun setUserPresence(userId: String) {
+        users[userId]?.connections?.add(true)
+    }
 
+    override fun removeUserConnection(userId: String) {
+        if (users[userId]?.connections?.size!! > 0) {
+            users[userId]?.connections?.removeAt(0)
+        }
+    }
 }

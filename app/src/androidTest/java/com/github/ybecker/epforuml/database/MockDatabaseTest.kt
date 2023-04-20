@@ -267,7 +267,6 @@ class MockDatabaseTest {
 
     @Test
     fun addNewObjectWithTolerateNullArgsTest(){
-
         val newAnswer = db.addAnswer(user.userId, question1.questionId, null)
         db.getAnswerById(newAnswer.answerId).thenAccept {
             assertThat(it?.answerText, equalTo(""))
@@ -301,4 +300,23 @@ class MockDatabaseTest {
         }.join()
     }
 
+    @Test
+    fun setUserPresenceAddsConnection() {
+        db.addUser("0", "test", "testEmail").join()
+        db.setUserPresence("0")
+        db.getUserById("0").thenAccept {
+            assertTrue(it!!.connections.size == 1)
+        }
+    }
+
+    @Test
+    fun removeUserConnectionRemovesAConnection() {
+        db.addUser("0", "test", "testEmail").join()
+        db.setUserPresence("0")
+        db.getUserById("0").thenAccept {
+            assertTrue(it!!.connections.size == 1)
+            db.removeUserConnection("0")
+            assertTrue(it.connections.size == 0)
+        }
+    }
 }

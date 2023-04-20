@@ -1,7 +1,11 @@
 package com.github.ybecker.epforuml.database
 
+import android.content.ContentValues
+import android.util.Log
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -47,6 +51,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val profilePicPath = "profilePic"
     private val userInfoPath = "userInfo"
     private val statusPath = "status"
+    private val connectionsPath = "connections"
 
 
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
@@ -205,18 +210,21 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     override fun addUser(userId:String, username: String, email: String): CompletableFuture<User> {
+        return addUser(User(userId, username, email))
+    }
+
+    override fun addUser(user: User): CompletableFuture<User> {
         val future = CompletableFuture<User>()
         //try to get the user with given id
-        getUserById(userId).thenAccept {
+        getUserById(user.userId).thenAccept {
             if(it != null){
                 //if user exists complete with it
                 future.complete(it)
             }
             else{
-                // it user do not exist create a new one and complete with it
-                val newUser = User(userId, username, email)
-                db.child(usersPath).child(userId).setValue(newUser)
-                future.complete(newUser)
+                // if user does not exist add him and complete with it
+                db.child(usersPath).child(user.userId).setValue(user)
+                future.complete(user)
             }
         }
         return future
@@ -387,6 +395,39 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
+    override fun setUserPresence(userId: String) {
+        val database = Firebase.database
+        val connectionRef =
+            database.getReference("$usersPath/$userId/$connectionsPath")
+
+        val connectionStateRef = database.getReference(".info/connected")
+        connectionStateRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val connected = snapshot.getValue(Boolean::class.java) ?: false
+                if (connected) {
+                    val con = connectionRef.push()
+
+                    // When this device disconnects set it to false
+                    con.onDisconnect().removeValue()
+
+                    // Add this device to my connections list
+                    // this value could contain info about the device or a timestamp too
+                    con.setValue(java.lang.Boolean.TRUE)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(ContentValues.TAG, "Listener was cancelled at .info/connected")
+            }
+        })
+    }
+
+    override fun removeUserConnection(userId: String) {
+        val connectionsRef =
+            Firebase.database.getReference("$usersPath/$userId/$connectionsPath")
+        connectionsRef.removeValue()
+    }
+
 
     private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {
         val future = CompletableFuture<Any?>()
@@ -482,6 +523,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // Get user status (is student or teacher)
         val status = dataSnapshot.child(statusPath).getValue(String::class.java)
 
+        // Get user connection status (is connected or not)
+        val connections = arrayListOf<Boolean>()
+        dataSnapshot.child(connectionsPath).children.forEach { conSnapshot ->
+            conSnapshot.key?.let { connections.add(it.toBoolean()) }
+        }
+
         if(userId!=null && username!=null && email!=null){
             return User(
                 userId,
@@ -493,7 +540,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 chatsWith,
                 profilePic ?: "",
                 userInfo ?: "",
-                status ?: ""
+                status ?: "",
+                connections
             )
         }
         return null

@@ -153,6 +153,7 @@ class QuestionDetailsTest {
 
     @Test
     fun guestUserCannotPostAnswers() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
         scenario.onActivity { MockAuthenticator(it).signOut() }
 
         // go to second question

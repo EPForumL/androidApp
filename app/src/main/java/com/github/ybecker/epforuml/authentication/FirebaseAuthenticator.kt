@@ -1,6 +1,8 @@
 package com.github.ybecker.epforuml.authentication
 
+import android.content.ContentValues
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCaller
@@ -16,6 +18,10 @@ import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -43,6 +49,7 @@ class FirebaseAuthenticator(
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
+            .setIsSmartLockEnabled(false)
             .build()
 
         // Shows to the user the authentication means
@@ -78,6 +85,7 @@ class FirebaseAuthenticator(
      * @param txt: The text to show on the toast
      */
     private fun logout(txt: String) {
+        DatabaseManager.user?.let { DatabaseManager.db.removeUserConnection(it.userId) }
         // User is logged out
         DatabaseManager.user = null
 
@@ -132,12 +140,13 @@ class FirebaseAuthenticator(
                         firebaseUser.email!!
                     ).thenAccept { newUser ->
                         DatabaseManager.user = newUser
-                        gotToActivity(newUser.username)
                     }
                 } else {
                     DatabaseManager.user = user
-                    gotToActivity(user.username)
                 }
+                DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)
+                DatabaseManager.user!!.connections.add(true)
+                gotToActivity(DatabaseManager.user!!.username)
             }
         }
     }

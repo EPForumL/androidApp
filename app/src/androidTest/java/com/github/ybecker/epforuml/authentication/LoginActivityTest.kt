@@ -61,14 +61,6 @@ class LoginActivityTest {
         onView(ViewMatchers.withId(R.id.signInButton)).perform(click())
 
         intended(hasComponent(KickoffActivity::class.java.name))
-
-        /*
-        onView(ViewMatchers.withText("Sign in with email")).perform(click())
-        onView(ViewMatchers.withHint("Email"))
-            .perform(typeText("yann.beckerjd@gmail.com"))
-            .perform(ViewActions.closeSoftKeyboard())
-        onView(ViewMatchers.withText("NEXT")).perform(click())
-        onView(ViewMatchers.withText("SIGN IN")).perform(click())*/
     }
 
     @Test

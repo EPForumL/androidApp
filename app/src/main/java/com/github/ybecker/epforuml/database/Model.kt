@@ -103,6 +103,7 @@ class Model {
         var profilePic: String = "",
         var userInfo: String = "",
         var status: String = "",
+        val connections: ArrayList<Boolean> = ArrayList()
         ) {
         constructor() : this(
             "",
@@ -114,7 +115,8 @@ class Model {
             emptyList(),
             "",
             "",
-            ""
+            "",
+            ArrayList()
         )
     }
 
