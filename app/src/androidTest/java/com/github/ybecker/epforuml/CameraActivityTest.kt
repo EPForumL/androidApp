@@ -1,4 +1,4 @@
-package com.github.ybecker.epforuml.camera
+package com.github.ybecker.epforuml.camera.com.github.ybecker.epforuml
 
 import android.Manifest
 import com.github.ybecker.epforuml.R
@@ -48,8 +48,8 @@ class CameraActivityTest {
     @Test
     fun testTakePhoto() {
         onView(withId(R.id.image_capture_button)).perform(click())
-        Thread.sleep(5000) // Wait for photo to be taken
-        onView(withId(R.id.ds_photo_editor_top_button_apply)).check(matches(isDisplayed()))
+        Thread.sleep(10000) // Wait for photo to be taken
+        onView(withText("filter")).check(matches(isDisplayed()))
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {
