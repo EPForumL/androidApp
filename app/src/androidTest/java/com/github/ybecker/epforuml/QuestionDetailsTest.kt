@@ -199,6 +199,22 @@ class QuestionDetailsTest {
     }
 
     @Test
+    fun removeQuestionEndorsementTest(){
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+
+        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withText("Endorsed"))
+        onView(withText("1"))
+
+        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withText("Endorse this"))
+        onView(withText("0"))
+    }
+
+    @Test
     fun answerLikeButtonModifyTheCounter() {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
@@ -228,6 +244,24 @@ class QuestionDetailsTest {
 
         onView(withText("About ci")).perform(click())
         CounterEquals(answerposition, "1")
+    }
+
+    @Test
+    fun removeAnswerLike() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        // go to third question
+        onView(withText("About ci")).perform(click())
+
+        val answerposition = 1
+
+        ClickOnLike(answerposition)
+
+        CounterEquals(answerposition, "1")
+
+        ClickOnLike(answerposition)
+
+        CounterEquals(answerposition, "0")
     }
 
     @After

@@ -114,7 +114,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                     mainActivity.replaceFragment(HomeFragment(mainActivity))
                     }
             }
-            mainActivity.replaceFragment(HomeFragment(this.mainActivity))
+            //mainActivity.replaceFragment(HomeFragment(this.mainActivity))
     }
 
     private fun setTakeImage(

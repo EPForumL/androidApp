@@ -1,18 +1,30 @@
 package com.github.ybecker.epforuml.database
 
+import androidx.test.core.app.ActivityScenario
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import java.util.concurrent.CompletableFuture
 
-
+@RunWith(AndroidJUnit4::class)
 class FirebaseDatabaseAdapterTest {
+
+
+    //you can use this user for tests : email: "test@test.com", password: "tester"
+    private lateinit var scenario : ActivityScenario<MainActivity>
 
     private lateinit var database: FirebaseDatabase
     private lateinit var db: FirebaseDatabaseAdapter
@@ -56,7 +68,7 @@ class FirebaseDatabaseAdapterTest {
         // local tests works on the emulator but the CI fails
         // so with the try-catch it work but on the real database...
         try{
-            //database.useEmulator("10.0.2.2", 9000)
+            database.useEmulator("10.0.2.2", 9000)
         }
         catch (r : IllegalStateException){ }
 
@@ -430,7 +442,23 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
-    fun addAndGetNewAnswerEndorsement(){
+    fun removeQuestionEndorsementTest(){
+
+        db.addQuestionEndorsement(romain.userId, question1.questionId)
+
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+
+        db.removeQuestionEndorsement(romain.userId, question1.questionId)
+
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewAnswerEndorsementTest(){
         db.getAnswerEndorsements(answer1.answerId).thenAccept {
             assertThat(it, equalTo(emptyList()))
         }.join()
@@ -439,4 +467,79 @@ class FirebaseDatabaseAdapterTest {
             assertThat(it, equalTo(listOf(romain.userId)))
         }.join()
     }
+
+    @Test
+    fun removeAnswerEndorsementTest(){
+
+        db.addAnswerEndorsement(romain.userId, answer1.answerId)
+
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+
+        db.removeAnswerEndorsement(romain.userId, answer1.answerId)
+
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
+
+    @Test
+    fun addNotificationTest(){
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
+        db.addNotification(romain.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+
+    }
+
+    @Test
+    fun removeNotificationTest(){
+
+        db.addNotification(romain.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+
+        db.removeNotification(romain.userId, sdp.courseId)
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
+    }
+
+    @Test
+    fun getNotificationUserTest(){
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
+        db.addNotification(romain.userId, sdp.courseId).join()
+        db.addNotification(theo.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId, theo.userId)))
+        }.join()
+    }
+
+    @Test
+    fun getNotificationTokenTest(){
+        val futureToken = CompletableFuture<String>()
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            futureToken.complete(it)
+        }
+        val token = futureToken.get()
+        db.addNotification(romain.userId, sdp.courseId).join()
+        db.getCourseNotificationTokens(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(token)))
+        }.join()
+    }
+
 }

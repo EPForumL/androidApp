@@ -10,11 +10,6 @@ class TokenUpdateService:  FirebaseMessagingService(){
         super.onNewToken(token)
         Log.d(ContentValues.TAG, "Refreshed token: $token")
 
-        //TODO
-        // Enregistrement du token dans la base de données
-        // ...
-
-        // Envoi du token au serveur d'application si nécessaire
-        // ...
+        //TODO during next sprint
     }
 }

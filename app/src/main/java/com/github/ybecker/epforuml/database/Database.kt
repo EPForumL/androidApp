@@ -183,8 +183,9 @@ abstract class Database {
      *
      * @param user the user that want to have notification
      * @param course the course to which the user want the notifications
+     * @return if the fuction worked correctly (it depend on FirebaseMessaging ans it may crash)
      */
-    abstract fun addNotification(userId: String, courseId: String)
+    abstract fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean>
 
     /**
      * remove the user from the list of the user to notify.

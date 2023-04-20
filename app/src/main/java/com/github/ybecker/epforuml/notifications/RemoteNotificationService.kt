@@ -46,6 +46,7 @@ class RemoteNotificationService : FirebaseMessagingService() {
         .build()
 
         val notificationManager = NotificationManagerCompat.from(MainActivity.context)
+
         if (ActivityCompat.checkSelfPermission(
                 MainActivity.context,
                 Manifest.permission.POST_NOTIFICATIONS

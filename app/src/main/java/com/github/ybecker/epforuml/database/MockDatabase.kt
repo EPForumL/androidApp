@@ -218,22 +218,27 @@ class MockDatabase : Database() {
         }
     }
 
-    override fun addNotification(userId: String, courseId: String) {
+    override fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean> {
+        val future = CompletableFuture<Boolean>()
         val course = courses[courseId]
         if(course != null) {
             FirebaseMessaging.getInstance().token.addOnSuccessListener {
                 val updatedNotification = course.notifications + (userId+"/"+it)
                 courses[courseId] = course.copy(notifications = updatedNotification)
+                future.complete(true)
             }.addOnFailureListener { e ->
                 Log.e(ContentValues.TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
+                future.complete(false)
             }
         }
+
+        return future
     }
 
     override fun removeNotification(userId: String, courseId: String) {
         val course = courses[courseId]
         if(course != null) {
-            val updatedNotification = course.notifications.filter { it != courseId }
+            val updatedNotification = course.notifications.filter { it.split("/").get(0) != userId }
             courses[courseId] = course.copy(notifications = updatedNotification)
         }
     }
@@ -296,11 +301,19 @@ class MockDatabase : Database() {
     }
 
     override fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>> {
-        return CompletableFuture.completedFuture(courses[courseId]?.notifications?.map { it.split("/") }?.get(0))
+        val list = courses[courseId]?.notifications?.map { it.split("/") }
+        if(list == null || list.isEmpty()){
+            return CompletableFuture.completedFuture(listOf())
+        }
+        return CompletableFuture.completedFuture(list.map { it.get(1) })
     }
 
     override fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>> {
-        return CompletableFuture.completedFuture(courses[courseId]?.notifications?.map { it.split("/") }?.get(1))
+        val list = courses[courseId]?.notifications?.map { it.split("/") }
+        if(list == null || list.isEmpty()){
+            return CompletableFuture.completedFuture(listOf())
+        }
+        return CompletableFuture.completedFuture(list.map { it.get(0) })
     }
 
 

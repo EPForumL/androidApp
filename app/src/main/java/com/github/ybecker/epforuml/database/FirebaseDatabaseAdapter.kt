@@ -266,12 +266,16 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).removeValue()
     }
 
-    override fun addNotification(userId: String, courseId: String) {
+    override fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean> {
+        val future = CompletableFuture<Boolean>()
         FirebaseMessaging.getInstance().token.addOnSuccessListener {
             db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).setValue(it)
+            future.complete(true)
         }.addOnFailureListener { e ->
             Log.e(TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
+            future.complete(false)
         }
+        return future
     }
 
     override fun removeNotification(userId: String, courseId: String) {

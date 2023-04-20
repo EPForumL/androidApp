@@ -56,6 +56,7 @@ object FirebaseCouldMessagingAdapter {
                 try {
                     FirebaseMessaging.getInstance().send(message)
 
+                    //TODO replace that by automatic onMessageReceived for next sprint
                     Thread(Runnable {
                         RemoteNotificationService().onMessageReceived(message)
                     }).start()
