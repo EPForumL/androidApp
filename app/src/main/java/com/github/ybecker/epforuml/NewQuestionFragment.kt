@@ -75,45 +75,43 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         user: Model.User?
     ): (v: View) -> Unit = {
 
+        // If the user is not logged in, show a message and don't submit the question
         if (user == null) {
             Toast.makeText(
-                requireContext(), "You must be logged in to post a question",
+                requireContext(),
+                "You must be logged in to post a question",
                 Toast.LENGTH_SHORT
             ).show()
-
         }
+        // If the question title or body is empty, show a message and don't submit the question
         else if (questBody.text.isBlank() || questTitle.text.isBlank()) {
             Toast.makeText(
-                requireContext(), "Question title or body cannot be empty",
+                requireContext(),
+                "Question title or body cannot be empty",
                 Toast.LENGTH_SHORT
             ).show()
-
         }
-
         else {
+            // Get the selected course from the spinner
             val selectedItemPosition = spinner.selectedItemPosition
             if (selectedItemPosition != Spinner.INVALID_POSITION) {
-
-
                 val questionSubject = spinner.getItemAtPosition(selectedItemPosition) as String
+                // Find the course in the list of available courses
                 val course = coursesList.firstOrNull { course -> course.courseName == questionSubject }
 
-
-                    // Add the question to the database
+                // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
                     DatabaseManager.db.addQuestion(
                         user.userId,
-                        course.courseId, questTitle.text.toString(),
+                        course.courseId,
+                        questTitle.text.toString(),
                         questBody.text.toString(),
                         imageURI.toString()
                     )
-                }
-                    // Navigate to the home screen
                     mainActivity.replaceFragment(HomeFragment(mainActivity))
-
+                }
             }
         }
-
     }
     private fun setTakeImage(
         view: View,
