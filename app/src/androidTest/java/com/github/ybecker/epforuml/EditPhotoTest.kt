@@ -31,6 +31,10 @@ class EditPhotoTest {
         val scenario = ActivityScenario.launch<Activity>(intent)
 
         scenario.onActivity {
+
+            Thread.sleep(10000)
+
+        }
         onView(withId(R.id.new_question_button)).check(matches(isDisplayed()))
         onView(withId(R.id.new_question_button)).perform(click())
         onView(withId(R.id.takeImage)).check(matches(isDisplayed()))
@@ -39,8 +43,6 @@ class EditPhotoTest {
         onView(withId(R.id.image_capture_button)).perform(click())
         Thread.sleep(10000)
         intended(hasComponent(DsPhotoEditorActivity::class.java.name))
-
-    }
         Intents.release()
         scenario.close()
     }
