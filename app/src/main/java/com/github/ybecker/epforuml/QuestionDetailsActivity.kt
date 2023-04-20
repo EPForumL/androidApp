@@ -46,8 +46,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }else{
             val uri = Uri.parse(question!!.imageURI)
             //image.imageTintMode = null;
-            image.setImageURI(uri)
             image.visibility = View.VISIBLE
+            image.setImageURI(uri)
         }
         title.text = question!!.questionTitle
         updateRecycler()
