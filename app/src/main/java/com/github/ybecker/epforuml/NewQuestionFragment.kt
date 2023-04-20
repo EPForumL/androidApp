@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.sensor.CameraActivity
 
 /**
  * A simple [Fragment] subclass.
@@ -98,7 +99,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                val questionSubject = spinner.getItemAtPosition(selectedItemPosition) as String
+                val questionSubject = spinner.selectedItem.toString()
                 val course = coursesList.firstOrNull { course -> course.courseName == questionSubject }
                 if (course == null) {
                     // This should never happen, but it's better to handle it just in case
@@ -108,11 +109,12 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                     ).show()
                 } else {
                     // Add the question to the database
-                    DatabaseManager.db.addQuestion(
+                    db.addQuestion(
                         user.userId,
-                        course.courseId, questTitle.text.toString(),
+                        course.courseId,
+                        questTitle.text.toString(),
                         questBody.text.toString(),
-                        imageURI.toString()
+                        imageURI.text.toString()
                     )
                     // Navigate to the home screen
                     mainActivity.replaceFragment(HomeFragment(mainActivity))
@@ -148,11 +150,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
          questBody = view.findViewById(R.id.question_details_edittext)
          questTitle = view.findViewById(R.id.question_title_edittext)
          imageURI = view.findViewById(R.id.image_uri)
-
-        println(questBody)
-
-
-
 
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))

@@ -67,6 +67,16 @@ class MockDatabaseTest {
         }.join()
 
     }
+    @Test
+    fun addAndGetChatWith(){
+        db.addChatsWith("0", "0")
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("TestUser").get(),equalTo("0"))
+    }
 
     @Test
     fun getCourseByIdTest(){
@@ -74,6 +84,14 @@ class MockDatabaseTest {
             assertThat(it?.courseId, equalTo(sdp.courseId))
             assertThat(it?.courseName, equalTo(sdp.courseName))
         }.join()
+    }
+
+    @Test
+    fun retrieveRegisteredUsers(){
+        val user2 = db.addUser("user2", "TestUser2", "testEmail").get()
+        val testUser = db.addUser("IDID", "TestUser", "testEmail").get()
+
+        assertThat( db.registeredUsers().get().size, equalTo(6))
     }
 
     @Test
@@ -260,4 +278,27 @@ class MockDatabaseTest {
             assertThat(it?.questionText, equalTo(""))
         }
     }
+
+    @Test
+    fun addAndGetNewQuestionEndorsement(){
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addQuestionEndorsement(user.userId, question1.questionId)
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewAnswerEndorsement(){
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addAnswerEndorsement(user.userId, answer1.answerId)
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+    }
+
 }

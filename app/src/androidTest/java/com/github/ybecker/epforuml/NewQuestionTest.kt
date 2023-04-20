@@ -97,22 +97,15 @@ class NewQuestionTest {
         // Click on the submit button
         onView(withId(R.id.btn_submit)).perform(click())
 
-
-        //Check if the question is added to the database
-        val dataBaseCourse= DatabaseManager.db.getCourseById("course11")
-
-        val courseQuestions = db.getCourseQuestions("Database")
-        val addedQuestion = courseQuestions.thenAccept{
-            it.filter { quest -> quest.questionText == questBody }
-        }
-
-        assertNotNull(addedQuestion)
-
-        //check if the question is displayed in the home page
+        val dataBaseCourse= db.getCourseById("course11").get()
+        db.getCourseQuestions(dataBaseCourse!!.courseId).thenAccept{
+            val addedQuestion = it.filter { quest -> quest.questionText == questBody }
+            assertNotNull(addedQuestion)
+        }.join()
 
         //Return home
 
-        Thread.sleep(2000)
+        //Thread.sleep(2000)
 
         //onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
         scenario.close()
@@ -126,8 +119,6 @@ class NewQuestionTest {
         // Launch the fragment
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
-
-        Thread.sleep(2000)
         onView(withId(R.id.guestButton)).perform(click())
 
         // Wait for the view to be loaded
@@ -139,8 +130,6 @@ class NewQuestionTest {
 
         // Click on the submit button
         onView(withId(R.id.new_question_button)).perform(click())
-
-        Thread.sleep(2000)
 
         // Check that the new fragment is displayed
         onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
