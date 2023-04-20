@@ -32,7 +32,7 @@ class EditPhotoTest {
 
         scenario.onActivity {
 
-            Thread.sleep(10000)
+            Thread.sleep(1000)
 
         }
         onView(withId(R.id.new_question_button)).check(matches(isDisplayed()))
@@ -41,7 +41,7 @@ class EditPhotoTest {
         onView(withId(R.id.takeImage)).perform(click())
         onView(withId(R.id.image_capture_button)).check(matches(isDisplayed()))
         onView(withId(R.id.image_capture_button)).perform(click())
-        Thread.sleep(10000)
+        Thread.sleep(2000)
         intended(hasComponent(DsPhotoEditorActivity::class.java.name))
         Intents.release()
         scenario.close()
