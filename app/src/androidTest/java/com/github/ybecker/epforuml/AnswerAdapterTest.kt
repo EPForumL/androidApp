@@ -65,6 +65,11 @@ class AnswerAdapterTest {
         }
     }
 
+    @Test
+    fun endorseAQuestionStay(){
+
+    }
+
     @After
     fun closing() {
         scenario.close()
