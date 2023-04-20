@@ -27,7 +27,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageURI.setText(uri.toString())
+            imageURI.text = uri.toString()
         }
 
     override fun onCreateView(
@@ -91,32 +91,25 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
         else {
             val selectedItemPosition = spinner.selectedItemPosition
-            if (selectedItemPosition == Spinner.INVALID_POSITION) {
-                // No item is selected from the spinner
-                Toast.makeText(
-                    requireContext(), "Please select a course",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else {
+            if (selectedItemPosition != Spinner.INVALID_POSITION) {
+
+
                 val questionSubject = spinner.getItemAtPosition(selectedItemPosition) as String
                 val course = coursesList.firstOrNull { course -> course.courseName == questionSubject }
-                if (course == null) {
-                    // This should never happen, but it's better to handle it just in case
-                    Toast.makeText(
-                        requireContext(), "Invalid course selected",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
+
+
                     // Add the question to the database
+                if (course != null) {
                     DatabaseManager.db.addQuestion(
                         user.userId,
                         course.courseId, questTitle.text.toString(),
                         questBody.text.toString(),
                         imageURI.toString()
                     )
+                }
                     // Navigate to the home screen
                     mainActivity.replaceFragment(HomeFragment(mainActivity))
-                }
+
             }
         }
 
