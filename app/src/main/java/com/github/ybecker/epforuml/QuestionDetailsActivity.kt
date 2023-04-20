@@ -44,9 +44,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
         if(question!!.imageURI == ""){
             image.visibility = View.INVISIBLE
         }else{
-            val url = question!!.imageURI.replace("\"" ,"")
-            val uri = Uri.parse(url)
-            image.imageTintMode = null;
+            val uri = Uri.parse(question!!.imageURI)
+            //image.imageTintMode = null;
             image.setImageURI(uri)
             image.visibility = View.VISIBLE
         }
