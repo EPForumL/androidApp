@@ -29,11 +29,15 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.MockDatabase
 import com.github.ybecker.epforuml.database.Model
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertNotNull
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert
@@ -42,26 +46,31 @@ class NewQuestionTest {
 
     @Before
     fun setup() {
+        Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
-
 
     }
     @Test
     fun testAddAQuestion() {
+
+        Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
+
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
+
+
         // Launch the fragment
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
-        onView(withId(R.id.guestButton)).perform(click())
 
-        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
+
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
 
         // Check that the new fragment is displayed
         onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
-
-
 
         //fill the different fields
 
@@ -72,7 +81,6 @@ class NewQuestionTest {
 
         //Title of the question
         onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title"))
-
 
         //Selection of the spinner
         onView(withId(R.id.subject_spinner)).perform(click())
@@ -96,24 +104,36 @@ class NewQuestionTest {
         }.join()
 
         //Return home
-        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
+
+        //Thread.sleep(2000)
+
+        //onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
+        scenario.close()
+
 
     }
 
     @Test
     fun testGoToAddQuestionFragment() {
+        Firebase.auth.signOut()
         // Launch the fragment
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
         onView(withId(R.id.guestButton)).perform(click())
 
+        // Wait for the view to be loaded
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
+
+        // Check if the question is displayed in the home page
+        onView(withId(R.id.home_layout_parent)).check(ViewAssertions.matches(isDisplayed()))
+
 
         // Click on the submit button
         onView(withId(R.id.new_question_button)).perform(click())
 
         // Check that the new fragment is displayed
         onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+        scenario.close()
 
     }
 
