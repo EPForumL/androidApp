@@ -83,7 +83,7 @@ class MyQuestionsFragment : Fragment() {
         }
         else {
         val userId = user?.userId
-            if (userId != null){
+        if (userId != null){
 
             db.getUserQuestions(userId).thenAccept { questions ->
                 //myQuestionsMap = mutableMapOf<Model.Course, MutableList<Model.Question>>()

@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.sensor.CameraActivity
 
 /**
  * A simple [Fragment] subclass.
