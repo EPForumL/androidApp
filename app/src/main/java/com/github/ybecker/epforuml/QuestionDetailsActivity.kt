@@ -44,9 +44,11 @@ class QuestionDetailsActivity : AppCompatActivity() {
         if(question!!.imageURI == ""){
             image.visibility = View.INVISIBLE
         }else{
-            val uri = Uri.parse(question!!.imageURI)
-            image.visibility = View.VISIBLE
+            val url = question!!.imageURI.replace("\"" ,"")
+            val uri = Uri.parse(url)
+            image.imageTintMode = null;
             image.setImageURI(uri)
+            image.visibility = View.VISIBLE
         }
         title.text = question!!.questionTitle
         updateRecycler()

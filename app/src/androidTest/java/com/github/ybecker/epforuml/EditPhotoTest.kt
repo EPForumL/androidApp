@@ -21,7 +21,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class EditPhotoTest {
 
-    /*@Test
     fun displaysEditorOnCorrectWorkflow(){
         Intents.init()
         val intent = Intent(
@@ -36,17 +35,11 @@ class EditPhotoTest {
         onView(withId(R.id.takeImage)).perform(click())
         onView(withId(R.id.image_capture_button)).check(matches(isDisplayed()))
         onView(withId(R.id.image_capture_button)).perform(click())
-        var done = false
-        while(!done){
-            try{
-                intended(hasComponent(DsPhotoEditorActivity::class.java.name))
-                done = true
-            } catch (e: AssertionError){
-            }
-        }
+        Thread.sleep(10000)
+        intended(hasComponent(DsPhotoEditorActivity::class.java.name))
         Intents.release()
         scenario.close()
-    }*/
+    }
 
     @Test
     fun failsWithIncorrectUri(){
@@ -55,7 +48,6 @@ class EditPhotoTest {
             ApplicationProvider.getApplicationContext(),
             EditPhotoActivity::class.java
         )
-
         intent.putExtra("uri", "INVALIDURI")
 
         val scenario = ActivityScenario.launch<Activity>(intent)
