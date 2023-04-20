@@ -96,6 +96,7 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
 
+        db.addChatsWith(romain.userId, theo.userId)
         db.addChat(romain.userId, theo.userId ,"Hi Theo this is Romain!")
     }
 
@@ -110,8 +111,9 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun addAndGetChat() {
         val chat2 = db.addChat("1","0", "Hi theo")
+        val chat3 = db.addChat("0","1", "Hi theo")
         db.getChat("1","0").thenAccept {
-            assertThat(it.size, equalTo(2))
+            assertThat(it.size, equalTo(3))
         }.join()
     }
 
@@ -334,6 +336,21 @@ class FirebaseDatabaseAdapterTest {
         db.getUserById(newUserId).thenAccept {
             assertNull(it)
         }.join()
+    }
+
+    @Test
+    fun addAndGetChatWith(){
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("Romain").get(),equalTo("0"))
+    }
+
+    @Test
+    fun registeredUsers(){
+        assertThat(db.registeredUsers().get().size, equalTo(2))
     }
 
     @Test

@@ -13,7 +13,6 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.MainActivity
-import com.github.ybecker.epforuml.authentication.LoginActivity
 import org.junit.Test
 import org.junit.runner.RunWith
 

@@ -31,6 +31,12 @@
         android:text="Answer"
         android:textSize="19sp"
         android:id="@+id/qdetails_answer_text"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chatWithUser"
+        android:text="@string/chat"
+        />
 
     <LinearLayout
         android:id="@+id/buttons_layout"

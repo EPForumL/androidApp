@@ -87,7 +87,10 @@ class MockDatabase : Database() {
 
     }
     override fun getChat(userId1: String, userId2:String): CompletableFuture<List<Chat>> {
-        return CompletableFuture.completedFuture(chats.filterValues { it.senderId == userId1 && it.receiverId == userId2}.values.toList().reversed())
+        return CompletableFuture.completedFuture(chats.filterValues {
+            (it.senderId == userId1 && it.receiverId == userId2)
+                ||(it.senderId == userId2 && it.receiverId == userId1)
+        }.values.toList().reversed())
     }
 
     override fun getQuestionEndorsements(questionId: String): CompletableFuture<List<String>> {
@@ -103,8 +106,26 @@ class MockDatabase : Database() {
         val chatId = "chats${chats.size + 1}"
         val chat = Chat(chatId, LocalDateTime.now().toString(),receiverId,senderId,text)
         chats[chatId] = chat
-
         return chat
+    }
+
+    override fun addChatsWith(senderId: String, receiverId: String): String {
+
+        if(!users[senderId]?.chatsWith?.contains(receiverId)!!){
+            users[senderId]?.chatsWith = users[senderId]?.chatsWith?.plus(receiverId) ?: listOf(receiverId)
+        }
+        if(!users[receiverId]?.chatsWith?.contains(senderId)!!){
+            users[receiverId]?.chatsWith = users[receiverId]?.chatsWith?.plus(senderId) ?: listOf(senderId)
+        }
+        return ""
+    }
+
+    override fun getUserId(userName: String): CompletableFuture<String> {
+        return CompletableFuture.completedFuture(users.filterValues { it.username== userName}.values.toList().reversed()[0].userId)
+    }
+
+    override fun getChatsWith(userID: String): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(users[userID]!!.chatsWith)
     }
 
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
@@ -228,6 +249,10 @@ class MockDatabase : Database() {
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         return CompletableFuture.completedFuture(courses.values.toList())
+    }
+
+    override fun registeredUsers(): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(users.values.toList().map { u -> u.username })
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> {
