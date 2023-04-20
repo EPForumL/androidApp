@@ -1,7 +1,10 @@
 package com.github.ybecker.epforuml
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.test.core.app.ActivityScenario
@@ -26,7 +29,16 @@ class CameraActivityTest {
 
     @Before
     fun setUp() {
-        scenario = ActivityScenario.launch(CameraActivity::class.java)
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            MainActivity::class.java
+        )
+        intent.putExtra("fragment", "NewQuestionFragment")
+
+        scenario = ActivityScenario.launch(intent)
+        scenario.onActivity {
+            it.findViewById<Button>(R.id.takeImage).performClick()
+        }
         val permissions = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
