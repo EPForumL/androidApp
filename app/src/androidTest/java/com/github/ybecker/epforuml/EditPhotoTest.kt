@@ -21,6 +21,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class EditPhotoTest {
 
+    @Test
     fun displaysEditorOnCorrectWorkflow(){
         Intents.init()
         val intent = Intent(
