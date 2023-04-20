@@ -56,7 +56,7 @@ class FirebaseDatabaseAdapterTest {
         //local tests works on the emulator but the CI fails
         // so with the try-catch it work but on the real database...
         try{
-            database.useEmulator("10.0.2.2", 9000)
+            //database.useEmulator("10.0.2.2", 9000)
         }
         catch (r : IllegalStateException){ }
 
@@ -96,6 +96,7 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
 
+        db.addChatsWith(romain.userId, theo.userId)
         db.addChat(romain.userId, theo.userId ,"Hi Theo this is Romain!")
     }
 
@@ -110,8 +111,9 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun addAndGetChat() {
         val chat2 = db.addChat("1","0", "Hi theo")
+        val chat3 = db.addChat("0","1", "Hi theo")
         db.getChat("1","0").thenAccept {
-            assertThat(it.size, equalTo(2))
+            assertThat(it.size, equalTo(3))
         }.join()
     }
 
@@ -337,6 +339,21 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
+    fun addAndGetChatWith(){
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("Romain").get(),equalTo("0"))
+    }
+
+    @Test
+    fun registeredUsers(){
+        assertThat(db.registeredUsers().get().size, equalTo(2))
+    }
+
+    @Test
     fun getMalformedQuestionIsNull(){
         val dbRef = database.reference
         val newQuestionId = "test"
@@ -415,6 +432,28 @@ class FirebaseDatabaseAdapterTest {
         val newQuestion = db.addQuestion(romain.userId, question1.questionId, "title", null, "URI")
         db.getQuestionById(newQuestion.questionId).thenAccept {
             assertThat(it?.questionText, equalTo(""))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewQuestionEndorsement(){
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addQuestionEndorsement(romain.userId, question1.questionId)
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewAnswerEndorsement(){
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addAnswerEndorsement(romain.userId, answer1.answerId)
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(romain.userId)))
         }.join()
     }
 
