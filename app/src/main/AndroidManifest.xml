@@ -46,8 +46,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        tools:targetApi="31"
-        android:largeHeap="true">
 
         <service
             android:name=".notifications.RemoteNotificationService"
