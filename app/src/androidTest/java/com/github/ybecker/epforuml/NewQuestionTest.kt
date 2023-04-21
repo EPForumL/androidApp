@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoActivityResumedException
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -13,6 +12,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity
 import com.dsphotoeditor.sdk.utils.DsPhotoEditorConstants
 import android.net.Uri
+import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.intent.Intents
 import com.github.ybecker.epforuml.authentication.LoginActivity
@@ -39,6 +39,7 @@ import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertNotNull
+import kotlinx.coroutines.android.awaitFrame
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert
 @RunWith(AndroidJUnit4::class)
@@ -48,29 +49,30 @@ class NewQuestionTest {
     fun setup() {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
-
     }
+
     @Test
     fun testAddAQuestion() {
 
-        Firebase.auth.signOut()
-        DatabaseManager.useMockDatabase()
+        // Launch the fragment
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
 
         val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user
 
 
-        // Launch the fragment
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
+        onView(withId(R.id.guestButton)).perform(click())
 
-
+        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
 
         // Check that the new fragment is displayed
         onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+
+
 
         //fill the different fields
 
@@ -82,14 +84,13 @@ class NewQuestionTest {
         //Title of the question
         onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title"))
 
+
         //Selection of the spinner
         onView(withId(R.id.subject_spinner)).perform(click())
         val secondItem = onData(anything()).atPosition(1)
         secondItem.perform(click())
 
-
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("Database")))
-
 
         // Scroll to the end of the page
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
@@ -103,13 +104,11 @@ class NewQuestionTest {
             assertNotNull(addedQuestion)
         }.join()
 
+
+        // The problem here seem to be that now as we need to send notification the methode is slow
+        // and thus the home layout is not instantaneous which lead to an error
         //Return home
-
-        //Thread.sleep(2000)
-
         //onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
-        scenario.close()
-
 
     }
 

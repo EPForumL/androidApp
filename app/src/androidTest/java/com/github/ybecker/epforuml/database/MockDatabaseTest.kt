@@ -3,17 +3,19 @@ package com.github.ybecker.epforuml.database
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.messaging.FirebaseMessaging
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
 import java.time.LocalDateTime
+import java.util.concurrent.CompletableFuture
 
 class MockDatabaseTest {
 
     private lateinit var db: Database
-    private var swEng = Course("course0","Sweng", emptyList())
-    private var sdp = Course("course1","SDP", emptyList())
+    private var swEng = Course("course0","Sweng", emptyList(), emptyList())
+    private var sdp = Course("course1","SDP", emptyList(), emptyList())
     private lateinit var user: User
     private lateinit var nullUser: User
     private lateinit var question1: Question
@@ -267,6 +269,7 @@ class MockDatabaseTest {
 
     @Test
     fun addNewObjectWithTolerateNullArgsTest(){
+
         val newAnswer = db.addAnswer(user.userId, question1.questionId, null)
         db.getAnswerById(newAnswer.answerId).thenAccept {
             assertThat(it?.answerText, equalTo(""))
@@ -297,6 +300,94 @@ class MockDatabaseTest {
         db.addAnswerEndorsement(user.userId, answer1.answerId)
         db.getAnswerEndorsements(answer1.answerId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+    }
+
+    @Test
+    fun removeAnswerEndorsementTest(){
+
+        db.addAnswerEndorsement(user.userId, answer1.answerId)
+
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+        db.removeAnswerEndorsement(user.userId, answer1.answerId)
+
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
+
+    @Test
+    fun removeQuestionEndorsementTest(){
+
+        db.addQuestionEndorsement(user.userId, question1.questionId)
+
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+        db.removeQuestionEndorsement(user.userId, question1.questionId)
+
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
+
+    @Test
+    fun addNotificationTest(){
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
+        db.addNotification(user.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+    }
+
+    @Test
+    fun getNotificationUserTest(){
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
+        db.addNotification(user.userId, sdp.courseId).join()
+        db.addNotification(nullUser.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId, nullUser.userId)))
+        }.join()
+    }
+
+    @Test
+    fun getNotificationTokenTest(){
+        val futureToken = CompletableFuture<String>()
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            futureToken.complete(it)
+        }
+        val token = futureToken.get()
+        db.addNotification(user.userId, sdp.courseId).join()
+        db.getCourseNotificationTokens(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(token)))
+        }.join()
+    }
+
+    @Test
+    fun removeNotification(){
+        db.addNotification(user.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+        db.removeNotification(user.userId, sdp.courseId)
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
         }.join()
     }
 

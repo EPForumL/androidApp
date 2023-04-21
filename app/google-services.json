@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1043962004253-2lqf9qn9kjqifupqmvq71kfgq85ebej9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.ybecker.epforuml",
+            "certificate_hash": "d9c2e34bbec856ff84b2878df629e6c238482941"
+          }
+        },
+        {
           "client_id": "1043962004253-7fkk9jho4fdc50jlrt22hpj9evip2uc9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
