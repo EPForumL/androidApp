@@ -18,6 +18,12 @@ abstract class Database {
     abstract fun availableCourses(): CompletableFuture<List<Course>>
 
     /**
+     * Returns a list of all registered user in the current database.
+     *
+     * @return a list of every registered user
+     */
+    abstract fun registeredUsers(): CompletableFuture<List<String>>
+    /**
      * Retrieves a list of questions for a given course.
      *
      * @param course the course for which to retrieve questions
@@ -110,9 +116,18 @@ abstract class Database {
      *
      * @param userId the id of the user to add
      * @param username the name of the user to add
+     * @param email the email of the user to add
      * @return the user that was added in database
      */
     abstract fun addUser(userId:String, username:String, email:String): CompletableFuture<User>
+
+    /**
+     * Adds a user to the database.
+     *
+     * @param user the user to add
+     * @return the user that was added in database
+     */
+    abstract fun addUser(user: User): CompletableFuture<User>
 
     /**
      * Adds an endorsement to a question
@@ -263,6 +278,40 @@ abstract class Database {
      * @param date time of the chat
      * @return the question that was posted in database
      */
-    abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
+    abstract fun addChat(senderId:String,  receiverId:String,  text: String?) : Chat
 
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param senderId the user that sent the chat
+     * @param receiverId user that will receive the chat
+     * @return a string
+     */
+    abstract fun addChatsWith(senderId: String, receiverId: String): String
+
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param userName the name of the useer
+     * @return the user's ID
+     */
+    abstract fun getUserId(userName: String): CompletableFuture<String>
+
+    /**
+     * Gets list of users the hist chatted with
+     *
+     * @param userID the id of the useer
+     * @return id list of all users he chats with
+     */
+    abstract fun getChatsWith(userID: String): CompletableFuture<List<String>>
+
+    /**
+     * Sets user's connected attribute to true and adds a listener to it to detect disconnection.
+     */
+    abstract fun setUserPresence(userId: String)
+
+    /**
+     * Remove a connection from the user's connection list
+     */
+    abstract fun removeUserConnection(userId: String)
 }

@@ -99,9 +99,11 @@ class Model {
         var questions: List<String> = emptyList(),
         var answers: List<String> = emptyList(),
         var subscriptions: List<String> = emptyList(),
+        var chatsWith: List<String> = emptyList(),
         var profilePic: String = "",
         var userInfo: String = "",
         var status: String = "",
+        val connections: ArrayList<Boolean> = ArrayList()
         ) {
         constructor() : this(
             "",
@@ -110,9 +112,11 @@ class Model {
             emptyList(),
             emptyList(),
             emptyList(),
+            emptyList(),
             "",
             "",
-            ""
+            "",
+            ArrayList()
         )
     }
 

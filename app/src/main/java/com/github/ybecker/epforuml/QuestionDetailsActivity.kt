@@ -28,7 +28,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         val button : Button = findViewById(R.id.back_to_forum_button)
         button.setOnClickListener{ // Create an intent to return to the previous fragment
-            startActivity(Intent(applicationContext, MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         }
 
         answerRecyclerView = findViewById(R.id.answers_recycler)
@@ -107,7 +107,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {
             question = it
-            answerRecyclerView.adapter = AnswerAdapter(question!!.questionId, question!!.questionText, question!!.answers)
+            answerRecyclerView.adapter = AnswerAdapter(question!!.questionId, question!!.questionText, question!!.answers, this)
         }
 
     }

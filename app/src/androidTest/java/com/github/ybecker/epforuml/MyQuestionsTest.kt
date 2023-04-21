@@ -22,8 +22,8 @@ class MyQuestionsTest {
 //test that the "You are not connected" message is displayed when the user is not connected
     @Test
     fun notConnectedMessageDisplayed() {
-        DatabaseManager.useMockDatabase()
         Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
         DatabaseManager.user = null
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
@@ -42,8 +42,9 @@ class MyQuestionsTest {
 //test that the "No question posted" message is displayed when the user is connected but has no question
     @Test
     fun connectedNoQuestMessageDisplayed() {
-        DatabaseManager.useMockDatabase()
         Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
+
         val user = DatabaseManager.db.addUser("noQuest", "NoQuest",  "").get()
         DatabaseManager.user = user
 
@@ -66,6 +67,7 @@ class MyQuestionsTest {
 
     @Test
     fun connectedQuestMessageDisplayed() {
+        Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
         Firebase.auth.signOut()
         val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()

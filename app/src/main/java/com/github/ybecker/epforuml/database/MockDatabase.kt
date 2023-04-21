@@ -90,7 +90,10 @@ class MockDatabase : Database() {
 
     }
     override fun getChat(userId1: String, userId2:String): CompletableFuture<List<Chat>> {
-        return CompletableFuture.completedFuture(chats.filterValues { it.senderId == userId1 && it.receiverId == userId2}.values.toList().reversed())
+        return CompletableFuture.completedFuture(chats.filterValues {
+            (it.senderId == userId1 && it.receiverId == userId2)
+                ||(it.senderId == userId2 && it.receiverId == userId1)
+        }.values.toList().reversed())
     }
 
     override fun getQuestionEndorsements(questionId: String): CompletableFuture<List<String>> {
@@ -108,6 +111,25 @@ class MockDatabase : Database() {
         chats[chatId] = chat
 
         return chat
+    }
+
+    override fun addChatsWith(senderId: String, receiverId: String): String {
+
+        if(!users[senderId]?.chatsWith?.contains(receiverId)!!){
+            users[senderId]?.chatsWith = users[senderId]?.chatsWith?.plus(receiverId) ?: listOf(receiverId)
+        }
+        if(!users[receiverId]?.chatsWith?.contains(senderId)!!){
+            users[receiverId]?.chatsWith = users[receiverId]?.chatsWith?.plus(senderId) ?: listOf(senderId)
+        }
+        return ""
+    }
+
+    override fun getUserId(userName: String): CompletableFuture<String> {
+        return CompletableFuture.completedFuture(users.filterValues { it.username== userName}.values.toList().reversed()[0].userId)
+    }
+
+    override fun getChatsWith(userID: String): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(users[userID]!!.chatsWith)
     }
 
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
@@ -159,12 +181,15 @@ class MockDatabase : Database() {
     }
 
     override fun addUser(userId:String, username: String, email: String): CompletableFuture<User> {
-        var user = users[userId]
-        if(user != null){
-            return CompletableFuture.completedFuture(user)
+        return addUser(User(userId, username, email))
+    }
+
+    override fun addUser(user: User): CompletableFuture<User> {
+        val dbUser = users[user.userId]
+        if(dbUser != null){
+            return CompletableFuture.completedFuture(dbUser)
         }
-        user = User(userId , username, email)
-        users[userId] = user
+        users[user.userId] = user
         return CompletableFuture.completedFuture(user)
     }
 
@@ -264,6 +289,10 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(courses.values.toList())
     }
 
+    override fun registeredUsers(): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(users.values.toList().map { u -> u.username })
+    }
+
     override fun getQuestionById(id: String): CompletableFuture<Question?> {
         return CompletableFuture.completedFuture(questions.get(id))
     }
@@ -316,5 +345,13 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(list.map { it.get(0) })
     }
 
+    override fun setUserPresence(userId: String) {
+        users[userId]?.connections?.add(true)
+    }
 
+    override fun removeUserConnection(userId: String) {
+        if (users[userId]?.connections?.size!! > 0) {
+            users[userId]?.connections?.removeAt(0)
+        }
+    }
 }

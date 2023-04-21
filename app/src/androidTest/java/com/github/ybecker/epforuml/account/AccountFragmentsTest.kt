@@ -9,6 +9,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.firebase.ui.auth.KickoffActivity
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
@@ -60,6 +61,7 @@ class AccountFragmentsTest {
 
     @Test
     fun checkAccountFragmentLayout() {
+        DatabaseManager.useMockDatabase()
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         onView(ViewMatchers.withContentDescription(R.string.open))
@@ -77,8 +79,11 @@ class AccountFragmentsTest {
 
     @Test
     fun checkSignOutRemovesCurrentUserAndGoesToGuestFragment() {
+        DatabaseManager.useMockDatabase()
         scenario.onActivity { MockAuthenticator(it).signIn() }
         assertTrue(DatabaseManager.user != null)
+
+        Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
@@ -93,8 +98,11 @@ class AccountFragmentsTest {
 
     @Test
     fun checkDeleteAccountDeletesUserAndGoesToGuestFragment() {
+        DatabaseManager.useMockDatabase()
         scenario.onActivity { MockAuthenticator(it).signIn() }
         assertTrue(DatabaseManager.user != null)
+
+        Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())

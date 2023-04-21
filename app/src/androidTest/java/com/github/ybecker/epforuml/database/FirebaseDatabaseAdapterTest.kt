@@ -108,6 +108,7 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
         romain = db.addSubscription(romain.userId, swEng.courseId).get() ?: User("", "error", "")
 
+        db.addChatsWith(romain.userId, theo.userId)
         db.addChat(romain.userId, theo.userId ,"Hi Theo this is Romain!")
     }
 
@@ -122,8 +123,9 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun addAndGetChat() {
         val chat2 = db.addChat("1","0", "Hi theo")
+        val chat3 = db.addChat("0","1", "Hi theo")
         db.getChat("1","0").thenAccept {
-            assertThat(it.size, equalTo(2))
+            assertThat(it.size, equalTo(3))
         }.join()
     }
 
@@ -349,6 +351,21 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
+    fun addAndGetChatWith(){
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("Romain").get(),equalTo("0"))
+    }
+
+    @Test
+    fun registeredUsers(){
+        assertThat(db.registeredUsers().get().size, equalTo(2))
+    }
+
+    @Test
     fun getMalformedQuestionIsNull(){
         val dbRef = database.reference
         val newQuestionId = "test"
@@ -542,4 +559,26 @@ class FirebaseDatabaseAdapterTest {
         }.join()
     }
 
+
+    @Test
+    fun setUserPresenceAddsConnection() {
+        db.addUser("0", "test", "testEmail").thenAccept { user ->
+            db.setUserPresence(user.userId)
+            db.getUserById(user.userId).thenAccept {
+                assertTrue(it!!.connections.size == 1)
+            }
+        }
+    }
+
+    @Test
+    fun removeUserConnectionRemovesAConnection() {
+        db.addUser("0", "test", "testEmail").thenAccept { user ->
+            db.setUserPresence(user.userId)
+            db.getUserById(user.userId).thenAccept {
+                assertTrue(it!!.connections.size == 1)
+                db.removeUserConnection(it.userId)
+                assertTrue(it.connections.size == 0)
+            }
+        }
+    }
 }

@@ -69,6 +69,16 @@ class MockDatabaseTest {
         }.join()
 
     }
+    @Test
+    fun addAndGetChatWith(){
+        db.addChatsWith("0", "0")
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("TestUser").get(),equalTo("0"))
+    }
 
     @Test
     fun getCourseByIdTest(){
@@ -76,6 +86,14 @@ class MockDatabaseTest {
             assertThat(it?.courseId, equalTo(sdp.courseId))
             assertThat(it?.courseName, equalTo(sdp.courseName))
         }.join()
+    }
+
+    @Test
+    fun retrieveRegisteredUsers(){
+        val user2 = db.addUser("user2", "TestUser2", "testEmail").get()
+        val testUser = db.addUser("IDID", "TestUser", "testEmail").get()
+
+        assertThat( db.registeredUsers().get().size, equalTo(6))
     }
 
     @Test
@@ -373,4 +391,23 @@ class MockDatabaseTest {
         }.join()
     }
 
+    @Test
+    fun setUserPresenceAddsConnection() {
+        db.addUser("0", "test", "testEmail").join()
+        db.setUserPresence("0")
+        db.getUserById("0").thenAccept {
+            assertTrue(it!!.connections.size == 1)
+        }
+    }
+
+    @Test
+    fun removeUserConnectionRemovesAConnection() {
+        db.addUser("0", "test", "testEmail").join()
+        db.setUserPresence("0")
+        db.getUserById("0").thenAccept {
+            assertTrue(it!!.connections.size == 1)
+            db.removeUserConnection("0")
+            assertTrue(it.connections.size == 0)
+        }
+    }
 }
