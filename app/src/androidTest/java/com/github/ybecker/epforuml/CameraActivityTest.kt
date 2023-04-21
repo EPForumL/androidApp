@@ -34,9 +34,6 @@ class CameraActivityTest {
             ApplicationProvider.getApplicationContext(),
             MainActivity::class.java
         )
-
-        ActivityCompat.setPermissionCompatDelegate(
-        )
         intent.putExtra("fragment", "NewQuestionFragment")
 
         scenario = ActivityScenario.launch(intent)
