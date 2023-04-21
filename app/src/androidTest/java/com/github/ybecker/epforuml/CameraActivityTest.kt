@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.widget.Button
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.PermissionCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -33,6 +34,9 @@ class CameraActivityTest {
             ApplicationProvider.getApplicationContext(),
             MainActivity::class.java
         )
+
+        ActivityCompat.setPermissionCompatDelegate(
+        )
         intent.putExtra("fragment", "NewQuestionFragment")
 
         scenario = ActivityScenario.launch(intent)
@@ -50,8 +54,16 @@ class CameraActivityTest {
                     permissions,
                     0
                 )
+
+                Thread.sleep(2000) // Wait for permissions dialog to show up
+                try{
+                    onView(withText("Only")).perform(click())
+                    Thread.sleep(2000) // Wait for permissions dialog to show up
+                    onView(withText("Only")).perform(click())
+                }catch (e: Exception){
+
+                }
             }
-            Thread.sleep(2000) // Wait for permissions dialog to show up
             onView(withText(android.R.string.ok)).perform(click())
 
         }
