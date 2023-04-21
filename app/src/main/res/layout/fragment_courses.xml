@@ -14,7 +14,7 @@
         android:layout_gravity="center_horizontal"
         android:textColor="@color/textColor"
         android:text="Courses"
-        android:textSize="40sp"
+        android:textSize="45sp"
         android:textStyle="bold" />
 
     <TextView
@@ -25,18 +25,6 @@
         android:text="You are not connected"
         android:textColor="@color/red"
         android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/manager_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/textColor"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="75dp"
-        android:text="Subscribtion managment : "
-        android:textSize="15sp"
-        android:textStyle="bold" />
-
 
     <ScrollView
         android:layout_width="match_parent"

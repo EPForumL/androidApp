@@ -20,6 +20,12 @@ abstract class Database {
     abstract fun availableCourses(): CompletableFuture<List<Course>>
 
     /**
+     * Returns a list of all registered user in the current database.
+     *
+     * @return a list of every registered user
+     */
+    abstract fun registeredUsers(): CompletableFuture<List<String>>
+    /**
      * Retrieves a list of questions for a given course.
      *
      * @param course the course for which to retrieve questions
@@ -39,6 +45,7 @@ abstract class Database {
     /**
      * Returns a list of every questions asked by a user.
      *
+     * @param user the user from which to get the questions list
      * @return a list of every questions asked by a user
      */
     abstract fun getUserQuestions(userId: String): CompletableFuture<List<Question>>
@@ -46,6 +53,7 @@ abstract class Database {
     /**
      * Returns a list of every answers asked by a user.
      *
+     * @param user the user from which to get the answers list
      * @return a list of every answers asked by a user
      */
     abstract fun getUserAnswers(userId: String): CompletableFuture<List<Answer>>
@@ -53,9 +61,26 @@ abstract class Database {
     /**
      * Returns a list of every courses the user is subscribed to.
      *
+     * @param user the user from which to get the subscription list
      * @return a list of every courses the user is subscribed to
      */
     abstract fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>>
+
+    /**
+     * Returns a list of token for every user that subscribed to notification for the given course.
+     *
+     * @param course the course from which to get the notification list
+     * @return a list of token for every user that subscribed to notification for the given course
+     */
+    abstract fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>>
+
+    /**
+     * Returns a list of userId of every user that subscribed to notification for the given course.
+     *
+     * @param course the course from which to get the notification list
+     * @return a list of userId of every user that subscribed to notification for the given course
+     */
+    abstract fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>>
 
     /**
      * Posts a new course in the forum
@@ -93,9 +118,34 @@ abstract class Database {
      *
      * @param userId the id of the user to add
      * @param username the name of the user to add
+     * @param email the email of the user to add
      * @return the user that was added in database
      */
     abstract fun addUser(userId:String, username:String, email:String): CompletableFuture<User>
+
+    /**
+     * Adds a user to the database.
+     *
+     * @param user the user to add
+     * @return the user that was added in database
+     */
+    abstract fun addUser(user: User): CompletableFuture<User>
+
+    /**
+     * Adds an endorsement to a question
+     *
+     * @param userId the id of the user that endorsed
+     * @param questionId the id of the question that is endorsed
+     */
+    abstract fun addQuestionEndorsement(userId:String, questionId: String)
+
+    /**
+     * Adds an endorsement to a question
+     *
+     * @param userId the id of the user that endorsed
+     * @param answerId the id of the question that is endorsed
+     */
+    abstract fun addAnswerEndorsement(userId:String, answerId: String)
 
     /**
      * Removes a user to the database.
@@ -121,12 +171,46 @@ abstract class Database {
     abstract fun addSubscription(userId: String, courseId: String): CompletableFuture<User?>
 
     /**
-     * REmoves a subscription of the given user for a specified course.
+     * Removes a subscription of the given user for a specified course.
      *
      * @param user the user that want to subscribe
      * @param course the course to which the user is subscribing
      */
     abstract fun removeSubscription(userId:String, courseId: String)
+
+
+    /**
+     * Removes an endorsement to a question
+     *
+     * @param userId the id of the user that removes his endorsement
+     * @param answerId the id of the question that lost its endorsement
+     */
+    abstract fun removeQuestionEndorsement(userId:String, questionId: String)
+
+    /**
+     * Removes an endorsement to a answer
+     *
+     * @param userId the id of the user that removes his endorsement
+     * @param answerId the id of the answer that lost its endorsement
+     */
+    abstract fun removeAnswerEndorsement(userId:String, answerId: String)
+
+    /**
+     * Adds the user in the list of the user to notify.
+     *
+     * @param user the user that want to have notification
+     * @param course the course to which the user want the notifications
+     * @return if the fuction worked correctly (it depend on FirebaseMessaging ans it may crash)
+     */
+    abstract fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean>
+
+    /**
+     * remove the user from the list of the user to notify.
+     *
+     * @param user the user that want to have notification
+     * @param course the course to which the user want the notifications
+     */
+    abstract fun removeNotification(userId:String, courseId: String)
 
     /**
      * Returns the question with the given ID.
@@ -166,9 +250,26 @@ abstract class Database {
      *
      * @param userId1 Id of the logged user
      * @param userId2 Id of the external user
-     * @returnList of all exchanged messages
+     * @return List of all exchanged messages
      */
     abstract fun getChat(userId1:String, userId2:String): CompletableFuture<List<Chat>>
+
+    /**
+     * Returns the list of all the userIds that endorsed the given question.
+     *
+     * @param questionId Id of the question from which we want the endorsements
+     * @return List the list of all the userIds that endorsed the given question
+     */
+    abstract fun getQuestionEndorsements(questionId: String): CompletableFuture<List<String>>
+
+    /**
+     * Returns the list of all the userIds that endorsed the given answer.
+     *
+     * @param answerId Id of the answer from which we want the endorsements
+     * @return List the list of all the userIds that endorsed the given answer
+     */
+    abstract fun getAnswerEndorsements(answerId: String): CompletableFuture<List<String>>
+
 
     /**
      * Posts a new question in a given course.
@@ -179,8 +280,7 @@ abstract class Database {
      * @param date time of the chat
      * @return the question that was posted in database
      */
-    abstract fun addChat( senderId:String,  receiverId:String,  text: String?) : Chat
-/*
+     
     /**
      * Gets the user's saved questions.
      *
@@ -217,4 +317,40 @@ abstract class Database {
 
      */
 
+    abstract fun addChat(senderId:String,  receiverId:String,  text: String?) : Chat
+
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param senderId the user that sent the chat
+     * @param receiverId user that will receive the chat
+     * @return a string
+     */
+    abstract fun addChatsWith(senderId: String, receiverId: String): String
+
+    /**
+     * Posts a new question in a given course.
+     *
+     * @param userName the name of the useer
+     * @return the user's ID
+     */
+    abstract fun getUserId(userName: String): CompletableFuture<String>
+
+    /**
+     * Gets list of users the hist chatted with
+     *
+     * @param userID the id of the useer
+     * @return id list of all users he chats with
+     */
+    abstract fun getChatsWith(userID: String): CompletableFuture<List<String>>
+
+    /**
+     * Sets user's connected attribute to true and adds a listener to it to detect disconnection.
+     */
+    abstract fun setUserPresence(userId: String)
+
+    /**
+     * Remove a connection from the user's connection list
+     */
+    abstract fun removeUserConnection(userId: String)
 }

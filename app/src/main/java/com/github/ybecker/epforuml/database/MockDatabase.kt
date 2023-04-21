@@ -1,8 +1,11 @@
 package com.github.ybecker.epforuml.database
 
+import android.content.ContentValues
+import android.util.Log
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -18,29 +21,29 @@ class MockDatabase : Database() {
     private val chats = hashMapOf<String, Chat>()
 
     init {
-        val course1 = Course("course0","Sweng", mutableListOf())
+        val course1 = Course("course0","Sweng", mutableListOf(), emptyList())
         courses[course1.courseId] = course1
-        val course2 = Course("course1","SDP", mutableListOf())
+        val course2 = Course("course1","SDP", mutableListOf(), emptyList())
         courses[course2.courseId] = course2
-        val course3 = Course("course2","AnalyseI", mutableListOf())
+        val course3 = Course("course2","AnalyseI", mutableListOf(), emptyList())
         courses[course3.courseId] = course3
-        val course4 = Course("course3","AnalyseII", mutableListOf())
+        val course4 = Course("course3","AnalyseII", mutableListOf(), emptyList())
         courses[course4.courseId] = course4
-        val course5 = Course("course4","AnalyseIII", mutableListOf())
+        val course5 = Course("course4","AnalyseIII", mutableListOf(), emptyList())
         courses[course5.courseId] = course5
-        val course6 = Course("course5","AnalyseIV", mutableListOf())
+        val course6 = Course("course5","AnalyseIV", mutableListOf(), emptyList())
         courses[course6.courseId] = course6
-        val course7 = Course("course6","Algo", mutableListOf())
+        val course7 = Course("course6","Algo", mutableListOf(), emptyList())
         courses[course7.courseId] = course7
-        val course8 = Course("course7","TOC", mutableListOf())
+        val course8 = Course("course7","TOC", mutableListOf(), emptyList())
         courses[course8.courseId] = course8
-        val course9 = Course("course8","POO", mutableListOf())
+        val course9 = Course("course8","POO", mutableListOf(), emptyList())
         courses[course9.courseId] = course9
-        val course10 = Course("course9","POS", mutableListOf())
+        val course10 = Course("course9","POS", mutableListOf(), emptyList())
         courses[course10.courseId] = course10
-        val course11 = Course("course10","OS", mutableListOf())
+        val course11 = Course("course10","OS", mutableListOf(), emptyList())
         courses[course11.courseId] = course11
-        val course12 = Course("course11","Database", mutableListOf())
+        val course12 = Course("course11","Database", mutableListOf(), emptyList())
         courses[course12.courseId] = course12
 
         val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), emptyList())
@@ -49,10 +52,10 @@ class MockDatabase : Database() {
         val question1 = Question("question1", "course1", "user1", "About ci",
                                 "How do I fix the CI ?",
             "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg",
-            mutableListOf())
+            mutableListOf(), emptyList())
         questions[question1.questionId] = question1
         val question2 = Question("question2", "course0", "user1", "About Scrum master",
-                                "What is a Scrum Master ?", "" , mutableListOf())
+                                "What is a Scrum Master ?", "" , mutableListOf(), emptyList())
 
         questions[question2.questionId] = question2
         val question3 = Question("question3", "course0", "user1", "Very long question",
@@ -60,23 +63,24 @@ class MockDatabase : Database() {
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long " +
-                    "question" ,"", mutableListOf())
+                    "question" ,"", mutableListOf(), emptyList())
         questions[question3.questionId] = question3
 
-        val answer1 = Answer("answer1", "question1", "user1", "première réponse")
+        val answer1 = Answer("answer1", "question1", "user1", "première réponse", emptyList())
         addAnswer(answer1.userId, answer1.questionId, answer1.answerText)
 
-        val answer2 = Answer("answer2", "question1", "user1", "Nan mais je suis pas d'accord")
+        val answer2 = Answer("answer2", "question1", "user1", "Nan mais je suis pas d'accord", emptyList())
         addAnswer(answer2.userId, answer2.questionId, answer2.answerText)
 
         val answer3 = Answer("answer3", "question1", "user1", "Ok alors si tu veux faire ça, " +
-                "il faut installer la VM et faire tout depuis chez toi avec le VPN")
+                "il faut installer la VM et faire tout depuis chez toi avec le VPN", emptyList()
+        )
         addAnswer(answer3.userId, answer3.questionId, answer3.answerText)
 
-        val answer4 = Answer("answer4", "question1", "user1", "Nan mais je suis pas d'accord")
+        val answer4 = Answer("answer4", "question1", "user1", "Nan mais je suis pas d'accord", emptyList())
         addAnswer(answer4.userId, answer4.questionId, answer4.answerText)
 
-        val answer5 = Answer("answer5", "question1", "user1", "Nan mais je suis pas d'accord non plus")
+        val answer5 = Answer("answer5", "question1", "user1", "Nan mais je suis pas d'accord non plus", emptyList())
         addAnswer(answer5.userId, answer5.questionId, answer5.answerText)
 
         val chat1 = Chat("chat0",LocalDateTime.now().toString(), user1.userId, user1.userId, "Hey me!")
@@ -86,8 +90,20 @@ class MockDatabase : Database() {
 
     }
     override fun getChat(userId1: String, userId2:String): CompletableFuture<List<Chat>> {
-        return CompletableFuture.completedFuture(chats.filterValues { it.senderId == userId1 && it.receiverId == userId2}.values.toList().reversed())
+        return CompletableFuture.completedFuture(chats.filterValues {
+            (it.senderId == userId1 && it.receiverId == userId2)
+                ||(it.senderId == userId2 && it.receiverId == userId1)
+        }.values.toList().reversed())
     }
+
+    override fun getQuestionEndorsements(questionId: String): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(questions[questionId]?.endorsements)
+    }
+
+    override fun getAnswerEndorsements(answerId: String): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(answers[answerId]?.endorsements)
+    }
+
 
     override fun addChat(senderId: String, receiverId: String, text: String?): Chat {
         val chatId = "chats${chats.size + 1}"
@@ -95,6 +111,25 @@ class MockDatabase : Database() {
         chats[chatId] = chat
 
         return chat
+    }
+
+    override fun addChatsWith(senderId: String, receiverId: String): String {
+
+        if(!users[senderId]?.chatsWith?.contains(receiverId)!!){
+            users[senderId]?.chatsWith = users[senderId]?.chatsWith?.plus(receiverId) ?: listOf(receiverId)
+        }
+        if(!users[receiverId]?.chatsWith?.contains(senderId)!!){
+            users[receiverId]?.chatsWith = users[receiverId]?.chatsWith?.plus(senderId) ?: listOf(senderId)
+        }
+        return ""
+    }
+
+    override fun getUserId(userName: String): CompletableFuture<String> {
+        return CompletableFuture.completedFuture(users.filterValues { it.username== userName}.values.toList().reversed()[0].userId)
+    }
+
+    override fun getChatsWith(userID: String): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(users[userID]!!.chatsWith)
     }
 
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
@@ -107,7 +142,13 @@ class MockDatabase : Database() {
 
     override fun addCourse(courseName: String): Course {
         val courseId = "question${questions.size + 1}"
-        val course = Course(courseId, courseName, emptyList())
+
+        var course = courses[courseId]
+        if(course != null) {
+            return course
+        }
+
+        course = Course(courseId, courseName, emptyList(), emptyList())
         courses[courseId] = course
 
         return course
@@ -115,7 +156,7 @@ class MockDatabase : Database() {
 
     override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
         val questionId = "question${questions.size + 1}"
-        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", image_uri, emptyList())
+        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", image_uri, emptyList(), emptyList())
 
         questions[questionId] = question
         courses[courseId]?.questions = courses[courseId]?.questions?.plus(question.questionId) ?: listOf(question.questionId)
@@ -128,9 +169,9 @@ class MockDatabase : Database() {
 
     override fun addAnswer(userId: String, questionId: String, answerText: String?): Answer {
         val answerId = "answer${answers.size + 1}"
-        val answer = Answer(answerId, questionId, userId, answerText ?: "")
+        val answer = Answer(answerId, questionId, userId, answerText ?: "", emptyList())
         answers[answerId] = answer
-        questions[questionId]?.answers = questions[questionId]?.answers?.plus(answer.answerText) ?: mutableListOf(answer.answerText)
+        questions[questionId]?.answers = questions[questionId]?.answers?.plus(answer.answerId) ?: mutableListOf(answer.answerId)
 
         users[userId]?.let {
             val updatedAnswers = it.answers + answer.answerId
@@ -140,13 +181,32 @@ class MockDatabase : Database() {
     }
 
     override fun addUser(userId:String, username: String, email: String): CompletableFuture<User> {
-        var user = users[userId]
-        if(user != null){
-            return CompletableFuture.completedFuture(user)
+        return addUser(User(userId, username, email))
+    }
+
+    override fun addUser(user: User): CompletableFuture<User> {
+        val dbUser = users[user.userId]
+        if(dbUser != null){
+            return CompletableFuture.completedFuture(dbUser)
         }
-        user = User(userId , username, email)
-        users[userId] = user
+        users[user.userId] = user
         return CompletableFuture.completedFuture(user)
+    }
+
+    override fun addQuestionEndorsement(userId: String, questionId: String) {
+        val question = questions[questionId]
+        if(question != null) {
+            val updatedEndorsement = question.endorsements + userId
+            questions[questionId] = question.copy(endorsements = updatedEndorsement)
+        }
+    }
+
+    override fun addAnswerEndorsement(userId: String, answerId: String) {
+        val answers = answers[answerId]
+        if(answers != null) {
+            val updatedEndorsement = answers.endorsements + userId
+            this.answers[answerId] = answers.copy(endorsements = updatedEndorsement)
+        }
     }
 
     override fun removeUser(userId: String) {
@@ -183,9 +243,54 @@ class MockDatabase : Database() {
         }
     }
 
+    override fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean> {
+        val future = CompletableFuture<Boolean>()
+        val course = courses[courseId]
+        if(course != null) {
+            FirebaseMessaging.getInstance().token.addOnSuccessListener {
+                val updatedNotification = course.notifications + (userId+"/"+it)
+                courses[courseId] = course.copy(notifications = updatedNotification)
+                future.complete(true)
+            }.addOnFailureListener { e ->
+                Log.e(ContentValues.TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
+                future.complete(false)
+            }
+        }
+
+        return future
+    }
+
+    override fun removeNotification(userId: String, courseId: String) {
+        val course = courses[courseId]
+        if(course != null) {
+            val updatedNotification = course.notifications.filter { it.split("/").get(0) != userId }
+            courses[courseId] = course.copy(notifications = updatedNotification)
+        }
+    }
+
+    override fun removeQuestionEndorsement(userId: String, questionId: String) {
+        val course = questions[questionId]
+        if(course != null) {
+            val updatedNotification = course.endorsements.filter { it != userId }
+            questions[questionId] = course.copy(endorsements = updatedNotification)
+        }
+    }
+
+    override fun removeAnswerEndorsement(userId: String, answerId: String) {
+        val answer = answers[answerId]
+        if(answer != null) {
+            val updatedNotification = answer.endorsements.filter { it != userId }
+            answers[answerId] = answer.copy(endorsements = updatedNotification)
+        }
+    }
+
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         return CompletableFuture.completedFuture(courses.values.toList())
+    }
+
+    override fun registeredUsers(): CompletableFuture<List<String>> {
+        return CompletableFuture.completedFuture(users.values.toList().map { u -> u.username })
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> {
@@ -221,6 +326,31 @@ class MockDatabase : Database() {
         val allFutures = CompletableFuture.allOf(*list.toTypedArray())
         return allFutures.thenApply {
             list.map { it.join() }
+        }
+    }
+    override fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>> {
+        val list = courses[courseId]?.notifications?.map { it.split("/") }
+        if(list == null || list.isEmpty()){
+            return CompletableFuture.completedFuture(listOf())
+        }
+        return CompletableFuture.completedFuture(list.map { it.get(1) })
+    }
+
+    override fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>> {
+        val list = courses[courseId]?.notifications?.map { it.split("/") }
+        if(list == null || list.isEmpty()){
+            return CompletableFuture.completedFuture(listOf())
+        }
+        return CompletableFuture.completedFuture(list.map { it.get(0) })
+    }
+
+    override fun setUserPresence(userId: String) {
+        users[userId]?.connections?.add(true)
+    }
+
+    override fun removeUserConnection(userId: String) {
+        if (users[userId]?.connections?.size!! > 0) {
+            users[userId]?.connections?.removeAt(0)
         }
     }
 }

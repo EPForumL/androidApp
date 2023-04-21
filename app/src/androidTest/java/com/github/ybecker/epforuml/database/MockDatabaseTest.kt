@@ -3,17 +3,19 @@ package com.github.ybecker.epforuml.database
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.messaging.FirebaseMessaging
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
 import java.time.LocalDateTime
+import java.util.concurrent.CompletableFuture
 
 class MockDatabaseTest {
 
     private lateinit var db: Database
-    private var swEng = Course("course0","Sweng", emptyList())
-    private var sdp = Course("course1","SDP", emptyList())
+    private var swEng = Course("course0","Sweng", emptyList(), emptyList())
+    private var sdp = Course("course1","SDP", emptyList(), emptyList())
     private lateinit var user: User
     private lateinit var nullUser: User
     private lateinit var question1: Question
@@ -67,6 +69,16 @@ class MockDatabaseTest {
         }.join()
 
     }
+    @Test
+    fun addAndGetChatWith(){
+        db.addChatsWith("0", "0")
+        assertThat( db.getUserById("0").get()?.chatsWith!!.size,equalTo(1))
+    }
+
+    @Test
+    fun getIdByName(){
+        assertThat( db.getUserId("TestUser").get(),equalTo("0"))
+    }
 
     @Test
     fun getCourseByIdTest(){
@@ -74,6 +86,14 @@ class MockDatabaseTest {
             assertThat(it?.courseId, equalTo(sdp.courseId))
             assertThat(it?.courseName, equalTo(sdp.courseName))
         }.join()
+    }
+
+    @Test
+    fun retrieveRegisteredUsers(){
+        val user2 = db.addUser("user2", "TestUser2", "testEmail").get()
+        val testUser = db.addUser("IDID", "TestUser", "testEmail").get()
+
+        assertThat( db.registeredUsers().get().size, equalTo(6))
     }
 
     @Test
@@ -258,6 +278,136 @@ class MockDatabaseTest {
         val newQuestion = db.addQuestion(user.userId, question1.questionId, "title", null, "URI")
         db.getQuestionById(newQuestion.questionId).thenAccept {
             assertThat(it?.questionText, equalTo(""))
+        }
+    }
+
+    @Test
+    fun addAndGetNewQuestionEndorsement(){
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addQuestionEndorsement(user.userId, question1.questionId)
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+    }
+
+    @Test
+    fun addAndGetNewAnswerEndorsement(){
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(emptyList()))
+        }.join()
+        db.addAnswerEndorsement(user.userId, answer1.answerId)
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+    }
+
+    @Test
+    fun removeAnswerEndorsementTest(){
+
+        db.addAnswerEndorsement(user.userId, answer1.answerId)
+
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+        db.removeAnswerEndorsement(user.userId, answer1.answerId)
+
+        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
+
+    @Test
+    fun removeQuestionEndorsementTest(){
+
+        db.addQuestionEndorsement(user.userId, question1.questionId)
+
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+        db.removeQuestionEndorsement(user.userId, question1.questionId)
+
+        db.getQuestionEndorsements(question1.questionId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
+
+    @Test
+    fun addNotificationTest(){
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
+        db.addNotification(user.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+    }
+
+    @Test
+    fun getNotificationUserTest(){
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
+        db.addNotification(user.userId, sdp.courseId).join()
+        db.addNotification(nullUser.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId, nullUser.userId)))
+        }.join()
+    }
+
+    @Test
+    fun getNotificationTokenTest(){
+        val futureToken = CompletableFuture<String>()
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            futureToken.complete(it)
+        }
+        val token = futureToken.get()
+        db.addNotification(user.userId, sdp.courseId).join()
+        db.getCourseNotificationTokens(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(token)))
+        }.join()
+    }
+
+    @Test
+    fun removeNotification(){
+        db.addNotification(user.userId, sdp.courseId).join()
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+        db.removeNotification(user.userId, sdp.courseId)
+
+        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+    }
+
+    @Test
+    fun setUserPresenceAddsConnection() {
+        db.addUser("0", "test", "testEmail").join()
+        db.setUserPresence("0")
+        db.getUserById("0").thenAccept {
+            assertTrue(it!!.connections.size == 1)
+        }
+    }
+
+    @Test
+    fun removeUserConnectionRemovesAConnection() {
+        db.addUser("0", "test", "testEmail").join()
+        db.setUserPresence("0")
+        db.getUserById("0").thenAccept {
+            assertTrue(it!!.connections.size == 1)
+            db.removeUserConnection("0")
+            assertTrue(it.connections.size == 0)
         }
     }
 }

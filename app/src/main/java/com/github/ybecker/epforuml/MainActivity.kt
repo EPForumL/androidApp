@@ -1,22 +1,29 @@
 package com.github.ybecker.epforuml
 
+import android.content.Context
 import android.os.Bundle
-import android.provider.ContactsContract.RawContacts.Data
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.cache.SavedQuestionsCache
+import com.github.ybecker.epforuml.chat.ChatHomeFragment
+import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        lateinit var context: Context
+    }
 
     lateinit var toggle : ActionBarDrawerToggle
     lateinit var drawerLayout: DrawerLayout
@@ -30,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        context = applicationContext
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
@@ -60,6 +69,12 @@ class MainActivity : AppCompatActivity() {
         if(intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
         }
+        if( intent.extras?.getString("fragment").equals("RealChat")) {
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, RealChatFragment()).commit()
+        }
+        if( intent.extras?.getString("fragment").equals("chatHome")) {
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, ChatHomeFragment()).commit()
+        }
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
@@ -74,8 +89,8 @@ class MainActivity : AppCompatActivity() {
                         replaceFragment(AccountFragment())
                     }
                 R.id.nav_settings -> replaceFragment(SettingsFragment())
+                R.id.nav_chat -> replaceFragment(ChatHomeFragment())
             }
-
             true
         }
     }

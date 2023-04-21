@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.sensor.CameraActivity
 
 /**
  * A simple [Fragment] subclass.
@@ -27,15 +28,16 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageURI.setText(uri.toString())
+            imageURI.text = uri.toString()
         }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val user = DatabaseManager.user ?: Model.User()
+        val user = DatabaseManager.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
+
 
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
         // Get the set of available courses from the MockDatabase
@@ -72,42 +74,45 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         coursesList: List<Model.Course>,
         user: Model.User?
     ): (v: View) -> Unit = {
-        if (questBody.text.isBlank() || questTitle.text.isBlank()) {
+
+        // If the user is not logged in, show a message and don't submit the question
+        if (user == null) {
             Toast.makeText(
-                requireContext(), "Question title or body cannot be empty",
+                requireContext(),
+                "You must be logged in to post a question",
                 Toast.LENGTH_SHORT
             ).show()
-        } else {
-            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    val questionSubject = parent.getItemAtPosition(position) as String
-                    val course =
-                        coursesList.filter { course -> course.courseName == questionSubject }[0]
-                    if (user != null) {
-                        db.addQuestion(
-                            user.userId,
-                            course.courseId,
-                            questTitle.toString(),
-                            questBody.toString(),
-                            imageURI.toString()
-                        )
-                    }
+        }
+        // If the question title or body is empty, show a message and don't submit the question
+        else if (questBody.text.isBlank() || questTitle.text.isBlank()) {
+            Toast.makeText(
+                requireContext(),
+                "Question title or body cannot be empty",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        else {
+            // Get the selected course from the spinner
+            val selectedItemPosition = spinner.selectedItemPosition
+            if (selectedItemPosition != Spinner.INVALID_POSITION) {
+                val questionSubject = spinner.getItemAtPosition(selectedItemPosition) as String
+                // Find the course in the list of available courses
+                val course = coursesList.firstOrNull { course -> course.courseName == questionSubject }
 
-
+                // If the course is found, add the question to the database and navigate to the home screen
+                if (course != null) {
+                    DatabaseManager.db.addQuestion(
+                        user.userId,
+                        course.courseId,
+                        questTitle.text.toString(),
+                        questBody.text.toString(),
+                        imageURI.toString()
+                    )
                     mainActivity.replaceFragment(HomeFragment(mainActivity))
                 }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
         }
-        mainActivity.replaceFragment(HomeFragment(this.mainActivity))
     }
-
     private fun setTakeImage(
         view: View,
         questBody: EditText,
@@ -135,6 +140,11 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
          questBody = view.findViewById(R.id.question_details_edittext)
          questTitle = view.findViewById(R.id.question_title_edittext)
          imageURI = view.findViewById(R.id.image_uri)
+
+        println(questBody)
+
+
+
 
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))

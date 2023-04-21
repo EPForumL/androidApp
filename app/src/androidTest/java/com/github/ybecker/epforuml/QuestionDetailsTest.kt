@@ -3,6 +3,10 @@ package com.github.ybecker.epforuml
 import android.app.ActionBar
 import android.content.Intent
 import android.widget.ImageButton
+import android.view.View
+import android.widget.Switch
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -20,6 +24,13 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
 import junit.framework.TestCase.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import junit.framework.TestCase
+import junit.framework.TestCase.fail
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
@@ -36,6 +47,27 @@ class QuestionDetailsTest {
     private var cache = arrayListOf<Model.Question>()
 
     private lateinit var intent : Intent
+
+    private fun ClickOnLike(itemPosition:Int){
+        onView(withId(R.id.answers_recycler)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
+                itemPosition,
+                performOnViewChild(R.id.likeButton, click())
+            )
+        )
+    }
+
+
+    private fun CounterEquals(itemPosition:Int, value:String){
+        onView(withId(R.id.answers_recycler))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
+                    itemPosition,
+                    checkCounter(R.id.likeCount, value)
+                )
+            )
+    }
+
 
     @Before
     fun begin() {
@@ -121,10 +153,116 @@ class QuestionDetailsTest {
     @Test
     fun guestUserCannotPostAnswers() {
         logOutDetailsActivity()
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signOut() }
+
+        // go to second question
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
         // check button is not clickable
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
-        onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers.")))
+        onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers and endorsements.")))
+    }
+
+    @Test
+    fun questionEndorseButtonModifyTheCounter() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        // go to second question
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+        onView(withText("0"))
+        onView(withText("Endorse this"))
+        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withText("1"))
+        onView(withText("Endorsed"))
+        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withText("0"))
+        onView(withText("Endorse this"))
+    }
+
+    @Test
+    fun questionEndorsementStaysWhenQuitting() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        // go to second question
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+
+        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+
+        onView(withText("Endorsed"))
+        onView(withText("1"))
+    }
+
+    @Test
+    fun removeQuestionEndorsementTest(){
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+
+        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withText("Endorsed"))
+        onView(withText("1"))
+
+        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withText("Endorse this"))
+        onView(withText("0"))
+    }
+
+    @Test
+    fun answerLikeButtonModifyTheCounter() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        // go to third question
+        onView(withText("About ci")).perform(click())
+
+        val answerposition = 1
+
+        CounterEquals(answerposition, "0")
+        ClickOnLike(answerposition)
+        CounterEquals(answerposition, "1")
+
+    }
+
+    @Test
+    fun answerLikeStaysWhenQuitting() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        // go to third question
+        onView(withText("About ci")).perform(click())
+
+        val answerposition = 1
+
+        ClickOnLike(answerposition)
+
+        onView(withId(R.id.back_to_forum_button)).perform(click())
+
+        onView(withText("About ci")).perform(click())
+        CounterEquals(answerposition, "1")
+    }
+
+    @Test
+    fun removeAnswerLike() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        // go to third question
+        onView(withText("About ci")).perform(click())
+
+        val answerposition = 1
+
+        ClickOnLike(answerposition)
+
+        CounterEquals(answerposition, "1")
+
+        ClickOnLike(answerposition)
+
+        CounterEquals(answerposition, "0")
     }
 
     @Test
@@ -176,5 +314,43 @@ class QuestionDetailsTest {
     @After
     fun closing() {
         localScenario.close()
+    }
+
+    private fun performOnViewChild(viewId: Int, viewAction: ViewAction): ViewAction {
+        return object : ViewAction {
+            override fun getConstraints(): Matcher<View> {
+                return click().constraints
+            }
+
+            override fun getDescription(): String {
+                return "click on a child view with id $viewId"
+            }
+
+            override fun perform(uiController: UiController?, view: View?) {
+                view?.findViewById<View>(viewId)?.let {
+                    viewAction.perform(uiController, it)
+                }
+            }
+        }
+    }
+
+    private fun checkCounter(viewId: Int, value: String): ViewAction {
+        return object : ViewAction {
+            override fun getConstraints(): Matcher<View> {
+                return Matchers.allOf(isAssignableFrom(View::class.java))
+            }
+
+            override fun getDescription(): String {
+                return "check child view with id $viewId"
+            }
+
+            override fun perform(uiController: UiController?, view: View?) {
+                view?.findViewById<TextView>(viewId)?.let {
+                    if(it.text!=value){
+                        fail()
+                    }
+                }
+            }
+        }
     }
 }

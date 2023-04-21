@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_my_questions_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="20dp"
-    android:id="@+id/my_questions_layout_parent"
-    tools:context=".MyQuestionsFragment">
+    android:layout_height="wrap_content"
+    android:padding="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/forum_layout"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
-
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/course_title_text_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/title_forum"
-            android:text= "@string/my_questions_display"
-            android:textSize="30sp"
-            android:layout_marginBottom="20dp"
-            android:textStyle="bold"/>
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text=""
+            android:textColor="@android:color/white"
+            android:background="@color/purple_700"
 
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal"
+            />
 
         <TextView
             android:id="@+id/not_connected_text_view"
@@ -36,6 +36,7 @@
             android:visibility="gone" />
 
 
+
         <TextView
             android:id="@+id/no_question"
             android:layout_width="match_parent"
@@ -45,22 +46,17 @@
             android:padding="16dp"
             android:visibility="gone" />
 
+
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_my_questions"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recycler_forum"
-            tools:listitem="@layout/forum_item"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/my_questions_item"
             android:clickable="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="10dp">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
+            android:layout_marginBottom="10dp"/>
 
     </LinearLayout>
 
-
-
-
-</FrameLayout>
+</androidx.core.widget.NestedScrollView>

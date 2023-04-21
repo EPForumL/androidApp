@@ -1,38 +1,25 @@
-// Importing necessary libraries for this code file
 package com.github.ybecker.epforuml
-import android.content.Intent
+
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.ybecker.epforuml.MyQuestionsAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.auth.data.model.User
 import com.github.ybecker.epforuml.database.DatabaseManager
-import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.firebase.ui.auth.data.model.User
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import java.util.concurrent.CompletableFuture
-import android.util.Log
-import android.widget.ImageButton
-
-// A simple fragment to display the questions list.
-
-//Initially it was supposed make a map with as keys the courses and as value the list of questions posted by
-//the user in that course.
-//For the moment it only displays the list of questions posted by the user in all courses.
-//MyQuestionsAdapter is made to handle the display of a map, and will be used later
-
 
 class MyQuestionsFragment : Fragment() {
 
-// Declare variables
-        private lateinit var forumAdapter: ForumAdapter
-        private lateinit var forumRecyclerView: RecyclerView
-        private var queryList = mutableListOf<Model.Question>()
-        private lateinit var asyncCourseList: CompletableFuture<List<Model.Course>>
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: MyQuestionsAdapter
+    private val user = DatabaseManager.user
+    private var myQuestionsMap = mutableMapOf<Model.Course, List<Model.Question>>()
 
         // Called to create the fragment's UI
         override fun onCreateView(
@@ -59,71 +46,78 @@ class MyQuestionsFragment : Fragment() {
             forumRecyclerView.layoutManager = linearLayoutMgr
             forumRecyclerView.setHasFixedSize(false)
 
-            // Update questions list
-            updateQuestions()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val layoutManager = LinearLayoutManager(context)
+        recyclerView = view.findViewById(R.id.recycler_my_questions)
+        recyclerView.layoutManager = layoutManager
+        recyclerView.setHasFixedSize(false)
+
+        // If user is not logged in, display a message
+        if (user == null) {
+            val message = "You need to be logged in to view your questions."
+            val messageView = view.findViewById<TextView>(R.id.not_connected_text_view)
+            messageView.text = message
+            messageView.visibility = View.VISIBLE
+        } else {
+            refresh()
         }
+    }
 
-        // Obtains and displays the list of questions
-        private fun fetchQuestions() {
-            //if user is not connected, display a message
-            if (DatabaseManager.user == null) {
-                val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
-                notConnected?.visibility = View.VISIBLE
-            } else {
+    // Fetch the questions and the corresponding courses and display them in the recycler view
+    private fun getMyQuestionsMap() {
+        if (DatabaseManager.user == null) {
+            val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
+            notConnected?.visibility = View.VISIBLE
+        } else {
+            val userId = user?.userId
+            if (userId != null) {
+                db.getUserQuestions(userId).thenAccept { questions ->
+                    val courseIds = questions.map { question -> question.courseId }.toSet().toList()
+                    val futureCourses = mutableListOf<CompletableFuture<Model.Course?>>()
 
+                    for (id in courseIds) {
+                        futureCourses.add(db.getCourseById(id))
+                    }
 
-                val list = DatabaseManager.user?.let {
-                   DatabaseManager.db.getUserQuestions(it.userId).get()
-               }
+                    // When all courses are fetched, store the questions and display them
+                    CompletableFuture.allOf(*futureCourses.toTypedArray()).thenAccept {
+                        myQuestionsMap = mutableMapOf()
+                        futureCourses.let {
+                            it.forEach { futureCourse ->
+                                val course = futureCourse.get()
+                                if (course != null) {
+                                    val courseQuestion = questions.filter { question -> question.courseId == course.courseId }
+                                    myQuestionsMap.set(course, courseQuestion)
+                                }
+                            }
+                        }
 
-                //COMMENT THIS DEMO VERSION
-                //val list = DatabaseManager.db.getUserQuestions("user1").get()
-                ////COMMENT THIS
-
-
-
-                if (list != null) {
-                    if (list.isEmpty()) {
-                        val noQuestions = view?.findViewById<TextView>(R.id.no_question)
-                        noQuestions?.visibility = View.VISIBLE
-                    } else {
-                        queryList = list as MutableList<Model.Question>
-                        // Show the query list
-                        displayQuestions()
+                        myQuestionsDisplay()
                     }
                 }
             }
         }
-
-
-
-        // Shows the list of questions
-        private fun displayQuestions() {
-
-
-
-
-            //if user has no questions, display a message
-            if (queryList.isEmpty()) {
-                val noQuestions = view?.findViewById<TextView>(R.id.no_question)
-                noQuestions?.visibility = View.VISIBLE
-            }
-
-            else {
-                forumAdapter = ForumAdapter(queryList)
-                forumRecyclerView.adapter = forumAdapter
-
-                // Navigate to QuestionDetailsActivity when a question is clicked
-                forumAdapter.onItemClick = { question ->
-                    val navigationIntent = Intent(this.context, QuestionDetailsActivity::class.java)
-                    startActivity(navigationIntent)
-                }
-            }
-        }
-
-        // Update the questions list
-        private fun updateQuestions() {
-            fetchQuestions()
-        }
     }
+
+    // Display the questions in the recycler view or a message if there are no questions
+    private fun myQuestionsDisplay() {
+        if (myQuestionsMap.isEmpty()) {
+            val message = "You have no questions yet."
+            val messageView = view?.findViewById<TextView>(R.id.no_question)
+            messageView?.text = message
+            messageView?.visibility = View.VISIBLE
+        }
+
+        adapter = MyQuestionsAdapter(myQuestionsMap)
+        recyclerView.adapter = adapter
+    }
+
+    // Fetch the questions and refresh the display
+    private fun refresh() {
+        getMyQuestionsMap()
+    }
+}
+
 

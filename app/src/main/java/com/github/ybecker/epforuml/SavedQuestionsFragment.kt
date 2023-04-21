@@ -33,7 +33,9 @@ class SavedQuestionsFragment : Fragment() {
         cache = this.requireArguments().getParcelableArrayList("savedQuestions")!!
 
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
+
     }
 
     @SuppressLint("SetTextI18n")

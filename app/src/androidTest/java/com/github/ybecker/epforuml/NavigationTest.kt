@@ -49,7 +49,7 @@ class NavigationTest {
         onView(withContentDescription(R.string.open))
             .perform(click())
         onView(withId(R.id.nav_my_questions)).perform(click())
-        onView(withId(R.id.my_questions_layout_parent)).check(matches(isDisplayed()))
+        onView(withId(R.id.fragment_my_questions_layout)).check(matches(isDisplayed()))
 
         onView(withContentDescription(R.string.open))
             .perform(click())
@@ -66,7 +66,13 @@ class NavigationTest {
         onView(withId(R.id.nav_home)).perform(click())
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
+        onView(withContentDescription(R.string.open))
+            .perform(click())
+        onView(withId(R.id.nav_chat)).perform(click())
+        onView(withId(R.id.chat_home__layout)).check(matches(isDisplayed()))
+
         scenario.close()
+
     }
 }
 

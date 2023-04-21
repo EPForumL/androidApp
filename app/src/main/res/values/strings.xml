@@ -37,6 +37,7 @@
     <string name="repeat_password">repeat_password</string>
     <string name="share_localisation">share_localisation</string>
     <string name="preferences">preferences</string>
+    <string name="no_match">No match found</string>
 
     ///Objects of the new fragment page:
     <string name="preview_question">Preview Question</string>
@@ -61,9 +62,15 @@
     <string name="continue_as_guest">Continue as guest</string>
     <string name="my_questions_display">My Questions</string>
     <string name="you_still_haven_t_asked_any_question">You still haven\'t asked any question</string>
-    <string name="please_login_to_post_answers">Please login to post answers.</string>
     <string name="please_log_in_to_be_able_to_save_questions">Please log in to be able to save questions.</string>
     />
+    <string name="you_have_not_started_a_conversation_yet">You have not started a conversation yet!</string>
+    <string name="chat">Chat</string>
+    <string name="send">Send</string>
+    <string name="type_your_message_here">Type your message here</string>
+    <string name="chats" />
+    <string name="please_login_to_post_answers">Please login to post answers and endorsements.</string>
+    <string name="User_not_found" />
 
 
 </resources>

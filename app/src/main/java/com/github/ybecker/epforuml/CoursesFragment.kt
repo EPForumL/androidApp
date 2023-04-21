@@ -1,9 +1,11 @@
 package com.github.ybecker.epforuml
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
@@ -47,44 +49,19 @@ class CoursesFragment : Fragment() {
             courses = futureCourses.get()
             userSubscriptions  = futureUserSubscriptions.get()
             // save actual user subscription in the a private variable
-            adapter = CourseAdapter(courses) { course ->
-                onCourseClick(course)
-            }
+            adapter = CourseAdapter(courses)
             recyclerView.adapter = adapter
         }
         return rootView
     }
 
     private inner class CourseAdapter(
-        private val courses: List<Course>,
-        private val onCourseClickListener: (Course) -> Unit
+        private val courses: List<Course>
     ) : RecyclerView.Adapter<CourseViewHolder>() {
 
         //this methode put the different courses in the recycler view
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_course, parent, false)
-            val switch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
-
-            // add a listener to every switches
-            switch.setOnCheckedChangeListener { _, isChecked ->
-                val course = itemView.tag as? Course
-                if(course != null){
-                    if (isChecked) {
-                        // add a subscription for this user in the course
-                        db.addSubscription(user.userId, course.courseId)
-                        Toast.makeText(
-                            itemView.context,
-                            "You subscribed to " + course.courseName,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    else {
-                        db.removeSubscription(user.userId, course.courseId)
-                        Toast.makeText(itemView.context,"You unsubscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
-
-                    }
-                }
-            }
 
             return CourseViewHolder(itemView)
         }
@@ -96,29 +73,70 @@ class CoursesFragment : Fragment() {
 
                 // add course here so we can get it in onCreateViewHolder
                 holder.itemView.tag = course
-                holder.itemView.setOnClickListener { onCourseClickListener(course) }
+                holder.itemView.setOnClickListener {
+                    val course_switches =  holder.itemView.findViewById<LinearLayout>(R.id.switch_container)
+                    if(course_switches.visibility == View.GONE){
+                        course_switches.visibility = View.VISIBLE
+                    }
+                    else{
+                        course_switches.visibility = View.GONE
+                    }
+                }
 
         }
 
         override fun getItemCount() = courses.size
-
 
     }
 
     private inner class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val courseTitleTextView = itemView.findViewById<TextView>(R.id.courseTitleTextView)
         private val subscriptionSwitch = itemView.findViewById<Switch>(R.id.subscriptionSwitch)
+        private val notificationSwitch = itemView.findViewById<Switch>(R.id.notificationSwitch)
 
         fun bind(course: Course) {
             courseTitleTextView.text = course.courseName
             subscriptionSwitch.isEnabled = user.userId.length != 0
-            subscriptionSwitch.isChecked = userSubscriptions.map { it.courseId }.contains(course.courseId)
+            val is_subscribed = userSubscriptions.map { it.courseId }.contains(course.courseId)
+            subscriptionSwitch.isChecked = is_subscribed
+            notificationSwitch.isEnabled = is_subscribed
+            db.getCourseNotificationUserIds(course.courseId).thenAccept {
+
+                notificationSwitch.isChecked = it.contains(user.userId)
+
+                // add a listener to every switches
+                subscriptionSwitch.setOnCheckedChangeListener { _, isChecked ->
+                    if(course != null){
+                        if (isChecked) {
+                            // add a subscription for this user in the course
+                            db.addSubscription(user.userId, course.courseId)
+                            notificationSwitch.isEnabled = true
+                            Toast.makeText(itemView.context,"You subscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
+                        }
+                        else {
+                            db.removeSubscription(user.userId, course.courseId)
+                            db.removeNotification(user.userId, course.courseId)
+                            notificationSwitch.isEnabled = false
+                            notificationSwitch.isChecked = false
+                            Toast.makeText(itemView.context,"You unsubscribed to " + course.courseName,Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+                }
+                notificationSwitch.setOnCheckedChangeListener {_, isChecked ->
+                    if(course != null){
+                        if (isChecked) {
+                            // add a subscription for this user in the course
+                            db.addNotification(user.userId, course.courseId)
+                            Toast.makeText(itemView.context, "You allow notifications for " + course.courseName, Toast.LENGTH_SHORT).show()
+                        }
+                        else {
+                            db.removeNotification(user.userId, course.courseId)
+                            Toast.makeText(itemView.context,"You reject notifications for " + course.courseName,Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
         }
     }
-
-    private fun onCourseClick(course: Course) {
-        //for later
-        println("Clicked course: ${course.courseName}")
-    }
-
 }
