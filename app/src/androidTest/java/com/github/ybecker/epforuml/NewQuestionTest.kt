@@ -54,15 +54,13 @@ class NewQuestionTest {
     @Test
     fun testAddAQuestion() {
 
-        Firebase.auth.signOut()
-        DatabaseManager.useMockDatabase()
+        // Launch the fragment
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
 
         val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user
 
 
-        // Launch the fragment
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
         onView(withId(R.id.guestButton)).perform(click())
 
