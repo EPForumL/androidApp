@@ -40,6 +40,14 @@ class CameraActivityTest {
         scenario.onActivity {
             it.findViewById<Button>(R.id.takeImage).performClick()
         }
+        Thread.sleep(2000)
+        try{
+            onView(withText("Only")).perform(click())
+            Thread.sleep(2000) // Wait for permissions dialog to show up
+            onView(withText("Only")).perform(click())
+        }catch (e: Exception){
+
+        }
         val permissions = arrayOf(
             Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO
@@ -51,15 +59,8 @@ class CameraActivityTest {
                     permissions,
                     0
                 )
-
                 Thread.sleep(2000) // Wait for permissions dialog to show up
-                try{
-                    onView(withText("Only")).perform(click())
-                    Thread.sleep(2000) // Wait for permissions dialog to show up
-                    onView(withText("Only")).perform(click())
-                }catch (e: Exception){
 
-                }
             }
             onView(withText(android.R.string.ok)).perform(click())
 
@@ -70,7 +71,7 @@ class CameraActivityTest {
     fun testTakePhoto() {
         onView(withId(R.id.image_capture_button)).check(matches(isDisplayed()))
         Thread.sleep(10000) // Wait for photo to be taken
-        //onView(withText("filter")).check(matches(isDisplayed()))
+        onView(withText("filter")).check(matches(isDisplayed()))
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {
