@@ -58,7 +58,7 @@ class MyQuestionsFragment : Fragment() {
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_my_questions)
         recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true) // maybe change that later
+        recyclerView.setHasFixedSize(false) // maybe change that later
 
 
 
