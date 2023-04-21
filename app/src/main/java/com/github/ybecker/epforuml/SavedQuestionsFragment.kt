@@ -8,6 +8,12 @@ import android.view.ViewGroup
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
+import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.notifications.RemoteNotificationService
+import com.google.firebase.messaging.RemoteMessage
 
 
 /**
@@ -16,8 +22,6 @@ import java.util.concurrent.CompletableFuture
  * create an instance of this fragment.
  */
 class SavedQuestionsFragment : Fragment() {
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,5 +29,6 @@ class SavedQuestionsFragment : Fragment() {
         // Inflate the layout for this fragment
 
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
+
     }
 }

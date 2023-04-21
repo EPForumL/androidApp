@@ -135,6 +135,5 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
         val button : Button = itemView.findViewById(R.id.chatWithUser)
     }
 
-
 }
 

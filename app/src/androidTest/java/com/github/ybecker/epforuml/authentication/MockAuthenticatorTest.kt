@@ -64,6 +64,28 @@ class MockAuthenticatorTest {
         assertTrue(DatabaseManager.user != null)
         scenario.onActivity { MockAuthenticator(it).deleteUser() }
         assertTrue(DatabaseManager.user == null)
-        //TODO : check removed from db
+        DatabaseManager.db.getUserById("0").thenAccept {
+            assertTrue(it == null)
+        }
+    }
+
+    @Test
+    fun checkUserHasAConnectionAfterSignIn() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+        DatabaseManager.db.getUserById("0").thenAccept {
+            assertTrue(it != null)
+            assertTrue(it?.connections != null)
+            assertTrue(it?.connections?.size!! > 0)
+        }
+    }
+
+    @Test
+    fun checkUserHasAConnectionLessWhenSignOut() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+        DatabaseManager.db.getUserById("0").thenAccept { user ->
+            val size = user?.connections?.size!!
+            scenario.onActivity { MockAuthenticator(it).signOut() }
+            assertTrue(user.connections.size == size-1)
+        }
     }
 }
