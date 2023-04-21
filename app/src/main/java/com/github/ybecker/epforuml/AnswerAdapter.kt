@@ -3,18 +3,19 @@ package com.github.ybecker.epforuml
 import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
 
@@ -57,11 +58,11 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
                 //holder.answerText.text = currentAnswerItem
                 val answerId = answerList.get(position-1)
                 val futureAnswer = db.getAnswerById(answerId)
-                val futureEndorsementList = db.getAnswerEndorsements(answerId)
-                CompletableFuture.allOf(futureAnswer, futureEndorsementList).thenAccept {
+                val futureLikeList = db.getAnswerLike(answerId)
+                CompletableFuture.allOf(futureAnswer, futureLikeList).thenAccept {
 
                     val currentAnswerItem = futureAnswer.get() ?: Model.Answer()
-                    val endorsementList = futureEndorsementList.get()
+                    val endorsementList = futureLikeList.get()
 
                     holder.answerText.text = currentAnswerItem.answerText
                     holder.button.setOnClickListener{
@@ -91,19 +92,19 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
                     like.tag = listOf(isEndorsed, endorsementCount)
 
                     like.setOnClickListener {
-                        val userId = DatabaseManager.user?.userId
+                        val userId = user?.userId
                         if (userId != null) {
                             val tags = like.tag as List<*>
                             val isEndorsed = tags[0] as Boolean
                             val count = tags[1] as Int
                             if (!isEndorsed) {
-                                db.addAnswerEndorsement(userId, currentAnswerItem.answerId)
+                                db.addAnswerLike(userId, currentAnswerItem.answerId)
                                 //turn like color to red ans increment counter
                                 like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.red), PorterDuff.Mode.SRC_IN)
                                 counter.setText((count + 1).toString())
                                 it.tag = listOf(true, count + 1)
                             } else {
-                                db.removeAnswerEndorsement(userId, currentAnswerItem.answerId)
+                                db.removeAnswerLike(userId, currentAnswerItem.answerId)
                                 // turn like color to light gray and decrement counter
                                 like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
                                 counter.setText((count - 1).toString())
@@ -112,6 +113,35 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
                         }
                     }
                 }
+
+                val userId = user?.userId
+                if(userId != null){
+                    val futureEndorsement = db.getAnswerEndorsement(answerId)
+                    val futureUserStatus = db.getUserStatus(userId, answerId)
+
+                    CompletableFuture.allOf(futureEndorsement, futureUserStatus).thenAccept {
+                        val endorserName = futureEndorsement.get()
+                        val userStatus = futureUserStatus.get()
+
+                        if(userStatus != null){
+                            val endorsementText = holder.itemView.findViewById<TextView>(R.id.endorsementText)
+                            val endorsementButton = holder.itemView.findViewById<ImageButton>(R.id.endorsementButton)
+                            endorsementButton.visibility = View.VISIBLE
+
+                            if(endorserName != null){
+                                db.addAnswerEndorsement(answerId, user?.username ?: "someone")
+                                //endorsementText.text = "This question have been verified by "+endorserName
+                                endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.black), PorterDuff.Mode.SRC_IN)
+                            } else {
+                                endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
+                            }
+                        }
+
+
+
+                    }
+                }
+
             }
         }
     }

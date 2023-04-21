@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.github.ybecker.epforuml.database.DatabaseManager
 
 
 /**
@@ -19,6 +20,7 @@ class SavedQuestionsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
+        DatabaseManager.db.addStatus(DatabaseManager.user!!.userId, "-NTYCj-xj2ooKFI6YGGh", UserStatus.STUDENT_ASSISTANT)
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
 
     }

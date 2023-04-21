@@ -1,13 +1,16 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.MainActivity.Companion.context
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
@@ -45,31 +48,41 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
-        db.getQuestionEndorsements(questionId).thenAccept {
-            val endorsementButton = findViewById<ToggleButton>(R.id.endorsementButton)
-            val endorsementCounter = findViewById<TextView>(R.id.endorsementCount)
+        db.getQuestionFollowers(questionId).thenAccept {
+            val notificationButton = findViewById<ImageButton>(R.id.addNotifButton)
+            val endorsementCounter = findViewById<TextView>(R.id.notificationCount)
             val count = it.size
 
             if(user == null || user.userId.isEmpty()){
-                endorsementButton.isEnabled = false
+                notificationButton.isEnabled = false
             }
             endorsementCounter.text = (count).toString()
 
-            endorsementButton.tag = count
-            endorsementButton.isChecked = it.contains(user.userId)
+            val notificationActive = it.contains(user.userId)
+            notificationButton.tag = listOf(notificationActive, count)
 
-            endorsementButton.setOnClickListener {
-                val count = endorsementButton.tag as Int
-                if (endorsementButton.isChecked) {
-                    db.addQuestionEndorsement(user.userId, questionId)
+            if(notificationActive){
+                notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.yellow), PorterDuff.Mode.SRC_IN)
+            } else {
+                notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
+            }
+
+            notificationButton.setOnClickListener {
+                val tags = notificationButton.tag as List<*>
+                val isActive = tags[0] as Boolean
+                val count = tags[1] as Int
+                if (!isActive) {
+                    db.addQuestionFollower(user.userId, questionId)
                     val newCount = count+1
                     endorsementCounter.text = (newCount).toString()
-                    endorsementButton.tag = newCount
+                    notificationButton.tag = listOf(true, newCount)
+                    notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.yellow), PorterDuff.Mode.SRC_IN)
                 } else {
-                    db.removeQuestionEndorsement(user.userId, questionId)
+                    db.removeQuestionFollower(user.userId, questionId)
                     val newCount = count-1
                     endorsementCounter.text =(newCount).toString()
-                    endorsementButton.tag = newCount
+                    notificationButton.tag = listOf(false, newCount)
+                    notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
                 }
             }
         }

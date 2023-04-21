@@ -25,21 +25,20 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/endorsementCount"
+            android:id="@+id/notificationCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:layout_weight="1"
             android:text="0" />
 
-        <ToggleButton
-            android:id="@+id/endorsementButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:textOff="Endorse this"
-            android:textOn="Endorsed" />
+        <ImageButton
+            android:id="@+id/addNotifButton"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:layout_margin="8dp"
+            android:src="@drawable/notif_bell"
+            android:background="@color/backgroundColor"/>
 
     </LinearLayout>
 

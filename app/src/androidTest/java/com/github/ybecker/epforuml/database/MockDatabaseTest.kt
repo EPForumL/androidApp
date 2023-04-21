@@ -283,22 +283,22 @@ class MockDatabaseTest {
 
     @Test
     fun addAndGetNewQuestionEndorsement(){
-        db.getQuestionEndorsements(question1.questionId).thenAccept {
+        db.getQuestionFollowers(question1.questionId).thenAccept {
             assertThat(it, equalTo(emptyList()))
         }.join()
-        db.addQuestionEndorsement(user.userId, question1.questionId)
-        db.getQuestionEndorsements(question1.questionId).thenAccept {
+        db.addQuestionFollower(user.userId, question1.questionId)
+        db.getQuestionFollowers(question1.questionId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))
         }.join()
     }
 
     @Test
     fun addAndGetNewAnswerEndorsement(){
-        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+        db.getAnswerLike(answer1.answerId).thenAccept {
             assertThat(it, equalTo(emptyList()))
         }.join()
-        db.addAnswerEndorsement(user.userId, answer1.answerId)
-        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+        db.addAnswerLike(user.userId, answer1.answerId)
+        db.getAnswerLike(answer1.answerId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))
         }.join()
     }
@@ -306,15 +306,15 @@ class MockDatabaseTest {
     @Test
     fun removeAnswerEndorsementTest(){
 
-        db.addAnswerEndorsement(user.userId, answer1.answerId)
+        db.addAnswerLike(user.userId, answer1.answerId)
 
-        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+        db.getAnswerLike(answer1.answerId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))
         }.join()
 
-        db.removeAnswerEndorsement(user.userId, answer1.answerId)
+        db.removeAnswerLike(user.userId, answer1.answerId)
 
-        db.getAnswerEndorsements(answer1.answerId).thenAccept {
+        db.getAnswerLike(answer1.answerId).thenAccept {
             assertThat(it, equalTo(listOf()))
         }.join()
     }
@@ -322,15 +322,15 @@ class MockDatabaseTest {
     @Test
     fun removeQuestionEndorsementTest(){
 
-        db.addQuestionEndorsement(user.userId, question1.questionId)
+        db.addQuestionFollower(user.userId, question1.questionId)
 
-        db.getQuestionEndorsements(question1.questionId).thenAccept {
+        db.getQuestionFollowers(question1.questionId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))
         }.join()
 
-        db.removeQuestionEndorsement(user.userId, question1.questionId)
+        db.removeQuestionFollower(user.userId, question1.questionId)
 
-        db.getQuestionEndorsements(question1.questionId).thenAccept {
+        db.getQuestionFollowers(question1.questionId).thenAccept {
             assertThat(it, equalTo(listOf()))
         }.join()
     }

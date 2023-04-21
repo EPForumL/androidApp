@@ -1,7 +1,6 @@
 package com.github.ybecker.epforuml
 
 import android.view.View
-import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -14,15 +13,10 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.authentication.Authenticator
-import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
-import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import junit.framework.TestCase
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -173,13 +167,10 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
         onView(withText("0"))
-        onView(withText("Endorse this"))
-        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withId(R.id.addNotifButton)).perform(click())
         onView(withText("1"))
-        onView(withText("Endorsed"))
-        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withId(R.id.addNotifButton)).perform(click())
         onView(withText("0"))
-        onView(withText("Endorse this"))
     }
 
     @Test
@@ -190,12 +181,11 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withId(R.id.addNotifButton)).perform(click())
         onView(withId(R.id.back_to_forum_button)).perform(click())
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        onView(withText("Endorsed"))
         onView(withText("1"))
     }
 
@@ -206,12 +196,10 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("Endorsed"))
+        onView(withId(R.id.addNotifButton)).perform(click())
         onView(withText("1"))
 
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("Endorse this"))
+        onView(withId(R.id.addNotifButton)).perform(click())
         onView(withText("0"))
     }
 
