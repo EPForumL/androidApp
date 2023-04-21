@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.database
 
+import com.github.ybecker.epforuml.UserStatus
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
@@ -282,7 +283,7 @@ class MockDatabaseTest {
     }
 
     @Test
-    fun addAndGetNewQuestionEndorsement(){
+    fun addAndGetNewQuestionFollowersTest(){
         db.getQuestionFollowers(question1.questionId).thenAccept {
             assertThat(it, equalTo(emptyList()))
         }.join()
@@ -293,7 +294,7 @@ class MockDatabaseTest {
     }
 
     @Test
-    fun addAndGetNewAnswerEndorsement(){
+    fun addAndGetNewAnswerLikeTest(){
         db.getAnswerLike(answer1.answerId).thenAccept {
             assertThat(it, equalTo(emptyList()))
         }.join()
@@ -304,7 +305,7 @@ class MockDatabaseTest {
     }
 
     @Test
-    fun removeAnswerEndorsementTest(){
+    fun removeAnswerLikeTest(){
 
         db.addAnswerLike(user.userId, answer1.answerId)
 
@@ -320,7 +321,7 @@ class MockDatabaseTest {
     }
 
     @Test
-    fun removeQuestionEndorsementTest(){
+    fun removeQuestionFollowerTest(){
 
         db.addQuestionFollower(user.userId, question1.questionId)
 
@@ -410,4 +411,66 @@ class MockDatabaseTest {
             assertTrue(it.connections.size == 0)
         }
     }
+
+    @Test
+    fun addStatutTest(){
+        for(value in UserStatus.values()) {
+            db.addStatus(user.userId, sdp.courseId, value)
+            db.getUserStatus(user.userId, sdp.courseId).thenAccept {
+                assertThat(it, equalTo(value))
+            }.join()
+        }
+    }
+
+    @Test
+    fun removeStatutTest(){
+        db.addStatus(user.userId, sdp.courseId, UserStatus.STUDENT_ASSISTANT)
+        db.getUserStatus(user.userId, sdp.courseId).thenAccept {
+            assertThat(it, equalTo(UserStatus.STUDENT_ASSISTANT))
+        }.join()
+        db.removeStatus(user.userId, sdp.courseId)
+        db.getUserStatus(user.userId, sdp.courseId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun addAnswerEndorsementTest(){
+        db.addAnswerEndorsement(answer1.answerId, user.username)
+        db.getAnswerEndorsement(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(user.username))
+        }.join()
+    }
+
+    @Test
+    fun getNullEndorsementTest(){
+        db.getAnswerEndorsement(answer1.answerId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
+    @Test
+    fun changeAnswerEndorsementTest(){
+        db.addAnswerEndorsement(answer1.answerId, user.username)
+        db.getAnswerEndorsement(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(user.username))
+        }.join()
+        db.addAnswerEndorsement(answer1.answerId, nullUser.username)
+        db.getAnswerEndorsement(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(nullUser.username))
+        }.join()
+    }
+
+    @Test
+    fun removeAnswerEndorsementTest(){
+        db.addAnswerEndorsement(answer1.answerId, user.username)
+        db.getAnswerEndorsement(answer1.answerId).thenAccept {
+            assertThat(it, equalTo(user.username))
+        }.join()
+        db.removeAnswerEndorsement(answer1.answerId)
+        db.getAnswerEndorsement(answer1.answerId).thenAccept {
+            assertNull(it)
+        }.join()
+    }
+
 }

@@ -87,7 +87,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
             }
         }
 
-
         // only allow posting answer if user is connected
         if (user != null && user.userId.isNotEmpty()) {
             // store content of box as a new answer to corresponding question
@@ -115,7 +114,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
 
     }
-
 
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {

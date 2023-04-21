@@ -105,7 +105,6 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(answers[answerId]?.like)
     }
 
-
     override fun addChat(senderId: String, receiverId: String, text: String?): Chat {
         val chatId = "chats${chats.size + 1}"
         val chat = Chat(chatId, LocalDateTime.now().toString(),receiverId,senderId,text)
@@ -359,11 +358,11 @@ class MockDatabase : Database() {
     override fun addStatus(userId: String, courseId: String, statut: UserStatus) {
         val user = users[userId]
         if(user != null){
-            val updatedUser = user.copy(status = user.status + ("$courseId/${statut.name}"))
+            val statutString = user.status.filter {it.split("/").get(0) != courseId}
+            val updatedUser = user.copy(status = statutString + ("$courseId/${statut.name}"))
             users[userId] = updatedUser
         }
     }
-
 
     override fun removeStatus(userId: String, courseId: String) {
         val user = users[userId]
@@ -373,19 +372,43 @@ class MockDatabase : Database() {
         }
     }
 
-    override fun getUserStatus(userId: String, answerId: String): CompletableFuture<UserStatus?> {
-        TODO("Not yet implemented")
+    override fun getUserStatus(userId: String, courseId: String): CompletableFuture<UserStatus?> {
+        val future = CompletableFuture<UserStatus?>()
+        val user = users[userId]
+        if(user != null){
+            val statutString = user.status.filter {it.split("/").get(0) == courseId}
+
+            if(statutString.isEmpty()) return CompletableFuture.completedFuture(null)
+
+             future.complete(UserStatus.valueOf(statutString[0].split("/").get(1)))
+        } else {
+            future.complete(null)
+        }
+
+        return future
     }
 
     override fun getAnswerEndorsement(answerId: String): CompletableFuture<String?> {
-        TODO("Not yet implemented")
+        val answer = answers[answerId]
+        if(answer!=null && answer.endorsed != ""){
+            return CompletableFuture.completedFuture(answer.endorsed)
+        }
+        return CompletableFuture.completedFuture(null)
     }
 
     override fun addAnswerEndorsement(answerId: String, username: String) {
-        TODO("Not yet implemented")
+        val answer = answers[answerId]
+        if(answer!=null){
+            val updatedAnswer = answer.copy(endorsed = username)
+            answers[answerId] = updatedAnswer
+        }
     }
 
     override fun removeAnswerEndorsement(answerId: String) {
-        TODO("Not yet implemented")
+        val answer = answers[answerId]
+        if(answer!=null){
+            val updatedAnswer = answer.copy(endorsed = "")
+            answers[answerId] = updatedAnswer
+        }
     }
 }
