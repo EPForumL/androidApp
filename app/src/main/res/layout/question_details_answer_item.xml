@@ -41,13 +41,6 @@
 
             </LinearLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Answer"
-                android:textSize="19sp"
-                android:id="@+id/qdetails_answer_text"/>
-
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

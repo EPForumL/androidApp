@@ -21,30 +21,9 @@ class MyQuestionsFragment : Fragment() {
     private val user = DatabaseManager.user
     private var myQuestionsMap = mutableMapOf<Model.Course, List<Model.Question>>()
 
-        // Called to create the fragment's UI
-        override fun onCreateView(
-            inflater: LayoutInflater, parentContainer: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            // Inflate the layout for this fragment
-            val fragmentView = inflater.inflate(R.layout.fragment_my_questions, parentContainer, false)
-
-            // Retrieve all available courses
-            asyncCourseList = db.availableCourses()
-
-            // Return the fragment view
-            return fragmentView
-        }
-
-        // Called after onCreateView returns and the fragment's view hierarchy is created
-        override fun onViewCreated(fragmentView: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(fragmentView, savedInstanceState)
-
-            // Configure recycler view and adapter
-            val linearLayoutMgr = LinearLayoutManager(context)
-            forumRecyclerView = fragmentView.findViewById(R.id.recycler_forum)
-            forumRecyclerView.layoutManager = linearLayoutMgr
-            forumRecyclerView.setHasFixedSize(false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_my_questions, container, false)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -119,5 +98,3 @@ class MyQuestionsFragment : Fragment() {
         getMyQuestionsMap()
     }
 }
-
-

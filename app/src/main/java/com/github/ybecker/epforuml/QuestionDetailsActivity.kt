@@ -35,11 +35,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val button : Button = findViewById(R.id.back_to_forum_button)
-        button.setOnClickListener{ // Create an intent to return to the previous fragment
-            startActivity(Intent(this, MainActivity::class.java))
-        }
-
         answerRecyclerView = findViewById(R.id.answers_recycler)
         answerRecyclerView.layoutManager = LinearLayoutManager(this)
 
