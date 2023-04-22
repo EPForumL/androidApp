@@ -376,11 +376,11 @@ class MockDatabase : Database() {
         val future = CompletableFuture<UserStatus?>()
         val user = users[userId]
         if(user != null){
-            val statutString = user.status.filter {it.split("/").get(0) == courseId}
+            val statusString = user.status.filter {it.split("/")[0] == courseId}
 
-            if(statutString.isEmpty()) return CompletableFuture.completedFuture(null)
+            if(statusString.isEmpty()) return CompletableFuture.completedFuture(null)
 
-             future.complete(UserStatus.valueOf(statutString[0].split("/").get(1)))
+             future.complete(UserStatus.valueOf(statusString[0].split("/")[1]))
         } else {
             future.complete(null)
         }

@@ -6,6 +6,8 @@ import android.graphics.PorterDuff
 import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
@@ -18,8 +20,8 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
-
-class AnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<String>,private val mainActivity: Activity)
+//private val questionId : String, private val questionText : String, private val answerList : List<String>,
+class AnswerAdapter(private val question: Model.Question, private val mainActivity: Activity)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -45,18 +47,19 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
     }
 
     override fun getItemCount(): Int {
-        return answerList.size + HEADER_ITEM_COUNT
+
+        return question.answers.size + HEADER_ITEM_COUNT
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> {
-                holder.headerText.text = questionText
+                holder.headerText.text = question.questionText
             }
 
             is AnswerViewHolder -> {
                 //holder.answerText.text = currentAnswerItem
-                val answerId = answerList.get(position-1)
+                val answerId = question.answers[position-1]
                 val futureAnswer = db.getAnswerById(answerId)
                 val futureLikeList = db.getAnswerLike(answerId)
                 CompletableFuture.allOf(futureAnswer, futureLikeList).thenAccept {
@@ -117,23 +120,45 @@ class AnswerAdapter(private val questionId : String, private val questionText : 
                 val userId = user?.userId
                 if(userId != null){
                     val futureEndorsement = db.getAnswerEndorsement(answerId)
-                    val futureUserStatus = db.getUserStatus(userId, answerId)
+                    val futureUserStatus = db.getUserStatus(userId, question.courseId)
 
                     CompletableFuture.allOf(futureEndorsement, futureUserStatus).thenAccept {
                         val endorserName = futureEndorsement.get()
                         val userStatus = futureUserStatus.get()
 
-                        if(userStatus != null){
-                            val endorsementText = holder.itemView.findViewById<TextView>(R.id.endorsementText)
-                            val endorsementButton = holder.itemView.findViewById<ImageButton>(R.id.endorsementButton)
-                            endorsementButton.visibility = View.VISIBLE
+                        //available for everyone
+                        val endorsementText = holder.itemView.findViewById<TextView>(R.id.endorsementText)
+                        val endorsementButton = holder.itemView.findViewById<ImageButton>(R.id.endorsementButton)
 
-                            if(endorserName != null){
-                                db.addAnswerEndorsement(answerId, user?.username ?: "someone")
-                                //endorsementText.text = "This question have been verified by "+endorserName
-                                endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.black), PorterDuff.Mode.SRC_IN)
-                            } else {
-                                endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
+                        if(endorserName != null){
+                            endorsementText.text = "Approved by by "+endorserName+"."
+                            endorsementText.visibility = VISIBLE
+                            endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_blue), PorterDuff.Mode.SRC_IN)
+                        } else {
+                            endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
+                        }
+
+                        //only for privileged USER
+                        if(userStatus != null){
+                            //set up the endorsement text and button
+                            endorsementButton.visibility = VISIBLE
+                            endorsementButton.tag = (endorserName != null && endorserName!="")
+
+                            //set the button listener
+                            endorsementButton.setOnClickListener {
+                                if(!(it.tag as Boolean)){
+                                    val name = user?.username ?: "someone"
+                                    db.addAnswerEndorsement(answerId, name)
+                                    endorsementText.text = "Approved by by "+name+"."
+                                    endorsementText.visibility = VISIBLE
+                                    endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_blue), PorterDuff.Mode.SRC_IN)
+                                    it.tag = true
+                                } else {
+                                    db.removeAnswerEndorsement(answerId)
+                                    endorsementText.visibility = GONE
+                                    endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
+                                    it.tag = false
+                                }
                             }
                         }
 

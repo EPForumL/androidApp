@@ -118,7 +118,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {
             question = it
-            answerRecyclerView.adapter = AnswerAdapter(question!!.questionId, question!!.questionText, question!!.answers, this)
+            answerRecyclerView.adapter = AnswerAdapter(question!!, this)
         }
 
     }
