@@ -49,7 +49,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
         db.getQuestionFollowers(questionId).thenAccept {
-            val notificationButton = findViewById<ImageButton>(R.id.addNotifButton)
+            val notificationButton = findViewById<ImageButton>(R.id.addFollowButton)
             val endorsementCounter = findViewById<TextView>(R.id.notificationCount)
             val count = it.size
 

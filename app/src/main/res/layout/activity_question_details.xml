@@ -33,7 +33,7 @@
             android:text="0" />
 
         <ImageButton
-            android:id="@+id/addNotifButton"
+            android:id="@+id/addFollowButton"
             android:layout_width="30sp"
             android:layout_height="30sp"
             android:layout_margin="8dp"

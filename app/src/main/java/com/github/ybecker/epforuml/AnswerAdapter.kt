@@ -130,7 +130,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
                         val endorsementText = holder.itemView.findViewById<TextView>(R.id.endorsementText)
                         val endorsementButton = holder.itemView.findViewById<ImageButton>(R.id.endorsementButton)
 
-                        if(endorserName != null){
+                        if(endorserName != null  && endorserName.isNotEmpty()){
                             endorsementText.text = "Approved by by "+endorserName+"."
                             endorsementText.visibility = VISIBLE
                             endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_blue), PorterDuff.Mode.SRC_IN)

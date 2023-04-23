@@ -172,13 +172,10 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
         onView(withText("0"))
-        onView(withText("Endorse this"))
-        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withId(R.id.addFollowButton)).perform(click())
         onView(withText("1"))
-        onView(withText("Endorsed"))
-        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withId(R.id.addFollowButton)).perform(click())
         onView(withText("0"))
-        onView(withText("Endorse this"))
     }
 
     @Test
@@ -189,7 +186,7 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        onView(withId(R.id.endorsementButton)).perform(click())
+        onView(withId(R.id.addFollowButton)).perform(click())
         onView(withId(R.id.back_to_forum_button)).perform(click())
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))

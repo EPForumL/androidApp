@@ -316,48 +316,49 @@ abstract class Database {
     abstract fun removeUserConnection(userId: String)
 
     /**
-     * Remove a connection from the user's connection list
+     * Add a Status to a specific user
      *
      * @param userId the id of the you want to add a status to
-     * @param courseId the id of the course for which the
+     * @param courseId the id of the course for where you want to add the status
      * @param status the status you want to add to this user
      */
     abstract fun addStatus(userId: String, courseId: String, status: UserStatus)
 
     /**
-     * Remove a connection from the user's connection list
+     * Remove a Status to a specific user
      *
-     * @param userId the id of the you want to add a statut to
-     * @param courseId the id of the course for which the
-     * @param statut the statu you want to add to this user
+     * @param userId the id of the user that remove the status
+     * @param courseId the id of the course where you want to remove the status
      */
     abstract fun removeStatus(userId: String, courseId: String)
 
     /**
-     * Remove a connection from the user's connection list
+     * Add a Status to a specific user
      *
-     * @param userId the id of the you want to get the status
-     * @param courseId the id of the course where you want to have the status
-     * @return the status of the user
+     * @param userId the id of the user that get the status
+     * @param courseId the id of the course where you want to get the status
+     * @return the status of the user if he has one, null otherwise
      */
     abstract fun getUserStatus(userId: String, courseId: String): CompletableFuture<UserStatus?>
 
     /**
-     * Remove a connection from the user's connection list
+     * Return the endorser of an answer if there is one, null otherwise
      *
-     * @param userId the id of the you want to get the status
-     * @param answerId the id of the course where you want to have the status
-     * @return the status of the user
+     * @param answerId the id of the answer from which you which the endorser
+     * @return the endorser of an answer if there is one, null otherwise
      */
     abstract fun getAnswerEndorsement(answerId: String): CompletableFuture<String?>
 
     /**
-     * TODO
+     * Add an endorsement from a user to the answer
+     * @param answerId the id of the answer you want to endorse
+     * @param username the username of the endorser
      */
     abstract fun addAnswerEndorsement(answerId: String, username: String)
 
     /**
-     * TODO
+     * Remove an endorsement from a user to the answer
+     * @param answerId the id of the answer you want to remove endorsement
      */
     abstract fun removeAnswerEndorsement(answerId: String)
 

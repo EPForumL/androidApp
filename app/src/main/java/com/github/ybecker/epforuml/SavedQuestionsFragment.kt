@@ -20,11 +20,14 @@ class SavedQuestionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        DatabaseManager.db.availableCourses().thenAccept {
-            val c = it[0]
-            Toast.makeText(MainActivity.context, "subscibe to "+c.courseName, Toast.LENGTH_SHORT)
-            DatabaseManager.db.addStatus(DatabaseManager.user!!.userId, c.courseId, UserStatus.STUDENT_ASSISTANT)
-        }
+
+        //TODO remove
+//        DatabaseManager.db.availableCourses().thenAccept {
+//            val c = it[0]
+//            Toast.makeText(MainActivity.context, "subscibe to "+c.courseName, Toast.LENGTH_SHORT)
+//            DatabaseManager.db.addStatus(DatabaseManager.user!!.userId, c.courseId, UserStatus.STUDENT_ASSISTANT)
+//        }
+
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
 
     }

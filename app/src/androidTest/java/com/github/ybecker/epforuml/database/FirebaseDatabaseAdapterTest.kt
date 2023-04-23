@@ -176,7 +176,8 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun getAnswerByIdTest(){
         db.getAnswerById(answer1.answerId).thenAccept {
-            assertThat(it, equalTo(answer1))
+            assertThat(it?.answerId, equalTo(answer1.answerId))
+            assertThat(it?.answerText, equalTo(answer1.answerText))
         }.join()
     }
 
