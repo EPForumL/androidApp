@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -38,7 +38,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/textColor"
                 android:textSize="20sp"
-                android:text="Subscribe :"/>
+                android:text="@string/subscribe"/>
 
             <Switch
                 android:id="@+id/subscriptionSwitch"
@@ -62,7 +62,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/textColor"
                 android:textSize="20sp"
-                android:text="Notify :"/>
+                android:text="@string/notify"/>
 
             <Switch
                 android:id="@+id/notificationSwitch"

@@ -21,7 +21,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import junit.framework.TestCase.assertTrue
-import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
 class AccountFragmentsTest {
@@ -73,7 +72,7 @@ class AccountFragmentsTest {
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
         onView(ViewMatchers.withId(R.id.signOutButton))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.deleteAccoutButton))
+        onView(ViewMatchers.withId(R.id.deleteAccountButton))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
@@ -108,7 +107,7 @@ class AccountFragmentsTest {
             .perform(click())
         onView(ViewMatchers.withId(R.id.nav_account))
             .perform(click())
-        onView(ViewMatchers.withId(R.id.deleteAccoutButton))
+        onView(ViewMatchers.withId(R.id.deleteAccountButton))
             .perform(click())
 
         assertTrue(DatabaseManager.user == null)

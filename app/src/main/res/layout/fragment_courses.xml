@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textColor="@color/textColor"
-        android:text="Courses"
+        android:text="@string/courses"
         android:textSize="45sp"
         android:textStyle="bold" />
 
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="You are not connected"
+        android:text="@string/you_are_not_connected"
         android:textColor="@color/red"
         android:visibility="gone" />
 
