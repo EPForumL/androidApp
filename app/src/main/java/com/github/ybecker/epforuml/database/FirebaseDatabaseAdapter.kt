@@ -484,10 +484,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         connectionsRef.removeValue()
     }
 
-    override fun removeChat(chatId: String): Boolean {
-        db.child(chatsPath).child(chatId).removeValue()
-        return true
-    }
 
 
     private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {

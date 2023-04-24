@@ -38,9 +38,7 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
                 holder.currentText.text = currentItem.text
                 if(hostUser.profilePic!="")
                     holder.chatImage.setImageURI(Uri.parse(hostUser.profilePic))
-                holder.itemView.setOnLongClickListener{
-                    db.removeChat(currentItem.chatId!!)
-                }
+
             }else{
                 holder.currentText.text = currentItem.text
                 if(externUser.profilePic!="")

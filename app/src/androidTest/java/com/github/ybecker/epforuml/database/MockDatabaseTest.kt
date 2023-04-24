@@ -410,13 +410,4 @@ class MockDatabaseTest {
             assertTrue(it.connections.size == 0)
         }
     }
-
-    @Test
-    fun removeChat(){
-        val chat =db.addChat("0", "0", "hey")
-        db.removeChat(chat.chatId!!)
-        db.getChat(user.userId,user.userId).thenAccept {
-            assertThat(it.size, equalTo(1))
-        }.join()
-    }
 }

@@ -355,12 +355,5 @@ class MockDatabase : Database() {
         }
     }
 
-    override fun removeChat(chatId: String): Boolean {
-        return try{
-            chats.remove(chatId)
-            true
-        } catch (e : Exception){
-            false
-        }
-    }
+
 }

@@ -157,30 +157,5 @@ class RealChatTest {
         }
     }
 
-    @Test
-    fun chatIsRemoved(){
-        DatabaseManager.user = host
-        DatabaseManager.db.addChatsWith(host.userId,extern.userId)
-        DatabaseManager.db.addChatsWith(extern.userId,host.userId)
-        DatabaseManager.db.addChat(host.userId,extern.userId,"Hey Extern!")
-        DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
-        DatabaseManager.db.addChat(host.userId,extern.userId,"HYD?")
 
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
-
-        scenario.onActivity { activity ->
-            val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
-            view.findViewById<Button>(R.id.buttonChatWith).performClick()
-        }
-        //remove chat
-        Espresso.onView(withText("HYD?")).perform(longClick())
-        Thread.sleep(2000)
-        scenario.onActivity { activity ->
-            val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
-            assertEquals(2, view.adapter?.itemCount ?:0 )
-        }
-
-    }
 }
