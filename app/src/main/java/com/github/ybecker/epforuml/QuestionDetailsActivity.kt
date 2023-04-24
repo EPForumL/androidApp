@@ -50,13 +50,13 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         db.getQuestionFollowers(questionId).thenAccept {
             val notificationButton = findViewById<ImageButton>(R.id.addFollowButton)
-            val endorsementCounter = findViewById<TextView>(R.id.notificationCount)
+            val followButton = findViewById<TextView>(R.id.notificationCount)
             val count = it.size
 
             if(user == null || user.userId.isEmpty()){
                 notificationButton.isEnabled = false
             }
-            endorsementCounter.text = (count).toString()
+            followButton.text = (count).toString()
 
             val notificationActive = it.contains(user.userId)
             notificationButton.tag = listOf(notificationActive, count)
@@ -74,13 +74,13 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 if (!isActive) {
                     db.addQuestionFollower(user.userId, questionId)
                     val newCount = count+1
-                    endorsementCounter.text = (newCount).toString()
+                    followButton.text = (newCount).toString()
                     notificationButton.tag = listOf(true, newCount)
                     notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.yellow), PorterDuff.Mode.SRC_IN)
                 } else {
                     db.removeQuestionFollower(user.userId, questionId)
                     val newCount = count-1
-                    endorsementCounter.text =(newCount).toString()
+                    followButton.text =(newCount).toString()
                     notificationButton.tag = listOf(false, newCount)
                     notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
                 }
