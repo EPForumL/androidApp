@@ -64,7 +64,7 @@
                 android:textSize="20sp"
                 android:text="@string/notify"/>
 
-            <androidx.appcompat.widget.SwitchCompat
+            <Switch
                 android:id="@+id/notificationSwitch"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
