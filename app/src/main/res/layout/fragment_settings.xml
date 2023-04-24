@@ -37,11 +37,11 @@
         app:layout_constraintTop_toBottomOf="@+id/textView"
         tools:layout_editor_absoluteX="1dp">
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchDark"
             android:layout_width="143dp"
             android:layout_height="48dp"
-            android:text="Switch Mode"
+            android:text="@string/switch_mode"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.06"
@@ -53,7 +53,7 @@
             android:layout_width="212dp"
             android:layout_height="37dp"
             android:layout_marginTop="16dp"
-            android:text="Preferences"
+            android:text="@string/preferences"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -73,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Settings"
+        android:text="@string/settings"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
