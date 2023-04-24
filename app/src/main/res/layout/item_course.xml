@@ -40,7 +40,7 @@
                 android:textSize="20sp"
                 android:text="@string/subscribe"/>
 
-            <androidx.appcompat.widget.SwitchCompat
+            <Switch
                 android:id="@+id/subscriptionSwitch"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
