@@ -3,6 +3,7 @@ package com.github.ybecker.epforuml.chat
 import android.app.Activity
 import android.content.Intent
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
@@ -154,5 +155,32 @@ class RealChatTest {
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
             assertEquals(3, view.adapter?.itemCount ?:0 )
         }
+    }
+
+    @Test
+    fun chatIsRemoved(){
+        DatabaseManager.user = host
+        DatabaseManager.db.addChatsWith(host.userId,extern.userId)
+        DatabaseManager.db.addChatsWith(extern.userId,host.userId)
+        DatabaseManager.db.addChat(host.userId,extern.userId,"Hey Extern!")
+        DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
+        DatabaseManager.db.addChat(host.userId,extern.userId,"HYD?")
+
+        Espresso.onView(withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(withId(R.id.nav_chat)).perform(click())
+
+        scenario.onActivity { activity ->
+            val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
+            view.findViewById<Button>(R.id.buttonChatWith).performClick()
+        }
+        //remove chat
+        Espresso.onView(withText("HYD?")).perform(longClick())
+        Thread.sleep(2000)
+        scenario.onActivity { activity ->
+            val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
+            assertEquals(2, view.adapter?.itemCount ?:0 )
+        }
+
     }
 }

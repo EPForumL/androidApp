@@ -354,4 +354,13 @@ class MockDatabase : Database() {
             users[userId]?.connections?.removeAt(0)
         }
     }
+
+    override fun removeChat(chatId: String): Boolean {
+        return try{
+            chats.remove(chatId)
+            true
+        } catch (e : Exception){
+            false
+        }
+    }
 }
