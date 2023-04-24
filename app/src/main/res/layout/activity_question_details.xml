@@ -25,92 +25,18 @@
         android:textStyle="bold"
         android:id="@+id/qdetails_title"/>
 
-    <ImageView
-        android:id="@+id/image_question"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_weight="1"
-        android:contentDescription="@string/image" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/answers_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_weight="2"
-        tools:listitem="@layout/question_details_answer_item" />
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/reply_box_and_button"
-        android:weightSum="2">
+        android:text="@string/new_question_details"
+        android:textSize="30sp"
+        android:id="@+id/qdetails_content"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:id="@+id/not_loggedin_text"
-            android:text="@string/please_login_to_post_answers"
-            android:layout_marginVertical="5dp"
-            android:textColor="@color/gray"
-            android:layout_gravity="end"
-            android:background="@color/white"
-            android:visibility="gone"/>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/write_reply_card"
-            android:layout_width="0dp"
-            android:layout_height="85dp"
-            android:layout_gravity="center"
-            android:layout_weight="2"
-            android:paddingVertical="5dp"
-            android:visibility="visible"
-            app:cardCornerRadius="3dp"
-            app:cardElevation="5dp"
-            app:cardUseCompatPadding="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="2"
-                android:orientation="vertical">
-
-                <EditText
-                    android:id="@+id/write_reply_box"
-                    android:layout_width="313dp"
-                    android:layout_height="0dp"
-                    android:layout_gravity="center"
-                    android:layout_margin="8dp"
-                    android:layout_weight="2"
-                    android:background="@color/fui_transparent"
-                    android:hint="@string/write_an_answer"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="5dp"
-                    android:textColorHint="@color/courseColor"
-                    android:textSize="20sp"
-                    tools:ignore="TouchTargetSizeCheck">
-
-                </EditText>
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <ImageButton
-            android:id="@+id/post_reply_button"
-            android:layout_width="48dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:background="@drawable/round_corner"
-            android:clickable="true"
-            android:src="@drawable/send_icon"
-            android:visibility="visible"
-            app:tint="@color/white"
-            tools:ignore="SpeakableTextPresentCheck" />
-
-    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/answers_recycler"/>
 
 </LinearLayout>
