@@ -16,8 +16,8 @@ import com.github.ybecker.epforuml.database.Model
 class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var answerRecyclerView: RecyclerView
-    private var question : Model.Question? = null
-    private lateinit var questionId : String
+    private lateinit var mQuestion : Model.Question
+    private lateinit var mQuestionId : String
 
     private lateinit var user : Model.User
     private lateinit var userId : String
@@ -39,10 +39,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
         answerRecyclerView.layoutManager = LinearLayoutManager(this)
 
         // create answer view
-        question = intent.getParcelableExtra("question")
-        questionId = question!!.questionId
+        mQuestion = intent.getParcelableExtra("question")!!
+        mQuestionId = mQuestion.questionId
         val title : TextView = findViewById(R.id.qdetails_title)
-        title.text = question!!.questionTitle
+        title.text = mQuestion.questionTitle
         updateRecycler()
 
         // retrieve cache value
@@ -59,12 +59,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
-        db.getQuestionEndorsements(questionId).thenAccept {
+        db.getQuestionEndorsements(mQuestionId).thenAccept {
             val endorsementButton = findViewById<ToggleButton>(R.id.endorsementButton)
             val endorsementCounter = findViewById<TextView>(R.id.endorsementCount)
             val count = it.size
 
-            if(user == null || user.userId.isEmpty()){
+            if(userId.isEmpty()){
                 endorsementButton.isEnabled = false
             }
             endorsementCounter.text = (count).toString()
@@ -75,12 +75,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
             endorsementButton.setOnClickListener {
                 val count = endorsementButton.tag as Int
                 if (endorsementButton.isChecked) {
-                    db.addQuestionEndorsement(user.userId, questionId)
+                    db.addQuestionEndorsement(user.userId, mQuestionId)
                     val newCount = count+1
                     endorsementCounter.text = (newCount).toString()
                     endorsementButton.tag = newCount
                 } else {
-                    db.removeQuestionEndorsement(user.userId, questionId)
+                    db.removeQuestionEndorsement(user.userId, mQuestionId)
                     val newCount = count-1
                     endorsementCounter.text =(newCount).toString()
                     endorsementButton.tag = newCount
@@ -91,19 +91,17 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         // only allow posting answer if user is connected
 
-        if (user != null && user.userId.isNotEmpty()) {
+        if (userId.isNotEmpty()) {
             // store content of box as a new answer to corresponding question
             sendButton.setOnClickListener {
-                if (question != null) {
-                    val replyText : String =  replyBox.text.toString()
+                val replyText : String =  replyBox.text.toString()
 
-                    // allow only non-empty answers
-                    if (replyText != "") {
-                        replyBox.setText("")
+                // allow only non-empty answers
+                if (replyText != "") {
+                    replyBox.setText("")
 
-                        db.addAnswer(userId, question!!.questionId, replyText)
-                        updateRecycler()
-                    }
+                    db.addAnswer(userId, mQuestionId, replyText)
+                    updateRecycler()
                 }
             }
 
@@ -116,12 +114,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 // question is saved, will be unsaved after click
                 //if (questionIsSaved) {
                 if (isSavedQuestion()) {
-                    cache.remove(question)
+                    cache.remove(mQuestion)
                     update()
                 }
                 // question is not yet saved, will be saved after click
                 else {
-                    cache.add(question!!)
+                    cache.add(mQuestion)
                     update()
                 }
 
@@ -143,15 +141,14 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
 
     private fun updateRecycler() {
-        db.getQuestionById(questionId).thenAccept {
-            question = it
-            answerRecyclerView.adapter = AnswerAdapter(question!!.questionId, question!!.questionText, question!!.answers, this)
+        db.getQuestionById(mQuestionId).thenAccept {
+            mQuestion = it!!
+            answerRecyclerView.adapter = AnswerAdapter(mQuestionId, mQuestion.questionText, mQuestion!!.answers, this)
         }
     }
 
     private fun isSavedQuestion(): Boolean {
-        //return cache.isQuestionSaved(questionId)
-        return cache.contains(question)
+        return cache.contains(mQuestion)
     }
 
     private fun switchImageButton() {
