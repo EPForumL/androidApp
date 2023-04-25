@@ -158,7 +158,7 @@ class QuestionDetailsTest {
 
         // go to second question
         onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(1, click()))
 
         // check button is not clickable
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
