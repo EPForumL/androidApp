@@ -110,7 +110,7 @@ class RealChatTest {
         }
     }
     @Test
-    fun chatIsRemovedCancel() {
+    fun chatIsRemovedCancelAndConfirm() {
         navigateToChat()
         //remove chat
         Espresso.onView(withText("HYD?")).perform(longClick())
@@ -119,11 +119,6 @@ class RealChatTest {
             val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
             assertEquals(3, view.adapter?.itemCount ?: 0)
         }
-    }
-
-    @Test
-    fun chatIsRemoved() {
-        navigateToChat()
         //remove chat
         Espresso.onView(withText("HYD?")).perform(longClick())
         Espresso.onView(withText("OK")).perform(click())
