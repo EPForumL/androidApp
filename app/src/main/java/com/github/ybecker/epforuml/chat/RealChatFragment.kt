@@ -128,7 +128,7 @@ class RealChatFragment : Fragment() {
     }
 
 
-    private fun fetchChats() {
+    fun fetchChats() {
         var chats : ArrayList<Model.Chat> = arrayListOf()
         db.getChat(hostId,externId).thenAccept{
             chats = it as ArrayList<Model.Chat>
@@ -146,7 +146,7 @@ class RealChatFragment : Fragment() {
         } else {
             noChats.visibility = View.GONE
             queryList.sortBy { LocalDateTime.parse(it.date) }
-            chatAdapter = ChatAdapter(queryList, externUser, this as MainActivity)
+            chatAdapter = ChatAdapter(queryList, externUser, this.activity as MainActivity, this)
             chatRecyclerView.adapter = chatAdapter
         }
     }

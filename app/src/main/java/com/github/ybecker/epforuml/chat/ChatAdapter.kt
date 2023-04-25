@@ -21,7 +21,7 @@ import com.github.ybecker.epforuml.database.Model
  * @param externUser the User the host is chatting with
  * It will create a recycler view, treating each chat correctly and outputing the correct view
  */
-class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val externUser : Model.User, private val mainActivity: MainActivity) :
+class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val externUser : Model.User ,private val mainActivity: MainActivity, private val fragment : RealChatFragment) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
 
@@ -41,9 +41,10 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
                 holder.currentText.text = currentItem.text
                 if(hostUser.profilePic!="")
                     holder.chatImage.setImageURI(Uri.parse(hostUser.profilePic))
-                holder.itemView.setOnLongClickListener{
+                holder.itemView.setOnLongClickListener {
                     onLongClickListener(currentItem)
                 }
+
             }else{
                 holder.currentText.text = currentItem.text
                 if(externUser.profilePic!="")
@@ -54,10 +55,7 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
             }
         }
     }
-    class ChatViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView) {
-        val currentText : TextView = itemView.findViewById(R.id.textChat)
-        val chatImage : ImageView = itemView.findViewById(R.id.profilePicture)
-    }
+
     private fun onLongClickListener(currentItem: Model.Chat): Boolean {
         val alertDialogBuilder = AlertDialog.Builder(mainActivity)
         alertDialogBuilder.setTitle("Do you want gto delete this message?")
@@ -69,5 +67,11 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
         alertDialogBuilder.setNegativeButton(android.R.string.cancel, null)
         alertDialogBuilder.show()
         return true
+    }
+
+
+    class ChatViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView) {
+        val currentText : TextView = itemView.findViewById(R.id.textChat)
+        val chatImage : ImageView = itemView.findViewById(R.id.profilePicture)
     }
 }
