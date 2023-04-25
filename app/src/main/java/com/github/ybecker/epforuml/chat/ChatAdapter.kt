@@ -1,5 +1,7 @@
 package com.github.ybecker.epforuml.chat
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
@@ -18,7 +21,7 @@ import com.github.ybecker.epforuml.database.Model
  * @param externUser the User the host is chatting with
  * It will create a recycler view, treating each chat correctly and outputing the correct view
  */
-class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val externUser : Model.User ) :
+class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val externUser : Model.User, private val mainActivity: MainActivity) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
 
@@ -39,7 +42,7 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
                 if(hostUser.profilePic!="")
                     holder.chatImage.setImageURI(Uri.parse(hostUser.profilePic))
                 holder.itemView.setOnLongClickListener{
-                    db.removeChat(currentItem.chatId!!)
+                    onLongClickListener(currentItem)
                 }
             }else{
                 holder.currentText.text = currentItem.text
@@ -54,5 +57,17 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
     class ChatViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView) {
         val currentText : TextView = itemView.findViewById(R.id.textChat)
         val chatImage : ImageView = itemView.findViewById(R.id.profilePicture)
+    }
+    private fun onLongClickListener(currentItem: Model.Chat): Boolean {
+        val alertDialogBuilder = AlertDialog.Builder(mainActivity)
+        alertDialogBuilder.setTitle("Do you want gto delete this message?")
+        alertDialogBuilder.setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int ->
+            db.removeChat(currentItem.chatId!!)
+            mainActivity.intent.putExtra("externID", currentItem.receiverId)
+            mainActivity.replaceFragment(RealChatFragment())
+        }
+        alertDialogBuilder.setNegativeButton(android.R.string.cancel, null)
+        alertDialogBuilder.show()
+        return true
     }
 }

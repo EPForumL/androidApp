@@ -146,7 +146,7 @@ class RealChatFragment : Fragment() {
         } else {
             noChats.visibility = View.GONE
             queryList.sortBy { LocalDateTime.parse(it.date) }
-            chatAdapter = ChatAdapter(queryList, externUser)
+            chatAdapter = ChatAdapter(queryList, externUser, this as MainActivity)
             chatRecyclerView.adapter = chatAdapter
         }
     }
