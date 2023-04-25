@@ -133,7 +133,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
                     val endorsementButton = holder.itemView.findViewById<ImageButton>(R.id.endorsementButton)
 
                     if(endorserName != null  && endorserName.isNotEmpty()){
-                        endorsementText.text = "Approved by by "+endorserName+"."
+                        endorsementText.text = "Approved by "+endorserName+"."
                         endorsementText.visibility = VISIBLE
                         endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_blue), PorterDuff.Mode.SRC_IN)
                     } else {
@@ -151,7 +151,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
                             if(!(it.tag as Boolean)){
                                 val name = user?.username ?: "someone"
                                 db.addAnswerEndorsement(answerId, name)
-                                endorsementText.text = "Approved by by "+name+"."
+                                endorsementText.text = "Approved by "+name+"."
                                 endorsementText.visibility = VISIBLE
                                 endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_blue), PorterDuff.Mode.SRC_IN)
                                 it.tag = true

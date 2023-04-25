@@ -20,8 +20,7 @@ import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -188,7 +187,6 @@ class QuestionDetailsTest {
     fun questionEndorsementStaysWhenQuitting() {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
-        //Thread.sleep(200)
         // go to second question
         onView(withText("Very long question")).perform(click())
 
@@ -275,16 +273,17 @@ class QuestionDetailsTest {
         // go to third question
         onView(withText("About ci")).perform(click())
 
-        VisibilityEquals(0, View.GONE, R.id.endorsementText)
-
         val itemPosition = 0
+
+        //VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
         ClickOnButton(itemPosition, R.id.endorsementButton)
 
-        VisibilityEquals(0, View.VISIBLE, R.id.endorsementText)
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
 
         ClickOnButton(itemPosition, R.id.endorsementButton)
 
-        VisibilityEquals(0, View.GONE, R.id.endorsementText)
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
     }
 
     @Test
@@ -349,23 +348,37 @@ class QuestionDetailsTest {
 
     private fun checkVisibility(viewId: Int, visibility: Int): ViewAction {
         return object : ViewAction {
-            override fun getConstraints(): Matcher<View> {
-                return Matchers.allOf(isAssignableFrom(View::class.java))
+            override fun getDescription(): String {
+                return "check if view is visible or not"
             }
 
-            override fun getDescription(): String {
-                return "check child view with id $viewId"
+            override fun getConstraints(): Matcher<View> {
+                return isAssignableFrom(View::class.java)
             }
 
             override fun perform(uiController: UiController?, view: View?) {
-                view?.findViewById<TextView>(viewId)?.let {
-                    if(it.visibility!=View.VISIBLE){
-                        fail()
+                if (view == null) {
+                    fail("View is null")
+                }
+                view?.findViewById<View>(viewId).let { textView ->
+                    if (textView == null) {
+                        fail("TextView is null")
                     }
+
+                    // check visibility
+                    val visibilityMatcher = when (visibility) {
+                        View.VISIBLE -> Matchers.`is`(View.VISIBLE)
+                        View.INVISIBLE -> Matchers.`is`(View.INVISIBLE)
+                        View.GONE -> Matchers.`is`(View.GONE)
+                        else -> throw IllegalArgumentException("Invalid visibility argument")
+                    }
+
+                    assertThat(textView?.visibility, visibilityMatcher)
                 }
             }
         }
     }
+
 
     //instead of Thread.sleep()
     fun onViewWithTimeout(
