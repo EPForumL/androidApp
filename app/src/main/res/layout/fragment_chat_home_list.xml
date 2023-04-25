@@ -17,11 +17,11 @@
         <TextView
             android:id="@+id/title_chat"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="20dp"
             android:layout_weight="0"
-            android:text="Chats"
+            android:text="@string/chats"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:id="@+id/newChatWith"
-            android:text="Chat with someone new"
+            android:text="@string/chat_with_someone_new"
             />
 
 

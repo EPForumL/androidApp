@@ -3,6 +3,7 @@ package com.github.ybecker.epforuml.chat
 import android.app.Activity
 import android.content.Intent
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.core.view.size
 import androidx.recyclerview.widget.RecyclerView
@@ -155,4 +156,6 @@ class RealChatTest {
             assertEquals(3, view.adapter?.itemCount ?:0 )
         }
     }
+
+
 }

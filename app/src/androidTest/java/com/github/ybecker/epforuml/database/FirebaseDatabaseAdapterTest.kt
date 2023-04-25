@@ -580,4 +580,5 @@ class FirebaseDatabaseAdapterTest {
             }
         }
     }
+
 }
