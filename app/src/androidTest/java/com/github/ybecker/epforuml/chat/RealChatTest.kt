@@ -33,6 +33,7 @@ import org.junit.runner.RunWith
 class RealChatTest {
     private lateinit var host : Model.User
     private lateinit var extern : Model.User
+    private lateinit var useless : Model.User
     private lateinit var scenario : ActivityScenario<Activity>
 
     @Before
@@ -41,7 +42,9 @@ class RealChatTest {
         Firebase.auth.signOut()
         //set up database
         host = DatabaseManager.db.addUser("0", "HostUser", "testEmail").get()
-        extern = DatabaseManager.db.addUser("1", "ExternUser", "testEmail").get()
+        extern = DatabaseManager.db.addUser("2", "ExternUser", "testEmail").get()
+        useless = DatabaseManager.db.addUser("1", "Useless", "testEmail").get()
+        setUpChats()
 
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -58,7 +61,6 @@ class RealChatTest {
 
     @Test
     fun chatGetsSetCorrectly(){
-        setUpChats()
         navigateToChat()
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
         Espresso.onView(withId(R.id.send_text)).check(matches(isClickable()))
@@ -83,7 +85,7 @@ class RealChatTest {
 
     @Test
     fun noMessageWhenNoChat(){
-        DatabaseManager.user = host
+        DatabaseManager.user = useless
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
@@ -93,7 +95,6 @@ class RealChatTest {
 
     @Test
     fun backToHomeIsCorrect() {
-        setUpChats()
         navigateToChat()
         Espresso.onView(withId(R.id.back_to_home_button)).perform(ViewActions.click())
         Espresso.onView(withId(R.id.recycler_chat_home)).check(matches(isDisplayed()))
@@ -101,9 +102,7 @@ class RealChatTest {
 
     @Test
     fun addMessageWorks(){
-        setUpChats()
         navigateToChat()
-
         Espresso.onView(withId(R.id.send_text)).perform(click())
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
@@ -112,7 +111,6 @@ class RealChatTest {
     }
     @Test
     fun chatIsRemovedCancel() {
-        setUpChats()
         navigateToChat()
         //remove chat
         Espresso.onView(withText("HYD?")).perform(longClick())
@@ -125,7 +123,6 @@ class RealChatTest {
 
     @Test
     fun chatIsRemoved() {
-        setUpChats()
         navigateToChat()
         //remove chat
         Espresso.onView(withText("HYD?")).perform(longClick())
