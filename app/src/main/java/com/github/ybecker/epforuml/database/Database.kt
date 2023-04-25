@@ -320,4 +320,5 @@ abstract class Database {
     * @param ChatID to remove
     */
     abstract fun removeChat(chatId:String) : Boolean
+
 }
