@@ -38,6 +38,9 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
      * The temporary (to be completed) list of questions
      */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
+
+    private lateinit var cache : ArrayList<Question>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,6 +50,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
         //DatabaseManager.useMockDatabase()
         futureCourseList = db.availableCourses()
+        cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
 
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         // Set click listener for the circular button with the "+" sign
@@ -102,6 +106,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // move to QuestionDetails when clicking on specific question
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
             intent.putExtra("question", q)
             startActivity(intent)
         }
