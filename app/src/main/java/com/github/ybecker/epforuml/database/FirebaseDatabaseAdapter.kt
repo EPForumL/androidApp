@@ -488,6 +488,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
 
+
     private fun getAnyById(id: String, dataPath: String, getter: (DataSnapshot) -> Any?): CompletableFuture<Any?> {
         val future = CompletableFuture<Any?>()
         // go in the given path

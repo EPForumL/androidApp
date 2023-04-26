@@ -83,7 +83,7 @@
             android:ems="10"
             android:inputType="textLongMessage"
             android:minHeight="100dp"
-            android:text="@string/type_your_message_here" />
+            android:hint="@string/type_your_message_here" />
 
         <Button
             android:id="@+id/send_text"

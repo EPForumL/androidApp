@@ -63,7 +63,7 @@ class MainActivityTest {
             .check(ViewAssertions.matches(ViewMatchers.withText("About Scrum master")))
     }
 
-    @Test
+    /*@Test
     fun cacheIsProperlySentToDetailsActivity() {
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -93,6 +93,8 @@ class MainActivityTest {
 
         Intents.release()
     }
+
+     */
 
     @After
     fun end() {

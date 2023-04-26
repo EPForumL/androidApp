@@ -47,9 +47,8 @@
                 android:id="@+id/endorsementCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
-                android:layout_weight="1"
-                android:text="0" />
+                android:gravity="end"
+                android:layout_weight="1" />
 
             <ToggleButton
                 android:id="@+id/endorsementButton"
@@ -57,8 +56,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:textOff="Endorse this"
-                android:textOn="Endorsed" />
+                android:textOff="@string/endorse_this"
+                android:textOn="@string/endorsed" />
 
         </LinearLayout>
 
@@ -70,7 +69,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         tools:listitem="@layout/question_details_answer_item"
         android:id="@+id/answers_recycler"
         android:layout_weight="2"/>
@@ -115,19 +114,21 @@
                 android:layout_gravity="center"
                 android:layout_weight="2">
 
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:id="@+id/write_reply_box"
-                    android:hint="Write an answer..."
-                    android:layout_gravity="center"
-                    android:background="@color/fui_transparent"
-                    android:textColorHint="@color/courseColor"
-                    android:textSize="20sp"
-                    android:layout_weight="2"
-                    android:paddingStart="15dp"
-                    android:layout_margin="8dp"
-                    android:paddingEnd="5dp">
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:id="@+id/write_reply_box"
+                        android:hint="@string/write_an_answer"
+                        android:layout_gravity="center"
+                        android:background="@color/fui_transparent"
+                        android:textColorHint="@color/courseColor"
+                        android:textSize="20sp"
+                        android:layout_weight="2"
+                        android:paddingStart="15dp"
+                        android:layout_margin="8dp"
+                        android:paddingEnd="5dp"
+                        android:autofillHints="@string/write_an_answer"
+                        android:inputType="text">
 
                 </EditText>
 
@@ -146,7 +147,7 @@
             android:background="@drawable/round_corner"
             app:tint="@color/white"
             android:layout_margin="8dp"
-            />
+            android:contentDescription="@string/send" />
 
     </LinearLayout>
 
