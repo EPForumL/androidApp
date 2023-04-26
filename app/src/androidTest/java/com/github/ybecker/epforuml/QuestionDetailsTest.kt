@@ -8,6 +8,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.*
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -17,6 +18,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -256,13 +258,16 @@ class QuestionDetailsTest {
         // go to third question
         onView(withText("About ci")).perform(click())
 
-        VisibilityEquals(0, View.GONE, R.id.endorsementText)
 
-        val itemPosition = 0
+        val itemPosition = 1
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
         ClickOnButton(itemPosition, R.id.endorsementButton)
 
-        VisibilityEquals(0, View.VISIBLE, R.id.endorsementText)
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
+
 
     @Test
     fun removeAnswerEndorsementTest(){
@@ -273,9 +278,9 @@ class QuestionDetailsTest {
         // go to third question
         onView(withText("About ci")).perform(click())
 
-        val itemPosition = 0
+        val itemPosition = 1
 
-        //VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
 
         ClickOnButton(itemPosition, R.id.endorsementButton)
 
@@ -292,15 +297,40 @@ class QuestionDetailsTest {
 
         onView(withText("About ci")).perform(click())
 
-        VisibilityEquals(0, View.GONE, R.id.endorsementButton)
+        val itemPosition = 1
 
-        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "Model.User()", "course1", UserStatus.TEACHER)
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementButton)
+
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "test_user", "course1", UserStatus.TEACHER)
 
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
         onView(withText("About ci")).perform(click())
 
-        VisibilityEquals(0, View.VISIBLE, R.id.endorsementButton)
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementButton)
+    }
+
+    @Test
+    fun answerEndorsementStaysWhenQuitting() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+
+        onView(withText("About ci")).perform(click())
+
+        val itemPosition = 1
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+
+        onView(withId(R.id.back_to_forum_button)).perform(click())
+
+        onView(withText("About ci")).perform(click())
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
 
     @After

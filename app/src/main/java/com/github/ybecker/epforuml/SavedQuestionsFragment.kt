@@ -22,11 +22,11 @@ class SavedQuestionsFragment : Fragment() {
         // Inflate the layout for this fragment
 
         //TODO remove
-//        DatabaseManager.db.availableCourses().thenAccept {
-//            val c = it[0]
-//            Toast.makeText(MainActivity.context, "subscibe to "+c.courseName, Toast.LENGTH_SHORT)
-//            DatabaseManager.db.addStatus(DatabaseManager.user!!.userId, c.courseId, UserStatus.STUDENT_ASSISTANT)
-//        }
+        DatabaseManager.db.availableCourses().thenAccept {
+            val c = it[1]
+            Toast.makeText(MainActivity.context, "subscibe to "+c.courseName, Toast.LENGTH_SHORT)
+            DatabaseManager.db.addStatus(DatabaseManager.user!!.userId, c.courseId, UserStatus.STUDENT_ASSISTANT)
+        }
 
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
 
