@@ -105,17 +105,12 @@ class SavedQuestionsTest {
     fun loggedCanClickOnSavedQuestionToSeeDetails() {
         // fill cache
         logInIntent()
-
-        Intents.init()
-
         goToSavedFragment()
 
         onView(withId(R.id.recycler_saved_questions))
             .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0, click()))
 
         intended(allOf(hasExtra("savedQuestions", cache), hasExtra("question", question), hasComponent(QuestionDetailsActivity::class.java.name)))
-
-        Intents.release()
     }
 
     // TODO(check if saved questions are still there after restarting the app)

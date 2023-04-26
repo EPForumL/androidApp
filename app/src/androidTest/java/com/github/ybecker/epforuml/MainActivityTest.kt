@@ -15,6 +15,7 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import org.hamcrest.Matchers.allOf
@@ -72,7 +73,10 @@ class MainActivityTest {
         // initialize cache
         intent.putParcelableArrayListExtra("savedQuestions", cache)
 
-        scenario = ActivityScenario.launch(intent)
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+            it.startActivity(intent)
+        }
 
         Intents.init()
 

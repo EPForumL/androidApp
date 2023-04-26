@@ -31,8 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var user : Model.User
 
     private var cache = ArrayList<Model.Question>()
-
-    // TODO : check if cache goes through process of posting a new question
+    // TODO remove test
+    private var test = "NOT LOADED FROM MAIN"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,20 +60,26 @@ class MainActivity : AppCompatActivity() {
         if (newCache != null) {
             cache = newCache
         }
+        /*
+        val newTest : String? = intent.getStringExtra("test")
+        if (newTest != null) {
+            test = newTest
+        }
+
+         */
 
         if(savedInstanceState == null) {
             replaceFragment(HomeFragment(this))
         }
 
-        // TODO change to replace
         if(intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
+            replaceFragment(NewQuestionFragment(this))
         }
         if( intent.extras?.getString("fragment").equals("RealChat")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, RealChatFragment()).commit()
+            replaceFragment(RealChatFragment())
         }
         if( intent.extras?.getString("fragment").equals("chatHome")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, ChatHomeFragment()).commit()
+            replaceFragment(ChatHomeFragment())
         }
 
         navView.setNavigationItemSelectedListener {
@@ -106,6 +112,7 @@ class MainActivity : AppCompatActivity() {
     fun replaceFragment(fragment: Fragment) {
         val bundle = Bundle()
         bundle.putParcelableArrayList("savedQuestions", cache)
+        //bundle.putString("test", test)
         //sendCache(bundle)
         fragment.arguments = bundle
 

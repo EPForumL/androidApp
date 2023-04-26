@@ -59,7 +59,6 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         // Set click listener for the circular button with the "+" sign
-        // TODO send cache to this fragment as well (HOW)
         newQuestionButton.setOnClickListener {
             // Navigate to the new fragment to add a new question
             mainActivity.replaceFragment(NewQuestionFragment(mainActivity))
