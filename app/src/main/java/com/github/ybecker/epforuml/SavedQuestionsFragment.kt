@@ -24,7 +24,6 @@ class SavedQuestionsFragment : Fragment() {
     private lateinit var user : Model.User
 
     private lateinit var cache : ArrayList<Model.Question>
-    private lateinit var newIntentDetails : Intent
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,7 +56,7 @@ class SavedQuestionsFragment : Fragment() {
 
             // move to QuestionDetails when clicking on specific question
             adapter.onItemClick = {q ->
-                newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
+                val newIntentDetails = Intent(requireContext().applicationContext, QuestionDetailsActivity::class.java)
                 newIntentDetails.putParcelableArrayListExtra("savedQuestions", cache)
                 newIntentDetails.putExtra("question", q)
                 startActivity(newIntentDetails)

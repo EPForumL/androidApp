@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.imageview.ShapeableImageView
-class ForumAdapter(private val questionsList : MutableList<Model.Question>) :
+class ForumAdapter(private val questionsList : List<Model.Question>) :
     RecyclerView.Adapter<ForumAdapter.ForumViewHolder>() {
 
     var onItemClick :((Model.Question) -> Unit)? = null

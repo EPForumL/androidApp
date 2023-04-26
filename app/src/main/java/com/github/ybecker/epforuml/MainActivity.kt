@@ -119,20 +119,5 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
     }
-/*
-    fun sendCache(bundle : Bundle) {
-        val list = cache.toListOfQuestions()
-
-        for (q in list) {
-            bundle.putParcelable(q.questionId, q)
-        }
-    }
-
- */
-
-    // faire en sorte de n'envoyer que des booleans (true/false pour save) entre les fragment.
-    fun updateCache() {
-
-    }
 }
 
