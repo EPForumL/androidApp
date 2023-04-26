@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.imageview.ShapeableImageView
