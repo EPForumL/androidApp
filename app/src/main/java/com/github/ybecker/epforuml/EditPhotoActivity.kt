@@ -96,6 +96,8 @@ private lateinit var imageView : ImageView
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 101){
+            //UPLAOD IMAGE TO FIREBASE
+
             goBackToQuestion()
         }
     }

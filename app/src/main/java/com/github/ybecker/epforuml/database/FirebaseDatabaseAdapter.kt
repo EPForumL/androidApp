@@ -1,7 +1,11 @@
 package com.github.ybecker.epforuml.database
 
+import android.content.ContentValues.TAG
+import android.net.Uri
+import android.util.Log
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -115,7 +119,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-        val question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", image_uri, emptyList())
+        val url = uploadImageToFirebase(Uri.parse(image_uri))
+        val question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", url, emptyList())
 
         // add the new question in the db
         newChildRef.setValue(question)
@@ -125,6 +130,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         //add the question in the user's questions list
         db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
+
 
         return question
     }
@@ -441,5 +447,26 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return null
     }
+
+    private fun uploadImageToFirebase(uri: Uri) : String {
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/${uri.lastPathSegment}")
+        val uploadTask = storageRef.putFile(uri)
+        var URL =""
+
+        uploadTask.addOnSuccessListener {
+            // Image uploaded successfully
+            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                // Save the download URL to Firebase database
+                URL = downloadUri.toString()
+                db.child("images").push().setValue(URL)
+
+            }
+        }.addOnFailureListener {
+            // Image upload failed
+            Log.e(TAG, "Error uploading image: ${it.message}")
+        }
+        return URL
+    }
+
 
 }
