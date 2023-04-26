@@ -65,6 +65,9 @@
     <string name="please_login_to_post_answers">Please login to post answers.</string>
     <string name="image">image</string>
     <string name="write_an_answer">Write an answer...</string>
+    <string name="endorse_this">Endorse this </string>
+    <string name="endorsed">Endorsed</string>
+    <string name="send">Send</string>
     />
 
 
