@@ -50,23 +50,25 @@ class MainActivity : AppCompatActivity() {
             cache = newCache
         }
 
-        if(savedInstanceState == null) {
-            replaceFragment(HomeFragment(this))
+        val fragment : String? = intent.extras?.getString("fragment")
+
+        if(savedInstanceState == null || fragment.equals("HomeFragment")) {
+            replaceFragment(HomeFragment())
         }
 
-        if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
+        if(fragment.equals("NewQuestionFragment")) {
             replaceFragment(NewQuestionFragment(this))
         }
-        if( intent.extras?.getString("fragment").equals("RealChat")) {
+        if(fragment.equals("RealChat")) {
             replaceFragment(RealChatFragment())
         }
-        if( intent.extras?.getString("fragment").equals("chatHome")) {
+        if(fragment.equals("chatHome")) {
             replaceFragment(ChatHomeFragment())
         }
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment(this))
+                R.id.nav_home -> replaceFragment(HomeFragment())
                 R.id.nav_courses -> replaceFragment(CoursesFragment())
                 R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
                 R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())

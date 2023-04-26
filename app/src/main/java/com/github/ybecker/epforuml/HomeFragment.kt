@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture
  *
  * Hosts the RecyclerView displaying all questions
  */
-class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
+class HomeFragment() : Fragment() {
 
     /**
      * The questions adapter
@@ -56,7 +56,13 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // Set click listener for the circular button with the "+" sign
         newQuestionButton.setOnClickListener {
             // Navigate to the new fragment to add a new question
-            mainActivity.replaceFragment(NewQuestionFragment(mainActivity))
+            val intent = Intent(
+                context,
+                MainActivity::class.java
+            )
+
+            intent.putExtra("fragment", "NewQuestionFragment")
+            startActivity(intent)
         }
 
         return view
