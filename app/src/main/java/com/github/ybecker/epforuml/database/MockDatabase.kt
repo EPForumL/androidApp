@@ -411,4 +411,13 @@ class MockDatabase : Database() {
             answers[answerId] = updatedAnswer
         }
     }
+
+    override fun removeChat(chatId: String): Boolean {
+        return try {
+            chats.remove(chatId)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

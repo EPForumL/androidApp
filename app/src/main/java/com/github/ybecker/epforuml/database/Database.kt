@@ -316,6 +316,12 @@ abstract class Database {
     abstract fun removeUserConnection(userId: String)
 
     /**
+    * Removes chat from database
+    * @param ChatID to remove
+    */
+    abstract fun removeChat(chatId:String) : Boolean
+
+    /**
      * Add a Status to a specific user
      *
      * @param userId the id of the you want to add a status to

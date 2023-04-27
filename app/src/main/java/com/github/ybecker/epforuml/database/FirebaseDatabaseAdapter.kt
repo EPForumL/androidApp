@@ -744,5 +744,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         return null
     }
+    override fun removeChat(chatId: String): Boolean {
+        db.child(chatsPath).child(chatId).removeValue()
+        return true
+    }
 
 }
