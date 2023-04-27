@@ -58,7 +58,7 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
 
     private fun onLongClickListener(currentItem: Model.Chat): Boolean {
         val alertDialogBuilder = AlertDialog.Builder(mainActivity)
-        alertDialogBuilder.setTitle("Do you want gto delete this message?")
+        alertDialogBuilder.setTitle("Do you want to delete this message?")
         alertDialogBuilder.setPositiveButton(android.R.string.ok) { _: DialogInterface, _: Int ->
             db.removeChat(currentItem.chatId!!)
             mainActivity.intent.putExtra("externID", currentItem.receiverId)

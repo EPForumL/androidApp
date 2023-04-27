@@ -14,7 +14,7 @@
         android:background="@drawable/rounded_rectangle"
         android:textAlignment="center"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:clickable="true"/>
+        />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profilePicture"

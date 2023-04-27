@@ -72,7 +72,8 @@
             android:layout_weight="1"
             app:layoutManager="LinearLayoutManager"
             tools:context=".chat.RealChatFragment"
-            tools:listitem="@layout/chat_item" />
+            tools:listitem="@layout/chat_item"
+            />
 
         <EditText
             android:id="@+id/edit_text_message"
