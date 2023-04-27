@@ -34,12 +34,17 @@ class FirebaseAuthenticator(
     private val caller: ActivityResultCaller = activity
     ) : Authenticator {
 
+    // Used to wait for the result to proceed
+    private lateinit var signInResult: CompletableFuture<Void>
+    private lateinit var signOutResult: CompletableFuture<Void>
+
     // Will be used to launch the sign in intent
     private val signInLauncher = caller.registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
     ) { res -> this.onSignInResult(res) }
 
-    override fun signIn() {
+    override fun signIn(): CompletableFuture<Void> {
+        signInResult = CompletableFuture()
         // Adds the authentication means
         val providers = arrayListOf(
             AuthUI.IdpConfig.EmailBuilder().build(),
@@ -54,9 +59,11 @@ class FirebaseAuthenticator(
 
         // Shows to the user the authentication means
         signInLauncher.launch(signInIntent)
+        return signInResult
     }
 
-    override fun signOut() {
+    override fun signOut(): CompletableFuture<Void> {
+        signOutResult = CompletableFuture()
         if (DatabaseManager.user != null) {
             AuthUI.getInstance()
                 .signOut(activity)
@@ -64,9 +71,11 @@ class FirebaseAuthenticator(
                     logout("Successfully signed out")
                 }
         }
+        return signOutResult
     }
 
-    override fun deleteUser() {
+    override fun deleteUser(): CompletableFuture<Void> {
+        signOutResult = CompletableFuture()
         val user = DatabaseManager.user
         if (user != null) {
             AuthUI.getInstance()
@@ -77,6 +86,7 @@ class FirebaseAuthenticator(
                     logout("Successfully deleted user : ${user.username}")
                 }
         }
+        return signOutResult
     }
 
     /**
@@ -96,6 +106,7 @@ class FirebaseAuthenticator(
             .replace(fragment.id, AccountFragmentGuest())
             .commit()
 
+        signOutResult.complete(null)
         Toast.makeText(activity, txt, Toast.LENGTH_LONG).show()
     }
 
@@ -124,6 +135,7 @@ class FirebaseAuthenticator(
                 ).show()
             }
         }
+        signInResult.complete(null)
     }
 
     /**

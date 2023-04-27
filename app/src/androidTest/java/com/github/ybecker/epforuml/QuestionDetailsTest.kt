@@ -94,7 +94,7 @@ class QuestionDetailsTest {
     @Test
     fun loggedInCanPost() {
         // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
 
         // go to last question
@@ -108,7 +108,7 @@ class QuestionDetailsTest {
     @Test
     fun cannotPostEmptyAnswer() {
         // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
 
         // go to last question
@@ -127,7 +127,7 @@ class QuestionDetailsTest {
     @Test
     fun writeAnswerAndPostIsDisplayed() {
         // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         // go to last question
         onView(withId(R.id.recycler_forum))
@@ -156,8 +156,8 @@ class QuestionDetailsTest {
 
     @Test
     fun guestUserCannotPostAnswers() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-        scenario.onActivity { MockAuthenticator(it).signOut() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
+        scenario.onActivity { MockAuthenticator(it).signOut().join() }
 
         // go to second question
         onView(withId(R.id.recycler_forum))
@@ -170,7 +170,7 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorseButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         // go to second question
         onView(withId(R.id.recycler_forum))
@@ -187,7 +187,7 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorsementStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         // go to second question
         onView(withId(R.id.recycler_forum))
@@ -204,7 +204,7 @@ class QuestionDetailsTest {
 
     @Test
     fun removeQuestionEndorsementTest(){
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         onView(withId(R.id.recycler_forum))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
@@ -220,7 +220,7 @@ class QuestionDetailsTest {
 
     @Test
     fun answerLikeButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         // go to third question
         onView(withText("About ci")).perform(click())
@@ -235,7 +235,7 @@ class QuestionDetailsTest {
 
     @Test
     fun answerLikeStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         // go to third question
         onView(withText("About ci")).perform(click())
@@ -252,7 +252,7 @@ class QuestionDetailsTest {
 
     @Test
     fun removeAnswerLike() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         // go to third question
         onView(withText("About ci")).perform(click())
@@ -270,7 +270,7 @@ class QuestionDetailsTest {
 
     @Test
     fun scrollToRefreshAnswers() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         val testQuStr = "NEWQUESTIONTEST"
         var questionId: String? = null
