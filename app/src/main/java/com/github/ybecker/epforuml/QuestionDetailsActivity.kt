@@ -7,8 +7,10 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
@@ -18,6 +20,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var answerRecyclerView: RecyclerView
     private var question : Model.Question? = null
     private lateinit var questionId : String
+
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private lateinit var user : Model.User
     private lateinit var userId : String
@@ -49,6 +53,19 @@ class QuestionDetailsActivity : AppCompatActivity() {
         button.setOnClickListener{ // Create an intent to return to the previous fragment
             startActivity(newIntent)
         }
+
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            // Reload data from database and update adapter
+            updateRecycler()
+            // Once the refresh is complete, call setRefreshing(false) to hide the loading indicator
+            swipeRefreshLayout.isRefreshing = false
+        }
+
+        swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(this, R.color.purple_500)
+        )
 
         answerRecyclerView = findViewById(R.id.answers_recycler)
         answerRecyclerView.layoutManager = LinearLayoutManager(this)

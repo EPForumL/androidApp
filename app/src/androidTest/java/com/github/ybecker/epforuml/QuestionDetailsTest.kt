@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml
 
+import android.provider.ContactsContract.Data
 import android.content.Intent
 import android.view.View
 import android.widget.Switch
@@ -12,6 +13,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -24,6 +26,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
+import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -293,6 +296,26 @@ class QuestionDetailsTest {
 
         onView(withId(R.id.toggle_save_question))
             .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun scrollToRefreshAnswers() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        val testQuStr = "NEWQUESTIONTEST"
+        var questionId: String? = null
+        DatabaseManager.db.availableCourses().thenAccept {
+            questionId = DatabaseManager.db.addQuestion("0",it[0].courseId, testQuStr, testQuStr, "").questionId
+        }.join()
+
+        onView(withText(testQuStr)).perform(click())
+
+        val testAnsStr =  "NEWANSWER"
+        onView(withText(testAnsStr)).check(ViewAssertions.doesNotExist())
+        DatabaseManager.db.addAnswer("0",questionId?:"", testAnsStr)
+
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
+        onView(withText(testAnsStr)).check(matches(isDisplayed()))
     }
 
     @After
