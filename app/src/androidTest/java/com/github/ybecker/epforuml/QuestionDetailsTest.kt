@@ -1,11 +1,13 @@
 package com.github.ybecker.epforuml
 
+import android.content.Intent
 import android.view.View
 import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
@@ -19,6 +21,8 @@ import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -35,7 +39,12 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class QuestionDetailsTest {
 
-    private lateinit var scenario : ActivityScenario<MainActivity>
+    private lateinit var scenario : ActivityScenario<QuestionDetailsActivity>
+
+    private lateinit var question : Model.Question
+    private var cache : ArrayList<Model.Question> = arrayListOf()
+
+    private lateinit var intent : Intent
 
     private fun ClickOnLike(itemPosition:Int){
         onView(withId(R.id.answers_recycler)).perform(
@@ -57,32 +66,50 @@ class QuestionDetailsTest {
             )
     }
 
+    private fun logInDetailsActivity() {
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+            it.startActivity(intent)
+        }
+    }
+
+    private fun logOutDetailsActivity() {
+        scenario.onActivity {
+            MockAuthenticator(it).signOut()
+            it.startActivity(intent)
+        }
+    }
+
 
     @Before
     fun setup() {
         DatabaseManager.useMockDatabase()
-        Firebase.auth.signInWithEmailAndPassword("jdupont@epfl.ch", "jdpoutn")
-        scenario = ActivityScenario.launch(MainActivity::class.java)
-    }
 
-    @Test
-    fun questionIsClickable() {
-        onView(withId(R.id.recycler_forum)).check(matches(isClickable()))
+        intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            QuestionDetailsActivity::class.java
+        )
+
+        db.getQuestionById("question1").thenAccept {
+            question = it!!
+
+            // add question to intent
+            intent.putExtra("question", question)
+            // add empty list of saved questions
+            cache.clear()
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
+
+            scenario = ActivityScenario.launch(intent)
+        }
     }
 
     @Test
     fun newActivityContainsCorrectData() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
-
-        onView(withId(R.id.qdetails_title)).check(matches(withText("About Scrum master")))
+        onView(withId(R.id.qdetails_title)).check(matches(withText(question.questionTitle)))
     }
 
     @Test
     fun backToMainIsCorrect() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
-
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
         onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
@@ -90,13 +117,7 @@ class QuestionDetailsTest {
 
     @Test
     fun loggedInCanPost() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-
-        // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+        logInDetailsActivity()
 
         onView(withId(R.id.write_reply_box)).check(matches(isDisplayed()))
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
@@ -104,13 +125,7 @@ class QuestionDetailsTest {
 
     @Test
     fun cannotPostEmptyAnswer() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-
-        // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+        logInDetailsActivity()
 
         // post answer
         onView(withId(R.id.post_reply_button)).perform(click())
@@ -123,12 +138,7 @@ class QuestionDetailsTest {
 
     @Test
     fun writeAnswerAndPostIsDisplayed() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+        logInDetailsActivity()
 
         // post write answer
         onView(withId(R.id.write_reply_box))
@@ -153,12 +163,7 @@ class QuestionDetailsTest {
 
     @Test
     fun guestUserCannotPostAnswers() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-        scenario.onActivity { MockAuthenticator(it).signOut() }
-
-        // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+        logOutDetailsActivity()
 
         // check button is not clickable
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
@@ -167,11 +172,8 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorseButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
-        // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
         onView(withText("0"))
         onView(withText("Endorse this"))
         onView(withId(R.id.endorsementButton)).perform(click())
@@ -184,11 +186,7 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorsementStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+        logInDetailsActivity()
 
         onView(withId(R.id.endorsementButton)).perform(click())
         onView(withId(R.id.back_to_forum_button)).perform(click())
@@ -201,10 +199,7 @@ class QuestionDetailsTest {
 
     @Test
     fun removeQuestionEndorsementTest(){
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+        logInDetailsActivity()
 
         onView(withId(R.id.endorsementButton)).perform(click())
         onView(withText("Endorsed"))
@@ -217,10 +212,7 @@ class QuestionDetailsTest {
 
     @Test
     fun answerLikeButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
+        logInDetailsActivity()
 
         val answerposition = 1
 
@@ -232,10 +224,7 @@ class QuestionDetailsTest {
 
     @Test
     fun answerLikeStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
+        logInDetailsActivity()
 
         val answerposition = 1
 
@@ -249,10 +238,7 @@ class QuestionDetailsTest {
 
     @Test
     fun removeAnswerLike() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
+        logInDetailsActivity()
 
         val answerposition = 1
 

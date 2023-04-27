@@ -34,9 +34,20 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // retrieve cache value
+        cache = intent.getParcelableArrayListExtra("savedQuestions")!!
+
+        newIntent = Intent(
+            this,
+            MainActivity::class.java
+        )
+
+        newIntent.putExtra("fragment", "HomeFragment")
+        updateNewIntent()
+
         val button : Button = findViewById(R.id.back_to_forum_button)
         button.setOnClickListener{ // Create an intent to return to the previous fragment
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(newIntent)
         }
 
         answerRecyclerView = findViewById(R.id.answers_recycler)
@@ -49,9 +60,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         title.text = question!!.questionTitle
         updateRecycler()
 
-        // retrieve cache value
-        cache = intent.getParcelableArrayListExtra("savedQuestions")!!
-
+        // retrieve user
         user = DatabaseManager.user ?: Model.User()
         userId = user.userId
         val replyBox : EditText = findViewById(R.id.write_reply_box)
@@ -68,17 +77,17 @@ class QuestionDetailsActivity : AppCompatActivity() {
             endorsementCounter.text = (count).toString()
 
             endorsementButton.tag = count
-            endorsementButton.isChecked = it.contains(user.userId)
+            endorsementButton.isChecked = it.contains(userId)
 
             endorsementButton.setOnClickListener {
                 val count = endorsementButton.tag as Int
                 if (endorsementButton.isChecked) {
-                    db.addQuestionEndorsement(user.userId, questionId)
+                    db.addQuestionEndorsement(userId, questionId)
                     val newCount = count+1
                     endorsementCounter.text = (newCount).toString()
                     endorsementButton.tag = newCount
                 } else {
-                    db.removeQuestionEndorsement(user.userId, questionId)
+                    db.removeQuestionEndorsement(userId, questionId)
                     val newCount = count-1
                     endorsementCounter.text =(newCount).toString()
                     endorsementButton.tag = newCount
@@ -92,13 +101,13 @@ class QuestionDetailsActivity : AppCompatActivity() {
             // store content of box as a new answer to corresponding question
             sendButton.setOnClickListener {
                 if (question != null) {
-                    val replyText : String =  replyBox.text.toString()
+                    val replyText : String = replyBox.text.toString()
 
                     // allow only non-empty answers
                     if (replyText != "") {
                         replyBox.setText("")
 
-                        db.addAnswer(user.userId, question!!.questionId, replyText)
+                        db.addAnswer(userId, question!!.questionId, replyText)
                         updateRecycler()
                     }
                 }
@@ -111,7 +120,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 // question is saved, will be unsaved after click
                 //if (questionIsSaved) {
                 if (isSavedQuestion()) {
-                    cache.remove(question)
+                    cache.remove(question!!)
                 }
                 // question is not yet saved, will be saved after click
                 else {
@@ -144,7 +153,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun isSavedQuestion(): Boolean {
-        //return cache.isQuestionSaved(questionId)
         return cache.contains(question)
     }
 
