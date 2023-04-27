@@ -88,7 +88,7 @@ class HomeFragment() : Fragment() {
         }
 
         swipeRefreshLayout.setColorSchemeColors(
-            ContextCompat.getColor(mainActivity.applicationContext, R.color.purple_500)
+            ContextCompat.getColor(requireContext(), R.color.purple_500)
         )
 
         recyclerView = view.findViewById(R.id.recycler_forum)
