@@ -97,10 +97,19 @@ class MainActivity : AppCompatActivity() {
         val bundle = Bundle()
         // send cache to any of the fragments we are going to
         bundle.putParcelableArrayList("savedQuestions", cache)
+        //sendQuestionsAnswersToBundle(bundle)
         fragment.arguments = bundle
 
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
     }
+
+    // TODO : implement for #120
+    /*
+    fun sendQuestionsAnswersToBundle(bundle: Bundle) {
+
+    }
+
+     */
 }
 
