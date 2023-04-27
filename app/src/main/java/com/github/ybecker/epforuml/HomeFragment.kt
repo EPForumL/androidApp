@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
+import androidx.core.content.ContextCompat
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -28,6 +31,8 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
     private lateinit var adapter : ForumAdapter
 
     private lateinit var recyclerView: RecyclerView
+
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     /**
      * The final list of questions to diplay on the page
@@ -62,6 +67,20 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val layoutManager = LinearLayoutManager(context)
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            // Reload data from database and update adapter
+            getQuestionsList()
+            // Once the refresh is complete, call setRefreshing(false) to hide the loading indicator
+            swipeRefreshLayout.isRefreshing = false
+        }
+
+        swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(mainActivity.applicationContext, R.color.purple_500)
+        )
+
         recyclerView = view.findViewById(R.id.recycler_forum)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(false) // maybe change that later
