@@ -139,14 +139,11 @@ class FirebaseAuthenticator(
                         firebaseUser.displayName!!,
                         firebaseUser.email!!
                     ).thenAccept { newUser ->
-                        DatabaseManager.user = newUser
+                        gotToActivity(newUser)
                     }
                 } else {
-                    DatabaseManager.user = user
+                    gotToActivity(user)
                 }
-                DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)
-                DatabaseManager.user!!.connections.add(true)
-                gotToActivity(DatabaseManager.user!!.username)
             }
         }
     }
@@ -154,10 +151,14 @@ class FirebaseAuthenticator(
     /**
      * Shows sign-in Toast and goes to MainActivity or AccountFragment
      */
-    private fun gotToActivity(username: String) {
+    private fun gotToActivity(newUser: Model.User) {
+        DatabaseManager.user = newUser
+        DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)
+        DatabaseManager.user!!.connections.add(true)
+
         Toast.makeText(
             activity,
-            "Successfully signed in as $username",
+            "Successfully signed in as ${newUser.username}",
             Toast.LENGTH_LONG
         ).show()
 

@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
@@ -42,11 +45,11 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment()).commit()
         }
 
         if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment()).commit()
         }
         if( intent.extras?.getString("fragment").equals("RealChat")) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, RealChatFragment()).commit()
@@ -54,10 +57,12 @@ class MainActivity : AppCompatActivity() {
         if( intent.extras?.getString("fragment").equals("chatHome")) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, ChatHomeFragment()).commit()
         }
+        // Remove it otherwise we might jump back to this fragment later
+        intent.removeExtra("fragment")
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment(this))
+                R.id.nav_home -> replaceFragment(HomeFragment())
                 R.id.nav_courses -> replaceFragment(CoursesFragment())
                 R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
                 R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())

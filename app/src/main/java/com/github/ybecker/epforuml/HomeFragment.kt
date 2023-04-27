@@ -12,6 +12,9 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture
@@ -23,7 +26,7 @@ import java.util.concurrent.CompletableFuture
  *
  * Hosts the RecyclerView displaying all questions
  */
-class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
+class HomeFragment : Fragment() {
 
     /**
      * The questions adapter
@@ -43,6 +46,9 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
      * The temporary (to be completed) list of questions
      */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
+
+    private lateinit var mainActivity: MainActivity
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,11 +59,13 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         //DatabaseManager.useMockDatabase()
         futureCourseList = db.availableCourses()
 
+        mainActivity = activity as MainActivity
+
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         // Set click listener for the circular button with the "+" sign
         newQuestionButton.setOnClickListener {
             // Navigate to the new fragment to add a new question
-            mainActivity.replaceFragment(NewQuestionFragment(mainActivity))
+            mainActivity.replaceFragment(NewQuestionFragment())
         }
 
         return view

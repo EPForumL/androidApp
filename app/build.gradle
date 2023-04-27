@@ -135,6 +135,8 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    implementation "androidx.fragment:fragment-ktx:1.5.7"
 }
 
 tasks.withType(Test) {

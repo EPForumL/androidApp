@@ -8,7 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
@@ -19,7 +22,7 @@ import com.github.ybecker.epforuml.sensor.CameraActivity
  * Use the [NewQuestionFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
+class NewQuestionFragment : Fragment() {
 
     private lateinit var questBody : EditText
     private lateinit var questTitle : EditText
@@ -31,6 +34,8 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
             imageURI.text = uri.toString()
         }
 
+    private lateinit var mainActivity: MainActivity
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,6 +43,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         val user = DatabaseManager.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
 
+        mainActivity = activity as MainActivity
 
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
         // Get the set of available courses from the MockDatabase
@@ -108,7 +114,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                         questBody.text.toString(),
                         imageURI.toString()
                     )
-                    mainActivity.replaceFragment(HomeFragment(mainActivity))
+                    mainActivity.replaceFragment(HomeFragment())
                 }
             }
         }
