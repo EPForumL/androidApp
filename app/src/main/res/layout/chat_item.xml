@@ -14,6 +14,7 @@
         android:background="@drawable/rounded_rectangle"
         android:textAlignment="center"
         android:textAppearance="?attr/textAppearanceListItem"
+        android:longClickable="true"
         />
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -26,5 +27,6 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.214" />
+        app:layout_constraintVertical_bias="0.214"
+        android:longClickable="true"/>
 </LinearLayout>
