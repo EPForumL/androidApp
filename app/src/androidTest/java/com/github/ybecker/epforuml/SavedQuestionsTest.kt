@@ -58,8 +58,6 @@ class SavedQuestionsTest {
         }
     }
 
-    // TODO : fix --> add cache
-    // not logged in can only see text
     @Test
     fun notLoggedInSeesOnlyText() {
         scenario.onActivity { MockAuthenticator(it).signOut() }
@@ -73,7 +71,6 @@ class SavedQuestionsTest {
             .check(matches(withText("Please log in to be able to save questions.")))
     }
 
-    // logged sees other text if empty question
     @Test
     fun loggedInNothingSaved() {
         scenario.onActivity { MockAuthenticator(it).signIn() }

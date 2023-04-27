@@ -350,8 +350,9 @@ class MockDatabase : Database() {
     }
 
     override fun removeUserConnection(userId: String) {
-        if (users[userId]?.connections?.size!! > 0) {
-            users[userId]?.connections?.removeAt(0)
+        val co = users[userId]?.connections
+        if (co != null && co.size > 0) {
+            co.removeAt(0)
         }
     }
 
