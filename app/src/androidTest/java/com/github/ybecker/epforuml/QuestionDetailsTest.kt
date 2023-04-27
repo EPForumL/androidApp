@@ -23,6 +23,7 @@ import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -249,6 +250,49 @@ class QuestionDetailsTest {
         ClickOnLike(answerposition)
 
         CounterEquals(answerposition, "0")
+    }
+
+    @Test
+    fun clickingToggleAltersDrawable() {
+        logInDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
+
+        onView(withId(R.id.toggle_save_question))
+            .perform(click())
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+    }
+
+    @Test
+    fun toggleOnWhenQuestionSaved() {
+        cache.add(question)
+        intent.putParcelableArrayListExtra("savedQuestions", cache)
+
+        logInDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+    }
+
+    @Test
+    fun guestCannotSaveQuestion() {
+        logOutDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(not(isDisplayed())))
+    }
+
+
+    @Test
+    fun loggedInCanSaveQuestion() {
+        // authentication
+        logInDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(isDisplayed()))
     }
 
     @After
