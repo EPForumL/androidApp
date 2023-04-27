@@ -130,11 +130,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    implementation 'com.google.gms:google-services:4.3.8'
 
     // Circular ImageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    implementation 'com.google.guava:guava:30.1.1-android'
 }
 
 tasks.withType(Test) {

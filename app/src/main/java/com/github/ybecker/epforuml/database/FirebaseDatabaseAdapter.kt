@@ -2,15 +2,19 @@ package com.github.ybecker.epforuml.database
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
+//import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import android.content.ContentValues
+import android.widget.Toast
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.coroutineContext
 
 /**
  * This class represents a database that uses Firebase Realtime Database
@@ -190,7 +194,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         //add the question in the user's questions list
         db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
 
-        FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
+        //FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
 
         return question
     }
@@ -328,6 +332,18 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             Log.e(TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
             future.complete(false)
         }
+
+        Firebase.messaging.subscribeToTopic("test")
+            .addOnCompleteListener { task ->
+                var msg = "Subscribed"
+                if (!task.isSuccessful) {
+                    msg = "Subscribe failed"
+                }
+                Log.d(TAG, msg)
+                Toast.makeText(MainActivity.context, msg, Toast.LENGTH_SHORT).show()
+            }
+
+
         return future
     }
 
