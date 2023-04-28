@@ -31,9 +31,15 @@ class LoginActivity : AppCompatActivity() {
         DatabaseManager.useMockDatabase()
 
         val signInButton = findViewById<Button>(R.id.signInButton)
-        signInButton.setOnClickListener { authenticator.signIn() }
-
         val guestButton = findViewById<Button>(R.id.guestButton)
+        signInButton.setOnClickListener {
+            signInButton.isEnabled = false
+            guestButton.isEnabled = false
+            authenticator.signIn().thenAccept {
+                signInButton.isEnabled = true
+                guestButton.isEnabled = true
+            }
+        }
         guestButton.setOnClickListener { continueAsGuest() }
 
         checkIfAlreadySignedIn()

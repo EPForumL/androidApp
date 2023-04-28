@@ -77,14 +77,14 @@ class QuestionDetailsTest {
 
     private fun logInDetailsActivity() {
         scenario.onActivity {
-            MockAuthenticator(it).signIn()
+            MockAuthenticator(it).signIn().join()
             it.startActivity(intent)
         }
     }
 
     private fun logOutDetailsActivity() {
         scenario.onActivity {
-            MockAuthenticator(it).signOut()
+            MockAuthenticator(it).signOut().join()
             it.startActivity(intent)
         }
     }
