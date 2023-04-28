@@ -2,6 +2,7 @@
 package com.github.ybecker.epforuml.notifications
 
 import android.Manifest
+import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.pm.PackageManager
@@ -31,7 +32,7 @@ class RemoteNotificationService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId, "My Channel", NotificationManager.IMPORTANCE_DEFAULT)
             val notificationManager: NotificationManager =
-                MainActivity.context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                this.application.applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
 
