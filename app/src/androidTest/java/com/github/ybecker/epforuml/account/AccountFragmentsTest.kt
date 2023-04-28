@@ -82,6 +82,8 @@ class AccountFragmentsTest {
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
         assertTrue(DatabaseManager.user != null)
 
+        Thread.sleep(2000)
+
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
         onView(ViewMatchers.withContentDescription(R.string.open))
@@ -100,6 +102,8 @@ class AccountFragmentsTest {
         DatabaseManager.useMockDatabase()
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
         assertTrue(DatabaseManager.user != null)
+
+        Thread.sleep(2000)
 
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
