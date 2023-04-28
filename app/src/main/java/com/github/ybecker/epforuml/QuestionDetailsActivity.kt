@@ -215,6 +215,20 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun updateNewIntent() {
         newIntent.putParcelableArrayListExtra("savedQuestions", cache)
+        updateAnswersCacheIfConnected()
+        newIntent.putParcelableArrayListExtra("savedAnswers", answersCache)
+    }
+
+    private fun updateAnswersCacheIfConnected() {
+        if (MainActivity.isConnected()) {
+            answersCache.clear()
+
+            for (question in cache) {
+                db.getQuestionAnswers(question.questionId).thenAccept { answerList ->
+                    answersCache.addAll(answerList)
+                }
+            }
+        }
     }
 
 }

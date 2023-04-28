@@ -70,7 +70,11 @@ class MainActivity : AppCompatActivity() {
         if (newCache != null) {
             cache = newCache
         }
-        updateAnswersCacheIfConnected()
+
+        val newAnswersCache : ArrayList<Model.Answer>? = intent.getParcelableArrayListExtra("savedAnswers")
+        if (newAnswersCache != null) {
+            answersCache = newAnswersCache
+        }
 
         // get retrieve name of fragment to display if any
         val fragment : String? = intent.extras?.getString("fragment")
@@ -128,6 +132,8 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.closeDrawers()
     }
 
+
+    // TODO : move this to QuestionDetails
     private fun updateAnswersCacheIfConnected() {
         if (isConnected()) {
             answersCache.clear()

@@ -59,6 +59,7 @@ class SavedQuestionsFragment : Fragment() {
             adapter.onItemClick = {q ->
                 newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
                 newIntentDetails.putParcelableArrayListExtra("savedQuestions", cache)
+                newIntentDetails.putParcelableArrayListExtra("savedAnswers", answersCache)
                 newIntentDetails.putExtra("comingFrom", "SavedQuestionsFragment")
                 newIntentDetails.putExtra("question", q)
                 startActivity(newIntentDetails)
