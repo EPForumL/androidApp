@@ -37,7 +37,7 @@ class RemoteNotificationService : FirebaseMessagingService() {
         }
 
         // Afficher une notification
-        val notification = NotificationCompat.Builder( MainActivity.context, channelId)
+        val notification = NotificationCompat.Builder(this.application.applicationContext, channelId)
         .setSmallIcon(R.drawable.nav_chat)
         .setContentTitle(author)
         .setContentText(title)
@@ -46,10 +46,10 @@ class RemoteNotificationService : FirebaseMessagingService() {
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .build()
 
-        val notificationManager = NotificationManagerCompat.from(MainActivity.context)
+        val notificationManager = NotificationManagerCompat.from(this.application.applicationContext)
 
         if (ActivityCompat.checkSelfPermission(
-                MainActivity.context,
+                this.application.applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {

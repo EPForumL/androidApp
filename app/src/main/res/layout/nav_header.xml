@@ -6,7 +6,7 @@
     android:paddingBottom="20dp"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    android:background="#1AF8FF">
+    android:background="@color/dark">
 
     <TextView
         android:layout_width="wrap_content"
@@ -15,6 +15,7 @@
         android:textSize="30sp"
         android:layout_marginStart="10dp"
         android:text="@string/menu"
+        android:textColor="@color/white"
         android:textStyle="bold" />
 
     <TextView
@@ -22,6 +23,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/nav_header_subtitle"
         android:paddingTop="5dp"
+        android:textColor="@color/white"
         android:layout_marginStart="10dp"
         android:textSize="20sp"
         android:text="@string/app_name" />
