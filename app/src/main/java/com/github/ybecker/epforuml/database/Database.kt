@@ -315,5 +315,10 @@ abstract class Database {
      */
     abstract fun removeUserConnection(userId: String)
 
+    /**
+    * Removes chat from database
+    * @param ChatID to remove
+    */
+    abstract fun removeChat(chatId:String) : Boolean
 
 }
