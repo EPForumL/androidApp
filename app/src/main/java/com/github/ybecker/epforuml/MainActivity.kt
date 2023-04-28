@@ -8,9 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
-import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.chat.ChatHomeFragment
