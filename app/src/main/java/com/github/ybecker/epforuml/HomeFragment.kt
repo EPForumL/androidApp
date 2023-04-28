@@ -47,7 +47,7 @@ class HomeFragment : Fragment() {
      */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
-    private lateinit var mainActivity: MainActivity
+    private lateinit var cache : ArrayList<Question>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,14 +58,19 @@ class HomeFragment : Fragment() {
 
         //DatabaseManager.useMockDatabase()
         futureCourseList = db.availableCourses()
-
-        mainActivity = activity as MainActivity
+        cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
 
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         // Set click listener for the circular button with the "+" sign
         newQuestionButton.setOnClickListener {
             // Navigate to the new fragment to add a new question
-            mainActivity.replaceFragment(NewQuestionFragment())
+            val intent = Intent(
+                context,
+                MainActivity::class.java
+            )
+
+            intent.putExtra("fragment", "NewQuestionFragment")
+            startActivity(intent)
         }
 
         return view
@@ -86,7 +91,7 @@ class HomeFragment : Fragment() {
         }
 
         swipeRefreshLayout.setColorSchemeColors(
-            ContextCompat.getColor(mainActivity.applicationContext, R.color.purple_500)
+            ContextCompat.getColor(requireContext(), R.color.purple_500)
         )
 
         recyclerView = view.findViewById(R.id.recycler_forum)
@@ -129,6 +134,7 @@ class HomeFragment : Fragment() {
         // move to QuestionDetails when clicking on specific question
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
             intent.putExtra("question", q)
             startActivity(intent)
         }

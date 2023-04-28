@@ -92,6 +92,7 @@
     <string name="username">Username</string>
     <string name="answer">Answer</string>
     <string name="_0">0</string>
+    <string name="please_login_to_save_questions">Please log in to be able to save questions.</string>
 
 
 </resources>

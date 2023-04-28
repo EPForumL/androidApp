@@ -16,6 +16,7 @@ import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.chat.ChatHomeFragment
 import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var toggle : ActionBarDrawerToggle
     lateinit var drawerLayout: DrawerLayout
+
+    private var cache = ArrayList<Model.Question>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,18 +47,26 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment()).commit()
+        // retrieve list of questions if any
+        val newCache : ArrayList<Model.Question>? = intent.getParcelableArrayListExtra("savedQuestions")
+        if (newCache != null) {
+            cache = newCache
         }
 
-        if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment()).commit()
+        val fragment : String? = intent.extras?.getString("fragment")
+
+        if(savedInstanceState == null || fragment.equals("HomeFragment")) {
+            replaceFragment(HomeFragment())
         }
-        if( intent.extras?.getString("fragment").equals("RealChat")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, RealChatFragment()).commit()
+
+        if(fragment.equals("NewQuestionFragment")) {
+            replaceFragment(NewQuestionFragment(this))
         }
-        if( intent.extras?.getString("fragment").equals("chatHome")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, ChatHomeFragment()).commit()
+        if(fragment.equals("RealChat")) {
+            replaceFragment(RealChatFragment())
+        }
+        if(fragment.equals("chatHome")) {
+            replaceFragment(ChatHomeFragment())
         }
         // Remove it otherwise we might jump back to this fragment later
         intent.removeExtra("fragment")
@@ -88,8 +99,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragment(fragment: Fragment) {
+        val bundle = Bundle()
+        // send cache to any of the fragments we are going to
+        bundle.putParcelableArrayList("savedQuestions", cache)
+        //sendQuestionsAnswersToBundle(bundle)
+        fragment.arguments = bundle
+
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
     }
+
+    // TODO : implement for #120
+    /*
+    fun sendQuestionsAnswersToBundle(bundle: Bundle) {
+
+    }
+
+     */
 }
 

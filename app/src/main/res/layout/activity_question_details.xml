@@ -40,6 +40,16 @@
             android:textOff="@string/endorse_this"
             android:textOn="@string/endorsed" />
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/toggle_save_question"
+            android:clickable="true"
+            android:layout_gravity="center_vertical|end"
+            android:visibility="visible"
+            app:tint="@color/gray"
+            android:background="@color/fui_transparent"/>
+
     </LinearLayout>
 
     <TextView
