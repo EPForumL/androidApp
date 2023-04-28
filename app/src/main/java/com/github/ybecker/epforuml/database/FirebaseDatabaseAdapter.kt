@@ -197,7 +197,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
 
         this.getUserById(userId).thenAccept {
-            PushNotificationService().sendNotification(MainActivity().applicationContext,it?.userId?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+            PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
         }
 
         return question

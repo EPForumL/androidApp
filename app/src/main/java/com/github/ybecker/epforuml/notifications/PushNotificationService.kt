@@ -82,17 +82,14 @@ class PushNotificationService: FirebaseMessagingService() {
         val request = MyJsonObjectRequest(
             Request.Method.POST, "https://fcm.googleapis.com/fcm/send", notification,
             {
-                // La notification a été envoyée avec succès
                 Log.d(TAG,"response received")
             },
             {
-                // Erreur lors de l'envoi de la notification
                 Log.d(TAG,"error received")
             })
 
         Log.d(TAG,request.headers.toString())
 
-        // Ajouter la requête à la file d'attente de la bibliothèque Volley
         Volley.newRequestQueue(context).add(request)
 
         Log.d(TAG, "Send request")
