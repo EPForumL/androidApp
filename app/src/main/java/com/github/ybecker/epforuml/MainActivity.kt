@@ -1,6 +1,8 @@
 package com.github.ybecker.epforuml
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -13,6 +15,7 @@ import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.chat.ChatHomeFragment
 import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.navigation.NavigationView
 
@@ -27,11 +30,20 @@ class MainActivity : AppCompatActivity() {
 
     private var cache = ArrayList<Model.Question>()
 
+    /**
+     * List of all existing answers
+     */
+    private var answersCache = ArrayList<List<Model.Answer>>()
+    private lateinit var connectivityManager: ConnectivityManager
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         context = applicationContext
+
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
@@ -49,6 +61,8 @@ class MainActivity : AppCompatActivity() {
         if (newCache != null) {
             cache = newCache
         }
+
+        updateAnswersCache()
 
         val fragment : String? = intent.extras?.getString("fragment")
 
@@ -111,5 +125,22 @@ class MainActivity : AppCompatActivity() {
     }
 
      */
+
+
+    private fun updateAnswersCache() {
+        if (isConnected()) {
+            cache.clear()
+
+            for (question in cache) {
+                db.getQuestionAnswers(question.questionId).thenAccept { answerList ->
+                    answersCache.add(answerList)
+                }.join()
+            }
+        }
+    }
+
+    private fun isConnected() : Boolean {
+        return (connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null)
+    }
 }
 
