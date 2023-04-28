@@ -67,8 +67,13 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
                 holder.username.text = currentAnswerItem.userId
 
                 val counter = holder.itemView.findViewById<TextView>(R.id.likeCount)
-                val endorsementCount = currentAnswerItem.endorsements.size
+
+                // TODO : fix
+                /*
+                val endorsementCount = currentAnswerItem..size
                 counter.text = (endorsementCount).toString()
+
+                 */
 
                 val like = holder.itemView.findViewById<ImageButton>(R.id.likeButton)
                 like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
