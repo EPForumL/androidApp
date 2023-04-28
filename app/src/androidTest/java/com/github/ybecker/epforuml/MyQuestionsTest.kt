@@ -45,14 +45,12 @@ class MyQuestionsTest {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
 
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
         val user = DatabaseManager.db.addUser("noQuest", "NoQuest",  "").get()
         DatabaseManager.user = user
-
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
         onView(ViewMatchers.withContentDescription(R.string.open)).perform(click())
         onView(withId(R.id.nav_my_questions)).perform(click())
-
 
         //test if "No question posted" is displayed
         onView(withId(R.id.no_question)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
