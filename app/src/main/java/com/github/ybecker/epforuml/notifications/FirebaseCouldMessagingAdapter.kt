@@ -24,7 +24,7 @@ object FirebaseCouldMessagingAdapter {
             val author = futureAuthor.get()
             val tokenList = futureTokenList.get()
             val random = Random()
-
+/*
             FirebaseMessaging.getInstance().token.addOnSuccessListener {token ->
                 val message = RemoteMessage.Builder(token)
                     .setMessageId(Integer.toString(random.nextInt()))
@@ -66,6 +66,8 @@ object FirebaseCouldMessagingAdapter {
                     Log.e(TAG, "Error sending message to $token: $e")
                 }
             }
+
+ */
         }
     }
 

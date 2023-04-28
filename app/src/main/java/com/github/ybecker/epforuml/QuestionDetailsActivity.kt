@@ -31,6 +31,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var cache : ArrayList<Model.Question>
 
     private lateinit var newIntent : Intent
+    private lateinit var comingFromFragment : String
+
+    private var answersCache : ArrayList<Model.Answer> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +43,23 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         // retrieve cache value
         cache = intent.getParcelableArrayListExtra("savedQuestions")!!
+        answersCache = intent.getParcelableArrayListExtra("savedAnswers")!!
+        comingFromFragment = intent.getStringExtra("comingFrom")!!
 
         newIntent = Intent(
             this,
             MainActivity::class.java
         )
 
-        newIntent.putExtra("fragment", "HomeFragment")
+        when(comingFromFragment) {
+            "HomeFragment" -> {
+                newIntent.putExtra("fragment", "HomeFragment")
+            }
+
+            "SavedQuestionsFragment" -> {
+                newIntent.putExtra("fragment", "SavedQuestionsFragment")
+            }
+        }
         updateNewIntent()
 
         val button : Button = findViewById(R.id.back_to_forum_button)
@@ -165,7 +178,16 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {
             question = it
-            answerRecyclerView.adapter = AnswerAdapter(question!!.questionId, question!!.questionText, question!!.answers, this)
+
+            when(MainActivity.isConnected()) {
+                true -> {
+                    answerRecyclerView.adapter = AnswerAdapter(questionId, question!!.questionText, question!!.answers, this)
+                }
+
+                false -> {
+                    answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, answersCache, this)
+                }
+            }
         }
     }
 

@@ -75,6 +75,7 @@ class Model {
             parcel.writeString(questionId)
             parcel.writeString(userId)
             parcel.writeString(answerText)
+            parcel.writeStringList(endorsements)
         }
 
         override fun describeContents(): Int {

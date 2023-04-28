@@ -23,6 +23,13 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var context: Context
+
+        private var connectivityManager : ConnectivityManager? = null
+        fun isConnected() : Boolean {
+            if (connectivityManager == null) { return false }
+
+            return (connectivityManager?.getNetworkCapabilities(connectivityManager?.activeNetwork) != null)
+        }
     }
 
     lateinit var toggle : ActionBarDrawerToggle
@@ -33,8 +40,8 @@ class MainActivity : AppCompatActivity() {
     /**
      * List of all existing answers
      */
-    private var answersCache = ArrayList<List<Model.Answer>>()
-    private lateinit var connectivityManager: ConnectivityManager
+    private var answersCache = ArrayList<Model.Answer>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         context = applicationContext
 
+        // get app connectivity
         connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         // initialize DB to Mock
@@ -57,15 +65,17 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // retrieve list of questions if any
+        // TODO : optimize and only allow when logged in
         val newCache : ArrayList<Model.Question>? = intent.getParcelableArrayListExtra("savedQuestions")
         if (newCache != null) {
             cache = newCache
         }
+        updateAnswersCacheIfConnected()
 
-        updateAnswersCache()
-
+        // get retrieve name of fragment to display if any
         val fragment : String? = intent.extras?.getString("fragment")
 
+        // TODO : change to switch (without savedInstanceState)
         if(savedInstanceState == null || fragment.equals("HomeFragment")) {
             replaceFragment(HomeFragment())
         }
@@ -111,36 +121,23 @@ class MainActivity : AppCompatActivity() {
         val bundle = Bundle()
         // send cache to any of the fragments we are going to
         bundle.putParcelableArrayList("savedQuestions", cache)
-        //sendQuestionsAnswersToBundle(bundle)
+        bundle.putParcelableArrayList("savedAnswers", answersCache)
         fragment.arguments = bundle
 
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
     }
 
-    // TODO : implement for #120
-    /*
-    fun sendQuestionsAnswersToBundle(bundle: Bundle) {
-
-    }
-
-     */
-
-
-    private fun updateAnswersCache() {
+    private fun updateAnswersCacheIfConnected() {
         if (isConnected()) {
-            cache.clear()
+            answersCache.clear()
 
             for (question in cache) {
                 db.getQuestionAnswers(question.questionId).thenAccept { answerList ->
-                    answersCache.add(answerList)
-                }.join()
+                    answersCache.addAll(answerList)
+                }
             }
         }
-    }
-
-    private fun isConnected() : Boolean {
-        return (connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null)
     }
 }
 
