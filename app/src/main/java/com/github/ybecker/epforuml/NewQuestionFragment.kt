@@ -108,7 +108,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                         questBody.text.toString(),
                         imageURI.toString()
                     )
-                    mainActivity.replaceFragment(HomeFragment(mainActivity))
+                    mainActivity.replaceFragment(HomeFragment())
                 }
             }
         }

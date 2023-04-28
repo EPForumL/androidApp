@@ -1,12 +1,14 @@
 package com.github.ybecker.epforuml
 
 import android.provider.ContactsContract.Data
+import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.*
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
@@ -17,7 +19,9 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -34,7 +38,12 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class QuestionDetailsTest {
 
-    private lateinit var scenario : ActivityScenario<MainActivity>
+    private lateinit var scenario : ActivityScenario<QuestionDetailsActivity>
+
+    private lateinit var question : Model.Question
+    private var cache : ArrayList<Model.Question> = arrayListOf()
+
+    private lateinit var intent : Intent
 
     private fun ClickOnButton(itemPosition:Int, id:Int){
         onView(withId(R.id.answers_recycler)).perform(
@@ -66,32 +75,50 @@ class QuestionDetailsTest {
             )
     }
 
+    private fun logInDetailsActivity() {
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+            it.startActivity(intent)
+        }
+    }
+
+    private fun logOutDetailsActivity() {
+        scenario.onActivity {
+            MockAuthenticator(it).signOut()
+            it.startActivity(intent)
+        }
+    }
+
 
     @Before
     fun setup() {
         DatabaseManager.useMockDatabase()
-        Firebase.auth.signInWithEmailAndPassword("jdupont@epfl.ch", "jdpoutn")
-        scenario = ActivityScenario.launch(MainActivity::class.java)
-    }
 
-    @Test
-    fun questionIsClickable() {
-        onView(withId(R.id.recycler_forum)).check(matches(isClickable()))
+        intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            QuestionDetailsActivity::class.java
+        )
+
+        db.getQuestionById("question1").thenAccept {
+            question = it!!
+
+            // add question to intent
+            intent.putExtra("question", question)
+            // add empty list of saved questions
+            cache.clear()
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
+
+            scenario = ActivityScenario.launch(intent)
+        }
     }
 
     @Test
     fun newActivityContainsCorrectData() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
-
-        onView(withId(R.id.qdetails_title)).check(matches(withText("About Scrum master")))
+        onView(withId(R.id.qdetails_title)).check(matches(withText(question.questionTitle)))
     }
 
     @Test
     fun backToMainIsCorrect() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
-
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
         onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
@@ -99,13 +126,7 @@ class QuestionDetailsTest {
 
     @Test
     fun loggedInCanPost() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-
-        // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+        logInDetailsActivity()
 
         onView(withId(R.id.write_reply_box)).check(matches(isDisplayed()))
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
@@ -113,13 +134,7 @@ class QuestionDetailsTest {
 
     @Test
     fun cannotPostEmptyAnswer() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-
-        // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+        logInDetailsActivity()
 
         // post answer
         onView(withId(R.id.post_reply_button)).perform(click())
@@ -132,12 +147,7 @@ class QuestionDetailsTest {
 
     @Test
     fun writeAnswerAndPostIsDisplayed() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
+        logInDetailsActivity()
 
         // post write answer
         onView(withId(R.id.write_reply_box))
@@ -162,11 +172,7 @@ class QuestionDetailsTest {
 
     @Test
     fun guestUserCannotPostAnswers() {
-        scenario.onActivity { MockAuthenticator(it).signOut() }
-
-        // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(1, click()))
+        logOutDetailsActivity()
 
         // check button is not clickable
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
@@ -175,7 +181,7 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorseButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
         // go to second question
         onView(withId(R.id.recycler_forum))
@@ -190,10 +196,7 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorsementStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to second question
-        onView(withText("Very long question")).perform(click())
+        logInDetailsActivity()
 
         onView(withId(R.id.addFollowButton)).perform(click())
         onView(withId(R.id.back_to_forum_button)).perform(click())
@@ -204,11 +207,8 @@ class QuestionDetailsTest {
     }
 
     @Test
-    fun answerLikeButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
+    fun removeQuestionEndorsementTest(){
+        logInDetailsActivity()
 
         val answerposition = 1
 
@@ -236,11 +236,20 @@ class QuestionDetailsTest {
     }
 
     @Test
-    fun answerLikeStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+    fun answerLikeButtonModifyTheCounter() {
+        logInDetailsActivity()
 
-        // go to third question
-        onView(withText("About ci")).perform(click())
+        val answerposition = 1
+
+        CounterEquals(answerposition, "0", R.id.likeCount)
+        ClickOnButton(answerposition, R.id.likeButton)
+        CounterEquals(answerposition, "1", R.id.likeCount)
+
+    }
+
+    @Test
+    fun answerLikeStaysWhenQuitting() {
+        logInDetailsActivity()
 
         val answerposition = 1
 
@@ -253,6 +262,8 @@ class QuestionDetailsTest {
     }
 
     @Test
+    fun removeAnswerLike() {
+        logInDetailsActivity()
     fun endorseAnswerButtonTest(){
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
@@ -337,23 +348,68 @@ class QuestionDetailsTest {
     }
 
     @Test
-    fun scrollToRefreshAnswers() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+    fun clickingToggleAltersDrawable() {
+        logInDetailsActivity()
 
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
+
+        onView(withId(R.id.toggle_save_question))
+            .perform(click())
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+    }
+
+    @Test
+    fun toggleOnWhenQuestionSaved() {
+        cache.add(question)
+        intent.putParcelableArrayListExtra("savedQuestions", cache)
+
+        logInDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+    }
+
+    @Test
+    fun guestCannotSaveQuestion() {
+        logOutDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(not(isDisplayed())))
+    }
+
+
+    @Test
+    fun loggedInCanSaveQuestion() {
+        // authentication
+        logInDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun scrollToRefreshAnswers() {
         val testQuStr = "NEWQUESTIONTEST"
         var questionId: String? = null
-        DatabaseManager.db.availableCourses().thenAccept {
-            questionId = DatabaseManager.db.addQuestion("0",it[0].courseId, testQuStr, testQuStr, "").questionId
+        db.availableCourses().thenAccept {
+            questionId = db.addQuestion("0",it[0].courseId, testQuStr, testQuStr, "").questionId
         }.join()
 
-        onView(withText(testQuStr)).perform(click())
+        db.getQuestionById(questionId!!).thenAccept { newQuestion ->
+            intent.putExtra("question", newQuestion)
 
-        val testAnsStr =  "NEWANSWER"
-        onView(withText(testAnsStr)).check(ViewAssertions.doesNotExist())
-        DatabaseManager.db.addAnswer("0",questionId?:"", testAnsStr)
+            logInDetailsActivity()
 
-        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
-        onView(withText(testAnsStr)).check(matches(isDisplayed()))
+            val testAnsStr =  "NEWANSWER"
+            onView(withText(testAnsStr)).check(ViewAssertions.doesNotExist())
+            db.addAnswer("0",questionId?:"", testAnsStr)
+
+            onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
+            onView(withText(testAnsStr)).check(matches(isDisplayed()))
+        }
     }
 
     @After

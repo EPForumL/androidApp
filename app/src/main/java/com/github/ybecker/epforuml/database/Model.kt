@@ -36,6 +36,7 @@ class Model {
             parcel.writeString(questionText)
             parcel.writeString(imageURI)
             parcel.writeStringList(answers)
+            parcel.writeStringList(endorsements)
         }
 
         override fun describeContents(): Int {
