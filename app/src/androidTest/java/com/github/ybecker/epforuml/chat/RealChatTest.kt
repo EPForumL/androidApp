@@ -33,6 +33,7 @@ import org.junit.runner.RunWith
 class RealChatTest {
     private lateinit var host : Model.User
     private lateinit var extern : Model.User
+    private lateinit var useless : Model.User
     private lateinit var scenario : ActivityScenario<Activity>
 
     @Before
@@ -41,7 +42,9 @@ class RealChatTest {
         Firebase.auth.signOut()
         //set up database
         host = DatabaseManager.db.addUser("0", "HostUser", "testEmail").get()
-        extern = DatabaseManager.db.addUser("1", "ExternUser", "testEmail").get()
+        extern = DatabaseManager.db.addUser("2", "ExternUser", "testEmail").get()
+        useless = DatabaseManager.db.addUser("1", "Useless", "testEmail").get()
+        setUpChats()
 
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -58,104 +61,91 @@ class RealChatTest {
 
     @Test
     fun chatGetsSetCorrectly(){
-        DatabaseManager.user = host
-        DatabaseManager.db.addChatsWith(host.userId,extern.userId)
-        DatabaseManager.db.addChatsWith(extern.userId,host.userId)
-        DatabaseManager.db.addChat(host.userId,extern.userId,"Hey Extern!")
-        DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
-
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
-
-        scenario.onActivity { activity ->
-            val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
-            view.findViewById<Button>(R.id.buttonChatWith).performClick()
-        }
+        navigateToChat()
         Espresso.onView(withId(R.id.title_chat)).check(matches(withText("ExternUser")))
         Espresso.onView(withId(R.id.send_text)).check(matches(isClickable()))
         Espresso.onView(withId(R.id.edit_text_message)).check(matches(isDisplayed())).check(matches(
             isClickable()
         ))
         scenario.onActivity { activity ->
-                val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
-                assertEquals(2, view.adapter?.itemCount ?:0 )
-            }
+            val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
+            assertEquals(3, view.adapter?.itemCount ?:0 )
+        }
 
     }
 
     @Test
     fun noMessageWhenSignedOut(){
         DatabaseManager.user = null
-
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
-
         Espresso.onView(withId(R.id.not_connected_text_view)).check(matches(isDisplayed()))
-
-
     }
 
     @Test
     fun noMessageWhenNoChat(){
-        DatabaseManager.user = host
-
+        DatabaseManager.user = useless
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
-
         Espresso.onView(withId(R.id.no_chats)).check(matches(isDisplayed()))
 
     }
 
     @Test
     fun backToHomeIsCorrect() {
-        DatabaseManager.user = host
-
-        DatabaseManager.db.addChatsWith(host.userId,extern.userId)
-        DatabaseManager.db.addChatsWith(extern.userId,host.userId)
-        DatabaseManager.db.addChat(host.userId,extern.userId,"Hey Extern!")
-        DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
-
-        Espresso.onView(withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(withId(R.id.nav_chat)).perform(click())
-
-        scenario.onActivity { activity ->
-            val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
-            view.findViewById<Button>(R.id.buttonChatWith).performClick()
-        }
-
+        navigateToChat()
         Espresso.onView(withId(R.id.back_to_home_button)).perform(ViewActions.click())
-
         Espresso.onView(withId(R.id.recycler_chat_home)).check(matches(isDisplayed()))
     }
 
     @Test
     fun addMessageWorks(){
-        DatabaseManager.user = host
+        navigateToChat()
+        Espresso.onView(withId(R.id.send_text)).perform(click())
+        scenario.onActivity { activity ->
+            val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
+            assertEquals(4, view.adapter?.itemCount ?:0 )
+        }
+    }
+    @Test
+    fun chatIsRemovedCancelAndConfirm() {
+        navigateToChat()
+        //remove chat
 
-        DatabaseManager.db.addChatsWith(host.userId,extern.userId)
-        DatabaseManager.db.addChatsWith(extern.userId,host.userId)
-        DatabaseManager.db.addChat(host.userId,extern.userId,"Hey Extern!")
-        DatabaseManager.db.addChat(extern.userId,host.userId,"Hey Host!")
+        Espresso.onView(withText("HYD?")).perform(longClick())
+        Espresso.onView(withText("Cancel")).perform(click())
+        scenario.onActivity { activity ->
+            val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
+            assertEquals(3, view.adapter?.itemCount ?: 0)
+        }
+        //remove chat
+        Espresso.onView(withText("HYD?")).perform(longClick())
+        Espresso.onView(withText("OK")).perform(click())
+        scenario.onActivity { activity ->
+            val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
+            assertEquals(2, view.adapter?.itemCount ?: 0)
+        }
+    }
 
+    private fun navigateToChat() {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(withId(R.id.nav_chat)).perform(click())
 
         scenario.onActivity { activity ->
-            val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
+            val view: RecyclerView = activity.findViewById(R.id.recycler_chat_home)
             view.findViewById<Button>(R.id.buttonChatWith).performClick()
-        }
-
-        Espresso.onView(withId(R.id.send_text)).perform(click())
-        scenario.onActivity { activity ->
-            val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
-            assertEquals(3, view.adapter?.itemCount ?:0 )
         }
     }
 
-
+    private fun setUpChats() {
+        DatabaseManager.user = host
+        DatabaseManager.db.addChatsWith(host.userId, extern.userId)
+        DatabaseManager.db.addChatsWith(extern.userId, host.userId)
+        DatabaseManager.db.addChat(host.userId, extern.userId, "Hey Extern!")
+        DatabaseManager.db.addChat(extern.userId, host.userId, "Hey Host!")
+        DatabaseManager.db.addChat(host.userId, extern.userId, "HYD?")
+    }
 }

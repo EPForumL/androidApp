@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import com.github.ybecker.epforuml.R
+import java.util.concurrent.CompletableFuture
 
 
 @RunWith(AndroidJUnit4::class)
@@ -40,52 +41,51 @@ class MockAuthenticatorTest {
     @Test
     fun checkSignInAddsUserToDatabase() {
         assertTrue(DatabaseManager.user == null)
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-        assertTrue(DatabaseManager.user != null)
+        scenario.onActivity {
+            MockAuthenticator(it).signIn().join()
+            assertTrue(DatabaseManager.user != null)
+        }
     }
 
     @Test
     fun checkSignInStartsMainActivity() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
         intended(hasComponent(MainActivity::class.java.name))
     }
 
     @Test
     fun checkUserIsNullWhenSignOut() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
         assertTrue(DatabaseManager.user != null)
-        scenario.onActivity { MockAuthenticator(it).signOut() }
+        scenario.onActivity { MockAuthenticator(it).signOut().join() }
         assertTrue(DatabaseManager.user == null)
     }
 
     @Test
     fun checkUserIsRemovedFromDatabaseWhenDeleted() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
         assertTrue(DatabaseManager.user != null)
-        scenario.onActivity { MockAuthenticator(it).deleteUser() }
+        scenario.onActivity { MockAuthenticator(it).deleteUser().join() }
         assertTrue(DatabaseManager.user == null)
-        DatabaseManager.db.getUserById("0").thenAccept {
-            assertTrue(it == null)
-        }
+        val user = DatabaseManager.db.getUserById("0").join()
+        assertTrue(user == null)
     }
 
     @Test
     fun checkUserHasAConnectionAfterSignIn() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-        DatabaseManager.db.getUserById("0").thenAccept {
-            assertTrue(it != null)
-            assertTrue(it?.connections != null)
-            assertTrue(it?.connections?.size!! > 0)
-        }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
+        val user = DatabaseManager.db.getUserById("0").join()
+        assertTrue(user != null)
+        assertTrue(user?.connections != null)
+        assertTrue(user?.connections?.size!! > 0)
     }
 
     @Test
     fun checkUserHasAConnectionLessWhenSignOut() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-        DatabaseManager.db.getUserById("0").thenAccept { user ->
-            val size = user?.connections?.size!!
-            scenario.onActivity { MockAuthenticator(it).signOut() }
-            assertTrue(user.connections.size == size-1)
-        }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
+        val user = DatabaseManager.db.getUserById("0").join()
+        val size = user?.connections?.size!!
+        scenario.onActivity { MockAuthenticator(it).signOut().join() }
+        assertTrue(user.connections.size == size-1)
     }
 }

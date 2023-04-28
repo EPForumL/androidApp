@@ -25,20 +25,30 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/endorsementCount"
+            android:id="@+id/notificationCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:layout_weight="1"/>
+            android:gravity="right"
+            android:layout_weight="1"
+            android:text="0" />
 
-        <ToggleButton
-            android:id="@+id/endorsementButton"
-            android:layout_width="100dp"
+        <ImageButton
+            android:id="@+id/addFollowButton"
+            android:layout_width="30sp"
+            android:layout_height="30sp"
+            android:layout_margin="8dp"
+            android:src="@drawable/notif_bell"
+            android:background="@color/backgroundColor"/>
+
+        <ImageButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:textOff="@string/endorse_this"
-            android:textOn="@string/endorsed" />
+            android:id="@+id/toggle_save_question"
+            android:clickable="true"
+            android:layout_gravity="center_vertical|end"
+            android:visibility="visible"
+            app:tint="@color/gray"
+            android:background="@color/fui_transparent"/>
 
     </LinearLayout>
 
