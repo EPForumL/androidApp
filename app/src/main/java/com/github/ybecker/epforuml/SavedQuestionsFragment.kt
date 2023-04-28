@@ -35,6 +35,7 @@ class SavedQuestionsFragment : Fragment() {
         answersCache = this.requireArguments().getParcelableArrayList("savedAnswers")!!
 
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
     }
 

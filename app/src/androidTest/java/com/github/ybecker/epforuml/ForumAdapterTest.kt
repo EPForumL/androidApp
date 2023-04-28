@@ -79,7 +79,7 @@ class ForumAdapterTest {
 
     @Test
     fun scrollToRefreshQuestionsTest() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
 
