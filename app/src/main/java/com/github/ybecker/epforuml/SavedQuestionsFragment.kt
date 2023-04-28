@@ -19,7 +19,8 @@ class SavedQuestionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        PushNotificationService().sendNotification()
+        PushNotificationService().sendNotification(this.requireContext())
+
         return inflater.inflate(R.layout.fragment_saved_questions, container, false)
     }
 }
