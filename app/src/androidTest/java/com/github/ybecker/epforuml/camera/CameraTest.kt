@@ -22,7 +22,7 @@ import org.junit.runner.RunWith
 class CameraTest {
 
     @Test
-    fun newQuestionSetsUpWhenIntentFilled() {
+    fun newQuestionSetsUpWhenIntentFilled(){
 
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
