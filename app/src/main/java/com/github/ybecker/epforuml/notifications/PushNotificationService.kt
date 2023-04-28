@@ -10,12 +10,12 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
-import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -23,21 +23,27 @@ import org.json.JSONObject
 
 class PushNotificationService: FirebaseMessagingService() {
 
-    private val key = "BNVie0Bei4MJ-fu4xj1WOJ9VRaPbg04uaygJG_TZsclsiQkz1zbTkOkw4aMoWovC0ItFmEUPYrQC_x6LJCQc2Po"
+    private val key = "AAAA8xD8Ax0:APA91bGp-Wt6U5tALnHdk83vTF_oQzP8AqtgC4TXuiuR0m2Z3_2nm4TLJhaUjqBIL_9f14LLKSEM-SUYDuJX0n7thc9h66kFFe-HLAh-j6hWzhu-guKV8zAmqKq0jsEwuo-mXFl2dEmt"
+
     override fun onMessageReceived(message: RemoteMessage) {
-        val received_notif = message.notification
-        val title = received_notif?.title
-        val body = received_notif?.body
+
+        val notif_data = message.data
+        val type = notif_data["type"]
+        val author = notif_data["author"]
+        val title = notif_data["title"]
+        val text = notif_data["text"]
+
         val channelId = "NOTIFICATION_CHANNEL"
         val notifChannel = NotificationChannel(channelId, "New Notification",
             NotificationManager.IMPORTANCE_DEFAULT)
 
         getSystemService(NotificationManager::class.java).createNotificationChannel(notifChannel)
 
-        val notif = Notification.Builder(this, channelId)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+        val notif = NotificationCompat.Builder(this, channelId)
+            .setContentTitle("New " + type + " from " +author)
+            .setContentText(title)
+            .setSmallIcon(R.drawable.notification)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(title+"\n"+text))
             .setAutoCancel(true)
 
         if (ActivityCompat.checkSelfPermission(
@@ -60,29 +66,15 @@ class PushNotificationService: FirebaseMessagingService() {
         //TODO Deal with DB
     }
 
-    //from: String, title:String ,body: String, topic: String
-    fun sendNotification(context: Context) {
+    fun sendNotification(context: Context, from: String, title:String ,text: String, topic: String, type: NotificationType) {
 
-//        FirebaseMessaging.getInstance().isAutoInitEnabled = true
-//
-//        val topic = "test"
-//        val message = RemoteMessage.Builder("1043962004253@gcm.googleapis.com")
-//            .setMessageId(java.util.UUID.randomUUID().toString())
-//            .addData("author", "TESTER USER")
-//            .addData("title", "Hello from FCM")
-//            .addData("title", "FCM Message")
-//            .build()
-//
-//        Log.d(TAG, "SENDING MESSAGE")
-//        // Send a message to the devices subscribed to the provided topic.
-//        FirebaseMessaging.getInstance().send(message)
-
-        val topic = "test"
         val notification = JSONObject()
         val notificationBody = JSONObject()
 
-        notificationBody.put("title", "Titre de la notification")
-        notificationBody.put("message", "Contenu de la notification")
+        notificationBody.put("author", from)
+        notificationBody.put("title", title)
+        notificationBody.put("text", text)
+        notificationBody.put("type", type.name)
 
         notification.put("to", "/topics/$topic")
         notification.put("data", notificationBody)
@@ -97,6 +89,8 @@ class PushNotificationService: FirebaseMessagingService() {
                 // Erreur lors de l'envoi de la notification
                 Log.d(TAG,"error received")
             })
+
+        Log.d(TAG,request.headers.toString())
 
         // Ajouter la requête à la file d'attente de la bibliothèque Volley
         Volley.newRequestQueue(context).add(request)

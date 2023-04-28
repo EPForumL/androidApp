@@ -7,6 +7,8 @@ import android.content.ContentValues
 import android.widget.Toast
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.database.Model.*
+import com.github.ybecker.epforuml.notifications.NotificationType
+import com.github.ybecker.epforuml.notifications.PushNotificationService
 import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.database.ktx.database
@@ -194,7 +196,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         //add the question in the user's questions list
         db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
 
-        //FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
+        this.getUserById(userId).thenAccept {
+            PushNotificationService().sendNotification(MainActivity().applicationContext,it?.userId?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+        }
 
         return question
     }
@@ -333,22 +337,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             future.complete(false)
         }
 
-        Firebase.messaging.subscribeToTopic("test")
-            .addOnCompleteListener { task ->
-                var msg = "Subscribed"
-                if (!task.isSuccessful) {
-                    msg = "Subscribe failed"
-                }
-                Log.d(TAG, msg)
-                Toast.makeText(MainActivity.context, msg, Toast.LENGTH_SHORT).show()
-            }
-
-
+        Firebase.messaging.subscribeToTopic(courseId)
         return future
     }
 
     override fun removeNotification(userId: String, courseId: String) {
         db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).removeValue()
+        Firebase.messaging.unsubscribeFromTopic(courseId)
     }
 
     override fun removeQuestionEndorsement(userId: String, questionId: String) {
