@@ -181,7 +181,7 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorseButtonModifyTheCounter() {
-        logInDetailsActivity()
+        scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to second question
         onView(withId(R.id.recycler_forum))
@@ -196,7 +196,10 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorsementStaysWhenQuitting() {
-        logInDetailsActivity()
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        // go to second question
+        onView(withText("Very long question")).perform(click())
 
         onView(withId(R.id.addFollowButton)).perform(click())
         onView(withId(R.id.back_to_forum_button)).perform(click())
@@ -204,18 +207,6 @@ class QuestionDetailsTest {
         onView(withText("Very long question")).perform(click())
 
         onViewWithTimeout(withId(R.id.notificationCount), matches(withText("1")))
-    }
-
-    @Test
-    fun removeQuestionEndorsementTest(){
-        logInDetailsActivity()
-
-        val answerposition = 1
-
-        CounterEquals(answerposition, "0", R.id.likeCount)
-        ClickOnButton(answerposition, R.id.likeButton)
-        CounterEquals(answerposition, "1", R.id.likeCount)
-
     }
 
     @Test
@@ -261,9 +252,6 @@ class QuestionDetailsTest {
         CounterEquals(answerposition, "1", R.id.likeCount)
     }
 
-    @Test
-    fun removeAnswerLike() {
-        logInDetailsActivity()
     fun endorseAnswerButtonTest(){
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
@@ -306,7 +294,7 @@ class QuestionDetailsTest {
     }
 
     @Test
-    fun EndorseButtonIsVisibleOnlyForStatusUsersTest(){
+    fun endorseButtonIsVisibleOnlyForStatusUsersTest(){
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         onView(withText("About ci")).perform(click())
@@ -490,7 +478,7 @@ class QuestionDetailsTest {
 
 
     //instead of Thread.sleep()
-    fun onViewWithTimeout(
+    private fun onViewWithTimeout(
         matcher: Matcher<View>,
         retryAssertion: ViewAssertion = matches(isDisplayed())
     ): ViewInteraction {

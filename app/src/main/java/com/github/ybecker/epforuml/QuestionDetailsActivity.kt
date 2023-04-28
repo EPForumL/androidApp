@@ -96,7 +96,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             }
             followButton.text = (count).toString()
 
-            val notificationActive = it.contains(user.userId)
+            val notificationActive = it.contains(userId)
             notificationButton.tag = listOf(notificationActive, count)
 
             if(notificationActive){
