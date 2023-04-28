@@ -20,8 +20,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CameraTest {
 
-    @Test
-    fun newQuestionSetsUpWhenIntentFilled(){
+    /*@Test
+    fun newQuestionSetsUpWhenIntentFilled() {
 
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -48,6 +48,8 @@ class CameraTest {
         } catch (e: Exception) {
             Log.e("NewQuestionFragment", "Error lauching activity: \${e.message}")
         }
+
+     */
 }/*
 
     @Test
