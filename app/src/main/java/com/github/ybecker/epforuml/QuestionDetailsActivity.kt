@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.ybecker.epforuml.MainActivity.Companion.context
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
@@ -83,35 +85,46 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
-        db.getQuestionEndorsements(questionId).thenAccept {
-            val endorsementButton = findViewById<ToggleButton>(R.id.endorsementButton)
-            val endorsementCounter = findViewById<TextView>(R.id.endorsementCount)
+        db.getQuestionFollowers(questionId).thenAccept {
+            val notificationButton = findViewById<ImageButton>(R.id.addFollowButton)
+            val followButton = findViewById<TextView>(R.id.notificationCount)
             val count = it.size
 
             if(userId.isEmpty()){
-                endorsementButton.isEnabled = false
+                notificationButton.isEnabled = false
+
             }
-            endorsementCounter.text = (count).toString()
+            followButton.text = (count).toString()
 
-            endorsementButton.tag = count
-            endorsementButton.isChecked = it.contains(userId)
+            val notificationActive = it.contains(userId)
+            notificationButton.tag = listOf(notificationActive, count)
 
-            endorsementButton.setOnClickListener {
-                val count = endorsementButton.tag as Int
-                if (endorsementButton.isChecked) {
-                    db.addQuestionEndorsement(userId, questionId)
+            if(notificationActive){
+                notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.yellow), PorterDuff.Mode.SRC_IN)
+            } else {
+                notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
+            }
+
+            notificationButton.setOnClickListener {
+                val tags = notificationButton.tag as List<*>
+                val isActive = tags[0] as Boolean
+                val count = tags[1] as Int
+                if (!isActive) {
+                    db.addQuestionFollower(user.userId, questionId)
                     val newCount = count+1
-                    endorsementCounter.text = (newCount).toString()
-                    endorsementButton.tag = newCount
+                    followButton.text = (newCount).toString()
+                    notificationButton.tag = listOf(true, newCount)
+                    notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.yellow), PorterDuff.Mode.SRC_IN)
                 } else {
-                    db.removeQuestionEndorsement(userId, questionId)
+                    db.removeQuestionFollower(userId, questionId)
+                    db.removeQuestionFollower(user.userId, questionId)
                     val newCount = count-1
-                    endorsementCounter.text =(newCount).toString()
-                    endorsementButton.tag = newCount
+                    followButton.text =(newCount).toString()
+                    notificationButton.tag = listOf(false, newCount)
+                    notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
                 }
             }
         }
-
 
         // only allow posting answer if user is connected
         if (userId.isNotEmpty()) {
@@ -161,11 +174,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     }
 
-
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {
             question = it
-            answerRecyclerView.adapter = AnswerAdapter(question!!.questionId, question!!.questionText, question!!.answers, this)
+            answerRecyclerView.adapter = AnswerAdapter(question!!, this)
         }
     }
 

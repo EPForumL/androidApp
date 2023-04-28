@@ -28,6 +28,8 @@ class LoginActivity : AppCompatActivity() {
 
         val authenticator = FirebaseAuthenticator(this)
 
+        DatabaseManager.useMockDatabase()
+
         val signInButton = findViewById<Button>(R.id.signInButton)
         signInButton.setOnClickListener { authenticator.signIn() }
 
