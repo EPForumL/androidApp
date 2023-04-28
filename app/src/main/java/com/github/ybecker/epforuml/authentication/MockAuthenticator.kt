@@ -29,21 +29,18 @@ class MockAuthenticator(private val activity: AppCompatActivity) : Authenticator
     }
 
     override fun signOut(): CompletableFuture<Void> {
-        signOutResult = CompletableFuture()
-        val user = DatabaseManager.user
-        if (user != null) {
-            DatabaseManager.db.removeUserConnection(user.userId)
-            DatabaseManager.user = null
-            signOutResult.complete(null)
-        }
-        return signOutResult
+        return signOutOrDelete { DatabaseManager.db.removeUserConnection(it) }
     }
 
     override fun deleteUser(): CompletableFuture<Void> {
+        return signOutOrDelete { DatabaseManager.db.removeUser(it) }
+    }
+
+    private fun signOutOrDelete(execute: (userId: String) -> Unit): CompletableFuture<Void> {
         signOutResult = CompletableFuture()
         val user = DatabaseManager.user
         if (user != null) {
-            DatabaseManager.db.removeUser(user.userId)
+            execute(user.userId)
             DatabaseManager.user = null
             signOutResult.complete(null)
         }
