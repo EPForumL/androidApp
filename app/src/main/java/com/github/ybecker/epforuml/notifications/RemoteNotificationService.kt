@@ -17,7 +17,7 @@ import com.google.firebase.messaging.RemoteMessage
 
 class RemoteNotificationService : FirebaseMessagingService() {
 
-
+/*
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
@@ -56,4 +56,6 @@ class RemoteNotificationService : FirebaseMessagingService() {
             notificationManager.notify(0, notification)
         }
     }
+
+ */
 }
