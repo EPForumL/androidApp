@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if(fragment.equals("NewQuestionFragment")) {
-            replaceFragment(NewQuestionFragment(this))
+            replaceFragment(NewQuestionFragment())
         }
         if(fragment.equals("RealChat")) {
             replaceFragment(RealChatFragment())
