@@ -23,12 +23,21 @@ abstract class Database {
      * @return a list of every registered user
      */
     abstract fun registeredUsers(): CompletableFuture<List<String>>
+
+    /**
+     * Returns a list of all questions in the current database.
+     *
+     * @return a list of every questions
+     */
+    abstract fun getQuestions(): CompletableFuture<List<Question>>
+
     /**
      * Retrieves a list of questions for a given course.
      *
      * @param course the course for which to retrieve questions
      * @return a list of all questions for the given course
      */
+
     abstract fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>>
 
     /**

@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
+import android.widget.TextView
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -21,32 +24,19 @@ import java.util.concurrent.CompletableFuture
  * Hosts the RecyclerView displaying all questions
  */
 class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
-
-    /**
-     * The questions adapter
-     */
-    private lateinit var adapter : ForumAdapter
-
     private lateinit var recyclerView: RecyclerView
-
-    /**
-     * The final list of questions to diplay on the page
-     */
-    private var questionsList = mutableListOf<Question>() // switch to questions when able to transfer data from mainActivtiy
-
-    /**
-     * The temporary (to be completed) list of questions
-     */
+    private lateinit var adapter: MyQuestionsAdapter
+    private val user = DatabaseManager.user
+    private var questionsMap = mutableMapOf<Model.Course, List<Model.Question>>()
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        //DatabaseManager.useMockDatabase()
         futureCourseList = db.availableCourses()
+
+        //DatabaseManager.useMockDatabase()
+
 
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         // Set click listener for the circular button with the "+" sign
@@ -62,48 +52,68 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val layoutManager = LinearLayoutManager(context)
-        recyclerView = view.findViewById(R.id.recycler_forum)
+        recyclerView = view.findViewById(R.id.recycler_my_questions)
         recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(false) // maybe change that later
+        recyclerView.setHasFixedSize(false)
 
-        getQuestionsList()
+
+
+        refresh()
+
     }
 
-    /**
-     * Gets the current list of questions to display from the database
-     */
-    private fun getQuestionsList() {
-        futureCourseList.thenAccept { it ->
-            val futureQuestionList = mutableListOf<CompletableFuture<List<Question>>>()
+    // Fetch the questions and the corresponding courses and display them in the recycler view
+    private fun getForumQuestionsMap() {
 
-            for (course in it) {
-                futureQuestionList.add(db.getCourseQuestions(course.courseId))
+        db.getQuestions().thenAccept { questions ->
+            val courseIds = questions.map { question -> question.courseId }.toSet().toList()
+            val futureCourses = mutableListOf<CompletableFuture<Model.Course?>>()
+
+            for (id in courseIds) {
+                futureCourses.add(db.getCourseById(id))
             }
-            CompletableFuture.allOf(*futureQuestionList.toTypedArray()).thenAccept {
-                // reset list before refresh
-                questionsList = mutableListOf()
 
-                futureQuestionList.let { it.forEach {
-                    questionsList.addAll(it.get())
-                } }
+            // When all courses are fetched, store the questions and display them
+            CompletableFuture.allOf(*futureCourses.toTypedArray()).thenAccept {
+                questionsMap = mutableMapOf()
+                futureCourses.let {
+                    it.forEach { futureCourse ->
+                        val course = futureCourse.get()
+                        if (course != null) {
+                            val courseQuestion = questions.filter { question -> question.courseId == course.courseId }
+                            questionsMap.set(course, courseQuestion)
+                        }
+                    }
+                }
 
                 questionsDisplay()
             }
         }
+
     }
 
-    /**
-     * Updates the adapter with the new list of questions and allow each item to be clickable
-     */
+
+
+    // Display the questions in the recycler view or a message if there are no questions
     private fun questionsDisplay() {
-        adapter = ForumAdapter(questionsList)
+        if (questionsMap.isEmpty()) {
+            val message = "There is no questions yet."
+            val messageView = view?.findViewById<TextView>(R.id.no_question)
+            messageView?.text = message
+            messageView?.visibility = View.VISIBLE
+        }
+
+        adapter = MyQuestionsAdapter(questionsMap)
         recyclerView.adapter = adapter
 
+
+
         // move to QuestionDetails when clicking on specific question
-        adapter.onItemClick = {q ->
-            val intent = Intent(this.context, QuestionDetailsActivity::class.java)
-            intent.putExtra("question", q)
-            startActivity(intent)
-        }
+
+    }
+
+    // Fetch the questions and refresh the display
+    private fun refresh() {
+        getForumQuestionsMap()
     }
 }

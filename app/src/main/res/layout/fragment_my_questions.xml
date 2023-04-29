@@ -4,7 +4,7 @@
     android:id="@+id/fragment_my_questions_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,37 +15,15 @@
             android:id="@+id/course_title_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="25sp"
             android:textStyle="bold"
-            android:text=""
+            android:text="My questions"
             android:textColor="@android:color/white"
             android:background="@color/purple_700"
-
             android:padding="10dp"
             android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"
             />
-
-        <TextView
-            android:id="@+id/not_connected_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/you_are_not_connected"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:visibility="gone" />
-
-
-
-        <TextView
-            android:id="@+id/no_question"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/you_still_haven_t_asked_any_question"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:visibility="gone" />
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_my_questions"
@@ -53,9 +31,26 @@
             android:layout_height="wrap_content"
             tools:listitem="@layout/my_questions_item"
             android:clickable="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/not_connected_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/you_are_not_connected"
+            android:textSize="20sp"
+            android:padding="16dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/no_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/you_still_haven_t_asked_any_question"
+            android:textSize="20sp"
+            android:padding="16dp"
+            android:visibility="gone" />
+
 
     </LinearLayout>
 

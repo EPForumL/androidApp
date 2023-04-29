@@ -31,6 +31,12 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
         //  "What is a Scrum Master ?", "" , mutableListOf())).toMutableList()
         holder.questionsRecyclerView.adapter = holder.forumAdapter
         holder.questionsRecyclerView.layoutManager = LinearLayoutManager(holder.itemView.context)
+
+        holder.forumAdapter.onItemClick = { question ->
+            val intent = Intent(holder.itemView.context, QuestionDetailsActivity::class.java)
+            intent.putExtra("question", question)
+            holder.itemView.context.startActivity(intent)
+        }
     }
 
     class MyQuestionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
