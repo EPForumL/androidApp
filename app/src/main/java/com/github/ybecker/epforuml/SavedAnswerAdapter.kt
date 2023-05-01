@@ -48,7 +48,7 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
     }
 
     override fun getItemCount(): Int {
-        return answerList.size + HEADER_ITEM_COUNT
+        return questionAnswers.size + HEADER_ITEM_COUNT
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

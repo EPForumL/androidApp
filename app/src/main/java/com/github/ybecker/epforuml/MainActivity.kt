@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
@@ -83,36 +81,35 @@ class MainActivity : AppCompatActivity() {
         val fragment : String? = intent.extras?.getString("fragment")
 
         // TODO : change to switch (without savedInstanceState)
-        if(savedInstanceState == null || fragment.equals("HomeFragment")) {
+        if(savedInstanceState == null) {
             replaceFragment(HomeFragment())
         }
 
-        if(fragment.equals("NewQuestionFragment")) {
-            replaceFragment(NewQuestionFragment())
+        when(fragment) {
+            "HomeFragment" -> replaceFragment(HomeFragment())
+            "NewQuestionFragment" -> replaceFragment(NewQuestionFragment())
+            "RealChat" -> replaceFragment(RealChatFragment())
+            "chatHome" -> replaceFragment(ChatHomeFragment())
+            else -> {}
         }
-        if(fragment.equals("RealChat")) {
-            replaceFragment(RealChatFragment())
-        }
-        if(fragment.equals("chatHome")) {
-            replaceFragment(ChatHomeFragment())
-        }
+
         // Remove it otherwise we might jump back to this fragment later
         intent.removeExtra("fragment")
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment())
-                R.id.nav_courses -> replaceFragment(CoursesFragment())
-                R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
-                R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())
+                R.id.nav_home -> replaceFragmentAndClose(HomeFragment())
+                R.id.nav_courses -> replaceFragmentAndClose(CoursesFragment())
+                R.id.nav_my_questions -> replaceFragmentAndClose(MyQuestionsFragment())
+                R.id.nav_saved_questions -> replaceFragmentAndClose(SavedQuestionsFragment())
                 R.id.nav_account ->
                     if (DatabaseManager.user == null) {
-                        replaceFragment(AccountFragmentGuest())
+                        replaceFragmentAndClose(AccountFragmentGuest())
                     } else {
-                        replaceFragment(AccountFragment())
+                        replaceFragmentAndClose(AccountFragment())
                     }
-                R.id.nav_settings -> replaceFragment(SettingsFragment())
-                R.id.nav_chat -> replaceFragment(ChatHomeFragment())
+                R.id.nav_settings -> replaceFragmentAndClose(SettingsFragment())
+                R.id.nav_chat -> replaceFragmentAndClose(ChatHomeFragment())
             }
             true
         }
@@ -134,6 +131,11 @@ class MainActivity : AppCompatActivity() {
         fragment.arguments = bundle
 
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
+        drawerLayout.closeDrawers()
+    }
+
+    fun replaceFragmentAndClose(fragment: Fragment) {
+        replaceFragment(fragment)
         drawerLayout.closeDrawers()
     }
 
