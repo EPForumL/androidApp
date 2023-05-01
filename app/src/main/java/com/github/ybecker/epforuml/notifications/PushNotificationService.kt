@@ -34,13 +34,13 @@ class PushNotificationService: FirebaseMessagingService() {
         val text = notif_data["text"]
 
         val channelId = "NOTIFICATION_CHANNEL"
-        val notifChannel = NotificationChannel(channelId, "New Notification",
+        val notifChannel = NotificationChannel(channelId, "NewNotification",
             NotificationManager.IMPORTANCE_DEFAULT)
 
         getSystemService(NotificationManager::class.java).createNotificationChannel(notifChannel)
 
         val notif = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("New " + type + " from " +author)
+            .setContentTitle("New $type from $author")
             .setContentText(title)
             .setSmallIcon(R.drawable.notification)
             .setStyle(NotificationCompat.BigTextStyle().bigText(title+"\n"+text))
@@ -57,15 +57,6 @@ class PushNotificationService: FirebaseMessagingService() {
         super.onMessageReceived(message)
     }
 
-    override fun onNewToken(token: String) {
-        Log.d(ContentValues.TAG, "Refreshed token: $token")
-
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // FCM registration token to your app server.
-        //TODO Deal with DB
-    }
-
     fun sendNotification(context: Context, from: String, title:String ,text: String, topic: String, type: NotificationType) {
 
         val notification = JSONObject()
@@ -74,7 +65,7 @@ class PushNotificationService: FirebaseMessagingService() {
         notificationBody.put("author", from)
         notificationBody.put("title", title)
         notificationBody.put("text", text)
-        notificationBody.put("type", type.name)
+        notificationBody.put("type", type.getName())
 
         notification.put("to", "/topics/$topic")
         notification.put("data", notificationBody)
@@ -88,11 +79,9 @@ class PushNotificationService: FirebaseMessagingService() {
                 Log.d(TAG,"error received")
             })
 
-        Log.d(TAG,request.headers.toString())
-
         Volley.newRequestQueue(context).add(request)
 
-        Log.d(TAG, "Send request")
+        Log.d(TAG, "Send request : $request")
     }
 
 

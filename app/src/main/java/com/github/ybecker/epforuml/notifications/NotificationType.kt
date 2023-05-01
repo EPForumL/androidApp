@@ -1,5 +1,9 @@
 package com.github.ybecker.epforuml.notifications
 
-enum class NotificationType(name: String) {
-    QUESTION("question"), ANSWER("answer")
+enum class NotificationType(private val v: String) {
+    QUESTION("question"), ANSWER("answer");
+
+    fun getName(): String {
+        return v
+    }
 }

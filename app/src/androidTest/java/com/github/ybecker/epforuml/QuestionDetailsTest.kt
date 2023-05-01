@@ -332,15 +332,13 @@ class QuestionDetailsTest {
     @Test
     fun clickingToggleAltersDrawable() {
         logInDetailsActivity()
-
-        //TODO fix this test
-        Thread.sleep(2000)
+        Thread.sleep(1000)
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
-
+        Thread.sleep(1000)
         onView(withId(R.id.toggle_save_question))
             .perform(click())
-
+        Thread.sleep(1000)
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
