@@ -90,6 +90,10 @@ class MainActivityTest {
         Intents.release()
     }
 
+    // check isConnected is correct
+    // check answerCache is properly sent
+    // check answerCache is properly updated
+
     @After
     fun end() {
         scenario.close()

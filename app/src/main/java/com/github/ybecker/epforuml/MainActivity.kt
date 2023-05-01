@@ -89,6 +89,7 @@ class MainActivity : AppCompatActivity() {
         when(fragment) {
             "HomeFragment" -> replaceFragment(HomeFragment())
             "NewQuestionFragment" -> replaceFragment(NewQuestionFragment())
+            "SavedQuestionsFragment" -> replaceFragment(SavedQuestionsFragment())
             "RealChat" -> replaceFragment(RealChatFragment())
             "chatHome" -> replaceFragment(ChatHomeFragment())
             else -> {}

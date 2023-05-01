@@ -400,6 +400,10 @@ class QuestionDetailsTest {
         }
     }
 
+    // check answerCache is properly sent back to main
+    // check goes back to the adequate fragment (1 test for each)
+    // check is no connection still displays content of question
+
     @After
     fun closing() {
         scenario.close()
