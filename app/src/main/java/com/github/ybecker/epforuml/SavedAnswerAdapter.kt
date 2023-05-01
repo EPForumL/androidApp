@@ -18,7 +18,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
 
-class SavedAnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<Model.Answer>, private val mainActivity: Activity)
+class SavedAnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<Model.Answer>)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -68,7 +68,7 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
 
                 val counter = holder.itemView.findViewById<TextView>(R.id.likeCount)
 
-                // TODO : fix
+                // TODO : fix this + color of endorsement button
                 /*
                 val endorsementCount = currentAnswerItem..size
                 counter.text = (endorsementCount).toString()

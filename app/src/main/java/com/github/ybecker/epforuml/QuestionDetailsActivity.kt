@@ -53,15 +53,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
             MainActivity::class.java
         )
 
-        when(comingFromFragment) {
-            "HomeFragment" -> {
-                newIntent.putExtra("fragment", "HomeFragment")
-            }
-
-            "SavedQuestionsFragment" -> {
-                newIntent.putExtra("fragment", "SavedQuestionsFragment")
-            }
-        }
+        newIntent.putExtra("fragment", comingFromFragment)
+        newIntent.putParcelableArrayListExtra("savedAnswers", answersCache)
         updateNewIntent()
 
         hideContentWhenNotConnectedToInternet()
@@ -77,6 +70,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         swipeRefreshLayout.setOnRefreshListener {
             // Reload data from database and update adapter
             updateRecycler()
+            hideContentWhenNotConnectedToInternet()
             // Once the refresh is complete, call setRefreshing(false) to hide the loading indicator
             swipeRefreshLayout.isRefreshing = false
         }
@@ -107,19 +101,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
 
     private fun updateRecycler() {
-        db.getQuestionById(questionId).thenAccept {
-            question = it
-
-            //when(MainActivity.isConnected()) {
-            when(comingFromFragment) {
-                "HomeFragment" -> {
-                    answerRecyclerView.adapter = AnswerAdapter(question!!, this)
-                }
-
-                "SavedQuestionsFragment" -> {
-                    answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, answersCache, this)
-                }
-            }
+        if (MainActivity.isConnected()) {
+            answerRecyclerView.adapter = AnswerAdapter(question!!, this)
+        } else {
+            answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, answersCache)
         }
     }
 
@@ -259,15 +244,18 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
     private fun hideContentWhenNotConnectedToInternet() {
+        val cardView : CardView = findViewById(R.id.write_reply_card)
+        val sendButton : ImageButton = findViewById(R.id.post_reply_button)
+        val saveButton : ImageButton = findViewById(R.id.toggle_save_question)
+
         if (!MainActivity.isConnected()) {
-            val cardView : CardView = findViewById(R.id.write_reply_card)
             cardView.visibility = View.GONE
-            val sendButton : ImageButton = findViewById(R.id.post_reply_button)
             sendButton.visibility = View.GONE
-
-            val saveButton : ImageButton = findViewById(R.id.toggle_save_question)
             saveButton.visibility = View.GONE
-
+        } else {
+            cardView.visibility = View.VISIBLE
+            sendButton.visibility = View.VISIBLE
+            saveButton.visibility = View.VISIBLE
         }
     }
 }

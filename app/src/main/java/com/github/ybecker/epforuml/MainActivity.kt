@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
         // get app connectivity
         connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        updateAnswersCacheIfConnected()
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
