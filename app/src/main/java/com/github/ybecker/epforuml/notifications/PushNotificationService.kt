@@ -21,11 +21,13 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.json.JSONObject
 
-class PushNotificationService: FirebaseMessagingService() {
+open class PushNotificationService: FirebaseMessagingService() {
 
     private val key = "AAAA8xD8Ax0:APA91bGp-Wt6U5tALnHdk83vTF_oQzP8AqtgC4TXuiuR0m2Z3_2nm4TLJhaUjqBIL_9f14LLKSEM-SUYDuJX0n7thc9h66kFFe-HLAh-j6hWzhu-guKV8zAmqKq0jsEwuo-mXFl2dEmt"
 
     override fun onMessageReceived(message: RemoteMessage) {
+
+        Log.d(TAG, "message received : $message")
 
         val notif_data = message.data
         val type = notif_data["type"]
