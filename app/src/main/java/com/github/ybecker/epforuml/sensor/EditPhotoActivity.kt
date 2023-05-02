@@ -16,6 +16,9 @@ import com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity
 import com.dsphotoeditor.sdk.utils.DsPhotoEditorConstants
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+import java.io.FileOutputStream
 
 
 /**
@@ -48,6 +51,7 @@ private lateinit var imageView : ImageView
         startActivity(intent)
 
     }
+
 
     /**
      * if not done before, check that the activity is allowed to write on disk

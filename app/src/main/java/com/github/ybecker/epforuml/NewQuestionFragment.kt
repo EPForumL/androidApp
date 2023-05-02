@@ -1,8 +1,10 @@
 package com.github.ybecker.epforuml
 
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,10 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.CameraActivity
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+import java.io.FileOutputStream
+import java.util.concurrent.CompletableFuture
 
 /**
  * A simple [Fragment] subclass.
@@ -101,13 +107,26 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-                    db.addQuestion(
-                        user.userId,
-                        course.courseId,
-                        questTitle.text.toString(),
-                        questBody.text.toString(),
-                        imageURI.text.toString()
-                    )
+                    if(imageURI.text=="null"){
+                        db.addQuestion(
+                            user.userId,
+                            course.courseId,
+                            questTitle.text.toString(),
+                            questBody.text.toString(),
+                            imageURI.text.toString()
+                        )
+                    }else{
+                        val pair = translateUriToFile(imageURI.text.toString())
+                        db.addQuestionWithUri(
+                            user.userId,
+                            course.courseId,
+                            questTitle.text.toString(),
+                            questBody.text.toString(),
+                            pair.second,
+                            pair.first
+                        )
+                    }
+
                     mainActivity.replaceFragment(HomeFragment())
                 }
             }
@@ -137,5 +156,24 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
         imageURI.text = image_uri
         return Triple(questBody, questTitle, imageURI)
+    }
+
+    private fun translateUriToFile(image_uri: String): Pair<String, String> {
+        val contentUri = Uri.parse(image_uri)
+        // Use a ContentResolver to get a local file Uri that points to the same image file
+        val contentResolver = this.mainActivity.contentResolver
+        val inputStream = contentResolver.openInputStream(contentUri)
+        val file = File.createTempFile("image", ".jpg")
+        val outputStream = FileOutputStream(file)
+        val buffer = ByteArray(4 * 1024)
+        var read: Int
+        while (inputStream!!.read(buffer).also { read = it } != -1) {
+            outputStream.write(buffer, 0, read)
+        }
+        outputStream.flush()
+        outputStream.close()
+        inputStream.close()
+        val localFileUri = Uri.fromFile(file)
+        return Pair(file.name, localFileUri.toString())
     }
 }

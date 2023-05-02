@@ -12,7 +12,10 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+import java.io.FileOutputStream
 import java.time.LocalDateTime
+import java.util.EmptyStackException
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -678,50 +681,84 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    private fun uploadImageToFirebase(image_uri: String) : CompletableFuture<String> {
-        val final_url : CompletableFuture<String> = CompletableFuture()
-        if(image_uri==""){
-            final_url.complete("")
-            return final_url
+    private fun uploadImageToFirebase(localFileUri: String, fileName : String): CompletableFuture<String> {
+        val finalUrl = CompletableFuture<String>()
+        if (localFileUri.isEmpty()) {
+            finalUrl.complete("")
+            return finalUrl
         }
-        val uri = Uri.parse(image_uri)
-        val storageRef = FirebaseStorage.getInstance().reference.child("images/${uri.lastPathSegment}")
-        val uploadTask = storageRef.putFile(uri)
 
-        uploadTask.addOnSuccessListener {
-            // Image uploaded successfully
-            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                // Save the download URL to Firebase database
-                val URL = downloadUri.toString()
-                db.child("images").push().setValue(URL)
-                final_url.complete(URL)
-
+// Upload the image to Firebase Storage using the local file Uri
+            val storageRef = FirebaseStorage.getInstance().reference
+            val imageRef = storageRef.child("images/${fileName}")
+            val uploadTask = imageRef.putFile(Uri.parse(localFileUri))
+            uploadTask.addOnSuccessListener {
+                // Image uploaded successfully
+                imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    // Save the download URL to Firebase database
+                    val url = downloadUri.toString()
+                    db.child("images").push().setValue(url)
+                        .addOnSuccessListener {
+                            // URL saved successfully
+                            finalUrl.complete(url)
+                        }
+                        .addOnFailureListener {
+                            // URL save failed
+                            Log.e(TAG, "Error saving URL: ${it.message}")
+                            finalUrl.completeExceptionally(it)
+                        }
+                }
             }
-        }.addOnFailureListener {
-            // Image upload failed
-            Log.e(TAG, "Error uploading image: ${it.message}")
-            final_url.completeExceptionally(it)
-        }
-        return final_url
+            .addOnFailureListener {
+                // Image upload failed
+                Log.e(TAG, "Error uploading image: ${it.message}")
+                finalUrl.completeExceptionally(it)
+            }
+
+        return finalUrl
     }
 
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
+    override fun addQuestion(
+        userId: String,
+        courseId: String,
+        questionTitle: String,
+        questionText: String?,
+        image_uri: String
+    ): CompletableFuture<Question> {
         val question_future = CompletableFuture<Question>()
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-        uploadImageToFirebase(image_uri).thenAccept{
-           var   question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+           var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", image_uri, emptyList(), emptyList())
            // add the new question in the db
            newChildRef.setValue(question)
+            question_future.complete(question)
            //add the question in the course's questions list
            db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
            //add the question in the user's questions list
            db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
            FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
-           question_future.complete(question)
+        return question_future
+    }
+
+    override fun addQuestionWithUri(userId: String, courseId: String, questionTitle: String, questionText: String?,localFileUri: String, fileName : String): CompletableFuture<Question> {
+        val question_future = CompletableFuture<Question>()
+        // create a space for the new question in db and save its id
+        val newChildRef = db.child(questionsPath).push()
+        val questionId = newChildRef.key ?: error("Failed to generate question ID")
+        // create the new question using given parameters
+        uploadImageToFirebase(localFileUri,fileName).thenAccept{
+           var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+           // add the new question in the db
+           newChildRef.setValue(question)
+            question_future.complete(question)
+           //add the question in the course's questions list
+           db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
+           //add the question in the user's questions list
+           db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
+           FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
        }
         return question_future
     }

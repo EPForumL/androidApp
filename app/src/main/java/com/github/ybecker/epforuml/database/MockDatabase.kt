@@ -366,4 +366,15 @@ class MockDatabase : Database() {
             false
         }
     }
+
+    override fun addQuestionWithUri(
+        userId: String,
+        courseId: String,
+        questionTitle: String,
+        questionText: String?,
+        localFileUri: String,
+        fileName: String
+    ): CompletableFuture<Question> {
+        TODO("Not yet implemented")
+    }
 }

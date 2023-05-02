@@ -321,4 +321,12 @@ abstract class Database {
     */
     abstract fun removeChat(chatId:String) : Boolean
 
+    abstract fun addQuestionWithUri(
+        userId: String,
+        courseId: String,
+        questionTitle: String,
+        questionText: String?,
+        localFileUri: String,
+        fileName: String
+    ): CompletableFuture<Question>
 }
