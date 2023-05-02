@@ -66,7 +66,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         setUpArgs(view)
         val submitButton = view.findViewById<Button>(R.id.btn_submit)
         submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
-        seUploadImage(view)
         setTakeImage(view, questBody, questTitle)
     }
 
@@ -102,12 +101,12 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-                    DatabaseManager.db.addQuestion(
+                    db.addQuestion(
                         user.userId,
                         course.courseId,
                         questTitle.text.toString(),
                         questBody.text.toString(),
-                        imageURI.toString()
+                        imageURI.text.toString()
                     )
                     mainActivity.replaceFragment(HomeFragment())
                 }
@@ -127,13 +126,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
             intent.putExtra("questionTitle", questionTitle)
             intent.putExtra("questionDetails", questionDetails)
             startActivity(intent)
-        }
-    }
-
-    private fun seUploadImage(view: View?) {
-        val uploadButton = view?.findViewById<Button>(R.id.uploadButton)
-        uploadButton?.setOnClickListener {
-            pickImage.launch("image/*")
         }
     }
 

@@ -12,6 +12,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
@@ -641,4 +642,18 @@ class FirebaseDatabaseAdapterTest {
             assertThat(it.size, equalTo(0))
           }.join()
      }
+
+    @Test
+    fun addQuestionWithNoURI(){
+        db.addQuestion("0","0","URI","????","").thenAccept{
+            assertThat(it.imageURI, `is`(""))
+        }
+    }
+
+    @Test
+    fun addQuestionWithValidURI(){
+        db.addQuestion("0","0","URI","????","content://media/external/images/media/1000000157").thenAccept{
+            assertThat(it.imageURI, `is`(""))
+        }
+    }
 }

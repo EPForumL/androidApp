@@ -25,13 +25,13 @@ import com.github.ybecker.epforuml.R
  */
 class EditPhotoActivity: AppCompatActivity() {
 
-private lateinit var IMAGE_URI : Uri
+private lateinit var IMAGE_URI : String
 private lateinit var imageView : ImageView
 
     override fun onCreate(avedInstanceState: Bundle?){
         super.onCreate(avedInstanceState)
         setContentView(R.layout.fragment_edit_photo)
-        imageView = this.findViewById<ImageView>(R.id.imageToModify)
+        imageView = this.findViewById(R.id.imageToModify)
         checkPermission()
         }
 
@@ -41,7 +41,7 @@ private lateinit var imageView : ImageView
      */
     private fun goBackToQuestion(){
         val intent  = Intent(this, MainActivity::class.java)
-        intent.putExtra("uri", IMAGE_URI.toString())
+        intent.putExtra("uri", IMAGE_URI)
         intent.putExtra("fragment", "NewQuestionFragment")
         intent.putExtra("questionTitle", this.intent.getStringExtra("questionTitle"))
         intent.putExtra("questionDetails", this.intent.getStringExtra("questionDetails"))
@@ -68,13 +68,12 @@ private lateinit var imageView : ImageView
 
     private fun openImage() {
         //Initialize URI
-        val uriiii = this.intent.getStringExtra("uri").toString()
-        IMAGE_URI = Uri.parse(uriiii)
+        IMAGE_URI = this.intent.getStringExtra("uri").toString()
         val intent = Intent(
             this,
             DsPhotoEditorActivity::class.java
         )
-        intent.data = IMAGE_URI
+        intent.data = Uri.parse(IMAGE_URI)
         intent.putExtra(DsPhotoEditorConstants.DS_PHOTO_EDITOR_OUTPUT_DIRECTORY, "Images")
         intent.putExtra(DsPhotoEditorConstants.DS_TOOL_BAR_BACKGROUND_COLOR, Color.GRAY)
         intent.putExtra(DsPhotoEditorConstants.DS_MAIN_BACKGROUND_COLOR, Color.WHITE)
