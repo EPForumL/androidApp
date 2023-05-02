@@ -32,27 +32,30 @@ class MockDatabaseTest {
         user = db.addUser("0","TestUser", "testEmail").get()
         nullUser = db.addUser("1","nullUser", "testEmail").get()
 
-        question1 = db.addQuestion(user.userId, sdp.courseId, "Question about Cirrus CI", "How do I fix the CI ?", "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
-        question2 = db.addQuestion(user.userId, sdp.courseId, "About the Scrum master", "What is the exact role of a Scrum Master ?", "")
-
-        question3 = db.addQuestion(user.userId, sdp.courseId, "Very long question",
-            "Extremely long long long long long long long long long long long long long " +
-                    "long long long long long long long long long long long long long long long" +
-                    "long long long long long long long long long long long long long long long" +
-                    "long long long long long long long long long long long long long long long " +
-                    "question" ,"")
+        db.addQuestion(user.userId, sdp.courseId, "Question about Cirrus CI", "How do I fix the CI ?", "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg").thenAccept{
+            question1 = it
+        }
+        db.addQuestion(user.userId, sdp.courseId, "About the Scrum master", "What is the exact role of a Scrum Master ?", "").thenAccept {
+            question2 = it
+        }
+        db.addQuestion(user.userId, sdp.courseId, "Very long question",
+                "Extremely long long long long long long long long long long long long long " +
+                        "long long long long long long long long long long long long long long long" +
+                        "long long long long long long long long long long long long long long long" +
+                        "long long long long long long long long long long long long long long long " +
+                        "question" ,"").thenAccept{
+            question3 =it }
 
         answer1 = db.addAnswer(user.userId, question1.questionId, "Try to re-run the CI.")
         answer2 = db.addAnswer(user.userId, question1.questionId, "I have already tried it :(")
         db.addAnswer(user.userId, question1.questionId, "I am talking alone actually")
-
         db.addSubscription(user.userId, swEng.courseId)
         db.addSubscription(user.userId, sdp.courseId)
 
-        val chat2 = Chat("chat0", LocalDateTime.now().toString(), user.userId, user.userId, "Hey me!")
+            val chat2 = Chat("chat0", LocalDateTime.now().toString(), user.userId, user.userId, "Hey me!")
 
-        db.addChat(chat2.senderId, chat2.receiverId, chat2.text)
-    }
+            db.addChat(chat2.senderId, chat2.receiverId, chat2.text)
+        }
 
     @Test
     fun addAndGetUser(){
@@ -121,9 +124,11 @@ class MockDatabaseTest {
     @Test
     fun AddAndGetQuestionByIdTest(){
         val question = db.addQuestion(user.userId, sdp.courseId, "Question","I have a question.", "")
-        db.getQuestionById(question.questionId).thenAccept {
+        question.thenAccept{ q->
+        db.getQuestionById(q.questionId).thenAccept {
             assertThat(it, equalTo(question))
         }.join()
+        }
     }
 
     @Test
@@ -136,14 +141,17 @@ class MockDatabaseTest {
     @Test
     fun AddAndGetAnswerByIdTest(){
         val question = db.addQuestion(user.userId, sdp.courseId, "Question","I have a question.", "")
-        val answer = db.addAnswer(user.userId, question.questionId, "And what is it ?")
 
-        db.getQuestionById(question.questionId).thenAccept {
-            assertThat(it, equalTo(question))
-        }.join()
-        db.getAnswerById(answer.answerId).thenAccept {
-            assertThat(it, equalTo(answer))
-        }.join()
+
+        question.thenAccept{ q->
+            val answer = db.addAnswer(user.userId, q.questionId, "And what is it ?")
+            db.getQuestionById(q.questionId).thenAccept {
+                assertThat(it, equalTo(question))
+            }.join()
+            db.getAnswerById(answer.answerId).thenAccept {
+                assertThat(it, equalTo(answer))
+            }.join()
+        }
 
     }
 
@@ -166,26 +174,30 @@ class MockDatabaseTest {
     fun getAnswerFromQuestionTest(){
 
         val q1 = db.addQuestion(user.userId, sdp.courseId, "Kotlin","Should we use Kotlin for Android Development?","")
+        q1.thenAccept{ q->
 
-        db.getQuestionAnswers(q1.questionId).thenAccept {
-            assertThat(it, equalTo(emptyList()))
-        }.join()
+            db.getQuestionAnswers(q.questionId).thenAccept {
+                assertThat(it, equalTo(emptyList()))
+            }.join()
 
-        val a1 = db.addAnswer(user.userId, q1.questionId, "Yes, it is well documented on the internet")
-        val a2= db.addAnswer(user.userId, q1.questionId, "Yes it is.")
-        val answers = listOf(a1, a2)
+            val a1 = db.addAnswer(user.userId, q.questionId, "Yes, it is well documented on the internet")
+            val a2= db.addAnswer(user.userId, q.questionId, "Yes it is.")
+            val answers = listOf(a1, a2)
 
-        db.getUserAnswers(user.userId).thenAccept {
-            assertTrue(it.containsAll(answers))
-        }.join()
+            db.getUserAnswers(user.userId).thenAccept {
+                assertTrue(it.containsAll(answers))
+            }.join()
+        }
     }
 
     @Test
     fun getAnswerFromQuestionWithoutAnyAnswerTest(){
         val q2 = db.addQuestion(user.userId, sdp.courseId, "XML vs JetpackCompose","We prefer to use XML over Jetpack Compose.","")
-        db.getQuestionAnswers(q2.questionId).thenAccept {
-            assertThat(it, equalTo(listOf()))
-        }.join()
+        q2.thenAccept{ q->
+            db.getQuestionAnswers(q.questionId).thenAccept {
+                assertThat(it, equalTo(listOf()))
+            }.join()
+        }
     }
 
     @Test
@@ -201,9 +213,11 @@ class MockDatabaseTest {
     @Test
     fun getQuestionTitleTest(){
         val q = db.addQuestion(user.userId, sdp.courseId, "chatGPT","He is a friend of mine :)","")
-        db.getQuestionById(q.questionId).thenAccept {
-            assertThat(it?.questionTitle, equalTo(q.questionTitle))
-        }.join()
+        q.thenAccept{ q->
+            db.getQuestionById(q.questionId).thenAccept {
+                assertThat(it?.questionTitle, equalTo(q.questionTitle))
+            }.join()
+        }
     }
 
 
@@ -276,9 +290,10 @@ class MockDatabaseTest {
         }
 
         val newQuestion = db.addQuestion(user.userId, question1.questionId, "title", null, "URI")
-        db.getQuestionById(newQuestion.questionId).thenAccept {
-            assertThat(it?.questionText, equalTo(""))
-        }
+        newQuestion.thenAccept{ q->
+            db.getQuestionById(q.questionId).thenAccept {
+                assertThat(it?.questionText, equalTo(""))
+            }}
     }
 
     @Test

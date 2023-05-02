@@ -154,7 +154,7 @@ class MockDatabase : Database() {
         return course
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
         val questionId = "question${questions.size + 1}"
         val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", image_uri, emptyList(), emptyList())
 
@@ -164,7 +164,9 @@ class MockDatabase : Database() {
             val updatedQuestions = it.questions + question.questionId
             users[userId] = it.copy(questions = updatedQuestions)
         }
-        return question
+        val question_future = CompletableFuture<Question>()
+        question_future.complete(question)
+        return question_future
     }
 
     override fun addAnswer(userId: String, questionId: String, answerText: String?): Answer {

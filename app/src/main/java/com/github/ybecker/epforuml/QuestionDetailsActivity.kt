@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -54,6 +55,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             startActivity(newIntent)
         }
 
+
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -83,6 +85,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
+        setUpImage()
         db.getQuestionEndorsements(questionId).thenAccept {
             val endorsementButton = findViewById<ToggleButton>(R.id.endorsementButton)
             val endorsementCounter = findViewById<TextView>(R.id.endorsementCount)
@@ -159,6 +162,17 @@ class QuestionDetailsActivity : AppCompatActivity() {
             saveButton.visibility = View.GONE
         }
 
+    }
+
+    private fun setUpImage() {
+        val image: ImageView = findViewById(R.id.image_question)
+        if (question!!.imageURI == "") {
+            image.visibility = View.GONE
+        } else {
+            val uri = Uri.parse(question!!.imageURI)
+            image.visibility = View.VISIBLE
+            image.setImageURI(uri)
+        }
     }
 
 

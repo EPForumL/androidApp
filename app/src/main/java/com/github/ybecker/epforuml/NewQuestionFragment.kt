@@ -25,6 +25,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
     private lateinit var questTitle : EditText
     private lateinit var imageURI: TextView
     private lateinit var takePictureButton: Button
+    private lateinit var image_uri : String
 
     private val pickImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -38,7 +39,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         val user = DatabaseManager.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
 
-
+        image_uri = this.mainActivity.intent.getStringExtra("uri").toString()
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
         // Get the set of available courses from the MockDatabase
         db.availableCourses().thenAccept {
@@ -140,15 +141,9 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
          questBody = view.findViewById(R.id.question_details_edittext)
          questTitle = view.findViewById(R.id.question_title_edittext)
          imageURI = view.findViewById(R.id.image_uri)
-
-        println(questBody)
-
-
-
-
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
-        imageURI.text = this.mainActivity.intent.getStringExtra("uri")
+        imageURI.text = image_uri
         return Triple(questBody, questTitle, imageURI)
     }
 }

@@ -68,7 +68,8 @@ private lateinit var imageView : ImageView
 
     private fun openImage() {
         //Initialize URI
-        IMAGE_URI = Uri.parse(this.intent.getStringExtra("uri").toString())
+        val uriiii = this.intent.getStringExtra("uri").toString()
+        IMAGE_URI = Uri.parse(uriiii)
         val intent = Intent(
             this,
             DsPhotoEditorActivity::class.java

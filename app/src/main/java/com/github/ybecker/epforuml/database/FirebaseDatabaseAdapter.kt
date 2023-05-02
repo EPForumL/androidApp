@@ -4,11 +4,14 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import android.content.ContentValues
+import android.net.Uri
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.*
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
@@ -170,29 +173,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // add the new course in the db
         newChildRef.setValue(course)
         return course
-    }
-
-
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
-
-        // create a space for the new question in db and save its id
-        val newChildRef = db.child(questionsPath).push()
-        val questionId = newChildRef.key ?: error("Failed to generate question ID")
-        // create the new question using given parameters
-        val question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", image_uri, emptyList(), emptyList())
-
-        // add the new question in the db
-        newChildRef.setValue(question)
-
-        //add the question in the course's questions list
-        db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
-
-        //add the question in the user's questions list
-        db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
-
-        FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
-
-        return question
     }
 
     override fun addChat(
@@ -698,4 +678,51 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
+    private fun uploadImageToFirebase(image_uri: String) : CompletableFuture<String> {
+        val final_url : CompletableFuture<String> = CompletableFuture()
+        if(image_uri==""){
+            final_url.complete("")
+            return final_url
+        }
+        val uri = Uri.parse(image_uri)
+        val storageRef = FirebaseStorage.getInstance().reference.child("images/${uri.lastPathSegment}")
+        val uploadTask = storageRef.putFile(uri)
+
+        uploadTask.addOnSuccessListener {
+            // Image uploaded successfully
+            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                // Save the download URL to Firebase database
+                val URL = downloadUri.toString()
+                db.child("images").push().setValue(URL)
+                final_url.complete(URL)
+
+            }
+        }.addOnFailureListener {
+            // Image upload failed
+            Log.e(TAG, "Error uploading image: ${it.message}")
+            final_url.completeExceptionally(it)
+        }
+        return final_url
+    }
+
+
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
+        val question_future = CompletableFuture<Question>()
+        // create a space for the new question in db and save its id
+        val newChildRef = db.child(questionsPath).push()
+        val questionId = newChildRef.key ?: error("Failed to generate question ID")
+        // create the new question using given parameters
+        uploadImageToFirebase(image_uri).thenAccept{
+           var   question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+           // add the new question in the db
+           newChildRef.setValue(question)
+           //add the question in the course's questions list
+           db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
+           //add the question in the user's questions list
+           db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
+           FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
+           question_future.complete(question)
+       }
+        return question_future
+    }
 }
