@@ -1,22 +1,21 @@
 package com.github.ybecker.epforuml.database
 
-import android.content.ContentValues.TAG
-import android.util.Log
-import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.net.Uri
+import android.util.Log
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.database.Model.*
-import com.google.android.gms.tasks.Task
+import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.google.firebase.database.*
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
-import java.io.File
-import java.io.FileOutputStream
+import com.google.firebase.storage.StorageReference
 import java.time.LocalDateTime
-import java.util.EmptyStackException
 import java.util.concurrent.CompletableFuture
+
 
 /**
  * This class represents a database that uses Firebase Realtime Database
@@ -681,42 +680,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    private fun uploadImageToFirebase(localFileUri: String, fileName : String): CompletableFuture<String> {
-        val finalUrl = CompletableFuture<String>()
-        if (localFileUri.isEmpty()) {
-            finalUrl.complete("")
-            return finalUrl
-        }
-
-// Upload the image to Firebase Storage using the local file Uri
-            val storageRef = FirebaseStorage.getInstance().reference
-            val imageRef = storageRef.child("images/${fileName}")
-            val uploadTask = imageRef.putFile(Uri.parse(localFileUri))
-            uploadTask.addOnSuccessListener {
-                // Image uploaded successfully
-                imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    // Save the download URL to Firebase database
-                    val url = downloadUri.toString()
-                    db.child("images").push().setValue(url)
-                        .addOnSuccessListener {
-                            // URL saved successfully
-                            finalUrl.complete(url)
-                        }
-                        .addOnFailureListener {
-                            // URL save failed
-                            Log.e(TAG, "Error saving URL: ${it.message}")
-                            finalUrl.completeExceptionally(it)
-                        }
-                }
-            }
-            .addOnFailureListener {
-                // Image upload failed
-                Log.e(TAG, "Error uploading image: ${it.message}")
-                finalUrl.completeExceptionally(it)
-            }
-
-        return finalUrl
-    }
 
 
     override fun addQuestion(
@@ -743,23 +706,39 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return question_future
     }
 
-    override fun addQuestionWithUri(userId: String, courseId: String, questionTitle: String, questionText: String?,localFileUri: String, fileName : String): CompletableFuture<Question> {
+    override fun addQuestionWithUri(userId: String, courseId: String, questionTitle: String, questionText: String?,image_uri: String, activity: MainActivity): CompletableFuture<Question> {
         val question_future = CompletableFuture<Question>()
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-        uploadImageToFirebase(localFileUri,fileName).thenAccept{
-           var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
-           // add the new question in the db
-           newChildRef.setValue(question)
+        uploadToFirebase(Uri.parse(image_uri)).thenAccept{
+            var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+            // add the new question in the db
+            newChildRef.setValue(question)
             question_future.complete(question)
-           //add the question in the course's questions list
-           db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
-           //add the question in the user's questions list
-           db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
-           FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
-       }
+            //add the question in the course's questions list
+            db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
+            //add the question in the user's questions list
+            db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
+            FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
+        }
+
         return question_future
     }
+    private fun uploadToFirebase(uri: Uri) : CompletableFuture<String>{
+        val url = CompletableFuture<String>()
+        val fileRef: StorageReference =
+            FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".jpg")
+        fileRef.putFile(uri).addOnSuccessListener {
+            fileRef.downloadUrl.addOnSuccessListener { uri ->
+                url.complete(uri.toString())
+            }
+        }.addOnFailureListener {
+            url.completeExceptionally(it)
+        }
+        return url
+    }
+
+
 }

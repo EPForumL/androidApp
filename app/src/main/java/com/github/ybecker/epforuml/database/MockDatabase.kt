@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.database
 
 import android.content.ContentValues
 import android.util.Log
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
@@ -373,7 +374,7 @@ class MockDatabase : Database() {
         questionTitle: String,
         questionText: String?,
         localFileUri: String,
-        fileName: String
+        activity: MainActivity
     ): CompletableFuture<Question> {
         TODO("Not yet implemented")
     }

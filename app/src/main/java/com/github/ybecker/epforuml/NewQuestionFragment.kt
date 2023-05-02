@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,11 +33,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
     private lateinit var imageURI: TextView
     private lateinit var takePictureButton: Button
     private lateinit var image_uri : String
-
-    private val pickImage =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageURI.text = uri.toString()
-        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -116,17 +112,17 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                             imageURI.text.toString()
                         )
                     }else{
-                        val pair = translateUriToFile(imageURI.text.toString())
                         db.addQuestionWithUri(
                             user.userId,
                             course.courseId,
                             questTitle.text.toString(),
                             questBody.text.toString(),
-                            pair.second,
-                            pair.first
+                            imageURI.text.toString(),
+                            this.mainActivity
                         )
                     }
 
+                    //mainActivity.intent.extras.
                     mainActivity.replaceFragment(HomeFragment())
                 }
             }
@@ -158,22 +154,5 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         return Triple(questBody, questTitle, imageURI)
     }
 
-    private fun translateUriToFile(image_uri: String): Pair<String, String> {
-        val contentUri = Uri.parse(image_uri)
-        // Use a ContentResolver to get a local file Uri that points to the same image file
-        val contentResolver = this.mainActivity.contentResolver
-        val inputStream = contentResolver.openInputStream(contentUri)
-        val file = File.createTempFile("image", ".jpg")
-        val outputStream = FileOutputStream(file)
-        val buffer = ByteArray(4 * 1024)
-        var read: Int
-        while (inputStream!!.read(buffer).also { read = it } != -1) {
-            outputStream.write(buffer, 0, read)
-        }
-        outputStream.flush()
-        outputStream.close()
-        inputStream.close()
-        val localFileUri = Uri.fromFile(file)
-        return Pair(file.name, localFileUri.toString())
-    }
+
 }

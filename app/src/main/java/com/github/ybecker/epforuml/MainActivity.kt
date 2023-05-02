@@ -15,6 +15,7 @@ import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.FirebaseApp
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        FirebaseApp.initializeApp(this)
         context = applicationContext
 
         // initialize DB to Mock

@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
@@ -169,9 +171,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
         if (question!!.imageURI == "") {
             image.visibility = View.GONE
         } else {
-            val uri = Uri.parse(question!!.imageURI)
             image.visibility = View.VISIBLE
-            image.setImageURI(uri)
+            displayImageFromFirebaseStorage(question!!.imageURI, image)
         }
     }
 
@@ -209,4 +210,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
         newIntent.putParcelableArrayListExtra("savedQuestions", cache)
     }
 
+    fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
+        Glide.with(imageView.context)
+            .load(imageUrl)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(imageView)
+    }
 }

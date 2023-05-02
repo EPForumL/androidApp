@@ -1,10 +1,7 @@
 package com.github.ybecker.epforuml.authentication
 
-import android.content.ContentValues
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCaller
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -16,15 +13,8 @@ import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.database.DatabaseManager
-import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 /**
  * Authenticator implementation that uses firebase authentication mechanisms
