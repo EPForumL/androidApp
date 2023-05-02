@@ -58,37 +58,10 @@ class AnswerAdapterTest {
     }
 
     private fun goToQuestion(questionTitle: String) {
-        // Find the RecyclerView that contains the questions
-        val recyclerViewMatcher = withId(R.id.recycler_my_questions)
-
-
-        // Find the ViewHolder that contains the specified question
-        val questionMatcher = hasDescendant(withText(questionTitle))
-
-        // Combine the RecyclerView and ViewHolder matchers
-        val combinedMatcher = allOf(recyclerViewMatcher, questionMatcher)
-
-        // Perform a click on the ViewHolder that contains the specified question
-        //onView(combinedMatcher).perform(click())
-
-
         onView(withText(questionTitle))
             .perform(click())
     }
 
-    fun clickXY(x: Float, y: Float): ViewAction {
-        return GeneralClickAction(
-            Tap.SINGLE,
-            CoordinatesProvider { view ->
-                val screenPos = IntArray(2)
-                view.getLocationOnScreen(screenPos)
-                val screenX = screenPos[0] + x
-                val screenY = screenPos[1] + y
-                floatArrayOf(screenX, screenY)
-            },
-            Press.FINGER
-        )
-    }
 
     private fun goToFirstElement() {
         // Find the RecyclerView that contains the questions
@@ -97,8 +70,8 @@ class AnswerAdapterTest {
     }
 
     private fun goToThirdElement() {
-        val questionId = db.getUserQuestions("answerAdapterTestUser").get()[0].questionTitle
-        goToQuestion(questionId)
+        val questionTitle = db.getUserQuestions("answerAdapterTestUser").get()[0].questionTitle
+        goToQuestion(questionTitle)
     }
 
     @Test
@@ -115,8 +88,6 @@ class AnswerAdapterTest {
         question3.thenAccept {
             onView(withId(R.id.qdetails_title)).check(matches(withText(question3.get()?.questionTitle)))
         }
-
-
     }
 
     //@Test

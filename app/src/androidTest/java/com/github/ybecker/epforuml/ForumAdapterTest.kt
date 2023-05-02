@@ -29,7 +29,7 @@ class ForumAdapterTest {
 
     @Test
     fun displayRecyclerTest() {
-        onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
+        onView(withId(R.id.recycler_my_questions)).check(matches(isDisplayed()))
     }
 
     @Test

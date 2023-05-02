@@ -36,6 +36,9 @@ import org.junit.runner.RunWith
 class QuestionDetailsTest {
 
     private lateinit var scenario : ActivityScenario<MainActivity>
+    private var firstQuestion = "About ci"
+    private var secondQuestion = "About Scrum master"
+    private var thirdQuestion = "Very long question"
 
     private fun ClickOnLike(itemPosition:Int){
         onView(withId(R.id.answers_recycler)).perform(
@@ -66,42 +69,29 @@ class QuestionDetailsTest {
     }
 
 
-    private fun goToQuestion(questionId: String) {
-        // Find the RecyclerView that contains the questions
-        val recyclerViewMatcher = withId(R.id.recycler_my_questions)
-
-        // Find the ViewHolder that contains the specified question
-        val questionMatcher = hasDescendant(withText(questionId))
-
-        // Combine the RecyclerView and ViewHolder matchers
-        val combinedMatcher = Matchers.allOf(recyclerViewMatcher, questionMatcher)
+    private fun goToQuestion(questionTitle: String) {
 
         // Perform a click on the ViewHolder that contains the specified question
-        onView(combinedMatcher).perform(click())
+
+        onView(withText(questionTitle)).perform(click())
     }
 
 
 
-    @Test
-    fun questionIsClickable() {
-        onView(withId(R.id.recycler_forum)).check(matches(isClickable()))
-    }
 
     @Test
     fun newActivityContainsCorrectData() {
-        goToQuestion("About Scrum master")
+        goToQuestion(secondQuestion)
 
-        onView(withId(R.id.qdetails_title)).check(matches(withText("About Scrum master")))
+        onView(withId(R.id.qdetails_title)).check(matches(withText(secondQuestion)))
     }
 
     @Test
     fun backToMainIsCorrect() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
-
+        goToQuestion(secondQuestion)
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
-        onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
+        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
     }
 
     @Test
@@ -111,9 +101,7 @@ class QuestionDetailsTest {
 
 
         // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
-
+        goToQuestion(thirdQuestion)
         onView(withId(R.id.write_reply_box)).check(matches(isDisplayed()))
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
     }
@@ -125,9 +113,7 @@ class QuestionDetailsTest {
 
 
         // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
-
+        goToQuestion(thirdQuestion)
         // post answer
         onView(withId(R.id.post_reply_button)).perform(click())
 
@@ -143,9 +129,7 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to last question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(2, click()))
-
+        goToQuestion(thirdQuestion)
         // post write answer
         onView(withId(R.id.write_reply_box))
             .perform(click())
@@ -173,9 +157,7 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signOut() }
 
         // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
-
+        goToQuestion(secondQuestion)
         // check button is not clickable
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
         onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers and endorsements.")))
@@ -186,8 +168,8 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+        goToQuestion(secondQuestion)
+
         onView(withText("0"))
         onView(withText("Endorse this"))
         onView(withId(R.id.endorsementButton)).perform(click())
@@ -203,13 +185,12 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+        goToQuestion(secondQuestion)
 
         onView(withId(R.id.endorsementButton)).perform(click())
         onView(withId(R.id.back_to_forum_button)).perform(click())
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+
+        goToQuestion(secondQuestion)
 
         onView(withText("Endorsed"))
         onView(withText("1"))
@@ -219,8 +200,7 @@ class QuestionDetailsTest {
     fun removeQuestionEndorsementTest(){
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+        goToQuestion(secondQuestion)
 
         onView(withId(R.id.endorsementButton)).perform(click())
         onView(withText("Endorsed"))
@@ -236,7 +216,7 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to third question
-        onView(withText("About ci")).perform(click())
+        goToQuestion(firstQuestion)
 
         val answerposition = 1
 
@@ -251,7 +231,7 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to third question
-        onView(withText("About ci")).perform(click())
+        goToQuestion(firstQuestion)
 
         val answerposition = 1
 
@@ -259,7 +239,7 @@ class QuestionDetailsTest {
 
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
-        onView(withText("About ci")).perform(click())
+        goToQuestion(firstQuestion)
         CounterEquals(answerposition, "1")
     }
 
@@ -268,7 +248,7 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to third question
-        onView(withText("About ci")).perform(click())
+        goToQuestion(firstQuestion)
 
         val answerposition = 1
 
