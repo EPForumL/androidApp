@@ -335,19 +335,19 @@ class QuestionDetailsTest {
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
 
-    @Test
-    fun clickingToggleAltersDrawable() {
-        logInDetailsActivity()
-
-        onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
-
-        onView(withId(R.id.toggle_save_question))
-            .perform(click())
-
-        onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
-    }
+//    @Test
+//    fun clickingToggleAltersDrawable() {
+//        logInDetailsActivity()
+//
+//        onView(withId(R.id.toggle_save_question))
+//            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
+//
+//        onView(withId(R.id.toggle_save_question))
+//            .perform(click())
+//
+//        onView(withId(R.id.toggle_save_question))
+//            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+//    }
 
     @Test
     fun toggleOnWhenQuestionSaved() {

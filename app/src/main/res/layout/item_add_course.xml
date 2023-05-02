@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/courseColor"
+    android:layout_marginBottom="16dp">
+
+    <TextView
+        android:id="@+id/courseTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_course_title"
+        android:textSize="32sp"
+        android:textColor="@color/textColor"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10sp"
+        android:layout_marginBottom="10sp"/>
+
+    <LinearLayout
+        android:id="@+id/addCourseLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_marginRight="15sp"
+        android:layout_marginLeft="15sp"
+        android:layout_marginTop="15sp"
+        android:layout_marginBottom="15sp">
+
+        <EditText
+            android:id="@+id/addCourseName"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/backgroundColor"
+            android:textSize="20sp"
+            android:layout_weight="2"
+            android:paddingStart="15dp"
+            android:layout_margin="8dp"
+            android:paddingEnd="5dp"
+            android:hint="@string/enter_course_name"
+            android:autofillHints="@string/enter_course_name"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/addCourseButton"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/send_icon"
+            android:background="@drawable/round_corner"
+            android:text="@string/add_course_button" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
