@@ -323,4 +323,7 @@ abstract class Database {
      * Remove a connection from the user's connection list
      */
     abstract fun removeUserConnection(userId: String)
+
+    //get question id
+
 }

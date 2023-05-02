@@ -65,6 +65,23 @@ class QuestionDetailsTest {
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 
+
+    private fun goToQuestion(questionId: String) {
+        // Find the RecyclerView that contains the questions
+        val recyclerViewMatcher = withId(R.id.recycler_my_questions)
+
+        // Find the ViewHolder that contains the specified question
+        val questionMatcher = hasDescendant(withText(questionId))
+
+        // Combine the RecyclerView and ViewHolder matchers
+        val combinedMatcher = Matchers.allOf(recyclerViewMatcher, questionMatcher)
+
+        // Perform a click on the ViewHolder that contains the specified question
+        onView(combinedMatcher).perform(click())
+    }
+
+
+
     @Test
     fun questionIsClickable() {
         onView(withId(R.id.recycler_forum)).check(matches(isClickable()))
@@ -72,8 +89,7 @@ class QuestionDetailsTest {
 
     @Test
     fun newActivityContainsCorrectData() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
+        goToQuestion("About Scrum master")
 
         onView(withId(R.id.qdetails_title)).check(matches(withText("About Scrum master")))
     }

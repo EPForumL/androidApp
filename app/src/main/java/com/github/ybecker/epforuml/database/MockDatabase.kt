@@ -294,7 +294,7 @@ class MockDatabase : Database() {
     }
 
     override fun getQuestions(): CompletableFuture<List<Question>> {
-        TODO("Not yet implemented")
+        return CompletableFuture.completedFuture(questions.values.toList().reversed())
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> {

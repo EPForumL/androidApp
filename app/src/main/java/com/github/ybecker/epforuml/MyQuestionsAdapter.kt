@@ -21,6 +21,7 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
         return myQuestionsMap.size
     }
 
+
     override fun onBindViewHolder(holder: MyQuestionsViewHolder, position: Int) {
         val course = myQuestionsMap.keys.elementAt(position)
         holder.courseTitle.text = course.courseName
