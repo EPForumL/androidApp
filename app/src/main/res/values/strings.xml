@@ -93,6 +93,11 @@
     <string name="answer">Answer</string>
     <string name="_0">0</string>
     <string name="please_login_to_save_questions">Please log in to be able to save questions.</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="map">map</string>
+    <string name="change_map_perm">Change permissions</string>
+    <string name="share_position">Share position</string>
+    <string name="localization_text">Share position</string>
 
 
 </resources>

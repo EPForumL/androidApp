@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.database
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.android.gms.maps.model.LatLng
 
 class Model {
 
@@ -104,7 +105,8 @@ class Model {
         var profilePic: String = "",
         var userInfo: String = "",
         var status: List<String> = emptyList(),
-        val connections: ArrayList<Boolean> = ArrayList()
+        val connections: ArrayList<Boolean> = ArrayList(),
+        var localization: LatLng? = null
         ) {
         constructor() : this(
             "",
@@ -117,7 +119,8 @@ class Model {
             "",
             "",
             emptyList(),
-            ArrayList()
+            ArrayList(),
+            null
         )
     }
 

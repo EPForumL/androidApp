@@ -17,6 +17,7 @@ import com.github.ybecker.epforuml.chat.ChatHomeFragment
 import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.sensor.MapsFragment
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -33,8 +34,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        context = applicationContext
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
@@ -68,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         if(fragment.equals("chatHome")) {
             replaceFragment(ChatHomeFragment())
         }
+        // TODO: maps ?
         // Remove it otherwise we might jump back to this fragment later
         intent.removeExtra("fragment")
 
@@ -77,6 +77,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_courses -> replaceFragment(CoursesFragment())
                 R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
                 R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())
+                R.id.nav_chat -> replaceFragment(ChatHomeFragment())
+                R.id.nav_map -> replaceFragment(MapsFragment())
                 R.id.nav_account ->
                     if (DatabaseManager.user == null) {
                         replaceFragment(AccountFragmentGuest())
@@ -84,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                         replaceFragment(AccountFragment())
                     }
                 R.id.nav_settings -> replaceFragment(SettingsFragment())
-                R.id.nav_chat -> replaceFragment(ChatHomeFragment())
+
             }
             true
         }
