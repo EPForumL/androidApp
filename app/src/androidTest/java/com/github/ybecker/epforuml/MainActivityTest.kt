@@ -117,8 +117,6 @@ class MainActivityTest {
     }
 
 
-    // check answerCache is properly updated
-
     @After
     fun end() {
         scenario.close()

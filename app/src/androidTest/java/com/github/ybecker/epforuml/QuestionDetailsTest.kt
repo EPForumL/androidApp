@@ -15,6 +15,10 @@ import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
@@ -385,8 +389,38 @@ class QuestionDetailsTest {
         }
     }
 
-    // check answerCache is properly sent back to main
-    // check goes back to the adequate fragment (1 test for each)
+
+    @Test
+    fun goesBackToForumWhenComingFromForum() {
+        onView(withId(androidx.appcompat.R.string.abc_action_bar_up_description))
+
+        onView((withId(R.id.title_forum))).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun goesBackToSavedQWhenComingSavedQ() {
+        intent.putExtra("comingFrom", "SavedQuestionsFragment")
+        scenario.onActivity {
+            it.startActivity(intent)
+
+            onView(withId(androidx.appcompat.R.string.abc_action_bar_up_description))
+
+            onView((withId(R.id.title_forum))).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun answerCacheProperlySentBackToMain() {
+        Intents.init()
+
+        onView(withId(androidx.appcompat.R.string.abc_action_bar_up_description))
+
+        intended(allOf(hasComponent(MainActivity::class.java.name), hasExtra("savedAnswers", answersCache)))
+
+        Intents.release()
+    }
+
+
     // check is no connection still displays content of question
 
     @After
