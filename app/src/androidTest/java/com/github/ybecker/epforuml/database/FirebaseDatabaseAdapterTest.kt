@@ -10,10 +10,10 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import junit.framework.TestCase.assertNull
-import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -194,6 +194,18 @@ class FirebaseDatabaseAdapterTest {
         db.availableCourses().thenAccept {
             assertTrue(it.map { it.courseId }.containsAll(listOf(swEng.courseId, sdp.courseId)))
         }.join()
+    }
+
+    @Test
+    fun getQuestionsTest() {
+        val futureQuestions = db.getQuestions()
+        val questions = futureQuestions.get() // block until the future completes
+
+        // Ensure that all questions have a non-empty title
+        for (question in questions) {
+            assertNotNull(question.questionTitle)
+            assertNotEquals("", question.questionTitle)
+        }
     }
 
     @Test

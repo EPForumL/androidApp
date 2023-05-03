@@ -29,29 +29,27 @@ class ForumAdapterTest {
 
     @Test
     fun displayRecyclerTest() {
-        onView(withId(R.id.recycler_my_questions)).check(matches(isDisplayed()))
+        onView(withId(R.id.recycler_my_questions))
+        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
     }
 
     @Test
     fun displayQuestionTest() {
 
         // check first question
-        onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions
-            .scrollToPosition<RecyclerView.ViewHolder>(0))
+        onView(withId(R.id.recycler_my_questions))
 
         onView(withText(DatabaseManager.db.getQuestionById("question3").get()?.questionTitle))
             .check(matches(isDisplayed()))
 
         // check second question
-        onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions
-            .scrollToPosition<RecyclerView.ViewHolder>(1))
+        onView(withId(R.id.recycler_my_questions))
 
         onView(withText(DatabaseManager.db.getQuestionById("question2").get()?.questionTitle))
             .check(matches(isDisplayed()))
 
         // check third question
-        onView(withId(R.id.recycler_forum)).perform(RecyclerViewActions
-            .scrollToPosition<RecyclerView.ViewHolder>(2))
+        onView(withId(R.id.recycler_my_questions))
 
         onView(withText(DatabaseManager.db.getQuestionById("question1").get()?.questionTitle))
             .check(matches(isDisplayed()))
