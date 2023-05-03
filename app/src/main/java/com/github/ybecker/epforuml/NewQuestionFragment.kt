@@ -99,31 +99,23 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
             if (selectedItemPosition != Spinner.INVALID_POSITION) {
                 val questionSubject = spinner.getItemAtPosition(selectedItemPosition) as String
                 // Find the course in the list of available courses
-                val course = coursesList.firstOrNull { course -> course.courseName == questionSubject }
+                val course =
+                    coursesList.firstOrNull { course -> course.courseName == questionSubject }
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-                    if(imageURI.text=="null"){
+                    if (imageURI.text == "null") {
                         db.addQuestion(
                             user.userId,
                             course.courseId,
                             questTitle.text.toString(),
                             questBody.text.toString(),
                             imageURI.text.toString()
-                        ).join()
-                    }else{
-                        db.addQuestionWithUri(
-                            user.userId,
-                            course.courseId,
-                            questTitle.text.toString(),
-                            questBody.text.toString(),
-                            imageURI.text.toString(),
-                            this.mainActivity
-                        ).join()
+                        ).thenAccept {
+                            //mainActivity.intent.extras.
+                            mainActivity.replaceFragment(HomeFragment())
+                        }
                     }
-
-                    //mainActivity.intent.extras.
-                    mainActivity.replaceFragment(HomeFragment())
                 }
             }
         }

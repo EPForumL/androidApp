@@ -368,25 +368,4 @@ class MockDatabase : Database() {
             false
         }
     }
-
-    override fun addQuestionWithUri(
-        userId: String,
-        courseId: String,
-        questionTitle: String,
-        questionText: String?,
-        localFileUri: String,
-        activity: MainActivity
-    ): CompletableFuture<Question> {val questionId = "question${questions.size + 1}"
-        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", localFileUri, emptyList(), emptyList())
-
-        questions[questionId] = question
-        courses[courseId]?.questions = courses[courseId]?.questions?.plus(question.questionId) ?: listOf(question.questionId)
-        users[userId]?.let {
-            val updatedQuestions = it.questions + question.questionId
-            users[userId] = it.copy(questions = updatedQuestions)
-        }
-        val question_future = CompletableFuture<Question>()
-        question_future.complete(question)
-        return question_future
-    }
 }

@@ -321,23 +321,4 @@ abstract class Database {
     * @param ChatID to remove
     */
     abstract fun removeChat(chatId:String) : Boolean
-
-    /**
-     * This functions adds a question to the databse when the uri is not empty, it ensures the image gets stored online as well.
-     * @param userId the user that adds the question
-     * @param courseId the course in which to add the question
-     * @param questionTitle the title of the question itself
-     * @param questionText the text of the question itself
-     * @param image_uri the uri to an image linked with the question
-     * @param activity the activity calling the function
-     * @return the question that was posted in database
-     */
-    abstract fun addQuestionWithUri(
-        userId: String,
-        courseId: String,
-        questionTitle: String,
-        questionText: String?,
-        image_uri: String,
-        activity: MainActivity
-    ): CompletableFuture<Question>
 }

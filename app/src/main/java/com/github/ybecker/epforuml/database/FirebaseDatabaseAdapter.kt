@@ -680,39 +680,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-
-
-    override fun addQuestion(
-        userId: String,
-        courseId: String,
-        questionTitle: String,
-        questionText: String?,
-        image_uri: String
-    ): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,image_uri: String): CompletableFuture<Question> {
         val question_future = CompletableFuture<Question>()
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-           var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", image_uri, emptyList(), emptyList())
-           // add the new question in the db
-           newChildRef.setValue(question)
-            question_future.complete(question)
-           //add the question in the course's questions list
-           db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
-           //add the question in the user's questions list
-           db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
-           FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
-        return question_future
-    }
-
-    override fun addQuestionWithUri(userId: String, courseId: String, questionTitle: String, questionText: String?,image_uri: String, activity: MainActivity): CompletableFuture<Question> {
-        val question_future = CompletableFuture<Question>()
-        // create a space for the new question in db and save its id
-        val newChildRef = db.child(questionsPath).push()
-        val questionId = newChildRef.key ?: error("Failed to generate question ID")
-        // create the new question using given parameters
-        uploadToFirebase(Uri.parse(image_uri)).thenAccept{
+        uploadToFirebase(image_uri).thenAccept{
             var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
             // add the new question in the db
             newChildRef.setValue(question)
@@ -725,18 +699,24 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return question_future
     }
-    private fun uploadToFirebase(uri: Uri) : CompletableFuture<String>{
+    private fun uploadToFirebase(uri: String) : CompletableFuture<String>{
         val url = CompletableFuture<String>()
-        val fileRef: StorageReference =
-            FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".jpg")
-        fileRef.putFile(uri).addOnSuccessListener {
-            fileRef.downloadUrl.addOnSuccessListener { uri ->
-                url.complete(uri.toString())
+        if(uri == "" || uri.equals(null)){
+            url.complete("")
+
+        }else{
+            val fileRef: StorageReference =
+                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".jpg")
+            fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
+                fileRef.downloadUrl.addOnSuccessListener { uri ->
+                    url.complete(uri.toString())
+                }
+            }.addOnFailureListener {
+                url.completeExceptionally(it)
+            }.addOnCanceledListener {
+                url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
             }
-        }.addOnFailureListener {
-            url.completeExceptionally(it)
-        }.addOnCanceledListener {
-            url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
+
         }
         return url
     }
