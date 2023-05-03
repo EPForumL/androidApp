@@ -41,7 +41,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_details)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         // retrieve cache value
         cache = intent.getParcelableArrayListExtra("savedQuestions")!!
@@ -58,12 +58,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
         updateNewIntent()
 
         hideContentWhenNotConnectedToInternet()
-
-        val button : Button = findViewById(R.id.back_to_forum_button)
-        button.setOnClickListener{ // Create an intent to return to the previous fragment
-            startActivity(newIntent)
-            finish()
-        }
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
 

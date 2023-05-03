@@ -129,7 +129,8 @@ class QuestionDetailsTest {
 
     @Test
     fun backToMainIsCorrect() {
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
     }
@@ -205,7 +206,8 @@ class QuestionDetailsTest {
         logInDetailsActivity()
 
         onView(withId(R.id.addFollowButton)).perform(click())
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withText(question.questionTitle)).perform(click())
 
@@ -246,7 +248,8 @@ class QuestionDetailsTest {
 
         ClickOnButton(answerposition, R.id.likeButton)
 
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withText(question.questionTitle)).perform(click())
         CounterEquals(answerposition, "1", R.id.likeCount)
@@ -296,7 +299,8 @@ class QuestionDetailsTest {
 
         DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "test_user", "course1", UserStatus.TEACHER)
 
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withText("About ci")).perform(click())
 
@@ -317,7 +321,8 @@ class QuestionDetailsTest {
 
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
 
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withText(question.questionTitle)).perform(click())
 
@@ -392,7 +397,8 @@ class QuestionDetailsTest {
 
     @Test
     fun goesBackToForumWhenComingFromForum() {
-        onView(withId(androidx.appcompat.R.string.abc_action_bar_up_description))
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView((withId(R.id.title_forum))).check(matches(isDisplayed()))
     }
@@ -403,7 +409,8 @@ class QuestionDetailsTest {
         scenario.onActivity {
             it.startActivity(intent)
 
-            onView(withId(androidx.appcompat.R.string.abc_action_bar_up_description))
+            onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+                .perform(click())
 
             onView((withId(R.id.title_forum))).check(matches(isDisplayed()))
         }
@@ -413,7 +420,8 @@ class QuestionDetailsTest {
     fun answerCacheProperlySentBackToMain() {
         Intents.init()
 
-        onView(withId(androidx.appcompat.R.string.abc_action_bar_up_description))
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         intended(allOf(hasComponent(MainActivity::class.java.name), hasExtra("savedAnswers", answersCache)))
 
@@ -421,7 +429,7 @@ class QuestionDetailsTest {
     }
 
 
-    // check is no connection still displays content of question
+    // check if no connection still displays content of question
 
     @After
     fun closing() {
