@@ -723,7 +723,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
             FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
         }
-
         return question_future
     }
     private fun uploadToFirebase(uri: Uri) : CompletableFuture<String>{
@@ -736,6 +735,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             }
         }.addOnFailureListener {
             url.completeExceptionally(it)
+        }.addOnCanceledListener {
+            url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
         }
         return url
     }
