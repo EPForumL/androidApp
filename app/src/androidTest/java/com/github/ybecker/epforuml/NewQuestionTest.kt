@@ -58,8 +58,10 @@ class NewQuestionTest {
         // Wait for the view to be loaded
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
 
-        // Click on the submit button
+        // Click on the new question button
         onView(withId(R.id.new_question_button)).perform(click())
         // Check that the new fragment is displayed
         onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
@@ -113,9 +115,11 @@ class NewQuestionTest {
 
         // Launch the fragment
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
-        // go to MainActivity
 
 
+
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
@@ -173,6 +177,10 @@ class NewQuestionTest {
         // Launch the fragment
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
 
+
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
 
@@ -216,9 +224,9 @@ class NewQuestionTest {
 
         // Launch the fragment
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
-        // go to MainActivity
 
-
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())

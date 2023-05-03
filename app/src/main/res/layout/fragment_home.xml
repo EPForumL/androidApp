@@ -45,16 +45,16 @@
                 android:visibility="gone" />
 
 
-    <ImageButton
-        android:id="@+id/new_question_button"
-        android:background="@android:color/transparent"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_plus"
-        android:padding="16dp"
-        android:contentDescription="@string/add_question_button_"/>
+            <ImageButton
+                android:id="@+id/new_question_button"
+                android:background="@android:color/transparent"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_plus"
+                android:padding="16dp"
+                android:contentDescription="@string/add_question_button_"/>
 
     </LinearLayout>
 

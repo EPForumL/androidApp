@@ -28,8 +28,7 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
         val questionsList = myQuestionsMap[course]?.toMutableList()
 
         holder.forumAdapter = ForumAdapter(questionsList ?: mutableListOf<Model.Question>())
-        // listOf<Model.Question>(Model.Question("question2", "course0", "user1", "About Scrum master",
-        //  "What is a Scrum Master ?", "" , mutableListOf())).toMutableList()
+
         holder.questionsRecyclerView.adapter = holder.forumAdapter
         holder.questionsRecyclerView.layoutManager = LinearLayoutManager(holder.itemView.context)
 

@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture
  * Hosts the RecyclerView displaying all questions
  */
 class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
+    // Declare variables
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MyQuestionsAdapter
     private val user = DatabaseManager.user
@@ -31,17 +32,15 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
+        // Get the list of available courses from the database
         futureCourseList = db.availableCourses()
 
-        //DatabaseManager.useMockDatabase()
-
-
+        // Set up the new question button and navigate to the new question fragment when clicked
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
-        // Set click listener for the circular button with the "+" sign
         newQuestionButton.setOnClickListener {
-            // Navigate to the new fragment to add a new question
             mainActivity.replaceFragment(NewQuestionFragment(mainActivity))
         }
 
@@ -51,24 +50,24 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Set up the recycler view
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_my_questions)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(false)
 
-
-
+        // Refresh the display
         refresh()
-
     }
 
     // Fetch the questions and the corresponding courses and display them in the recycler view
     private fun getForumQuestionsMap() {
-
         db.getQuestions().thenAccept { questions ->
+            // Get the list of unique course IDs from the questions list
             val courseIds = questions.map { question -> question.courseId }.toSet().toList()
-            val futureCourses = mutableListOf<CompletableFuture<Model.Course?>>()
 
+            // Create a list of futures for fetching the courses corresponding to the course IDs
+            val futureCourses = mutableListOf<CompletableFuture<Model.Course?>>()
             for (id in courseIds) {
                 futureCourses.add(db.getCourseById(id))
             }
@@ -80,35 +79,32 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
                     it.forEach { futureCourse ->
                         val course = futureCourse.get()
                         if (course != null) {
+                            // Filter the questions corresponding to each course and store the result in the questions map
                             val courseQuestion = questions.filter { question -> question.courseId == course.courseId }
                             questionsMap.set(course, courseQuestion)
                         }
                     }
                 }
 
+                // Update the recycler view adapter with the questions map
                 questionsDisplay()
             }
         }
-
     }
-
-
 
     // Display the questions in the recycler view or a message if there are no questions
     private fun questionsDisplay() {
         if (questionsMap.isEmpty()) {
+            // Display a message if there are no questions
             val message = "There is no questions yet."
             val messageView = view?.findViewById<TextView>(R.id.no_question)
             messageView?.text = message
             messageView?.visibility = View.VISIBLE
         }
 
+        // Update the recycler view adapter with the questions map
         adapter = MyQuestionsAdapter(questionsMap)
         recyclerView.adapter = adapter
-
-
-
-        // move to QuestionDetails when clicking on specific question
 
     }
 
