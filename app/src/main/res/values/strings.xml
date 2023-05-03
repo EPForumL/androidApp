@@ -93,6 +93,7 @@
     <string name="answer">Answer</string>
     <string name="_0">0</string>
     <string name="please_login_to_save_questions">Please log in to be able to save questions.</string>
+    <string name="image">Image</string>
 
     <string name="add_course_title">Add new course</string>
     <string name="enter_course_name">Write course name...</string>

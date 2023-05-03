@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit
 class FirebaseAuthenticator(
     private val activity: FragmentActivity,
     private val caller: ActivityResultCaller = activity
-    ) : Authenticator {
+) : Authenticator {
 
     // Used to wait for the result to proceed
     private lateinit var signInResult: CompletableFuture<Void>

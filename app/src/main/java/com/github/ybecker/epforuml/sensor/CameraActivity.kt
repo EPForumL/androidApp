@@ -26,7 +26,6 @@ import java.util.Locale
 
 class CameraActivity : AppCompatActivity() {
 
-    private lateinit var IMAGE_URI: String
     private lateinit var viewBinding: ActivityCameraBinding
 
     private var imageCapture: ImageCapture? = null

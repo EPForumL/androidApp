@@ -114,7 +114,7 @@ class RealChatTest {
         navigateToChat()
         //remove chat
 
-        Espresso.onView(withText("HYD?")).perform(longClick())
+        Espresso.onView(withText("HYD?")).perform(scrollTo(), longClick())
         Espresso.onView(withText("Cancel")).perform(click())
         scenario.onActivity { activity ->
             val view: RecyclerView = activity.findViewById(R.id.recycler_chat)

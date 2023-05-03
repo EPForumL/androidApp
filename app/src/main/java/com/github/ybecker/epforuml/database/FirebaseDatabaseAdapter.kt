@@ -1,17 +1,21 @@
 package com.github.ybecker.epforuml.database
 
+import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.net.Uri
 import android.util.Log
 import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
-import android.content.ContentValues
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.database.*
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
+
 
 /**
  * This class represents a database that uses Firebase Realtime Database
@@ -173,29 +177,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // add the new course in the db
         newChildRef.setValue(course)
         return course
-    }
-
-
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
-
-        // create a space for the new question in db and save its id
-        val newChildRef = db.child(questionsPath).push()
-        val questionId = newChildRef.key ?: error("Failed to generate question ID")
-        // create the new question using given parameters
-        val question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", image_uri, emptyList(), emptyList())
-
-        // add the new question in the db
-        newChildRef.setValue(question)
-
-        //add the question in the course's questions list
-        db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
-
-        //add the question in the user's questions list
-        db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
-
-        FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
-
-        return question
     }
 
     override fun addChat(
@@ -748,5 +729,47 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(chatsPath).child(chatId).removeValue()
         return true
     }
+
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,image_uri: String): CompletableFuture<Question> {
+        val question_future = CompletableFuture<Question>()
+        // create a space for the new question in db and save its id
+        val newChildRef = db.child(questionsPath).push()
+        val questionId = newChildRef.key ?: error("Failed to generate question ID")
+        // create the new question using given parameters
+        uploadToFirebase(image_uri).thenAccept{
+            var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+            // add the new question in the db
+            newChildRef.setValue(question)
+            question_future.complete(question)
+            //add the question in the course's questions list
+            db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
+            //add the question in the user's questions list
+            db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
+            FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
+        }
+        return question_future
+    }
+    private fun uploadToFirebase(uri: String) : CompletableFuture<String>{
+        val url = CompletableFuture<String>()
+        if(uri == "" || uri.equals(null)){
+            url.complete("")
+
+        }else{
+            val fileRef: StorageReference =
+                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".jpg")
+            fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
+                fileRef.downloadUrl.addOnSuccessListener { uri ->
+                    url.complete(uri.toString())
+                }
+            }.addOnFailureListener {
+                url.completeExceptionally(it)
+            }.addOnCanceledListener {
+                url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
+            }
+
+        }
+        return url
+    }
+
 
 }
