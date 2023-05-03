@@ -110,7 +110,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                             questTitle.text.toString(),
                             questBody.text.toString(),
                             imageURI.text.toString()
-                        ).join()
+                        )
                     }else{
                         db.addQuestionWithUri(
                             user.userId,
@@ -119,7 +119,7 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
                             questBody.text.toString(),
                             imageURI.text.toString(),
                             this.mainActivity
-                        ).join()
+                        )
                     }
 
                     //mainActivity.intent.extras.
