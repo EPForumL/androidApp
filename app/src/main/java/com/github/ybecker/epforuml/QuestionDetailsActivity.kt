@@ -91,9 +91,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
         setUpImage()
-        db.getQuestionEndorsements(questionId).thenAccept {
-            val endorsementButton = findViewById<ToggleButton>(R.id.endorsementButton)
-            val endorsementCounter = findViewById<TextView>(R.id.endorsementCount)
+        db.getQuestionFollowers(questionId).thenAccept {
+            val notificationButton = findViewById<ImageButton>(R.id.addFollowButton)
+            val followButton = findViewById<TextView>(R.id.notificationCount)
             val count = it.size
 
             if(userId.isEmpty()){
@@ -131,6 +131,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         // only allow posting answer if user is connected
         if (userId.isNotEmpty()) {

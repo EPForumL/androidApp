@@ -57,7 +57,6 @@ class QuestionDetailsWithUri {
             scenario.close()
         } catch (e: Exception) {
             Log.e("NewQuestionFragment", "Error lauching activity: \${e.message}")
-            scenario.close()
         }
     }
 

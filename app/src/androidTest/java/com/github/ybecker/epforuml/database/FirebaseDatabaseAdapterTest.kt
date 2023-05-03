@@ -494,11 +494,11 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun addAndGetNewQuestionEndorsement(){
         question1Future.thenAccept { question1 ->
-            db.getQuestionEndorsements(question1.questionId).thenAccept {
+            db.getQuestionFollowers(question1.questionId).thenAccept {
                 assertThat(it, equalTo(emptyList()))
             }.join()
-            db.addQuestionEndorsement(romain.userId, question1.questionId)
-            db.getQuestionEndorsements(question1.questionId).thenAccept {
+            db.getQuestionFollowers(question1.questionId)
+            db.getQuestionFollowers(question1.questionId).thenAccept {
                 assertThat(it, equalTo(listOf(romain.userId)))
             }.join()
         }
@@ -507,14 +507,14 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun removeQuestionEndorsementTest(){
         question1Future.thenAccept { question1 ->
-            db.addQuestionEndorsement(romain.userId, question1.questionId)
-            db.getQuestionEndorsements(question1.questionId).thenAccept {
+            db.addQuestionFollower(romain.userId, question1.questionId)
+            db.getQuestionFollowers(question1.questionId).thenAccept {
                 assertThat(it, equalTo(listOf(romain.userId)))
             }.join()
 
-            db.removeQuestionEndorsement(romain.userId, question1.questionId)
+            db.removeQuestionFollower(romain.userId, question1.questionId)
 
-            db.getQuestionEndorsements(question1.questionId).thenAccept {
+            db.getQuestionFollowers(question1.questionId).thenAccept {
                 assertThat(it, equalTo(listOf()))
             }.join()
         }
@@ -523,11 +523,11 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun addAndGetNewAnswerEndorsementTest(){
     answer1Future.thenAccept { answer1 ->
-            db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            db.getQuestionFollowers(answer1.answerId).thenAccept {
                 assertThat(it, equalTo(emptyList()))
             }.join()
             db.addAnswerEndorsement(romain.userId, answer1.answerId)
-            db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            db.getQuestionFollowers(answer1.answerId).thenAccept {
                 assertThat(it, equalTo(listOf(romain.userId)))
             }.join()
         }
@@ -539,13 +539,13 @@ class FirebaseDatabaseAdapterTest {
         answer1Future.thenAccept { answer1 ->
             db.addAnswerEndorsement(romain.userId, answer1.answerId)
 
-            db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            db.getQuestionFollowers(answer1.answerId).thenAccept {
                 assertThat(it, equalTo(listOf(romain.userId)))
             }.join()
 
-            db.removeAnswerEndorsement(romain.userId, answer1.answerId)
+            db.removeAnswerEndorsement(answer1.answerId)
 
-            db.getAnswerEndorsements(answer1.answerId).thenAccept {
+            db.getQuestionFollowers(answer1.answerId).thenAccept {
                 assertThat(it, equalTo(listOf()))
             }.join()
         }

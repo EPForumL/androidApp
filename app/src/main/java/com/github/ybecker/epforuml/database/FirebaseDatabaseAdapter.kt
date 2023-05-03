@@ -4,11 +4,9 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
-import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
-import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
