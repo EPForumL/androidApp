@@ -13,17 +13,17 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:src="@drawable/nav_account" />
 
         <TextView
             android:id="@+id/forum_question_displayed"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="3"
-            android:text="Hop une belle question et tout bla bla bla beauuucoup trop trop trop trop troptt t t t tt tt t tt tt t t  longue t t t tt tt t tt tt t t  longuet t t tt tt t tt tt t t  longue t t t tt tt t tt tt t t  longue"
+            android:text="@string/hop_une_belle_question_et_tout_bla_bla_bla_beauuucoup_trop_trop_trop_trop_troptt_t_t_t_tt_tt_t_tt_tt_t_t_longue_t_t_t_tt_tt_t_tt_tt_t_t_longuet_t_t_tt_tt_t_tt_tt_t_t_longue_t_t_t_tt_tt_t_tt_tt_t_t_longue"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -34,6 +34,8 @@
         android:background="@android:color/transparent"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="onQuestionClick" />
+        android:contentDescription="@string/go_to_new_question_fragment"
+
+         />
 
 </FrameLayout>
