@@ -191,7 +191,6 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun getAnswerByIdTest(){
-
         answer1Future.thenAccept { answer1 ->
             db.getAnswerById(answer1.answerId).thenAccept {
                 assertThat(it, equalTo(answer1))
