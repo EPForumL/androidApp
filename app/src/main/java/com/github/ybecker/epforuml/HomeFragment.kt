@@ -13,8 +13,6 @@ import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture

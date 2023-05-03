@@ -42,6 +42,7 @@ class QuestionDetailsTest {
 
     private lateinit var question : Model.Question
     private var cache : ArrayList<Model.Question> = arrayListOf()
+    private var answersCache : ArrayList<Model.Answer> = arrayListOf()
 
     private lateinit var intent : Intent
 
@@ -107,6 +108,11 @@ class QuestionDetailsTest {
             // add empty list of saved questions
             cache.clear()
             intent.putParcelableArrayListExtra("savedQuestions", cache)
+
+            answersCache.clear()
+            intent.putParcelableArrayListExtra("savedAnswers", answersCache)
+
+            intent.putExtra("comingFrom", "HomeFragment")
 
             scenario = ActivityScenario.launch(intent)
         }
@@ -181,40 +187,30 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorseButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
-        // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
-
-        onView(withText("0")).check(matches(isDisplayed()))
+        onView(withId(R.id.notificationCount)).check(matches(withText("0")))
         onView(withId(R.id.addFollowButton)).perform(click())
-        onView(withText("1")).check(matches(isDisplayed()))
+        onView(withId(R.id.notificationCount)).check(matches(withText("1")))
         onView(withId(R.id.addFollowButton)).perform(click())
-        onView(withText("0")).check(matches(isDisplayed()))
+        onView(withId(R.id.notificationCount)).check(matches(withText("0")))
     }
 
     @Test
     fun questionEndorsementStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to second question
-        onView(withText("Very long question")).perform(click())
+        logInDetailsActivity()
 
         onView(withId(R.id.addFollowButton)).perform(click())
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
-        onView(withText("Very long question")).perform(click())
+        onView(withText(question.questionTitle)).perform(click())
 
         onViewWithTimeout(withId(R.id.notificationCount), matches(withText("1")))
     }
 
     @Test
     fun removeLikeTest() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
+        logInDetailsActivity()
 
         val answerposition = 1
 
@@ -248,18 +244,14 @@ class QuestionDetailsTest {
 
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
-        onView(withText("About ci")).perform(click())
+        onView(withText(question.questionTitle)).perform(click())
         CounterEquals(answerposition, "1", R.id.likeCount)
     }
 
     fun endorseAnswerButtonTest(){
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
-        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
-
+        db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
 
         val itemPosition = 1
 
@@ -273,12 +265,9 @@ class QuestionDetailsTest {
 
     @Test
     fun removeAnswerEndorsementTest(){
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
-        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
+        db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
 
         val itemPosition = 1
 
@@ -295,9 +284,7 @@ class QuestionDetailsTest {
 
     @Test
     fun endorseButtonIsVisibleOnlyForStatusUsersTest(){
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        onView(withText("About ci")).perform(click())
+        logInDetailsActivity()
 
         val itemPosition = 1
 
@@ -314,11 +301,9 @@ class QuestionDetailsTest {
 
     @Test
     fun answerEndorsementStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
-        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
-
-        onView(withText("About ci")).perform(click())
+        db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
 
         val itemPosition = 1
 
@@ -330,7 +315,7 @@ class QuestionDetailsTest {
 
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
-        onView(withText("About ci")).perform(click())
+        onView(withText(question.questionTitle)).perform(click())
 
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
