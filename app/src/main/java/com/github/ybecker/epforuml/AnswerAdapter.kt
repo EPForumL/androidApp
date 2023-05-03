@@ -18,6 +18,9 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
 
+/**
+ * Adapter for the RecyclerView displaying the answers to a question
+ */
 class AnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<String>,private val mainActivity: Activity)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

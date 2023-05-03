@@ -42,10 +42,10 @@ class AnswerAdapterTest {
     @Before
     fun setup() {
         DatabaseManager.useMockDatabase()
-        db.getUserById("answerAdapterTestUser").thenAccept{
+        db.getUserById("user1").thenAccept{
             user = it!!
         }
-        db.addQuestion("answerAdapterTestUser","course0","Not so long question",
+        db.addQuestion("user1","course0","Not so long question",
             "TEST FOR CHAT", "")
 
 
@@ -70,7 +70,7 @@ class AnswerAdapterTest {
     }
 
     private fun goToThirdElement() {
-        val questionTitle = db.getUserQuestions("answerAdapterTestUser").get()[0].questionTitle
+        val questionTitle = db.getUserQuestions("user1").get()[0].questionTitle
         goToQuestion(questionTitle)
     }
 

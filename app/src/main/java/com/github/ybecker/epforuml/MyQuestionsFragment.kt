@@ -14,6 +14,7 @@ import com.firebase.ui.auth.data.model.User
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import java.util.concurrent.CompletableFuture
 
+//Fragment to display the questions asked by the user
 class MyQuestionsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
