@@ -3,33 +3,33 @@ package com.github.ybecker.epforuml
 import android.provider.ContactsContract.Data
 import android.content.Intent
 import android.view.View
-import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.*
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.authentication.Authenticator
-import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
-import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -45,36 +45,46 @@ class QuestionDetailsTest {
 
     private lateinit var intent : Intent
 
-    private fun ClickOnLike(itemPosition:Int){
+    private fun ClickOnButton(itemPosition:Int, id:Int){
         onView(withId(R.id.answers_recycler)).perform(
             RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
                 itemPosition,
-                performOnViewChild(R.id.likeButton, click())
+                performOnViewChild(id, click())
             )
         )
     }
 
 
-    private fun CounterEquals(itemPosition:Int, value:String){
+    private fun CounterEquals(itemPosition:Int, value:String, id: Int){
         onView(withId(R.id.answers_recycler))
             .perform(
                 RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
                     itemPosition,
-                    checkCounter(R.id.likeCount, value)
+                    checkCounter(id, value)
+                )
+            )
+    }
+
+    private fun VisibilityEquals(itemPosition:Int, visibility: Int, id: Int){
+        onView(withId(R.id.answers_recycler))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
+                    itemPosition,
+                    checkVisibility(id, visibility)
                 )
             )
     }
 
     private fun logInDetailsActivity() {
         scenario.onActivity {
-            MockAuthenticator(it).signIn()
+            MockAuthenticator(it).signIn().join()
             it.startActivity(intent)
         }
     }
 
     private fun logOutDetailsActivity() {
         scenario.onActivity {
-            MockAuthenticator(it).signOut()
+            MockAuthenticator(it).signOut().join()
             it.startActivity(intent)
         }
     }
@@ -171,42 +181,49 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorseButtonModifyTheCounter() {
-        logInDetailsActivity()
+        scenario.onActivity { MockAuthenticator(it).signIn() }
 
-        onView(withText("0"))
-        onView(withText("Endorse this"))
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("1"))
-        onView(withText("Endorsed"))
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("0"))
-        onView(withText("Endorse this"))
+        // go to second question
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+
+        onView(withText("0")).check(matches(isDisplayed()))
+        onView(withId(R.id.addFollowButton)).perform(click())
+        onView(withText("1")).check(matches(isDisplayed()))
+        onView(withId(R.id.addFollowButton)).perform(click())
+        onView(withText("0")).check(matches(isDisplayed()))
     }
 
     @Test
     fun questionEndorsementStaysWhenQuitting() {
-        logInDetailsActivity()
+        scenario.onActivity { MockAuthenticator(it).signIn() }
 
-        onView(withId(R.id.endorsementButton)).perform(click())
+        // go to second question
+        onView(withText("Very long question")).perform(click())
+
+        onView(withId(R.id.addFollowButton)).perform(click())
         onView(withId(R.id.back_to_forum_button)).perform(click())
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        onView(withText("Endorsed"))
-        onView(withText("1"))
+        onView(withText("Very long question")).perform(click())
+
+        onViewWithTimeout(withId(R.id.notificationCount), matches(withText("1")))
     }
 
     @Test
-    fun removeQuestionEndorsementTest(){
-        logInDetailsActivity()
+    fun removeLikeTest() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
 
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("Endorsed"))
-        onView(withText("1"))
+        // go to third question
+        onView(withText("About ci")).perform(click())
 
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("Endorse this"))
-        onView(withText("0"))
+        val answerposition = 1
+
+        CounterEquals(answerposition, "0", R.id.likeCount)
+        ClickOnButton(answerposition, R.id.likeButton)
+        CounterEquals(answerposition, "1", R.id.likeCount)
+        ClickOnButton(answerposition, R.id.likeButton)
+        CounterEquals(answerposition, "0", R.id.likeCount)
+
     }
 
     @Test
@@ -215,9 +232,9 @@ class QuestionDetailsTest {
 
         val answerposition = 1
 
-        CounterEquals(answerposition, "0")
-        ClickOnLike(answerposition)
-        CounterEquals(answerposition, "1")
+        CounterEquals(answerposition, "0", R.id.likeCount)
+        ClickOnButton(answerposition, R.id.likeButton)
+        CounterEquals(answerposition, "1", R.id.likeCount)
 
     }
 
@@ -227,27 +244,95 @@ class QuestionDetailsTest {
 
         val answerposition = 1
 
-        ClickOnLike(answerposition)
+        ClickOnButton(answerposition, R.id.likeButton)
 
         onView(withId(R.id.back_to_forum_button)).perform(click())
 
         onView(withText("About ci")).perform(click())
-        CounterEquals(answerposition, "1")
+        CounterEquals(answerposition, "1", R.id.likeCount)
+    }
+
+    fun endorseAnswerButtonTest(){
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+
+        // go to third question
+        onView(withText("About ci")).perform(click())
+
+
+        val itemPosition = 1
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+    }
+
+
+    @Test
+    fun removeAnswerEndorsementTest(){
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+
+        // go to third question
+        onView(withText("About ci")).perform(click())
+
+        val itemPosition = 1
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
     }
 
     @Test
-    fun removeAnswerLike() {
-        logInDetailsActivity()
+    fun endorseButtonIsVisibleOnlyForStatusUsersTest(){
+        scenario.onActivity { MockAuthenticator(it).signIn() }
 
-        val answerposition = 1
+        onView(withText("About ci")).perform(click())
 
-        ClickOnLike(answerposition)
+        val itemPosition = 1
 
-        CounterEquals(answerposition, "1")
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementButton)
 
-        ClickOnLike(answerposition)
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "test_user", "course1", UserStatus.TEACHER)
 
-        CounterEquals(answerposition, "0")
+        onView(withId(R.id.back_to_forum_button)).perform(click())
+
+        onView(withText("About ci")).perform(click())
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementButton)
+    }
+
+    @Test
+    fun answerEndorsementStaysWhenQuitting() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+
+        onView(withText("About ci")).perform(click())
+
+        val itemPosition = 1
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+
+        onView(withId(R.id.back_to_forum_button)).perform(click())
+
+        onView(withText("About ci")).perform(click())
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
 
     @Test
@@ -358,5 +443,60 @@ class QuestionDetailsTest {
                 }
             }
         }
+    }
+
+    private fun checkVisibility(viewId: Int, visibility: Int): ViewAction {
+        return object : ViewAction {
+            override fun getDescription(): String {
+                return "check if view is visible or not"
+            }
+
+            override fun getConstraints(): Matcher<View> {
+                return isAssignableFrom(View::class.java)
+            }
+
+            override fun perform(uiController: UiController?, view: View?) {
+                if (view == null) {
+                    fail("View is null")
+                }
+                view?.findViewById<View>(viewId).let { textView ->
+                    if (textView == null) {
+                        fail("TextView is null")
+                    }
+
+                    // check visibility
+                    val visibilityMatcher = when (visibility) {
+                        View.VISIBLE -> Matchers.`is`(View.VISIBLE)
+                        View.INVISIBLE -> Matchers.`is`(View.INVISIBLE)
+                        View.GONE -> Matchers.`is`(View.GONE)
+                        else -> throw IllegalArgumentException("Invalid visibility argument")
+                    }
+
+                    assertThat(textView?.visibility, visibilityMatcher)
+                }
+            }
+        }
+    }
+
+
+    //instead of Thread.sleep()
+    private fun onViewWithTimeout(
+        matcher: Matcher<View>,
+        retryAssertion: ViewAssertion = matches(isDisplayed())
+    ): ViewInteraction {
+        repeat(20) { i ->
+            try {
+                val viewInteraction = onView(matcher)
+                viewInteraction.check(retryAssertion)
+                return viewInteraction
+            } catch (e: NoMatchingViewException) {
+                if (i >= 20) {
+                    throw e
+                } else {
+                    Thread.sleep(200)
+                }
+            }
+        }
+        throw AssertionError("View matcher is broken for $matcher")
     }
 }

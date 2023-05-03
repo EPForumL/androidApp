@@ -1,14 +1,11 @@
 package com.github.ybecker.epforuml
 
-import android.opengl.Visibility
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.Switch
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,15 +23,18 @@ class CoursesFragment : Fragment() {
     private lateinit var userSubscriptions : List<Course>
     private lateinit var courses: List<Course>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private var myContext: Context? = null
 
-        val futureCourses = db.availableCourses()
+    private val VIEW_TYPE_NORMAL = 0
+    private val VIEW_TYPE_LAST_ITEM = 1
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        
+        myContext = requireContext();
 
         // we take the current user in the database
         user = DatabaseManager.user ?: User()
-
-        val futureUserSubscriptions= db.getUserSubscriptions(user.userId)
-
         val rootView = inflater.inflate(R.layout.fragment_courses, container, false)
         recyclerView = rootView.findViewById(R.id.recyclerViewCourses)
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -45,28 +45,27 @@ class CoursesFragment : Fragment() {
             textView.visibility = View.VISIBLE
         }
 
-        CompletableFuture.allOf(futureCourses, futureUserSubscriptions).thenAccept {
-            courses = futureCourses.get()
-            userSubscriptions  = futureUserSubscriptions.get()
-            // save actual user subscription in the a private variable
-            adapter = CourseAdapter(courses)
-            recyclerView.adapter = adapter
-        }
+        refreshCourses()
+
         return rootView
     }
 
     private inner class CourseAdapter(
         private val courses: List<Course>
-    ) : RecyclerView.Adapter<CourseViewHolder>() {
+    ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         //this methode put the different courses in the recycler view
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseViewHolder {
-            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_course, parent, false)
-
-            return CourseViewHolder(itemView)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+            if (viewType == VIEW_TYPE_NORMAL) {
+                val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_course, parent, false)
+                return CourseViewHolder(itemView)
+            }
+            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_add_course, parent, false)
+            return AddCourseViewHolder(itemView)
         }
 
-        override fun onBindViewHolder(holder: CourseViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+            if(holder is CourseViewHolder){
                 val course = courses[position]
                 // call bind with name args and if the switch is checked or not
                 holder.bind(course)
@@ -82,11 +81,65 @@ class CoursesFragment : Fragment() {
                         course_switches.visibility = View.GONE
                     }
                 }
+            } else if(holder is AddCourseViewHolder) {
+
+                holder.bind()
+
+                holder.itemView.setOnClickListener {
+                    val addTitle =  holder.itemView.findViewById<TextView>(R.id.courseTitleTextView)
+                    val addLayout =  holder.itemView.findViewById<LinearLayout>(R.id.addCourseLayout)
+                    val user = DatabaseManager.user
+                    if(user != null && user.userId.isNotEmpty()) {
+                        if (addLayout.visibility == View.GONE) {
+                            addLayout.visibility = View.VISIBLE
+                            addTitle.visibility = View.GONE
+                        } else {
+                            addLayout.visibility = View.GONE
+                            addTitle.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
 
         }
 
-        override fun getItemCount() = courses.size
+        override fun getItemCount() = courses.size + 1
 
+        override fun getItemViewType(position: Int): Int {
+            return if (position == courses.size) VIEW_TYPE_LAST_ITEM else VIEW_TYPE_NORMAL
+        }
+
+    }
+
+    private fun refreshCourses(){
+        val futureCourses = db.availableCourses()
+        val futureUserSubscriptions= db.getUserSubscriptions(user.userId)
+        CompletableFuture.allOf(futureCourses, futureUserSubscriptions).thenAccept {
+            courses = futureCourses.get()
+            userSubscriptions  = futureUserSubscriptions.get()
+            // save actual user subscription in the a private variable
+            adapter = CourseAdapter(courses)
+            recyclerView.adapter = adapter
+        }
+    }
+
+    private inner class AddCourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val text = itemView.findViewById<EditText>(R.id.addCourseName)
+        private val button = itemView.findViewById<ImageButton>(R.id.addCourseButton)
+        fun bind() {
+            button.setOnClickListener {
+                if(text.text.isNotEmpty()) {
+                    val newCourse = db.addCourse(text.text.toString())
+                    db.addStatus(DatabaseManager.user!!.userId, newCourse.courseId, UserStatus.TEACHER)
+                    text.setText("")
+                    refreshCourses()
+                    Toast.makeText(myContext, "You add a newCourse.", Toast.LENGTH_SHORT)
+                } else {
+                    Toast.makeText(myContext, "Course name cannot be empty.", Toast.LENGTH_SHORT)
+                }
+            }
+        }
     }
 
     private inner class CourseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

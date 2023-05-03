@@ -24,12 +24,17 @@ class FirebaseAuthenticator(
     private val caller: ActivityResultCaller = activity
     ) : Authenticator {
 
+    // Used to wait for the result to proceed
+    private lateinit var signInResult: CompletableFuture<Void>
+    private lateinit var signOutResult: CompletableFuture<Void>
+
     // Will be used to launch the sign in intent
     private val signInLauncher = caller.registerForActivityResult(
         FirebaseAuthUIActivityResultContract()
     ) { res -> this.onSignInResult(res) }
 
-    override fun signIn() {
+    override fun signIn(): CompletableFuture<Void> {
+        signInResult = CompletableFuture()
         // Adds the authentication means
         val providers = arrayListOf(
             AuthUI.IdpConfig.EmailBuilder().build(),
@@ -44,9 +49,11 @@ class FirebaseAuthenticator(
 
         // Shows to the user the authentication means
         signInLauncher.launch(signInIntent)
+        return signInResult
     }
 
-    override fun signOut() {
+    override fun signOut(): CompletableFuture<Void> {
+        signOutResult = CompletableFuture()
         if (DatabaseManager.user != null) {
             AuthUI.getInstance()
                 .signOut(activity)
@@ -54,9 +61,11 @@ class FirebaseAuthenticator(
                     logout("Successfully signed out")
                 }
         }
+        return signOutResult
     }
 
-    override fun deleteUser() {
+    override fun deleteUser(): CompletableFuture<Void> {
+        signOutResult = CompletableFuture()
         val user = DatabaseManager.user
         if (user != null) {
             AuthUI.getInstance()
@@ -67,6 +76,7 @@ class FirebaseAuthenticator(
                     logout("Successfully deleted user : ${user.username}")
                 }
         }
+        return signOutResult
     }
 
     /**
@@ -86,6 +96,7 @@ class FirebaseAuthenticator(
             .replace(fragment.id, AccountFragmentGuest())
             .commit()
 
+        signOutResult.complete(null)
         Toast.makeText(activity, txt, Toast.LENGTH_LONG).show()
     }
 
@@ -114,6 +125,7 @@ class FirebaseAuthenticator(
                 ).show()
             }
         }
+        signInResult.complete(null)
     }
 
     /**
@@ -129,14 +141,11 @@ class FirebaseAuthenticator(
                         firebaseUser.displayName!!,
                         firebaseUser.email!!
                     ).thenAccept { newUser ->
-                        DatabaseManager.user = newUser
+                        gotToActivity(newUser)
                     }
                 } else {
-                    DatabaseManager.user = user
+                    gotToActivity(user)
                 }
-                DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)
-                DatabaseManager.user!!.connections.add(true)
-                gotToActivity(DatabaseManager.user!!.username)
             }
         }
     }
@@ -144,10 +153,14 @@ class FirebaseAuthenticator(
     /**
      * Shows sign-in Toast and goes to MainActivity or AccountFragment
      */
-    private fun gotToActivity(username: String) {
+    private fun gotToActivity(newUser: Model.User) {
+        DatabaseManager.user = newUser
+        DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)
+        DatabaseManager.user!!.connections.add(true)
+
         Toast.makeText(
             activity,
-            "Successfully signed in as $username",
+            "Successfully signed in as ${newUser.username}",
             Toast.LENGTH_LONG
         ).show()
 

@@ -5,6 +5,8 @@ import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
+import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.google.firebase.database.*
@@ -46,7 +48,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val senderIdPath = "senderId"
     private val datePath = "date"
     private val chatIdPath = "chatId"
-    private val endorsementPath = "endorsements"
+    private val likePath = "like"
+    private val followersPath = "followers"
+    private val endorsedPath = "endorsed"
 
     private val courseNamePath = "courseName"
     private val usernamePath = "username"
@@ -239,7 +243,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val newChildRef = db.child(answersPath).push()
         val answerId = newChildRef.key ?: error("Failed to generate answer ID")
         // create the new answer using given parameters
-        val answer = Answer(answerId, questionId, userId, answerText ?: "", emptyList())
+        val answer = Answer(answerId, questionId, userId, answerText ?: "", emptyList(), "")
         newChildRef.setValue(answer)
 
         //add the answer in the question's answers list
@@ -272,12 +276,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
-    override fun addQuestionEndorsement(userId: String, questionId: String) {
-        db.child(questionsPath).child(questionId).child(endorsementPath).child(userId).setValue(userId)
+    override fun addQuestionFollower(userId: String, questionId: String) {
+        db.child(questionsPath).child(questionId).child(followersPath).child(userId).setValue(userId)
     }
 
-    override fun addAnswerEndorsement(userId: String, answerId: String) {
-        db.child(answersPath).child(answerId).child(endorsementPath).child(userId).setValue(userId)
+    override fun addAnswerLike(userId: String, answerId: String) {
+        db.child(answersPath).child(answerId).child(likePath).child(userId).setValue(userId)
     }
 
     override fun addSubscription(userId: String, courseId: String): CompletableFuture<User?> {
@@ -317,12 +321,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).removeValue()
     }
 
-    override fun removeQuestionEndorsement(userId: String, questionId: String) {
-        db.child(questionsPath).child(questionId).child(endorsementPath).child(userId).removeValue()
+    override fun removeQuestionFollower(userId: String, questionId: String) {
+        db.child(questionsPath).child(questionId).child(followersPath).child(userId).removeValue()
     }
 
-    override fun removeAnswerEndorsement(userId: String, answerId: String) {
-        db.child(answersPath).child(answerId).child(endorsementPath).child(userId).removeValue()
+    override fun removeAnswerLike(userId: String, answerId: String) {
+        db.child(answersPath).child(answerId).child(likePath).child(userId).removeValue()
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> =
@@ -397,9 +401,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
-    override fun getQuestionEndorsements(questionId: String): CompletableFuture<List<String>> {
+    override fun getQuestionFollowers(questionId: String): CompletableFuture<List<String>> {
         val future = CompletableFuture<List<String>>()
-        db.child(questionsPath).child(questionId).child(endorsementPath).get().addOnSuccessListener {
+        db.child(questionsPath).child(questionId).child(followersPath).get().addOnSuccessListener {
             val userIds = mutableListOf<String>()
 
             for(courseSnapshot in it.children){
@@ -415,9 +419,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
-    override fun getAnswerEndorsements(answerId: String): CompletableFuture<List<String>> {
+    override fun getAnswerLike(answerId: String): CompletableFuture<List<String>> {
         val future = CompletableFuture<List<String>>()
-        db.child(answersPath).child(answerId).child(endorsementPath).get().addOnSuccessListener {
+        db.child(answersPath).child(answerId).child(likePath).get().addOnSuccessListener {
             val userIds = mutableListOf<String>()
 
             for(courseSnapshot in it.children){
@@ -464,6 +468,49 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val connectionsRef =
             Firebase.database.getReference("$usersPath/$userId/$connectionsPath")
         connectionsRef.removeValue()
+    }
+
+    override fun getUserStatus(userId: String, courseId: String): CompletableFuture<UserStatus?> {
+        val future = CompletableFuture<UserStatus?>()
+        db.child(usersPath).child(userId).child(statusPath).child(courseId).get().addOnSuccessListener {
+            val statusString = it.value as String?
+            if(statusString != null) {
+                future.complete(UserStatus.valueOf(statusString))
+            } else{
+                future.complete(null)
+            }
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
+        return future
+    }
+
+    override fun getAnswerEndorsement(answerId: String): CompletableFuture<String?> {
+
+        val future = CompletableFuture<String?>()
+        db.child(answersPath).child(answerId).child(endorsedPath).get().addOnSuccessListener{
+            future.complete(it.value as String?)
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
+
+        return future
+    }
+
+    override fun addAnswerEndorsement(answerId: String, username: String){
+        db.child(answersPath).child(answerId).child(endorsedPath).setValue(username)
+    }
+
+    override fun removeAnswerEndorsement(answerId: String) {
+        db.child(answersPath).child(answerId).child(endorsedPath).removeValue()
+    }
+
+    override fun addStatus(userId: String, courseId: String, status: UserStatus) {
+        db.child(usersPath).child(userId).child(statusPath).child(courseId).setValue(status.name)
+    }
+
+    override fun removeStatus(userId: String, courseId: String) {
+        db.child(usersPath).child(userId).child(statusPath).child(courseId).removeValue()
     }
 
 
@@ -559,8 +606,11 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // Get user infos
         val userInfo = dataSnapshot.child(userInfoPath).getValue(String::class.java)
 
-        // Get user status (is student or teacher)
-        val status = dataSnapshot.child(statusPath).getValue(String::class.java)
+        // Get user status (is assistant or teacher)
+        val status = arrayListOf<String>()
+        dataSnapshot.child(statusPath).children.forEach { conSnapshot ->
+            conSnapshot.key?.let { status.add(it) }
+        }
 
         // Get user connection status (is connected or not)
         val connections = arrayListOf<Boolean>()
@@ -579,7 +629,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 chatsWith,
                 profilePic ?: "",
                 userInfo ?: "",
-                status ?: "",
+                status,
                 connections
             )
         }
@@ -606,13 +656,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             answerSnapshot.key?.let { answers.add(it) }
         }
 
-        val endorsements = arrayListOf<String>()
-        dataSnapshot.child(endorsementPath).children.forEach { questionSnapshot ->
-            questionSnapshot.key?.let { endorsements.add(it) }
+        val followers = arrayListOf<String>()
+        dataSnapshot.child(followersPath).children.forEach { questionSnapshot ->
+            questionSnapshot.key?.let { followers.add(it) }
         }
 
         if(questionId!=null && courseId!=null && userId!=null && questionTitle!=null && questionText!=null && questionURI!=null){
-            return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers, endorsements)
+            return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers, followers)
         }
         return null
     }
@@ -627,13 +677,15 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         val answerText = dataSnapshot.child(answerTextPath).getValue(String::class.java)
 
-        val endorsements = arrayListOf<String>()
-        dataSnapshot.child(endorsementPath).children.forEach { questionSnapshot ->
-            questionSnapshot.key?.let { endorsements.add(it) }
+        val like = arrayListOf<String>()
+        dataSnapshot.child(this.likePath).children.forEach { questionSnapshot ->
+            questionSnapshot.key?.let { like.add(it) }
         }
 
-        if(answerId!=null && questionId!=null && userId!=null && answerText != null){
-            return Answer(answerId, questionId, userId, answerText, endorsements)
+        val endorsement = dataSnapshot.child(answerTextPath).getValue(String::class.java)
+
+        if(answerId!=null && questionId!=null && userId!=null && answerText != null && endorsement != null){
+            return Answer(answerId, questionId, userId, answerText, like, endorsement)
         }
 
         return null

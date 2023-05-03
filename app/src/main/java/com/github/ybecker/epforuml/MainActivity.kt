@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
@@ -58,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if(fragment.equals("NewQuestionFragment")) {
-            replaceFragment(NewQuestionFragment(this))
+            replaceFragment(NewQuestionFragment())
         }
         if(fragment.equals("RealChat")) {
             replaceFragment(RealChatFragment())
@@ -66,6 +69,8 @@ class MainActivity : AppCompatActivity() {
         if(fragment.equals("chatHome")) {
             replaceFragment(ChatHomeFragment())
         }
+        // Remove it otherwise we might jump back to this fragment later
+        intent.removeExtra("fragment")
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {

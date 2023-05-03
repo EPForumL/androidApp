@@ -5,13 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
+import java.util.concurrent.CompletableFuture
 
 class MockAuthenticator(private val activity: AppCompatActivity) : Authenticator {
     private val userId = "0"
     private val userName = "TestUser"
     private val email = "testEmail"
+    private lateinit var signInResult: CompletableFuture<Void>
+    private lateinit var signOutResult: CompletableFuture<Void>
 
-    override fun signIn() {
+    override fun signIn(): CompletableFuture<Void> {
+        signInResult = CompletableFuture()
         val futureUser =
             DatabaseManager.getDatabase().addUser(userId, userName, email)
         futureUser.thenAccept {
@@ -19,22 +23,27 @@ class MockAuthenticator(private val activity: AppCompatActivity) : Authenticator
             DatabaseManager.db.setUserPresence(it.userId)
             DatabaseManager.user!!.connections.add(true)
             activity.startActivity(Intent(activity, MainActivity::class.java))
+            signInResult.complete(null)
         }
+        return signInResult
     }
 
-    override fun signOut() {
-        val user = DatabaseManager.user
-        if (user != null) {
-            DatabaseManager.db.removeUserConnection(user.userId)
-            DatabaseManager.user = null
-        }
+    override fun signOut(): CompletableFuture<Void> {
+        return signOutOrDelete { DatabaseManager.db.removeUserConnection(it) }
     }
 
-    override fun deleteUser() {
+    override fun deleteUser(): CompletableFuture<Void> {
+        return signOutOrDelete { DatabaseManager.db.removeUser(it) }
+    }
+
+    private fun signOutOrDelete(execute: (userId: String) -> Unit): CompletableFuture<Void> {
+        signOutResult = CompletableFuture()
         val user = DatabaseManager.user
         if (user != null) {
-            DatabaseManager.db.removeUser(user.userId)
+            execute(user.userId)
             DatabaseManager.user = null
+            signOutResult.complete(null)
         }
+        return signOutResult
     }
 }
