@@ -61,7 +61,7 @@ class AccountFragmentsTest {
     @Test
     fun checkAccountFragmentLayout() {
         DatabaseManager.useMockDatabase()
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
@@ -79,8 +79,10 @@ class AccountFragmentsTest {
     @Test
     fun checkSignOutRemovesCurrentUserAndGoesToGuestFragment() {
         DatabaseManager.useMockDatabase()
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
         assertTrue(DatabaseManager.user != null)
+
+        Thread.sleep(2000)
 
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
@@ -91,15 +93,17 @@ class AccountFragmentsTest {
         onView(ViewMatchers.withId(R.id.signOutButton))
             .perform(click())
 
-        //assertTrue(DatabaseManager.user == null)
+        assertTrue(DatabaseManager.user == null)
         checkGuest()
     }
 
     @Test
     fun checkDeleteAccountDeletesUserAndGoesToGuestFragment() {
         DatabaseManager.useMockDatabase()
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
         assertTrue(DatabaseManager.user != null)
+
+        Thread.sleep(2000)
 
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
@@ -111,10 +115,9 @@ class AccountFragmentsTest {
             .perform(click())
 
         assertTrue(DatabaseManager.user == null)
-        DatabaseManager.db.getUserById("0").thenAccept {
-            assertTrue(it == null)
-            checkGuest()
-        }
+        val user = DatabaseManager.db.getUserById("0").join()
+        assertTrue(user == null)
+        checkGuest()
     }
 
     private fun checkGuest() {

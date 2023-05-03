@@ -11,7 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
@@ -26,13 +29,15 @@ import java.util.concurrent.CompletableFuture
  * Use the [NewQuestionFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
+class NewQuestionFragment : Fragment() {
 
     private lateinit var questBody : EditText
     private lateinit var questTitle : EditText
     private lateinit var imageURI: TextView
     private lateinit var takePictureButton: Button
     private lateinit var image_uri : String
+
+    private lateinit var mainActivity: MainActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +47,8 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
 
         image_uri = this.mainActivity.intent.getStringExtra("uri").toString()
+        mainActivity = activity as MainActivity
+
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
         // Get the set of available courses from the MockDatabase
         db.availableCourses().thenAccept {

@@ -1,8 +1,8 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
-import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -136,7 +136,7 @@ abstract class Database {
      * @param userId the id of the user that endorsed
      * @param questionId the id of the question that is endorsed
      */
-    abstract fun addQuestionEndorsement(userId:String, questionId: String)
+    abstract fun addQuestionFollower(userId:String, questionId: String)
 
     /**
      * Adds an endorsement to a question
@@ -144,7 +144,7 @@ abstract class Database {
      * @param userId the id of the user that endorsed
      * @param answerId the id of the question that is endorsed
      */
-    abstract fun addAnswerEndorsement(userId:String, answerId: String)
+    abstract fun addAnswerLike(userId:String, answerId: String)
 
     /**
      * Removes a user to the database.
@@ -184,7 +184,7 @@ abstract class Database {
      * @param userId the id of the user that removes his endorsement
      * @param answerId the id of the question that lost its endorsement
      */
-    abstract fun removeQuestionEndorsement(userId:String, questionId: String)
+    abstract fun removeQuestionFollower(userId:String, questionId: String)
 
     /**
      * Removes an endorsement to a answer
@@ -192,7 +192,7 @@ abstract class Database {
      * @param userId the id of the user that removes his endorsement
      * @param answerId the id of the answer that lost its endorsement
      */
-    abstract fun removeAnswerEndorsement(userId:String, answerId: String)
+    abstract fun removeAnswerLike(userId:String, answerId: String)
 
     /**
      * Adds the user in the list of the user to notify.
@@ -257,17 +257,17 @@ abstract class Database {
      * Returns the list of all the userIds that endorsed the given question.
      *
      * @param questionId Id of the question from which we want the endorsements
-     * @return List the list of all the userIds that endorsed the given question
+     * @return List the list of all the userIds that follows the given question
      */
-    abstract fun getQuestionEndorsements(questionId: String): CompletableFuture<List<String>>
+    abstract fun getQuestionFollowers(questionId: String): CompletableFuture<List<String>>
 
     /**
      * Returns the list of all the userIds that endorsed the given answer.
      *
      * @param answerId Id of the answer from which we want the endorsements
-     * @return List the list of all the userIds that endorsed the given answer
+     * @return List the list of all the userIds that like the given answer
      */
-    abstract fun getAnswerEndorsements(answerId: String): CompletableFuture<List<String>>
+    abstract fun getAnswerLike(answerId: String): CompletableFuture<List<String>>
 
 
     /**
@@ -321,4 +321,52 @@ abstract class Database {
     * @param ChatID to remove
     */
     abstract fun removeChat(chatId:String) : Boolean
+
+    /**
+     * Add a Status to a specific user
+     *
+     * @param userId the id of the you want to add a status to
+     * @param courseId the id of the course for where you want to add the status
+     * @param status the status you want to add to this user
+     */
+    abstract fun addStatus(userId: String, courseId: String, status: UserStatus)
+
+    /**
+     * Remove a Status to a specific user
+     *
+     * @param userId the id of the user that remove the status
+     * @param courseId the id of the course where you want to remove the status
+     */
+    abstract fun removeStatus(userId: String, courseId: String)
+
+    /**
+     * Add a Status to a specific user
+     *
+     * @param userId the id of the user that get the status
+     * @param courseId the id of the course where you want to get the status
+     * @return the status of the user if he has one, null otherwise
+     */
+    abstract fun getUserStatus(userId: String, courseId: String): CompletableFuture<UserStatus?>
+
+    /**
+     * Return the endorser of an answer if there is one, null otherwise
+     *
+     * @param answerId the id of the answer from which you which the endorser
+     * @return the endorser of an answer if there is one, null otherwise
+     */
+    abstract fun getAnswerEndorsement(answerId: String): CompletableFuture<String?>
+
+    /**
+     * Add an endorsement from a user to the answer
+     * @param answerId the id of the answer you want to endorse
+     * @param username the username of the endorser
+     */
+    abstract fun addAnswerEndorsement(answerId: String, username: String)
+
+    /**
+     * Remove an endorsement from a user to the answer
+     * @param answerId the id of the answer you want to remove endorsement
+     */
+    abstract fun removeAnswerEndorsement(answerId: String)
+
 }

@@ -33,6 +33,7 @@ class SearchActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("fragment", "chatHome")
             startActivity(intent)
+            finish()
         }
 
         db.registeredUsers().thenAccept { listIt ->

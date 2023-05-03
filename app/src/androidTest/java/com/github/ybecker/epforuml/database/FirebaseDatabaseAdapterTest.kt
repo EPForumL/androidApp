@@ -3,9 +3,7 @@ package com.github.ybecker.epforuml.database
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.MainActivity
-import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.Model.*
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -510,7 +508,6 @@ class FirebaseDatabaseAdapterTest {
     fun removeQuestionEndorsementTest(){
         question1Future.thenAccept { question1 ->
             db.addQuestionEndorsement(romain.userId, question1.questionId)
-
             db.getQuestionEndorsements(question1.questionId).thenAccept {
                 assertThat(it, equalTo(listOf(romain.userId)))
             }.join()
@@ -525,7 +522,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addAndGetNewAnswerEndorsementTest(){
-        answer1Future.thenAccept { answer1 ->
+    answer1Future.thenAccept { answer1 ->
             db.getAnswerEndorsements(answer1.answerId).thenAccept {
                 assertThat(it, equalTo(emptyList()))
             }.join()
