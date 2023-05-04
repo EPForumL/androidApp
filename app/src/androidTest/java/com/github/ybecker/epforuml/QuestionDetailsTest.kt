@@ -91,14 +91,14 @@ class QuestionDetailsTest {
     }
     private fun logInDetailsActivity() {
         scenario.onActivity {
-            MockAuthenticator(it).signIn()
+            MockAuthenticator(it).signIn().join()
             it.startActivity(intent)
         }
     }
 
     private fun logOutDetailsActivity() {
         scenario.onActivity {
-            MockAuthenticator(it).signOut()
+            MockAuthenticator(it).signOut().join()
             it.startActivity(intent)
         }
     }
@@ -146,7 +146,7 @@ class QuestionDetailsTest {
     fun newActivityContainsCorrectData() {
         onView(withId(R.id.qdetails_title)).check(matches(withText(question.questionTitle)))
     }
-/*
+
     @Test
     fun backToMainIsCorrect() {
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
@@ -155,7 +155,6 @@ class QuestionDetailsTest {
         onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
     }
 
- */
 /*
     @Test
     fun loggedInCanPost() {
@@ -164,6 +163,8 @@ class QuestionDetailsTest {
         onView(withId(R.id.write_reply_box)).check(matches(isDisplayed()))
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
     }
+
+ */
 
     @Test
     fun cannotPostEmptyAnswer() {
@@ -351,6 +352,7 @@ class QuestionDetailsTest {
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
 
+    /*
     @Test
     fun clickingToggleAltersDrawable() {
         logInDetailsActivity()
@@ -364,6 +366,8 @@ class QuestionDetailsTest {
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
+
+     */
 
     @Test
     fun toggleOnWhenQuestionSaved() {
@@ -394,8 +398,6 @@ class QuestionDetailsTest {
             .check(matches(isDisplayed()))
     }
 
- */
-/*
     @Test
     fun scrollToRefreshAnswers() {
         val testQuStr = "NEWQUESTIONTEST"
@@ -439,23 +441,9 @@ class QuestionDetailsTest {
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
             .perform(click())
 
-        onView((withId(R.id.title_forum))).check(matches(isDisplayed()))
+        onView((withId(R.id.title_saved))).check(matches(isDisplayed()))
 
     }
-
-    @Test
-    fun answerCacheProperlySentBackToMain() {
-        Intents.init()
-
-        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
-            .perform(click())
-
-        intended(allOf(hasComponent(MainActivity::class.java.name), hasExtra("savedAnswers", answersCache)))
-
-        Intents.release()
-    }
-
- */
 
 
     // check if no connection still displays content of question

@@ -268,7 +268,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
-    fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
+    private fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
         Glide.with(imageView.context)
             .load(imageUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
