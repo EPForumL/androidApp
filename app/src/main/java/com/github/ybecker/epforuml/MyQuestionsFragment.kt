@@ -23,6 +23,8 @@ class MyQuestionsFragment : Fragment() {
     private var myQuestionsMap = mutableMapOf<Model.Course, List<Model.Question>>()
 
     private lateinit var cache : ArrayList<Model.Question>
+    private lateinit var answersCache : ArrayList<Model.Answer>
+    private lateinit var comingFromFragment : String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_my_questions, container, false)
@@ -32,6 +34,7 @@ class MyQuestionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
+        answersCache = requireArguments().getParcelableArrayList("savedAnswers") ?: arrayListOf()
 
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_my_questions)
@@ -94,7 +97,7 @@ class MyQuestionsFragment : Fragment() {
             messageView?.visibility = View.VISIBLE
         }
 
-        adapter = MyQuestionsAdapter(myQuestionsMap, cache)
+        adapter = MyQuestionsAdapter(myQuestionsMap, cache, answersCache, "MyQuestionsFragment")
         recyclerView.adapter = adapter
     }
 

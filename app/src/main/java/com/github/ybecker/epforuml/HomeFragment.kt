@@ -143,7 +143,7 @@ class HomeFragment : Fragment() {
         }
 
         // Update the recycler view adapter with the questions map
-        adapter = MyQuestionsAdapter(questionsMap, cache)
+        adapter = MyQuestionsAdapter(questionsMap, cache, answersCache, "HomeFragment")
         recyclerView.adapter = adapter
 
         // move to QuestionDetails when clicking on specific question
