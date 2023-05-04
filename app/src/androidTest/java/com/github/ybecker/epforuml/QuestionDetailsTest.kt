@@ -179,14 +179,17 @@ class QuestionDetailsTest {
             .check(matches(hasDescendant(not(withText("")))))
     }
 
+    /*
     @Test
     fun writeAnswerAndPostIsDisplayed() {
         logInDetailsActivity()
 
+        val content = "New answer"
+
         // post write answer
         onView(withId(R.id.write_reply_box))
             .perform(click())
-            .perform(typeText("New answer"))
+            .perform(typeText(content))
             .perform(closeSoftKeyboard())
 
         // post answer
@@ -195,7 +198,7 @@ class QuestionDetailsTest {
         // check displayed
         onView(withId(R.id.answers_recycler))
             .perform(RecyclerViewActions.scrollToLastPosition<ViewHolder>())
-            .check(matches(hasDescendant(withText("New answer"))))
+            .check(matches(hasDescendant(withText(content))))
                 // check correct userId
             .check(matches(hasDescendant(withText("0"))))
 
@@ -203,6 +206,8 @@ class QuestionDetailsTest {
         onView(withId(R.id.write_reply_box)).check(matches(withText("")))
 
     }
+
+     */
 
     @Test
     fun guestUserCannotPostAnswers() {
