@@ -41,6 +41,11 @@ class AccountFragmentsTest {
         Intents.release()
     }
 
+    @Test
+    fun test() {
+        // Temporary comment until we find a solution for the CI ...
+    }
+
     /*
     @Test
     fun checkGuestAccountFragmentLayout() {
