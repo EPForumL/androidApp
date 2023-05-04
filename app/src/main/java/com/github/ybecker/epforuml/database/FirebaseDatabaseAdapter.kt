@@ -4,10 +4,6 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
-import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
-//import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
-import android.content.ContentValues
-import android.widget.Toast
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
@@ -185,31 +181,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         // add the new course in the db
         newChildRef.setValue(course)
         return course
-    }
-
-
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): Question {
-
-        // create a space for the new question in db and save its id
-        val newChildRef = db.child(questionsPath).push()
-        val questionId = newChildRef.key ?: error("Failed to generate question ID")
-        // create the new question using given parameters
-        val question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", image_uri, emptyList(), emptyList())
-
-        // add the new question in the db
-        newChildRef.setValue(question)
-
-        //add the question in the course's questions list
-        db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
-
-        //add the question in the user's questions list
-        db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
-
-        this.getUserById(userId).thenAccept {
-            PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
-        }
-
-        return question
     }
 
     override fun addChat(
@@ -766,7 +737,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,image_uri: String): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
         val question_future = CompletableFuture<Question>()
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
@@ -781,7 +752,11 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
             //add the question in the user's questions list
             db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
-            FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
+
+            this.getUserById(userId).thenAccept {
+                PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+            }
+
         }
         return question_future
     }
