@@ -48,7 +48,7 @@ class AnswerAdapterTest {
 
         val answer6 =
             Model.Answer("answer6", "question4", "answerAdapterTestUser",
-                "Nan mais je suis pas d'accord non plus", emptyList())
+                "Nan mais je suis pas d'accord non plus", emptyList(), "")
         db.addAnswer(answer6.userId, answer6.questionId, answer6.answerText)
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
