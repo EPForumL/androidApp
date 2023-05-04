@@ -60,6 +60,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val userInfoPath = "userInfo"
     private val statusPath = "status"
     private val connectionsPath = "connections"
+    private val sharesLocationPath = "sharesLocation"
+    private val longitudePath = "longitude"
+    private val latitudePath = "latitude"
 
     override fun availableCourses(): CompletableFuture<List<Course>> {
         val future = CompletableFuture<List<Course>>()
@@ -522,6 +525,26 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(answersPath).child(answerId).child(endorsedPath).removeValue()
     }
 
+    override fun getOtherUsers(userId: String): CompletableFuture<List<User>> {
+        val future = CompletableFuture<List<User>>()
+        // go in "users" dir
+        db.child(usersPath).get().addOnSuccessListener {
+            val users = mutableListOf<User>()
+            // add every user that is not null and not equal to userId to the users list
+            for (userSnapshot in it.children) {
+                val user = getUser(userSnapshot)
+                if (user != null && user.userId != userId) {
+                    users.add(user)
+                }
+            }
+            //complete the future when every children has been added
+            future.complete(users)
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
+        return future
+    }
+
     override fun addStatus(userId: String, courseId: String, status: UserStatus) {
         db.child(usersPath).child(userId).child(statusPath).child(courseId).setValue(status.name)
     }
@@ -635,6 +658,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             conSnapshot.key?.let { connections.add(it.toBoolean()) }
         }
 
+        // Get whether the user is sharing his location
+        val sharesLocation = dataSnapshot.child(sharesLocationPath).getValue(Boolean::class.java)
+
+        // Get user's coordinates
+        val longitude = dataSnapshot.child(longitudePath).getValue(Double::class.java)
+        val latitude = dataSnapshot.child(latitudePath).getValue(Double::class.java)
+
         if(userId!=null && username!=null && email!=null){
             return User(
                 userId,
@@ -647,7 +677,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 profilePic ?: "",
                 userInfo ?: "",
                 status,
-                connections
+                connections,
+                sharesLocation ?: false,
+                longitude ?: -200.0,
+                latitude ?: -200.0
             )
         }
         return null

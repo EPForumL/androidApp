@@ -67,7 +67,6 @@ class MainActivity : AppCompatActivity() {
         if(fragment.equals("chatHome")) {
             replaceFragment(ChatHomeFragment())
         }
-        // TODO: maps ?
         // Remove it otherwise we might jump back to this fragment later
         intent.removeExtra("fragment")
 

@@ -588,4 +588,23 @@ class FirebaseDatabaseAdapterTest {
             assertThat(it.size, equalTo(0))
           }.join()
      }
+
+    @Test
+    fun getOtherUsersDoesNotContainTheUser() {
+        db.getOtherUsers(romain.userId).thenAccept {
+            assertThat(it.filter { user -> user.userId != romain.userId }.size, equalTo(it.size))
+        }.join()
+    }
+
+    @Test
+    fun getOtherUsersGivesAllOtherUsers() {
+        db.getOtherUsers(romain.userId).thenAccept { users ->
+            db.registeredUsers().thenAccept {
+                val usersIds = users.map { user -> user.userId }
+                it.forEach { id ->
+                    assertThat(usersIds.contains(id), equalTo(true))
+                }
+            }
+        }.join()
+    }
 }

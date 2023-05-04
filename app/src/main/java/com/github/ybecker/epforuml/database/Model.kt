@@ -106,7 +106,9 @@ class Model {
         var userInfo: String = "",
         var status: List<String> = emptyList(),
         val connections: ArrayList<Boolean> = ArrayList(),
-        var localization: LatLng? = null
+        var sharesLocation: Boolean = false,
+        var longitude: Double = -200.0,
+        var latitude: Double = -200.0
         ) {
         constructor() : this(
             "",
@@ -120,7 +122,9 @@ class Model {
             "",
             emptyList(),
             ArrayList(),
-            null
+            false,
+            -200.0,
+            -200.0
         )
     }
 

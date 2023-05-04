@@ -2,24 +2,20 @@ package com.github.ybecker.epforuml.sensor
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.os.Looper
 import android.view.*
-import android.widget.LinearLayout
-import android.widget.Switch
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -27,16 +23,27 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import java.util.concurrent.TimeUnit
 
+/**
+ * Google map fragment that shows the user and other users on the map.
+ */
 class MapsFragment : Fragment(),
     GoogleMap.OnMyLocationButtonClickListener,
     GoogleMap.OnMyLocationClickListener,
-    OnMapReadyCallback {
+    OnMapReadyCallback,
+    MenuProvider {
 
+    // Used to get the current user's location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var currentLocation: Location
-    private var localizationShared = false
 
+    // Called on user's location updates
+    private lateinit var locationCallback: LocationCallback
+
+    // Sets the behaviour of the user's location updates
+    private lateinit var locationRequest: LocationRequest
+
+    // Asks the user to give localization permissions : Fine Location, Coarse Location or None
     private val requestPermissions = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { onRequestPermissionsResult(it) }
@@ -46,36 +53,49 @@ class MapsFragment : Fragment(),
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val context = requireContext()
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.map_menu, menu)
-                if (ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED) {
-                    menu.findItem(R.id.change_map_perm).isVisible = false
+        // Callback called when the location changes
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                val location = locationResult.lastLocation
+                if (location != null) {
+                    updateUserLocation(location)
                 }
             }
+        }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.change_map_perm ->
-                        requestPermissions.launch(
-                            arrayOf(
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.ACCESS_COARSE_LOCATION
-                            )
-                        )
-                    R.id.share_position -> {
-                        localizationShared = menuItem.isChecked
-                        menuItem.isChecked = !menuItem.isChecked
-                    }
-                }
-                return true
-            }
-        })
+        // Set location update properties
+        val interval = TimeUnit.SECONDS.toMillis(60)
+        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, interval).apply {
+            setMinUpdateDistanceMeters(10.0F)
+            setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL)
+            setWaitForAccurateLocation(true)
+        }.build()
+
+        // Add upper right menu components
+        requireActivity().addMenuProvider(
+            this,
+            viewLifecycleOwner,
+            androidx.lifecycle.Lifecycle.State.RESUMED
+        )
         return inflater.inflate(R.layout.fragment_maps, container, false)
+    }
+
+    /**
+     * Gets all users in the database (except the current user) that share their localization
+     * and displays them on the map.
+     */
+    private fun displayOtherUsers(map: GoogleMap) {
+        DatabaseManager.db.getOtherUsers(DatabaseManager.user?.userId ?: "")
+            .thenAccept { users ->
+                val usersSharingLocation = users.filter { it.sharesLocation }
+                usersSharingLocation.forEach {
+                    val position = LatLng(it.latitude, it.longitude)
+                    map.addMarker(
+                        MarkerOptions().position(position).title(it.username)
+                    )
+                }
+            }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,13 +106,21 @@ class MapsFragment : Fragment(),
 
     @SuppressLint("MissingPermission")
     override fun onMapReady(map: GoogleMap) {
-        map.isMyLocationEnabled = true
-        map.setOnMyLocationButtonClickListener(this)
-        map.setOnMyLocationClickListener(this)
+        val user = DatabaseManager.user
+        if (user != null) {
+            // Enables the user's position marker
+            map.isMyLocationEnabled = true
+            // Button that centers the view on the user's position
+            map.setOnMyLocationButtonClickListener(this)
+            map.setOnMyLocationClickListener(this)
 
-        val position = LatLng(currentLocation.latitude, currentLocation.longitude)
-        map.animateCamera(CameraUpdateFactory.newLatLng(position))
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
+            // Move and zoom view on user
+            val position = LatLng(user.latitude, user.longitude)
+            map.animateCamera(CameraUpdateFactory.newLatLng(position))
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 15f))
+
+            displayOtherUsers(map)
+        }
     }
 
     override fun onMyLocationClick(location: Location) {
@@ -108,16 +136,10 @@ class MapsFragment : Fragment(),
         return false
     }
 
+    @SuppressLint("MissingPermission")
     private fun getCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
-
+        if (isLocalizationNotGranted()) {
+            // Asks user location permissions
             requestPermissions.launch(
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -125,43 +147,126 @@ class MapsFragment : Fragment(),
                 )
             )
             return
+        } else if (DatabaseManager.user?.sharesLocation == false) {
+            // If user disables the location sharing, put fake coordinates
+            DatabaseManager.user?.latitude = -200.0
+            DatabaseManager.user?.longitude = -200.0
+            DatabaseManager.syncUserWithDatabase()
+            return
         }
 
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
-                currentLocation = location
+                updateUserLocation(location)
 
                 val mapFragment =
                     childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
 
                 mapFragment.getMapAsync(this)
-
-                if (localizationShared) {
-                    DatabaseManager.db
-                        .getUserById(DatabaseManager.user!!.userId).thenAccept { user ->
-                        if (user != null) {
-
-                            DatabaseManager.db.updateUser()
-                        }
-                    }
-                }
             }
         }
     }
 
+    private fun updateUserLocation(location: Location) {
+        DatabaseManager.user.let {
+            if (it != null) {
+                it.latitude = location.latitude
+                it.longitude = location.longitude
+                DatabaseManager.syncUserWithDatabase()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        if (!isLocalizationNotGranted()) {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopLocationUpdates()
+    }
+
+    private fun stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun isLocalizationNotGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+    }
+
+    /**
+     * Checks which permissions where granted after asking the user.
+     */
     private fun onRequestPermissionsResult(permissions: Map<String, Boolean>) {
         when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
                 // Precise location access granted.
-                requireActivity().invalidateOptionsMenu()
-                localizationShared = true
+                // requireActivity().invalidateOptionsMenu()
+                DatabaseManager.user?.sharesLocation = true
+                DatabaseManager.syncUserWithDatabase()
                 getCurrentLocation()
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 // Only approximate location access granted.
-                localizationShared = true
+                DatabaseManager.user?.sharesLocation = true
+                DatabaseManager.syncUserWithDatabase()
                 getCurrentLocation()
             }
         }
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.map_menu, menu)
+        // If the user granted all permissions then hide the "Change permissions" button
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED) {
+            menu.findItem(R.id.change_map_perm).isVisible = false
+        }
+        // Synchronize state of the "Share position" button with the user's attribute
+        menu.findItem(R.id.share_position).isChecked = DatabaseManager.user?.sharesLocation ?: false
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.change_map_perm -> {
+                requestPermissions.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
+            R.id.share_position -> {
+                // Change state of the share position button and save it to the user
+                if (DatabaseManager.user != null) {
+                    DatabaseManager.user?.sharesLocation = !menuItem.isChecked
+                    DatabaseManager.syncUserWithDatabase()
+                    getCurrentLocation()
+                    menuItem.isChecked = !menuItem.isChecked
+                }
+            }
+        }
+        return true
     }
 }

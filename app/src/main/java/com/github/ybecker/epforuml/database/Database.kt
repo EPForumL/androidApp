@@ -368,5 +368,11 @@ abstract class Database {
      */
     abstract fun removeAnswerEndorsement(answerId: String)
 
-
+    /**
+     * Returns a list of all users except the user passed in parameter
+     * @param userId the id of the user not included
+     *
+     * @return the list of users except the user with id "userId"
+     */
+    abstract fun getOtherUsers(userId: String): CompletableFuture<List<User>>
 }

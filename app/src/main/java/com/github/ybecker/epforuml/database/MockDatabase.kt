@@ -413,6 +413,10 @@ class MockDatabase : Database() {
         }
     }
 
+    override fun getOtherUsers(userId: String): CompletableFuture<List<User>> {
+        return CompletableFuture.completedFuture(users.values.toList().filter { it.userId != userId })
+    }
+
     override fun removeChat(chatId: String): Boolean {
         return try {
             chats.remove(chatId)

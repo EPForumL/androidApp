@@ -18,10 +18,23 @@ object DatabaseManager {
     fun getDatabase(): Database {
         return db
     }
+
     /**
      * Modify the current instance of the Database to a MockDatabase
      */
     fun useMockDatabase() {
         db = MockDatabase()
+    }
+
+    /**
+     * Synchronizes the local user with the database user.
+     * Should be used when modifying the local user.
+     */
+    fun syncUserWithDatabase() {
+        user.let {
+            if (it != null) {
+                db.updateUser(it)
+            }
+        }
     }
 }
