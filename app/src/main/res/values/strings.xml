@@ -36,7 +36,7 @@
     <string name="choose_new_password">choose_new_password</string>
     <string name="repeat_password">repeat_password</string>
     <string name="share_localisation">share_localisation</string>
-    <string name="preferences">preferences</string>
+    <string name="preferences">Preferences</string>
     <string name="no_match">No match found</string>
 
     ///Objects of the new fragment page:
