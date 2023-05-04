@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_marginHorizontal="5dp">
 
             <androidx.cardview.widget.CardView
@@ -32,7 +32,6 @@
                 app:cardUseCompatPadding="true"
                 android:id="@+id/write_reply_card"
                 app:cardCornerRadius="3dp"
-                android:visibility="visible"
                 app:cardElevation="5dp"
                 android:paddingVertical="5dp"
                 android:layout_weight="2">
