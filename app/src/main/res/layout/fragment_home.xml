@@ -52,8 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_plus"
-        android:padding="16dp"
-        android:contentDescription="@string/add_question_button_"/>
+        android:padding="16dp"/>
 
 
 

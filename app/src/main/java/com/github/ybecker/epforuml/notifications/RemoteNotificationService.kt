@@ -2,6 +2,7 @@
 package com.github.ybecker.epforuml.notifications
 
 import android.Manifest
+import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.pm.PackageManager
@@ -16,7 +17,7 @@ import com.google.firebase.messaging.RemoteMessage
 
 class RemoteNotificationService : FirebaseMessagingService() {
 
-
+/*
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
@@ -31,12 +32,12 @@ class RemoteNotificationService : FirebaseMessagingService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId, "My Channel", NotificationManager.IMPORTANCE_DEFAULT)
             val notificationManager: NotificationManager =
-                MainActivity.context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+                this.application.applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
 
         // Afficher une notification
-        val notification = NotificationCompat.Builder( MainActivity.context, channelId)
+        val notification = NotificationCompat.Builder(this.application.applicationContext, channelId)
         .setSmallIcon(R.drawable.nav_chat)
         .setContentTitle(author)
         .setContentText(title)
@@ -45,14 +46,16 @@ class RemoteNotificationService : FirebaseMessagingService() {
         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         .build()
 
-        val notificationManager = NotificationManagerCompat.from(MainActivity.context)
+        val notificationManager = NotificationManagerCompat.from(this.application.applicationContext)
 
         if (ActivityCompat.checkSelfPermission(
-                MainActivity.context,
+                this.application.applicationContext,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             notificationManager.notify(0, notification)
         }
     }
+
+ */
 }

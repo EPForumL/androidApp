@@ -2,10 +2,7 @@ package com.github.ybecker.epforuml.chat
 
 import android.app.Activity
 import android.content.Intent
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import androidx.core.view.size
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -13,7 +10,6 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.MainActivity
@@ -136,7 +132,7 @@ class RealChatTest {
 
         scenario.onActivity { activity ->
             val view: RecyclerView = activity.findViewById(R.id.recycler_chat_home)
-            view.findViewById<Button>(R.id.buttonChatWith).performClick()
+            view.findViewById<CardView>(R.id.buttonChatWith).performClick()
         }
     }
 
