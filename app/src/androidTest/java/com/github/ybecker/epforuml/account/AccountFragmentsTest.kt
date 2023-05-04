@@ -8,6 +8,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.firebase.ui.auth.KickoffActivity
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
@@ -46,6 +47,8 @@ class AccountFragmentsTest {
             .perform(click())
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
+
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
         onView(ViewMatchers.withId(R.id.nav_account))
             .perform(click())
 
@@ -62,6 +65,8 @@ class AccountFragmentsTest {
     fun checkAccountFragmentLayout() {
         DatabaseManager.useMockDatabase()
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
+
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
@@ -86,6 +91,8 @@ class AccountFragmentsTest {
 
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
         onView(ViewMatchers.withId(R.id.nav_account))
@@ -103,7 +110,7 @@ class AccountFragmentsTest {
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
         assertTrue(DatabaseManager.user != null)
 
-        Thread.sleep(2000)
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
