@@ -4,17 +4,21 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
-import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
+import com.github.ybecker.epforuml.notifications.NotificationType
+import com.github.ybecker.epforuml.notifications.PushNotificationService
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.coroutineContext
 
 
 /**
@@ -312,11 +316,14 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             Log.e(TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
             future.complete(false)
         }
+
+        Firebase.messaging.subscribeToTopic(courseId)
         return future
     }
 
     override fun removeNotification(userId: String, courseId: String) {
         db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).removeValue()
+        Firebase.messaging.unsubscribeFromTopic(courseId)
     }
 
     override fun removeQuestionFollower(userId: String, questionId: String) {
@@ -730,7 +737,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,image_uri: String): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
         val question_future = CompletableFuture<Question>()
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
@@ -745,7 +752,11 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
             //add the question in the user's questions list
             db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
-            FirebaseCouldMessagingAdapter.sendQuestionNotifications(question)
+
+            this.getUserById(userId).thenAccept {
+                PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+            }
+
         }
         return question_future
     }

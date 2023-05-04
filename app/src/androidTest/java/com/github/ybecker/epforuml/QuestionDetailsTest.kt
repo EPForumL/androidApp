@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml
 
-import android.provider.ContactsContract.Data
 import android.content.Intent
 import android.view.View
 import android.widget.TextView
@@ -11,7 +10,6 @@ import androidx.test.espresso.*
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
@@ -22,10 +20,6 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -343,13 +337,13 @@ class QuestionDetailsTest {
     @Test
     fun clickingToggleAltersDrawable() {
         logInDetailsActivity()
-
+        Thread.sleep(1000)
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
-
+        Thread.sleep(1000)
         onView(withId(R.id.toggle_save_question))
             .perform(click())
-
+        Thread.sleep(1000)
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
