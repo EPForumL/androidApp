@@ -33,14 +33,9 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MyQuestionsAdapter
     private val user = DatabaseManager.user
-    private var questionsMap = mutableMapOf<Model.Course, List<Model.Question>>()
+    private var questionsMap = mutableMapOf<Course, List<Question>>()
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-
-    /**
-     * The final list of questions to diplay on the page
-     */
-    private var questionsList = mutableListOf<Question>() // switch to questions when able to transfer data from mainActivtiy
 
     /**
      * The temporary (to be completed) list of questions

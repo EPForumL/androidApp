@@ -11,7 +11,11 @@ import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.Model
 
 // Adapter for displaying a user's questions organized by course
-class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, List<Model.Question>>) : RecyclerView.Adapter<MyQuestionsAdapter.MyQuestionsViewHolder>() {
+class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, List<Model.Question>>) :
+    RecyclerView.Adapter<MyQuestionsAdapter.MyQuestionsViewHolder>() {
+
+    // Click listener for the forum questions
+    var onItemClick :((Model.Question) -> Unit)? = null
 
     // Inflate the layout for each item in the RecyclerView
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyQuestionsViewHolder {
