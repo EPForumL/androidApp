@@ -16,8 +16,6 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import java.util.concurrent.CompletableFuture
 
@@ -43,6 +41,7 @@ class HomeFragment : Fragment() {
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
     private lateinit var cache : ArrayList<Question>
+    private lateinit var answersCache : ArrayList<Answer>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +53,7 @@ class HomeFragment : Fragment() {
         // Get the list of available courses from the database
         futureCourseList = db.availableCourses()
         cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
+        answersCache = requireArguments().getParcelableArrayList("savedAnswers") ?: arrayListOf()
 
         // Set up the new question button and navigate to the new question fragment when clicked
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
@@ -150,6 +150,8 @@ class HomeFragment : Fragment() {
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
             intent.putParcelableArrayListExtra("savedQuestions", cache)
+            intent.putParcelableArrayListExtra("savedAnswers", answersCache)
+            intent.putExtra("comingFrom", "HomeFragment")
             intent.putExtra("question", q)
             startActivity(intent)
         }

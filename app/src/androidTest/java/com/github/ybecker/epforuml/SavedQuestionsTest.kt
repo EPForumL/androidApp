@@ -115,6 +115,41 @@ class SavedQuestionsTest {
         Intents.release()
     }
 
+    @Test
+    fun cachesProperlySentToQuestionDetailsFromSavedQuestions() {
+        logInIntent()
+
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            MainActivity::class.java
+        )
+
+        val emptyAnswers : ArrayList<Model.Answer> = arrayListOf()
+
+        // initialize cache
+        intent.putParcelableArrayListExtra("savedQuestions", cache)
+        intent.putParcelableArrayListExtra("savedAnswers", emptyAnswers)
+
+        scenario = ActivityScenario.launch(intent)
+
+        goToSavedFragment()
+
+        Intents.init()
+
+        // go to last QuestionDetailsActivity
+        onView(withId(R.id.recycler_saved_questions))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                    0,
+                    click()
+                )
+            )
+
+        intended(allOf(hasExtra("savedQuestions", cache), hasExtra("savedAnswers", emptyAnswers)))
+
+        Intents.release()
+    }
+
     private fun goToSavedFragment() {
         onView(withContentDescription(R.string.open))
             .perform(click())
