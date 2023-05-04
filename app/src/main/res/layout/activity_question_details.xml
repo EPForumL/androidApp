@@ -16,18 +16,11 @@
         android:orientation="horizontal"
         tools:context=".QuestionDetailsActivity">
 
-        <Button
-            android:id="@+id/back_to_forum_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:text="@string/back"
-            android:textStyle="bold" />
-
         <TextView
             android:id="@+id/notificationCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:gravity="right"
             android:layout_weight="1"
             android:text="0" />
@@ -38,7 +31,7 @@
             android:layout_height="30sp"
             android:layout_margin="8dp"
             android:src="@drawable/notif_bell"
-            android:background="@color/backgroundColor"/>
+            android:background="@color/fui_transparent"/>
 
         <ImageButton
             android:layout_width="wrap_content"
@@ -99,7 +92,6 @@
             android:textColor="@color/red"
             android:textSize="13sp"
             android:layout_gravity="center"
-            android:background="@color/white"
             android:visibility="gone"/>
 
         <androidx.cardview.widget.CardView
