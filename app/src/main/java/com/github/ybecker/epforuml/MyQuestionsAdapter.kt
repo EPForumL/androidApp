@@ -12,7 +12,9 @@ import com.github.ybecker.epforuml.database.Model
 
 // Adapter for displaying a user's questions organized by course
 class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, List<Model.Question>>,
-                         private val cache: ArrayList<Model.Question>) :
+                         private val cache: ArrayList<Model.Question>,
+                         private val answersCache: ArrayList<Model.Answer>,
+                         private val fragment: String) :
     RecyclerView.Adapter<MyQuestionsAdapter.MyQuestionsViewHolder>() {
 
     // Click listener for the forum questions
@@ -49,6 +51,8 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
         holder.forumAdapter.onItemClick = { question ->
             val intent = Intent(holder.itemView.context, QuestionDetailsActivity::class.java)
             intent.putParcelableArrayListExtra("savedQuestions", cache)
+            intent.putParcelableArrayListExtra("savedAnswers", answersCache)
+            intent.putExtra("comingFrom", fragment)
             intent.putExtra("question", question)
             holder.itemView.context.startActivity(intent)
         }
