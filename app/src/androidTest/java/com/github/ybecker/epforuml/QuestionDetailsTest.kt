@@ -116,7 +116,7 @@ class QuestionDetailsTest {
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
             .perform(click())
 
-        onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
+        onView(withId(R.id.recycler_my_questions)).check(matches(isDisplayed()))
     }
 
     @Test
@@ -178,11 +178,11 @@ class QuestionDetailsTest {
     fun questionEndorseButtonModifyTheCounter() {
         logInDetailsActivity()
 
-        onView(withText("0")).check(matches(isDisplayed()))
+        onView(withId(R.id.notificationCount)).check(matches(isDisplayed()))
         onView(withId(R.id.addFollowButton)).perform(click())
-        onView(withText("1")).check(matches(isDisplayed()))
+        onView(withId(R.id.notificationCount)).check(matches(isDisplayed()))
         onView(withId(R.id.addFollowButton)).perform(click())
-        onView(withText("0")).check(matches(isDisplayed()))
+        onView(withId(R.id.notificationCount)).check(matches(isDisplayed()))
     }
 
     @Test

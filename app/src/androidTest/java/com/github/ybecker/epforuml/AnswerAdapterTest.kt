@@ -91,7 +91,7 @@ class AnswerAdapterTest {
 
     @Test
     fun clickingOnChatLeadsToChat(){
-        onView(withId(R.id.recycler_forum))
+        onView(withId(R.id.recycler_my_questions))
             .perform(RecyclerViewActions.scrollToPosition<ViewHolder>(0))
             .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0,
                 click()

@@ -46,13 +46,13 @@ class MainActivityTest {
 
     @Test
     fun questionIsClickable() {
-        onView(withId(R.id.recycler_forum))
+        onView(withId(R.id.recycler_my_questions))
             .check(ViewAssertions.matches(ViewMatchers.isClickable()))
     }
 
     @Test
     fun newActivityContainsCorrectData() {
-        onView(withId(R.id.recycler_forum))
+        onView(withId(R.id.recycler_my_questions))
             .perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0,
                     click()
@@ -77,7 +77,7 @@ class MainActivityTest {
         Intents.init()
 
         // go to last QuestionDetailsActivity
-        onView(withId(R.id.recycler_forum))
+        onView(withId(R.id.recycler_my_questions))
             .perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
                     2,
