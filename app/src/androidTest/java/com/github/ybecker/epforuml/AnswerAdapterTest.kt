@@ -10,6 +10,7 @@ import androidx.test.espresso.action.GeneralClickAction
 import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -34,7 +35,7 @@ import java.util.regex.Matcher
 class AnswerAdapterTest {
 
     private lateinit var scenario : ActivityScenario<MainActivity>
-    private var question3 = db.getQuestionById("question3")
+    private lateinit var question3 : Model.Question
 
 
     @Before
@@ -50,24 +51,29 @@ class AnswerAdapterTest {
             Model.Answer("answer6", "question4", "answerAdapterTestUser",
                 "Nan mais je suis pas d'accord non plus", emptyList(), "")
         db.addAnswer(answer6.userId, answer6.questionId, answer6.answerText)
-        scenario = ActivityScenario.launch(MainActivity::class.java)
+
+        db.getQuestionById("question3").thenAccept {
+            question3 = it!!
+            scenario = ActivityScenario.launch(MainActivity::class.java)
+        }
     }
 
     private fun goToQuestion(questionTitle: String) {
         onView(withText(questionTitle))
-            .perform(click())
+            .perform(scrollTo(), click())
     }
 
 
     private fun goToFirstElement() {
         // Find the RecyclerView that contains the questions
-        question3.get()?.let { goToQuestion(it.questionTitle) }
+        goToQuestion(question3.questionTitle)
 
     }
 
     private fun goToThirdElement() {
-        val questionTitle = db.getUserQuestions("user1").get()[0].questionTitle
-        goToQuestion(questionTitle)
+        db.getUserQuestions("user1").thenAccept {
+            goToQuestion(it[0].questionTitle)
+        }
     }
 
     @Test
@@ -81,9 +87,7 @@ class AnswerAdapterTest {
     fun properDisplayOfElementsWhenNoAnswer() {
         goToFirstElement()
 
-        question3.thenAccept {
-            onView(withId(R.id.qdetails_title)).check(matches(withText(question3.get()?.questionTitle)))
-        }
+        onView(withId(R.id.qdetails_title)).check(matches(withText(question3.questionTitle)))
     }
 
     @Test

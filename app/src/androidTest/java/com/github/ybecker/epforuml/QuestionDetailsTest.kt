@@ -182,11 +182,7 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorseButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to second question
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
+        logInDetailsActivity()
 
         onView(withText("0")).check(matches(isDisplayed()))
         onView(withId(R.id.addFollowButton)).perform(click())
@@ -197,26 +193,20 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorsementStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to second question
-        onView(withText("Very long question")).perform(click())
+        logInDetailsActivity()
 
         onView(withId(R.id.addFollowButton)).perform(click())
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
             .perform(click())
 
-        onView(withText("Very long question")).perform(click())
+        onView(withText(question.questionTitle)).perform(click())
 
         onViewWithTimeout(withId(R.id.notificationCount), matches(withText("1")))
     }
 
     @Test
     fun removeLikeTest() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
+        logInDetailsActivity()
 
         val answerposition = 1
 
@@ -256,13 +246,9 @@ class QuestionDetailsTest {
     }
 
     fun endorseAnswerButtonTest(){
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
         DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
-
-        // go to third question
-        onView(withText("About ci")).perform(click())
-
 
         val itemPosition = 1
 
@@ -276,12 +262,10 @@ class QuestionDetailsTest {
 
     @Test
     fun removeAnswerEndorsementTest(){
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
         DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
 
-        // go to third question
-        onView(withText("About ci")).perform(click())
 
         val itemPosition = 1
 
@@ -298,9 +282,7 @@ class QuestionDetailsTest {
 
     @Test
     fun endorseButtonIsVisibleOnlyForStatusUsersTest(){
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        onView(withText("About ci")).perform(click())
+        logInDetailsActivity()
 
         val itemPosition = 1
 
@@ -318,7 +300,7 @@ class QuestionDetailsTest {
 
     @Test
     fun answerEndorsementStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
         DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
 

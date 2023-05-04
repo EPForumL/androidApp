@@ -76,7 +76,7 @@ class HomeFragment : Fragment() {
 
         // Set up the recycler view
         val layoutManager = LinearLayoutManager(context)
-        recyclerView = view.findViewById(R.id.recycler_my_questions)
+        recyclerView = view.findViewById(R.id.recycler_forum)
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout)
 
