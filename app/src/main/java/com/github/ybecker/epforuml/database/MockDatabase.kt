@@ -86,6 +86,9 @@ class MockDatabase : Database() {
         val answer5 = Answer("answer5", "question1", "user1", "Nan mais je suis pas d'accord non plus", emptyList(), "")
         addAnswer(answer5.userId, answer5.questionId, answer5.answerText)
 
+        val answer6 = Answer("answer6", "question3", "user1", "Nan mais je suis pas d'accord non plus", emptyList(), "")
+        addAnswer(answer6.userId, answer6.questionId, answer6.answerText)
+
         val chat1 = Chat("chat0",LocalDateTime.now().toString(), user1.userId, user1.userId, "Hey me!")
         addChat(chat1.senderId, chat1.receiverId, chat1.text)
         this.addSubscription(user1.userId, course1.courseId)

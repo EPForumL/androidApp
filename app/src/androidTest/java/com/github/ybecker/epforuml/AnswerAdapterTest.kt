@@ -43,14 +43,6 @@ class AnswerAdapterTest {
         db.getUserById("user1").thenAccept{
             user = it!!
         }
-        db.addQuestion("user1","course0","Not so long question",
-            "TEST FOR CHAT", "")
-
-        val answer6 =
-            Model.Answer("answer6", "question4", "answerAdapterTestUser",
-                "Nan mais je suis pas d'accord non plus", emptyList(), "")
-        db.addAnswer(answer6.userId, answer6.questionId, answer6.answerText)
-
         db.getQuestionById("question3").thenAccept {
             question3 = it!!
             scenario = ActivityScenario.launch(MainActivity::class.java)
@@ -91,12 +83,10 @@ class AnswerAdapterTest {
 
     @Test
     fun clickingOnChatLeadsToChat(){
-        onView(withId(R.id.recycler_my_questions))
-            .perform(RecyclerViewActions.scrollToPosition<ViewHolder>(0))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0,
-                click()
-            ))
-        onView(withId(R.id.chatWithUser)).perform(click())
+        onView(withText(question3.questionTitle))
+            .perform(scrollTo())
+            .perform(click())
+        onView(withId(R.id.chatWithUser)).perform(scrollTo(),click())
         onView(withId(R.id.title_chat)).check(matches(isDisplayed()))
 
     }

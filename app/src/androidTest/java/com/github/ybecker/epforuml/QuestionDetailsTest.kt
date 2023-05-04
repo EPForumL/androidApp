@@ -146,7 +146,7 @@ class QuestionDetailsTest {
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
             .perform(click())
 
-        onView(withId(R.id.recycler_my_questions)).check(matches(isDisplayed()))
+        onView(withId(R.id.title_forum)).check(matches(isDisplayed()))
     }
 
 /*
