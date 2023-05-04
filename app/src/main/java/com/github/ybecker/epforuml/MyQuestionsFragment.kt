@@ -22,12 +22,16 @@ class MyQuestionsFragment : Fragment() {
     private val user = DatabaseManager.user
     private var myQuestionsMap = mutableMapOf<Model.Course, List<Model.Question>>()
 
+    private lateinit var cache : ArrayList<Model.Question>
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_my_questions, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
 
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_my_questions)
@@ -90,7 +94,7 @@ class MyQuestionsFragment : Fragment() {
             messageView?.visibility = View.VISIBLE
         }
 
-        adapter = MyQuestionsAdapter(myQuestionsMap)
+        adapter = MyQuestionsAdapter(myQuestionsMap, cache)
         recyclerView.adapter = adapter
     }
 

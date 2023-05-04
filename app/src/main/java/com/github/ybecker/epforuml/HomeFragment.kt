@@ -76,7 +76,6 @@ class HomeFragment : Fragment() {
 
         // Set up the recycler view
         val layoutManager = LinearLayoutManager(context)
-        recyclerView = view.findViewById(R.id.recycler_forum)
 
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout)
 
@@ -88,10 +87,10 @@ class HomeFragment : Fragment() {
         }
 
         swipeRefreshLayout.setColorSchemeColors(
-            ContextCompat.getColor(requireContext(), R.color.purple_500)
+            ContextCompat.getColor(requireContext(), R.color.highlight)
         )
 
-        recyclerView = view.findViewById(R.id.recycler_forum)
+        recyclerView = view.findViewById(R.id.recycler_my_questions)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(false)
 
@@ -144,7 +143,7 @@ class HomeFragment : Fragment() {
         }
 
         // Update the recycler view adapter with the questions map
-        adapter = MyQuestionsAdapter(questionsMap)
+        adapter = MyQuestionsAdapter(questionsMap, cache)
         recyclerView.adapter = adapter
 
         // move to QuestionDetails when clicking on specific question
