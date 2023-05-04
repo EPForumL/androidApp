@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.chat
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.github.ybecker.epforuml.MainActivity
@@ -28,13 +29,7 @@ class SearchActivity : AppCompatActivity() {
         listView = findViewById(R.id.listView)
         searchView = findViewById(R.id.searchView)
 
-        val button: Button = findViewById(R.id.back_to_home_button)
-        button.setOnClickListener { // Create an intent to return to the previous fragment
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("fragment", "chatHome")
-            startActivity(intent)
-            finish()
-        }
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         db.registeredUsers().thenAccept { listIt ->
             list = listIt as ArrayList<String>
@@ -77,6 +72,17 @@ class SearchActivity : AppCompatActivity() {
                 }
             })
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fragment", "chatHome")
+            startActivity(intent)
+            finish()
+        }
+
+        return true
     }
 }
 

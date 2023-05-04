@@ -70,7 +70,7 @@ class SearchActivityTest {
     @Test
     fun backToHomeIsCorrect() {
 
-        onView(withId(R.id.back_to_home_button)).perform(ViewActions.click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description)).perform(ViewActions.click())
 
         onView(withId(R.id.recycler_chat_home)).check(matches(isDisplayed()))
     }
