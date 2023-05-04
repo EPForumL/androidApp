@@ -35,8 +35,7 @@ class RemoteNotificationServiceTest {
     @Test
     fun onMessageReceiveTestLaunchANotification(){
         val scenario = ActivityScenario.launch(MainActivity::class.java)
-        // TODO: use mock database ?
-        scenario.onActivity { MockAuthenticator(it).signIn() } // TODO: if use mock db then signIn().join() (just in case)
+        scenario.onActivity { MockAuthenticator(it).signIn() }
 
         val context = ApplicationProvider.getApplicationContext<Context>()
         val notificationsListener = TestNotificationListener()

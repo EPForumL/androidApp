@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
+import android.net.Uri
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.MenuItem
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity.Companion.context
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
@@ -57,6 +60,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             finish()
         }
 
+
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
 
         swipeRefreshLayout.setOnRefreshListener {
@@ -86,6 +90,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
+        setUpImage()
         db.getQuestionFollowers(questionId).thenAccept {
             val notificationButton = findViewById<ImageButton>(R.id.addFollowButton)
             val followButton = findViewById<TextView>(R.id.notificationCount)
@@ -126,6 +131,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         // only allow posting answer if user is connected
         if (userId.isNotEmpty()) {
@@ -175,6 +181,16 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     }
 
+    private fun setUpImage() {
+        val image: ImageView = findViewById(R.id.image_question)
+        if (question!!.imageURI == "") {
+            image.visibility = View.GONE
+        } else {
+            image.visibility = View.VISIBLE
+            displayImageFromFirebaseStorage(question!!.imageURI, image)
+        }
+    }
+
     private fun updateRecycler() {
         db.getQuestionById(questionId).thenAccept {
             question = it
@@ -208,4 +224,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
         newIntent.putParcelableArrayListExtra("savedQuestions", cache)
     }
 
+    fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
+        Glide.with(imageView.context)
+            .load(imageUrl)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(imageView)
+    }
 }
