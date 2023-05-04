@@ -21,7 +21,7 @@
             app:cardUseCompatPadding="true"
             android:id="@+id/message_card"
             app:cardCornerRadius="3dp"
-            android:backgroundTint="@color/shade1"
+            android:backgroundTint="@color/even_more_background"
             app:cardElevation="5dp"
             android:layout_margin="5dp">
 
