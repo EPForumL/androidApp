@@ -113,7 +113,8 @@ class QuestionDetailsTest {
 
     @Test
     fun backToMainIsCorrect() {
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
     }
@@ -196,7 +197,8 @@ class QuestionDetailsTest {
         onView(withText("Very long question")).perform(click())
 
         onView(withId(R.id.addFollowButton)).perform(click())
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withText("Very long question")).perform(click())
 
@@ -240,7 +242,8 @@ class QuestionDetailsTest {
 
         ClickOnButton(answerposition, R.id.likeButton)
 
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withText("About ci")).perform(click())
         CounterEquals(answerposition, "1", R.id.likeCount)
@@ -299,7 +302,8 @@ class QuestionDetailsTest {
 
         DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "test_user", "course1", UserStatus.TEACHER)
 
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withText("About ci")).perform(click())
 
@@ -322,7 +326,8 @@ class QuestionDetailsTest {
 
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
 
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
         onView(withText("About ci")).perform(click())
 
@@ -377,7 +382,9 @@ class QuestionDetailsTest {
         val testQuStr = "NEWQUESTIONTEST"
         var questionId: String? = null
         db.availableCourses().thenAccept {
-            questionId = db.addQuestion("0",it[0].courseId, testQuStr, testQuStr, "").questionId
+            db.addQuestion("0",it[0].courseId, testQuStr, testQuStr, "").thenAccept{
+                questionId = it.questionId
+            }
         }.join()
 
         db.getQuestionById(questionId!!).thenAccept { newQuestion ->

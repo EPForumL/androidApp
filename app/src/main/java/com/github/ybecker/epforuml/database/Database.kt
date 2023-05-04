@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.database
 
+import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import java.util.concurrent.CompletableFuture
@@ -96,10 +97,10 @@ abstract class Database {
      * @param courseId the course in which to add the question
      * @param questionTitle the title of the question itself
      * @param questionText the text of the question itself
-     * #param image_uri the uri to an image linked with the question
+     * @param image_uri the uri to an image linked with the question
      * @return the question that was posted in database
      */
-    abstract fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,  image_uri: String): Question
+    abstract fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,  image_uri: String): CompletableFuture<Question>
 
     /**
      * Posts a new answer to a question in a given course.
@@ -367,6 +368,5 @@ abstract class Database {
      * @param answerId the id of the answer you want to remove endorsement
      */
     abstract fun removeAnswerEndorsement(answerId: String)
-
 
 }

@@ -13,6 +13,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.database.DatabaseManager
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit
 class FirebaseAuthenticator(
     private val activity: FragmentActivity,
     private val caller: ActivityResultCaller = activity
-    ) : Authenticator {
+) : Authenticator {
 
     // Used to wait for the result to proceed
     private lateinit var signInResult: CompletableFuture<Void>
@@ -55,6 +56,9 @@ class FirebaseAuthenticator(
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
             .setIsSmartLockEnabled(false)
+            .setTheme(
+                R.style.Theme_EPForumL
+            )
             .build()
 
         // Shows to the user the authentication means
