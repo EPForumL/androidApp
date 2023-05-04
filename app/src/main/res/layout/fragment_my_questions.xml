@@ -17,10 +17,8 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:text=""
             android:textColor="@android:color/white"
-            android:background="@color/purple_700"
-
+            android:background="@color/main_highlight"
             android:padding="10dp"
             android:layout_marginBottom="10dp"
             android:layout_gravity="center_horizontal"
@@ -34,8 +32,6 @@
             android:textSize="18sp"
             android:padding="16dp"
             android:visibility="gone" />
-
-
 
         <TextView
             android:id="@+id/no_question"

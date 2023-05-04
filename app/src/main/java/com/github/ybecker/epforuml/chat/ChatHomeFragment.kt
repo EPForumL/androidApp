@@ -24,13 +24,12 @@ class ChatHomeFragment : Fragment() {
     private lateinit var chatHomeAdapter: ChatHomeAdapter
     private lateinit var chatHomeRecyclerView: RecyclerView
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(layout.fragment_chat_home_list, container, false)
-        val newChatButton = view.findViewById<Button>(R.id.newChatWith)
+        val newChatButton = view.findViewById<ImageButton>(R.id.newChatWith)
         if (user == null) {
             val notConnected = view?.findViewById<TextView>(R.id.not_connected_text_view)
             notConnected?.visibility = View.VISIBLE
@@ -53,7 +52,7 @@ class ChatHomeFragment : Fragment() {
         chatHomeRecyclerView = fragmentView.findViewById(R.id.recycler_chat_home)
         chatHomeRecyclerView.layoutManager = linearLayoutMgr
         chatHomeRecyclerView.setHasFixedSize(false)
-        val newChatButton = view?.findViewById<Button>(R.id.newChatWith)
+        val newChatButton = view?.findViewById<ImageButton>(R.id.newChatWith)
         newChatButton?.setOnClickListener(listener)
         // Update chats list
         if (user != null) {

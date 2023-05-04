@@ -187,7 +187,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val username : TextView = itemView.findViewById(R.id.qdetails_answer_username)
         val answerText : TextView = itemView.findViewById(R.id.qdetails_answer_text)
-        val button : Button = itemView.findViewById(R.id.chatWithUser)
+        val button : ImageButton = itemView.findViewById(R.id.chatWithUser)
     }
 
 }
