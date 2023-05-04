@@ -76,6 +76,8 @@ class Model {
             parcel.writeString(questionId)
             parcel.writeString(userId)
             parcel.writeString(answerText)
+            parcel.writeStringList(like)
+            parcel.writeString(endorsed)
         }
 
         override fun describeContents(): Int {

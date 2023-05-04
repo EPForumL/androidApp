@@ -19,6 +19,13 @@ abstract class Database {
     abstract fun availableCourses(): CompletableFuture<List<Course>>
 
     /**
+     * Fetches all existing answers in the database
+     *
+     * @return a list of every existing answers as a CompletableFuture
+     */
+    abstract fun getAllAnswers(): CompletableFuture<List<Answer>>
+
+    /**
      * Returns a list of all registered user in the current database.
      *
      * @return a list of every registered user

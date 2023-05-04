@@ -13,8 +13,6 @@ import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture
@@ -48,6 +46,7 @@ class HomeFragment : Fragment() {
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
     private lateinit var cache : ArrayList<Question>
+    private lateinit var answersCache : ArrayList<Answer>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +58,7 @@ class HomeFragment : Fragment() {
         //DatabaseManager.useMockDatabase()
         futureCourseList = db.availableCourses()
         cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
+        answersCache = requireArguments().getParcelableArrayList("savedAnswers") ?: arrayListOf()
 
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         // Set click listener for the circular button with the "+" sign
@@ -105,6 +105,7 @@ class HomeFragment : Fragment() {
      * Gets the current list of questions to display from the database
      */
     private fun getQuestionsList() {
+        // TODO : implement something for when not connected
         futureCourseList.thenAccept { it ->
             val futureQuestionList = mutableListOf<CompletableFuture<List<Question>>>()
 
@@ -135,6 +136,8 @@ class HomeFragment : Fragment() {
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
             intent.putParcelableArrayListExtra("savedQuestions", cache)
+            intent.putParcelableArrayListExtra("savedAnswers", answersCache)
+            intent.putExtra("comingFrom", "HomeFragment")
             intent.putExtra("question", q)
             startActivity(intent)
         }

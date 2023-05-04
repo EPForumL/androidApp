@@ -1,6 +1,8 @@
 package com.github.ybecker.epforuml
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -13,6 +15,7 @@ import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.chat.ChatHomeFragment
 import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.MapsFragment
 import com.google.android.material.navigation.NavigationView
@@ -22,6 +25,13 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var context: Context
+
+        private var connectivityManager : ConnectivityManager? = null
+        fun isConnected() : Boolean {
+            if (connectivityManager == null) { return false }
+
+            return (connectivityManager?.getNetworkCapabilities(connectivityManager?.activeNetwork) != null)
+        }
     }
 
     lateinit var toggle : ActionBarDrawerToggle
@@ -29,11 +39,22 @@ class MainActivity : AppCompatActivity() {
 
     private var cache = ArrayList<Model.Question>()
 
+    /**
+     * List of all existing answers
+     */
+    private var answersCache = ArrayList<Model.Answer>()
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         FirebaseApp.initializeApp(this)
         context = applicationContext
+
+        // get app connectivity
+        connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        updateAnswersCacheIfConnected()
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
@@ -47,45 +68,52 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         // retrieve list of questions if any
+        // TODO : optimize and only allow when logged in
         val newCache : ArrayList<Model.Question>? = intent.getParcelableArrayListExtra("savedQuestions")
         if (newCache != null) {
             cache = newCache
         }
 
+        val newAnswersCache : ArrayList<Model.Answer>? = intent.getParcelableArrayListExtra("savedAnswers")
+        if (newAnswersCache != null) {
+            answersCache = newAnswersCache
+        }
+
+        // get retrieve name of fragment to display if any
         val fragment : String? = intent.extras?.getString("fragment")
 
-        if(savedInstanceState == null || fragment.equals("HomeFragment")) {
+        // TODO : change to switch (without savedInstanceState)
+        if(savedInstanceState == null) {
             replaceFragment(HomeFragment())
         }
 
-        if(fragment.equals("NewQuestionFragment")) {
-            replaceFragment(NewQuestionFragment())
+        when(fragment) {
+            "HomeFragment" -> replaceFragment(HomeFragment())
+            "NewQuestionFragment" -> replaceFragment(NewQuestionFragment())
+            "SavedQuestionsFragment" -> replaceFragment(SavedQuestionsFragment())
+            "RealChat" -> replaceFragment(RealChatFragment())
+            "chatHome" -> replaceFragment(ChatHomeFragment())
+            else -> {}
         }
-        if(fragment.equals("RealChat")) {
-            replaceFragment(RealChatFragment())
-        }
-        if(fragment.equals("chatHome")) {
-            replaceFragment(ChatHomeFragment())
-        }
+
         // Remove it otherwise we might jump back to this fragment later
         intent.removeExtra("fragment")
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment())
-                R.id.nav_courses -> replaceFragment(CoursesFragment())
-                R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
-                R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())
-                R.id.nav_chat -> replaceFragment(ChatHomeFragment())
-                R.id.nav_map -> replaceFragment(MapsFragment())
+                R.id.nav_home -> replaceFragmentAndClose(HomeFragment())
+                R.id.nav_courses -> replaceFragmentAndClose(CoursesFragment())
+                R.id.nav_my_questions -> replaceFragmentAndClose(MyQuestionsFragment())
+                R.id.nav_saved_questions -> replaceFragmentAndClose(SavedQuestionsFragment())
                 R.id.nav_account ->
                     if (DatabaseManager.user == null) {
-                        replaceFragment(AccountFragmentGuest())
+                        replaceFragmentAndClose(AccountFragmentGuest())
                     } else {
-                        replaceFragment(AccountFragment())
+                        replaceFragmentAndClose(AccountFragment())
                     }
-                R.id.nav_settings -> replaceFragment(SettingsFragment())
-
+                R.id.nav_settings -> replaceFragmentAndClose(SettingsFragment())
+                R.id.nav_chat -> replaceFragmentAndClose(ChatHomeFragment())
+                R.id.nav_map -> replaceFragment(MapsFragment())
             }
             true
         }
@@ -103,19 +131,30 @@ class MainActivity : AppCompatActivity() {
         val bundle = Bundle()
         // send cache to any of the fragments we are going to
         bundle.putParcelableArrayList("savedQuestions", cache)
-        //sendQuestionsAnswersToBundle(bundle)
+        bundle.putParcelableArrayList("savedAnswers", answersCache)
         fragment.arguments = bundle
 
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
     }
 
-    // TODO : implement for #120
-    /*
-    fun sendQuestionsAnswersToBundle(bundle: Bundle) {
-
+    fun replaceFragmentAndClose(fragment: Fragment) {
+        replaceFragment(fragment)
+        drawerLayout.closeDrawers()
     }
 
-     */
+
+    // TODO : move this to QuestionDetails
+    private fun updateAnswersCacheIfConnected() {
+        if (isConnected()) {
+            answersCache.clear()
+
+            for (question in cache) {
+                db.getQuestionAnswers(question.questionId).thenAccept { answerList ->
+                    answersCache.addAll(answerList)
+                }
+            }
+        }
+    }
 }
 

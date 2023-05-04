@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/saved_questions_fragment"
+            android:id="@+id/title_saved"
             android:textSize="30sp"
             android:textStyle="bold"/>
 

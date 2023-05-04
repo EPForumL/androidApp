@@ -24,6 +24,7 @@ class SavedQuestionsFragment : Fragment() {
     private lateinit var user : Model.User
 
     private lateinit var cache : ArrayList<Model.Question>
+    private lateinit var answersCache : ArrayList<Model.Answer>
     private lateinit var newIntentDetails : Intent
 
     override fun onCreateView(
@@ -31,6 +32,7 @@ class SavedQuestionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         cache = this.requireArguments().getParcelableArrayList("savedQuestions")!!
+        answersCache = this.requireArguments().getParcelableArrayList("savedAnswers")!!
 
         // Inflate the layout for this fragment
 
@@ -58,6 +60,8 @@ class SavedQuestionsFragment : Fragment() {
             adapter.onItemClick = {q ->
                 newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
                 newIntentDetails.putParcelableArrayListExtra("savedQuestions", cache)
+                newIntentDetails.putParcelableArrayListExtra("savedAnswers", answersCache)
+                newIntentDetails.putExtra("comingFrom", "SavedQuestionsFragment")
                 newIntentDetails.putExtra("question", q)
                 startActivity(newIntentDetails)
             }
