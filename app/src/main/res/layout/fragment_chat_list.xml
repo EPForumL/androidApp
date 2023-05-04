@@ -14,26 +14,43 @@
         android:id="@+id/chat_layout"
         android:orientation="vertical">
 
-        <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/back"
-        android:textStyle="bold"
-        android:clickable="true"
-        android:id="@+id/back_to_home_button"/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/title_chat"
-            android:text= "@string/chat"
-            android:textSize="30sp"
-            android:layout_weight="0"
-            android:layout_marginBottom="20dp"
-            android:textStyle="bold"/>
+            android:orientation="horizontal"
+            android:layout_weight="0">
 
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:padding="10dp"
+                android:src="@drawable/back_arrow"
+                android:backgroundTint="@color/dark"
+                android:clickable="true"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/back_to_home_button"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:id="@+id/title_chat"
+                    android:text= "@string/chat"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="45dp"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/not_connected_text_view"
@@ -75,23 +92,67 @@
             tools:listitem="@layout/chat_item"
             />
 
-        <EditText
-            android:id="@+id/edit_text_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:autofillHints=""
-            android:ems="10"
-            android:inputType="textLongMessage"
-            android:minHeight="100dp"
-            android:hint="@string/type_your_message_here" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
-        <Button
-            android:id="@+id/send_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="@string/send" />
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:cardUseCompatPadding="true"
+                    android:id="@+id/write_reply_card"
+                    app:cardCornerRadius="3dp"
+                    android:visibility="visible"
+                    app:cardElevation="5dp"
+                    android:paddingVertical="5dp"
+                    android:layout_weight="2">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_gravity="center"
+                        android:layout_weight="2">
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:id="@+id/edit_text_message"
+                            android:hint="@string/write_an_answer"
+                            android:layout_gravity="center"
+                            android:background="@color/fui_transparent"
+                            android:textColorHint="@color/courseColor"
+                            android:textSize="20sp"
+                            android:layout_weight="2"
+                            android:paddingStart="15dp"
+                            android:layout_margin="8dp"
+                            android:paddingEnd="5dp"
+                            android:autofillHints="@string/write_a_message"
+                            android:inputType="text">
+
+                        </EditText>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <ImageButton
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:id="@+id/send_text"
+                    android:clickable="true"
+                    android:visibility="visible"
+                    android:layout_gravity="center"
+                    android:src="@drawable/send_icon"
+                    android:background="@drawable/round_corner"
+                    app:tint="@color/white"
+                    android:layout_margin="8dp"
+                    android:contentDescription="@string/send" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
 </FrameLayout>
