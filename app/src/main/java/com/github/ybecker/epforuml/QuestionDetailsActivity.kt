@@ -267,15 +267,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
             displayImageFromFirebaseStorage(question!!.imageURI, image)
         }
     }
-/*
-    private fun updateRecycler() {
-        db.getQuestionById(questionId).thenAccept {
-            question = it
-            answerRecyclerView.adapter = AnswerAdapter(question!!, this)
-        }
-    }
-
- */
 
     fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
         Glide.with(imageView.context)
