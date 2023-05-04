@@ -5,15 +5,20 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import com.github.ybecker.epforuml.notifications.FirebaseCouldMessagingAdapter
 import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.chat.ChatHomeFragment
 import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.FirebaseApp
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,10 +29,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var toggle : ActionBarDrawerToggle
     lateinit var drawerLayout: DrawerLayout
 
+    private var cache = ArrayList<Model.Question>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        FirebaseApp.initializeApp(this)
         context = applicationContext
 
         // initialize DB to Mock
@@ -41,23 +48,33 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, HomeFragment(this)).commit()
+        // retrieve list of questions if any
+        val newCache : ArrayList<Model.Question>? = intent.getParcelableArrayListExtra("savedQuestions")
+        if (newCache != null) {
+            cache = newCache
         }
 
-        if( intent.extras?.getString("fragment").equals("NewQuestionFragment")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, NewQuestionFragment(this)).commit()
+        val fragment : String? = intent.extras?.getString("fragment")
+
+        if(savedInstanceState == null || fragment.equals("HomeFragment")) {
+            replaceFragment(HomeFragment())
         }
-        if( intent.extras?.getString("fragment").equals("RealChat")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, RealChatFragment()).commit()
+
+        if(fragment.equals("NewQuestionFragment")) {
+            replaceFragment(NewQuestionFragment())
         }
-        if( intent.extras?.getString("fragment").equals("chatHome")) {
-            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, ChatHomeFragment()).commit()
+        if(fragment.equals("RealChat")) {
+            replaceFragment(RealChatFragment())
         }
+        if(fragment.equals("chatHome")) {
+            replaceFragment(ChatHomeFragment())
+        }
+        // Remove it otherwise we might jump back to this fragment later
+        intent.removeExtra("fragment")
 
         navView.setNavigationItemSelectedListener {
             when(it.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment(this))
+                R.id.nav_home -> replaceFragment(HomeFragment())
                 R.id.nav_courses -> replaceFragment(CoursesFragment())
                 R.id.nav_my_questions -> replaceFragment(MyQuestionsFragment())
                 R.id.nav_saved_questions -> replaceFragment(SavedQuestionsFragment())
@@ -83,8 +100,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun replaceFragment(fragment: Fragment) {
+        val bundle = Bundle()
+        // send cache to any of the fragments we are going to
+        bundle.putParcelableArrayList("savedQuestions", cache)
+        //sendQuestionsAnswersToBundle(bundle)
+        fragment.arguments = bundle
+
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         drawerLayout.closeDrawers()
     }
+
+    // TODO : implement for #120
+    /*
+    fun sendQuestionsAnswersToBundle(bundle: Bundle) {
+
+    }
+
+     */
 }
 

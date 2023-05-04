@@ -109,13 +109,6 @@
             android:layout_height="wrap_content"
             android:text="@string/take_picture" />
 
-
-        <Button
-            android:id="@+id/uploadButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/import_picture" />
-
         <androidx.camera.view.PreviewView
                 android:id="@+id/previewView"
                 android:layout_height="wrap_content"
@@ -125,13 +118,7 @@
             android:id="@+id/btn_submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginTop="16dp"
-            android:background="@color/teal_700"
-            android:padding="16dp"
-            android:text="@string/submit_new_question"
-            android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:text="@string/submit_new_question"/>
 
     </LinearLayout>
 </ScrollView>

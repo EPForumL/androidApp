@@ -1,35 +1,35 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.CameraActivity
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+import java.io.FileOutputStream
+import java.util.concurrent.CompletableFuture
 
 /**
  * A simple [Fragment] subclass.
  * Use the [NewQuestionFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
+class NewQuestionFragment : Fragment() {
 
     private lateinit var questBody : EditText
     private lateinit var questTitle : EditText
     private lateinit var imageURI: TextView
     private lateinit var takePictureButton: Button
+    private lateinit var image_uri : String
 
-    private val pickImage =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageURI.text = uri.toString()
-        }
+    private lateinit var mainActivity: MainActivity
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +37,9 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
     ): View? {
         val user = DatabaseManager.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
+
+        mainActivity = activity as MainActivity
+        image_uri = mainActivity.intent.getStringExtra("uri").toString()
 
 
         val spinner = view.findViewById<Spinner>(R.id.subject_spinner)
@@ -65,7 +68,6 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         setUpArgs(view)
         val submitButton = view.findViewById<Button>(R.id.btn_submit)
         submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
-        seUploadImage(view)
         setTakeImage(view, questBody, questTitle)
     }
 
@@ -97,18 +99,23 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
             if (selectedItemPosition != Spinner.INVALID_POSITION) {
                 val questionSubject = spinner.getItemAtPosition(selectedItemPosition) as String
                 // Find the course in the list of available courses
-                val course = coursesList.firstOrNull { course -> course.courseName == questionSubject }
+                val course =
+                    coursesList.firstOrNull { course -> course.courseName == questionSubject }
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-                    DatabaseManager.db.addQuestion(
-                        user.userId,
-                        course.courseId,
-                        questTitle.text.toString(),
-                        questBody.text.toString(),
-                        imageURI.toString()
-                    )
-                    mainActivity.replaceFragment(HomeFragment(mainActivity))
+                    if (imageURI.text == "null") {
+                        db.addQuestion(
+                            user.userId,
+                            course.courseId,
+                            questTitle.text.toString(),
+                            questBody.text.toString(),
+                            imageURI.text.toString()
+                        ).thenAccept {
+                            //mainActivity.intent.extras.
+                            mainActivity.replaceFragment(HomeFragment())
+                        }
+                    }
                 }
             }
         }
@@ -129,26 +136,15 @@ class NewQuestionFragment(val mainActivity: MainActivity) : Fragment() {
         }
     }
 
-    private fun seUploadImage(view: View?) {
-        val uploadButton = view?.findViewById<Button>(R.id.uploadButton)
-        uploadButton?.setOnClickListener {
-            pickImage.launch("image/*")
-        }
-    }
-
     private fun setUpArgs(view: View): Triple<EditText, EditText, TextView> {
          questBody = view.findViewById(R.id.question_details_edittext)
          questTitle = view.findViewById(R.id.question_title_edittext)
          imageURI = view.findViewById(R.id.image_uri)
-
-        println(questBody)
-
-
-
-
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
-        imageURI.text = this.mainActivity.intent.getStringExtra("uri")
+        imageURI.text = image_uri
         return Triple(questBody, questTitle, imageURI)
     }
+
+
 }

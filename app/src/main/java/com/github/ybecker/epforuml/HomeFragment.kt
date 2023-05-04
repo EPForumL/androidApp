@@ -12,6 +12,9 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.ybecker.epforuml.database.DatabaseManager
 import java.util.concurrent.CompletableFuture
@@ -23,7 +26,7 @@ import java.util.concurrent.CompletableFuture
  *
  * Hosts the RecyclerView displaying all questions
  */
-class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
+class HomeFragment : Fragment() {
 
     /**
      * The questions adapter
@@ -43,6 +46,9 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
      * The temporary (to be completed) list of questions
      */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
+
+    private lateinit var cache : ArrayList<Question>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,12 +58,19 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
 
         //DatabaseManager.useMockDatabase()
         futureCourseList = db.availableCourses()
+        cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
 
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         // Set click listener for the circular button with the "+" sign
         newQuestionButton.setOnClickListener {
             // Navigate to the new fragment to add a new question
-            mainActivity.replaceFragment(NewQuestionFragment(mainActivity))
+            val intent = Intent(
+                context,
+                MainActivity::class.java
+            )
+
+            intent.putExtra("fragment", "NewQuestionFragment")
+            startActivity(intent)
         }
 
         return view
@@ -78,7 +91,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         }
 
         swipeRefreshLayout.setColorSchemeColors(
-            ContextCompat.getColor(mainActivity.applicationContext, R.color.purple_500)
+            ContextCompat.getColor(requireContext(), R.color.purple_500)
         )
 
         recyclerView = view.findViewById(R.id.recycler_forum)
@@ -121,6 +134,7 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // move to QuestionDetails when clicking on specific question
         adapter.onItemClick = {q ->
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
             intent.putExtra("question", q)
             startActivity(intent)
         }

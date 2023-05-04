@@ -118,12 +118,15 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.5.1'
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.5.1'
+    implementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation 'com.firebaseui:firebase-ui-auth:8.0.2'
 
     implementation files('libs/ds-photo-editor-sdk.aar')
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     implementation 'com.google.firebase:firebase-database-ktx:20.0.0'
+    implementation 'com.google.firebase:firebase-storage:20.0.0'
+
 
     implementation platform('com.google.firebase:firebase-bom:31.5.0')
 
@@ -135,6 +138,8 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    implementation "androidx.fragment:fragment-ktx:1.5.7"
 }
 
 tasks.withType(Test) {
