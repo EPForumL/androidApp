@@ -401,7 +401,9 @@ class QuestionDetailsTest {
         val testQuStr = "NEWQUESTIONTEST"
         var questionId: String? = null
         db.availableCourses().thenAccept {
-            questionId = db.addQuestion("0",it[0].courseId, testQuStr, testQuStr, "").questionId
+            db.addQuestion("0",it[0].courseId, testQuStr, testQuStr, "").thenAccept{
+                questionId = it.questionId
+            }
         }.join()
 
         db.getQuestionById(questionId!!).thenAccept { newQuestion ->

@@ -52,6 +52,13 @@
         android:textSize="40sp"
         android:textStyle="bold"
         android:id="@+id/qdetails_title"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_question"
+        android:layout_weight="1"
+        android:contentDescription="@string/image" />
+
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
