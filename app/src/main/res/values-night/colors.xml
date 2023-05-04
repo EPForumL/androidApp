@@ -10,6 +10,7 @@
     <color name="textColor">#FCFCFC</color>
     <color name="backgroundColor">#000000</color>
     <color name="courseColor">#323232</color>
+    <color name="pictureColor">#57D4F1</color>
 
     <color name="very_bright">#57D4F1</color>
     <color name="bright">#1BB0D3</color>
