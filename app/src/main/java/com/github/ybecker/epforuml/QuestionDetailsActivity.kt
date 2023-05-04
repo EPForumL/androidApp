@@ -36,6 +36,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private lateinit var cache : ArrayList<Model.Question>
 
     private lateinit var newIntent : Intent
+    private lateinit var comingFromFragment : String
+
+    private var answersCache : ArrayList<Model.Answer> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,20 +48,27 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         // retrieve cache value
         cache = intent.getParcelableArrayListExtra("savedQuestions")!!
+        answersCache = intent.getParcelableArrayListExtra("savedAnswers")!!
+        comingFromFragment = intent.getStringExtra("comingFrom")!!
 
         newIntent = Intent(
             this,
             MainActivity::class.java
         )
 
-        newIntent.putExtra("fragment", "HomeFragment")
+        newIntent.putExtra("fragment", comingFromFragment)
+        newIntent.putParcelableArrayListExtra("savedAnswers", answersCache)
         updateNewIntent()
+
+        hideContentWhenNotConnectedToInternet()
+
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
 
         swipeRefreshLayout.setOnRefreshListener {
             // Reload data from database and update adapter
             updateRecycler()
+            hideContentWhenNotConnectedToInternet()
             // Once the refresh is complete, call setRefreshing(false) to hide the loading indicator
             swipeRefreshLayout.isRefreshing = false
         }
@@ -80,10 +90,64 @@ class QuestionDetailsActivity : AppCompatActivity() {
         // retrieve user
         user = DatabaseManager.user ?: Model.User()
         userId = user.userId
-        val replyBox : EditText = findViewById(R.id.write_reply_box)
-        val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
 
         setUpImage()
+        endorsementSetup()
+
+        // only allow posting answer if user is connected
+        answerPostingSetup()
+    }
+
+
+    private fun updateRecycler() {
+        if (MainActivity.isConnected()) {
+            answerRecyclerView.adapter = AnswerAdapter(question!!, this)
+        } else {
+            answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, answersCache)
+        }
+    }
+
+    private fun isSavedQuestion(): Boolean {
+        return cache.contains(question)
+    }
+
+    private fun switchImageButton() {
+        saveToggle.setBackgroundResource(
+            when(isSavedQuestion()) {
+                true -> R.drawable.checkmark
+                false -> R.drawable.nav_saved_questions
+            }
+        )
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            startActivity(newIntent)
+        }
+
+        return true
+    }
+
+
+    private fun updateNewIntent() {
+        newIntent.putParcelableArrayListExtra("savedQuestions", cache)
+
+        updateAnswersCacheIfConnected()
+    }
+
+    private fun updateAnswersCacheIfConnected() {
+        if (MainActivity.isConnected()) {
+            answersCache.clear()
+
+            db.getAllAnswers().thenAccept {
+                answersCache.addAll(it)
+                newIntent.putParcelableArrayListExtra("savedAnswers", answersCache)
+            }
+        }
+    }
+
+
+    private fun endorsementSetup() {
         db.getQuestionFollowers(questionId).thenAccept {
             val notificationButton = findViewById<ImageButton>(R.id.addFollowButton)
             val followButton = findViewById<TextView>(R.id.notificationCount)
@@ -124,9 +188,13 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
 
-        // only allow posting answer if user is connected
+    private fun answerPostingSetup() {
+        val replyBox : EditText = findViewById(R.id.write_reply_box)
+        val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
+
         if (userId.isNotEmpty()) {
             // store content of box as a new answer to corresponding question
             sendButton.setOnClickListener {
@@ -139,6 +207,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
                         db.addAnswer(userId, question!!.questionId, replyText)
                         updateRecycler()
+                        updateNewIntent()
                     }
                 }
             }
@@ -171,7 +240,22 @@ class QuestionDetailsActivity : AppCompatActivity() {
             val saveButton : ImageButton = findViewById(R.id.toggle_save_question)
             saveButton.visibility = View.GONE
         }
+    }
 
+    private fun hideContentWhenNotConnectedToInternet() {
+        val cardView : CardView = findViewById(R.id.write_reply_card)
+        val sendButton : ImageButton = findViewById(R.id.post_reply_button)
+        val saveButton : ImageButton = findViewById(R.id.toggle_save_question)
+
+        if (!MainActivity.isConnected()) {
+            cardView.visibility = View.GONE
+            sendButton.visibility = View.GONE
+            saveButton.visibility = View.GONE
+        } else {
+            cardView.visibility = View.VISIBLE
+            sendButton.visibility = View.VISIBLE
+            saveButton.visibility = View.VISIBLE
+        }
     }
 
     private fun setUpImage() {
@@ -182,40 +266,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
             image.visibility = View.VISIBLE
             displayImageFromFirebaseStorage(question!!.imageURI, image)
         }
-    }
-
-    private fun updateRecycler() {
-        db.getQuestionById(questionId).thenAccept {
-            question = it
-            answerRecyclerView.adapter = AnswerAdapter(question!!, this)
-        }
-    }
-
-    private fun isSavedQuestion(): Boolean {
-        return cache.contains(question)
-    }
-
-    private fun switchImageButton() {
-        saveToggle.setBackgroundResource(
-            when(isSavedQuestion()) {
-                true -> R.drawable.checkmark
-                false -> R.drawable.nav_saved_questions
-            }
-        )
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            startActivity(newIntent)
-            finish()
-        }
-
-        return true
-    }
-
-
-    private fun updateNewIntent() {
-        newIntent.putParcelableArrayListExtra("savedQuestions", cache)
     }
 
     private fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {

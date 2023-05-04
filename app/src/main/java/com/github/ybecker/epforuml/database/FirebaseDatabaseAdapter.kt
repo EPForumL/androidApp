@@ -90,6 +90,27 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
+    override fun getAllAnswers(): CompletableFuture<List<Answer>> {
+        val future = CompletableFuture<List<Answer>>()
+        // go in "courses" dir
+        db.child(answersPath).get().addOnSuccessListener {
+            val answers = mutableListOf<Answer>()
+            // add every course that in not null in "courses" in the map
+            for (answerSnapshot in it.children) {
+                val answer = getAnswer(answerSnapshot)
+                if (answer != null) {
+                    answers.add(answer)
+                }
+            }
+            //complete the future when every children has been added
+            future.complete(answers)
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
+
+        return future
+    }
+
     //Note that using course.questions in the main is false because you don't take new values in the db into account !
     override fun getCourseQuestions(courseId: String): CompletableFuture<List<Question>> {
 
