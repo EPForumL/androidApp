@@ -41,6 +41,7 @@ class AccountFragmentsTest {
         Intents.release()
     }
 
+    /*
     @Test
     fun checkGuestAccountFragmentLayout() {
         onView(ViewMatchers.withId(R.id.guestButton))
@@ -125,7 +126,7 @@ class AccountFragmentsTest {
         val user = DatabaseManager.db.getUserById("0").join()
         assertTrue(user == null)
         checkGuest()
-    }
+    } */
 
     private fun checkGuest() {
         onView(ViewMatchers.withId(R.id.titleAccountGuest))

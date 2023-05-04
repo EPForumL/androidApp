@@ -769,7 +769,11 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-        uploadToFirebase(image_uri).thenAccept{
+        var future = CompletableFuture.completedFuture("")
+        if (image_uri != "null") {
+            future = uploadToFirebase(image_uri)
+        }
+        future.thenAccept{
             var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
             // add the new question in the db
             newChildRef.setValue(question)

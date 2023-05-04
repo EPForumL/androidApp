@@ -5,6 +5,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.openContextualActionModeOverflowMenu
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers
@@ -46,13 +47,13 @@ class MapFragmentTest {
     }
 
     @Test
-    fun test() {
+    fun checkMapLayout() {
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
-            .perform(ViewActions.click())
+            .perform(click())
         Espresso.onView(ViewMatchers.withId(R.id.nav_map))
-            .perform(ViewActions.click())
+            .perform(click())
 
         Espresso.onView(ViewMatchers.withId(R.id.map))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
@@ -61,5 +62,23 @@ class MapFragmentTest {
 
         Espresso.onView(ViewMatchers.withText(R.string.share_position))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+    }
+
+    @Test
+    fun checkClickOnShareLocation() {
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
+
+        Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(ViewMatchers.withId(R.id.nav_map))
+            .perform(click())
+
+        openContextualActionModeOverflowMenu()
+
+        Espresso.onView(ViewMatchers.withText(R.string.share_position))
+            .check(ViewAssertions.matches(not(ViewMatchers.isChecked())))
+        Espresso.onView(ViewMatchers.withText(R.string.share_position))
+            .perform(click())
+        openContextualActionModeOverflowMenu()
     }
 }
