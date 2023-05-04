@@ -17,4 +17,9 @@
     <color name="medium">#0097BA</color>
     <color name="dark">#0C5C70</color>
     <color name="very_dark">#004453</color>
+
+    <color name="highlight">#57D4F1</color>
+    <color name="main_highlight">#1BB0D3</color>
+    <color name="background">#0C5C70</color>
+    <color name="even_more_background">#004453</color>
 </resources>

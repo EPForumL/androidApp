@@ -43,7 +43,8 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/nav_account"
-            android:layout_gravity="top" />
+            android:layout_gravity="top"
+            android:layout_marginTop="5dp"/>
 
     </LinearLayout>
 
