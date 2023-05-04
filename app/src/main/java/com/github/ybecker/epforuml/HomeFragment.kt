@@ -14,6 +14,11 @@ import android.widget.ImageButton
 import android.widget.TextView
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
+import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -23,25 +28,49 @@ import java.util.concurrent.CompletableFuture
  *
  * Hosts the RecyclerView displaying all questions
  */
-class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
-    // Declare variables
+class HomeFragment : Fragment() {
+
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MyQuestionsAdapter
     private val user = DatabaseManager.user
     private var questionsMap = mutableMapOf<Model.Course, List<Model.Question>>()
+
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+    /**
+     * The final list of questions to diplay on the page
+     */
+    private var questionsList = mutableListOf<Question>() // switch to questions when able to transfer data from mainActivtiy
+
+    /**
+     * The temporary (to be completed) list of questions
+     */
     private lateinit var futureCourseList: CompletableFuture<List<Course>>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private lateinit var cache : ArrayList<Question>
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         // Get the list of available courses from the database
         futureCourseList = db.availableCourses()
+        cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
 
         // Set up the new question button and navigate to the new question fragment when clicked
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
         newQuestionButton.setOnClickListener {
-            mainActivity.replaceFragment(NewQuestionFragment(mainActivity))
+            // Navigate to the new fragment to add a new question
+            val intent = Intent(
+                context,
+                MainActivity::class.java
+            )
+
+            intent.putExtra("fragment", "NewQuestionFragment")
+            startActivity(intent)
         }
 
         return view
@@ -53,6 +82,21 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         // Set up the recycler view
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_my_questions)
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout)
+
+        swipeRefreshLayout.setOnRefreshListener {
+            // Reload data from database and update adapter
+            refresh()
+            // Once the refresh is complete, call setRefreshing(false) to hide the loading indicator
+            swipeRefreshLayout.isRefreshing = false
+        }
+
+        swipeRefreshLayout.setColorSchemeColors(
+            ContextCompat.getColor(requireContext(), R.color.purple_500)
+        )
+
+        recyclerView = view.findViewById(R.id.recycler_forum)
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(false)
 
@@ -92,7 +136,9 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         }
     }
 
-    // Display the questions in the recycler view or a message if there are no questions
+    /**
+     * Updates the adapter with the new list of questions and allow each item to be clickable
+     */
     private fun questionsDisplay() {
         if (questionsMap.isEmpty()) {
             // Display a message if there are no questions
@@ -106,6 +152,13 @@ class HomeFragment(private val mainActivity: MainActivity) : Fragment() {
         adapter = MyQuestionsAdapter(questionsMap)
         recyclerView.adapter = adapter
 
+        // move to QuestionDetails when clicking on specific question
+        adapter.onItemClick = {q ->
+            val intent = Intent(this.context, QuestionDetailsActivity::class.java)
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
+            intent.putExtra("question", q)
+            startActivity(intent)
+        }
     }
 
     // Fetch the questions and refresh the display

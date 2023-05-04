@@ -2,7 +2,6 @@ package com.github.ybecker.epforuml.database
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.time.LocalDateTime
 
 class Model {
 
@@ -15,7 +14,7 @@ class Model {
         val questionText: String,
         val imageURI : String,
         var answers: List<String>,
-        var endorsements: List<String>
+        var followers: List<String>
         ) : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
@@ -37,6 +36,7 @@ class Model {
             parcel.writeString(questionText)
             parcel.writeString(imageURI)
             parcel.writeStringList(answers)
+            parcel.writeStringList(followers)
         }
 
         override fun describeContents(): Int {
@@ -56,18 +56,19 @@ class Model {
     }
 
     // This class represent a user an answer
-    data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String, var endorsements: List<String>)
+    data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String, var like: List<String>, val endorsed: String)
         : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
-            parcel.createStringArrayList()!!
+            parcel.createStringArrayList()!!,
+            parcel.readString()!!
         ) {
         }
 
-        constructor() : this("", "", "", "", emptyList())
+        constructor() : this("", "", "", "", emptyList(),"")
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {
             parcel.writeString(answerId)
@@ -102,7 +103,7 @@ class Model {
         var chatsWith: List<String> = emptyList(),
         var profilePic: String = "",
         var userInfo: String = "",
-        var status: String = "",
+        var status: List<String> = emptyList(),
         val connections: ArrayList<Boolean> = ArrayList()
         ) {
         constructor() : this(
@@ -115,7 +116,7 @@ class Model {
             emptyList(),
             "",
             "",
-            "",
+            emptyList(),
             ArrayList()
         )
     }

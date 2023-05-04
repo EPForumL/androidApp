@@ -1,32 +1,35 @@
 package com.github.ybecker.epforuml
 
+import android.provider.ContactsContract.Data
+import android.content.Intent
 import android.view.View
-import android.widget.Switch
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.*
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.authentication.Authenticator
-import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
-import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import junit.framework.TestCase
+import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
-import org.hamcrest.Matchers.not
+import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -35,85 +38,105 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class QuestionDetailsTest {
 
-    private lateinit var scenario : ActivityScenario<MainActivity>
-    private var firstQuestion = "About ci"
-    private var secondQuestion = "About Scrum master"
-    private var thirdQuestion = "Very long question"
+    private lateinit var scenario : ActivityScenario<QuestionDetailsActivity>
 
-    private fun ClickOnLike(itemPosition:Int){
+    private lateinit var question : Model.Question
+    private var cache : ArrayList<Model.Question> = arrayListOf()
+
+    private lateinit var intent : Intent
+
+    private fun ClickOnButton(itemPosition:Int, id:Int){
         onView(withId(R.id.answers_recycler)).perform(
             RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
                 itemPosition,
-                performOnViewChild(R.id.likeButton, click())
+                performOnViewChild(id, click())
             )
         )
     }
 
 
-    private fun CounterEquals(itemPosition:Int, value:String){
+    private fun CounterEquals(itemPosition:Int, value:String, id: Int){
         onView(withId(R.id.answers_recycler))
             .perform(
                 RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
                     itemPosition,
-                    checkCounter(R.id.likeCount, value)
+                    checkCounter(id, value)
                 )
             )
+    }
+
+    private fun VisibilityEquals(itemPosition:Int, visibility: Int, id: Int){
+        onView(withId(R.id.answers_recycler))
+            .perform(
+                RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
+                    itemPosition,
+                    checkVisibility(id, visibility)
+                )
+            )
+    }
+
+    private fun logInDetailsActivity() {
+        scenario.onActivity {
+            MockAuthenticator(it).signIn().join()
+            it.startActivity(intent)
+        }
+    }
+
+    private fun logOutDetailsActivity() {
+        scenario.onActivity {
+            MockAuthenticator(it).signOut().join()
+            it.startActivity(intent)
+        }
     }
 
 
     @Before
     fun setup() {
         DatabaseManager.useMockDatabase()
-        Firebase.auth.signInWithEmailAndPassword("jdupont@epfl.ch", "jdpoutn")
-        scenario = ActivityScenario.launch(MainActivity::class.java)
+
+        intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            QuestionDetailsActivity::class.java
+        )
+
+        db.getQuestionById("question1").thenAccept {
+            question = it!!
+
+            // add question to intent
+            intent.putExtra("question", question)
+            // add empty list of saved questions
+            cache.clear()
+            intent.putParcelableArrayListExtra("savedQuestions", cache)
+
+            scenario = ActivityScenario.launch(intent)
+        }
     }
-
-
-    private fun goToQuestion(questionTitle: String) {
-
-        // Perform a click on the ViewHolder that contains the specified question
-
-        onView(withText(questionTitle)).perform(click())
-    }
-
-
-
 
     @Test
     fun newActivityContainsCorrectData() {
-        goToQuestion(secondQuestion)
-
-        onView(withId(R.id.qdetails_title)).check(matches(withText(secondQuestion)))
+        onView(withId(R.id.qdetails_title)).check(matches(withText(question.questionTitle)))
     }
 
     @Test
     fun backToMainIsCorrect() {
-        goToQuestion(secondQuestion)
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
-        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
+        onView(withId(R.id.recycler_forum)).check(matches(isDisplayed()))
     }
 
     @Test
     fun loggedInCanPost() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
-
-        // go to last question
-        goToQuestion(thirdQuestion)
         onView(withId(R.id.write_reply_box)).check(matches(isDisplayed()))
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
     }
 
     @Test
     fun cannotPostEmptyAnswer() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
-
-        // go to last question
-        goToQuestion(thirdQuestion)
         // post answer
         onView(withId(R.id.post_reply_button)).perform(click())
 
@@ -125,11 +148,8 @@ class QuestionDetailsTest {
 
     @Test
     fun writeAnswerAndPostIsDisplayed() {
-        // authentication
-        scenario.onActivity { MockAuthenticator(it).signIn() }
+        logInDetailsActivity()
 
-        // go to last question
-        goToQuestion(thirdQuestion)
         // post write answer
         onView(withId(R.id.write_reply_box))
             .perform(click())
@@ -153,11 +173,8 @@ class QuestionDetailsTest {
 
     @Test
     fun guestUserCannotPostAnswers() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-        scenario.onActivity { MockAuthenticator(it).signOut() }
+        logOutDetailsActivity()
 
-        // go to second question
-        goToQuestion(secondQuestion)
         // check button is not clickable
         onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
         onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers and endorsements.")))
@@ -168,16 +185,14 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to second question
-        goToQuestion(secondQuestion)
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(1, click()))
 
-        onView(withText("0"))
-        onView(withText("Endorse this"))
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("1"))
-        onView(withText("Endorsed"))
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("0"))
-        onView(withText("Endorse this"))
+        onView(withText("0")).check(matches(isDisplayed()))
+        onView(withId(R.id.addFollowButton)).perform(click())
+        onView(withText("1")).check(matches(isDisplayed()))
+        onView(withId(R.id.addFollowButton)).perform(click())
+        onView(withText("0")).check(matches(isDisplayed()))
     }
 
     @Test
@@ -185,80 +200,211 @@ class QuestionDetailsTest {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
         // go to second question
-        goToQuestion(secondQuestion)
+        onView(withText("Very long question")).perform(click())
 
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withId(R.id.addFollowButton)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
-        goToQuestion(secondQuestion)
+        onView(withText("Very long question")).perform(click())
 
-        onView(withText("Endorsed"))
-        onView(withText("1"))
+        onViewWithTimeout(withId(R.id.notificationCount), matches(withText("1")))
     }
 
     @Test
-    fun removeQuestionEndorsementTest(){
+    fun removeLikeTest() {
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
-        goToQuestion(secondQuestion)
+        // go to third question
+        onView(withText("About ci")).perform(click())
 
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("Endorsed"))
-        onView(withText("1"))
+        val answerposition = 1
 
-        onView(withId(R.id.endorsementButton)).perform(click())
-        onView(withText("Endorse this"))
-        onView(withText("0"))
+        CounterEquals(answerposition, "0", R.id.likeCount)
+        ClickOnButton(answerposition, R.id.likeButton)
+        CounterEquals(answerposition, "1", R.id.likeCount)
+        ClickOnButton(answerposition, R.id.likeButton)
+        CounterEquals(answerposition, "0", R.id.likeCount)
+
     }
 
     @Test
     fun answerLikeButtonModifyTheCounter() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to third question
-        goToQuestion(firstQuestion)
+        logInDetailsActivity()
 
         val answerposition = 1
 
-        CounterEquals(answerposition, "0")
-        ClickOnLike(answerposition)
-        CounterEquals(answerposition, "1")
+        CounterEquals(answerposition, "0", R.id.likeCount)
+        ClickOnButton(answerposition, R.id.likeButton)
+        CounterEquals(answerposition, "1", R.id.likeCount)
 
     }
 
     @Test
     fun answerLikeStaysWhenQuitting() {
-        scenario.onActivity { MockAuthenticator(it).signIn() }
-
-        // go to third question
-        goToQuestion(firstQuestion)
+        logInDetailsActivity()
 
         val answerposition = 1
 
-        ClickOnLike(answerposition)
+        ClickOnButton(answerposition, R.id.likeButton)
 
-        onView(withId(R.id.back_to_forum_button)).perform(click())
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
-        goToQuestion(firstQuestion)
-        CounterEquals(answerposition, "1")
+        onView(withText("About ci")).perform(click())
+        CounterEquals(answerposition, "1", R.id.likeCount)
+    }
+
+    fun endorseAnswerButtonTest(){
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+
+        // go to third question
+        onView(withText("About ci")).perform(click())
+
+
+        val itemPosition = 1
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+    }
+
+
+    @Test
+    fun removeAnswerEndorsementTest(){
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+
+        // go to third question
+        onView(withText("About ci")).perform(click())
+
+        val itemPosition = 1
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
     }
 
     @Test
-    fun removeAnswerLike() {
+    fun endorseButtonIsVisibleOnlyForStatusUsersTest(){
         scenario.onActivity { MockAuthenticator(it).signIn() }
 
-        // go to third question
-        goToQuestion(firstQuestion)
+        onView(withText("About ci")).perform(click())
 
-        val answerposition = 1
+        val itemPosition = 1
 
-        ClickOnLike(answerposition)
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementButton)
 
-        CounterEquals(answerposition, "1")
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "test_user", "course1", UserStatus.TEACHER)
 
-        ClickOnLike(answerposition)
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
 
-        CounterEquals(answerposition, "0")
+        onView(withText("About ci")).perform(click())
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementButton)
+    }
+
+    @Test
+    fun answerEndorsementStaysWhenQuitting() {
+        scenario.onActivity { MockAuthenticator(it).signIn() }
+
+        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+
+        onView(withText("About ci")).perform(click())
+
+        val itemPosition = 1
+
+        VisibilityEquals(itemPosition, View.GONE, R.id.endorsementText)
+
+        ClickOnButton(itemPosition, R.id.endorsementButton)
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
+
+        onView(withText("About ci")).perform(click())
+
+        VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+    }
+
+    @Test
+    fun clickingToggleAltersDrawable() {
+        logInDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
+
+        onView(withId(R.id.toggle_save_question))
+            .perform(click())
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+    }
+
+    @Test
+    fun toggleOnWhenQuestionSaved() {
+        cache.add(question)
+        intent.putParcelableArrayListExtra("savedQuestions", cache)
+
+        logInDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
+    }
+
+    @Test
+    fun guestCannotSaveQuestion() {
+        logOutDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(not(isDisplayed())))
+    }
+
+
+    @Test
+    fun loggedInCanSaveQuestion() {
+        // authentication
+        logInDetailsActivity()
+
+        onView(withId(R.id.toggle_save_question))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun scrollToRefreshAnswers() {
+        val testQuStr = "NEWQUESTIONTEST"
+        var questionId: String? = null
+        db.availableCourses().thenAccept {
+            db.addQuestion("0",it[0].courseId, testQuStr, testQuStr, "").thenAccept{
+                questionId = it.questionId
+            }
+        }.join()
+
+        db.getQuestionById(questionId!!).thenAccept { newQuestion ->
+            intent.putExtra("question", newQuestion)
+
+            logInDetailsActivity()
+
+            val testAnsStr =  "NEWANSWER"
+            onView(withText(testAnsStr)).check(ViewAssertions.doesNotExist())
+            db.addAnswer("0",questionId?:"", testAnsStr)
+
+            onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
+            onView(withText(testAnsStr)).check(matches(isDisplayed()))
+        }
     }
 
     @After
@@ -302,5 +448,60 @@ class QuestionDetailsTest {
                 }
             }
         }
+    }
+
+    private fun checkVisibility(viewId: Int, visibility: Int): ViewAction {
+        return object : ViewAction {
+            override fun getDescription(): String {
+                return "check if view is visible or not"
+            }
+
+            override fun getConstraints(): Matcher<View> {
+                return isAssignableFrom(View::class.java)
+            }
+
+            override fun perform(uiController: UiController?, view: View?) {
+                if (view == null) {
+                    fail("View is null")
+                }
+                view?.findViewById<View>(viewId).let { textView ->
+                    if (textView == null) {
+                        fail("TextView is null")
+                    }
+
+                    // check visibility
+                    val visibilityMatcher = when (visibility) {
+                        View.VISIBLE -> Matchers.`is`(View.VISIBLE)
+                        View.INVISIBLE -> Matchers.`is`(View.INVISIBLE)
+                        View.GONE -> Matchers.`is`(View.GONE)
+                        else -> throw IllegalArgumentException("Invalid visibility argument")
+                    }
+
+                    assertThat(textView?.visibility, visibilityMatcher)
+                }
+            }
+        }
+    }
+
+
+    //instead of Thread.sleep()
+    private fun onViewWithTimeout(
+        matcher: Matcher<View>,
+        retryAssertion: ViewAssertion = matches(isDisplayed())
+    ): ViewInteraction {
+        repeat(20) { i ->
+            try {
+                val viewInteraction = onView(matcher)
+                viewInteraction.check(retryAssertion)
+                return viewInteraction
+            } catch (e: NoMatchingViewException) {
+                if (i >= 20) {
+                    throw e
+                } else {
+                    Thread.sleep(200)
+                }
+            }
+        }
+        throw AssertionError("View matcher is broken for $matcher")
     }
 }

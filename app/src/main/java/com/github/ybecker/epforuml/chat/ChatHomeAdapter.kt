@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
@@ -31,7 +33,7 @@ class ChatHomeAdapter(private val chatList : MutableList<String>,private val mai
         val currentItem = chatList[position]
          DatabaseManager.db.getUserById(currentItem).thenAccept{
              val user : Model.User? = it
-             holder.chatWithButton.text = "Chat with " + user?.username
+             holder.chatWithText.text = user?.username
              if(user?.profilePic!="") holder.chatImage.setImageURI(Uri.parse(user?.profilePic))
              holder.chatWithButton.setOnClickListener{
                  mainActivity.intent.putExtra("externID", currentItem)
@@ -41,7 +43,8 @@ class ChatHomeAdapter(private val chatList : MutableList<String>,private val mai
     }
     class ChatHomeViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView) {
         val chatImage : ImageView = itemView.findViewById(R.id.profilePicture)
-        val chatWithButton : Button = itemView.findViewById(R.id.buttonChatWith)
+        val chatWithText : TextView = itemView.findViewById(R.id.whoToChatWith)
+        val chatWithButton : CardView = itemView.findViewById(R.id.buttonChatWith)
     }
 
     override fun getItemCount(): Int {

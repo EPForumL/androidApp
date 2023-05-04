@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.widget.Button
 import android.widget.EditText
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -85,7 +86,7 @@ class ChatHomeTest {
 
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat_home)
-            view.findViewById<Button>(R.id.buttonChatWith).performClick()
+            view.findViewById<CardView>(R.id.buttonChatWith).performClick()
         }
         onView(withId(R.id.title_chat)).check(matches(withText("ExternUser1")))
 

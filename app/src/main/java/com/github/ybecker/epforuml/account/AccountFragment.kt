@@ -36,7 +36,7 @@ class AccountFragment : Fragment() {
         val signOutButton = view.findViewById<Button>(R.id.signOutButton)
         signOutButton.setOnClickListener { authenticator.signOut() }
 
-        val deleteAccountButton = view.findViewById<Button>(R.id.deleteAccoutButton)
+        val deleteAccountButton = view.findViewById<Button>(R.id.deleteAccountButton)
         deleteAccountButton.setOnClickListener { authenticator.deleteUser() }
 
         view = profilePictureManagement(view)

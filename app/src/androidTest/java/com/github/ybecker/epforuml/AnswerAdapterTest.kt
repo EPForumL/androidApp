@@ -37,8 +37,6 @@ class AnswerAdapterTest {
     private var question3 = db.getQuestionById("question3")
 
 
-
-
     @Before
     fun setup() {
         DatabaseManager.useMockDatabase()
@@ -47,8 +45,6 @@ class AnswerAdapterTest {
         }
         db.addQuestion("user1","course0","Not so long question",
             "TEST FOR CHAT", "")
-
-
 
         val answer6 =
             Model.Answer("answer6", "question4", "answerAdapterTestUser",
@@ -90,13 +86,17 @@ class AnswerAdapterTest {
         }
     }
 
-    //@Test
-   // fun clickingOnChatLeadsToChat(){
-  //      goToFirstElement()
-   //     onView(withId(R.id.chatWithUser)).perform(click())
-  //      onView(withId(R.id.title_chat)).check(matches(isDisplayed()))
+    @Test
+    fun clickingOnChatLeadsToChat(){
+        onView(withId(R.id.recycler_forum))
+            .perform(RecyclerViewActions.scrollToPosition<ViewHolder>(0))
+            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0,
+                click()
+            ))
+        onView(withId(R.id.chatWithUser)).perform(click())
+        onView(withId(R.id.title_chat)).check(matches(isDisplayed()))
 
-    //}
+    }
 
     @After
     fun closing() {

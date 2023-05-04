@@ -13,10 +13,25 @@
     <color name="backgroundColor">#FCFCFC</color>
     <color name="textColor">#000000</color>
     <color name="courseColor">#C5C5C5</color>
+    <color name= "yellow">#FFC107</color>
+    <color name="light_blue">#2F9CD9</color>
+    <color name="pictureColor">#1BB0D3</color>
 
     <color name="shade0">#1BD0D8</color>
     <color name="shade1">#A9F9FD</color>
     <color name="shade2">#78F0F6</color>
     <color name="shade3">#00777D</color>
     <color name="shade4">#005F63</color>
+
+    <color name="very_bright">#F2FCFE</color>
+    <color name="bright">#97E3F5</color>
+    <color name="medium">#57D4F1</color>
+    <color name="dark">#1BB0D3</color>
+    <color name="very_dark">#0097BA</color>
+
+    <color name="highlight">#0097BA</color>
+    <color name="main_highlight">#1BB0D3</color>
+    <color name="background">#97E3F5</color>
+    <color name="even_more_background">#F2FCFE</color>
+
 </resources>

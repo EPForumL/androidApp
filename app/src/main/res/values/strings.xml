@@ -36,7 +36,7 @@
     <string name="choose_new_password">choose_new_password</string>
     <string name="repeat_password">repeat_password</string>
     <string name="share_localisation">share_localisation</string>
-    <string name="preferences">preferences</string>
+    <string name="preferences">Preferences</string>
     <string name="no_match">No match found</string>
 
     ///Objects of the new fragment page:
@@ -67,11 +67,39 @@
     <string name="chat">Chat</string>
     <string name="send">Send</string>
     <string name="type_your_message_here">Type your message here</string>
-    <string name="chats" />
+    <string name="chats">Chats</string> />
     <string name="please_login_to_post_answers">Please login to post answers and endorsements.</string>
     <string name="User_not_found" />
     <string name="hop_une_belle_question_et_tout_bla_bla_bla_beauuucoup_trop_trop_trop_trop_troptt_t_t_t_tt_tt_t_tt_tt_t_t_longue_t_t_t_tt_tt_t_tt_tt_t_t_longuet_t_t_tt_tt_t_tt_tt_t_t_longue_t_t_t_tt_tt_t_tt_tt_t_t_longue">Hop une belle question et tout bla bla bla beauuucoup trop trop trop trop troptt t t t tt tt t tt tt t t longue t t t tt tt t tt tt t t longuet t t tt tt t tt tt t t longue t t t tt tt t tt tt t t longue</string>
     <string name="go_to_new_question_fragment">Go to new question fragment</string>
+    <string name="take_photo">take_photo</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="endorse_this">Endorse this</string>
+    <string name="endorsed">Endorsed</string>
+    <string name="write_an_answer">Write an answer...</string>
+    <string name="write_a_message">Write a message...</string>
+    <string name="chat_with_me">Chat With Me</string>
+    <string name="sign_out">Sign-Out</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="sign_in">Sign-In</string>
+    <string name="you_are_currently_using_the_app_as_a_guest">You are currently using the app as a guest</string>
+    <string name="chat_with_someone_new">Chat with someone new</string>
+    <string name="import_picture">Import picture</string>
+    <string name="take_picture">TAKE PICTURE</string>
+    <string name="no_image_selected_yet">No image selected yet</string>
+    <string name="add_content">Add content</string>
+    <string name="notify">Notify :</string>
+    <string name="subscribe">Subscribe :</string>
+    <string name="username">Username</string>
+    <string name="answer">Answer</string>
+    <string name="_0">0</string>
+    <string name="please_login_to_save_questions">Please log in to be able to save questions.</string>
+    <string name="image">Image</string>
+
+    <string name="add_course_title">Add new course</string>
+    <string name="enter_course_name">Write course name...</string>
+    <string name="add_course_button">Add course</string>
 
 
 </resources>

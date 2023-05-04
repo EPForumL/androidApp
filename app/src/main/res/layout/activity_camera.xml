@@ -22,7 +22,7 @@
         android:layout_marginEnd="52dp"
         android:layout_marginBottom="40dp"
         android:elevation="2dp"
-        android:text="take_photo"
+        android:text="@string/take_photo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/viewFinder"
         app:layout_constraintHorizontal_bias="0.455"

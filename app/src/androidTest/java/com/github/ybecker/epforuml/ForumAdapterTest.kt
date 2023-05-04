@@ -5,15 +5,20 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.swipeDown
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.concurrent.thread
 
 @RunWith(AndroidJUnit4::class)
 class ForumAdapterTest {
@@ -67,6 +72,27 @@ class ForumAdapterTest {
 
         displayRecyclerTest()
         displayQuestionTest()
+    }
+
+
+    @Test
+    fun scrollToRefreshQuestionsTest() {
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
+
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
+
+        val testStr = "NEWQUESTIONTEST"
+        onView(withText(testStr)).check(doesNotExist())
+
+        DatabaseManager.db.availableCourses().thenAccept {
+            DatabaseManager.db.addQuestion("0",it[0].courseId, testStr, testStr, "")
+        }.join()
+
+
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
+
+        onView(withText(testStr)).check(matches(isDisplayed()))
+
     }
 
     @After

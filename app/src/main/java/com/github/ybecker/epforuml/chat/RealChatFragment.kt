@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
@@ -48,12 +49,12 @@ class RealChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(layout.fragment_chat_list, container, false)
-        val button = view.findViewById<Button>(R.id.send_text)
+        val button = view.findViewById<ImageButton>(R.id.send_text)
         val textMsg = view.findViewById<EditText>(R.id.edit_text_message)
         noChats = view?.findViewById(R.id.no_chats)!!
         notConnected = view?.findViewById(R.id.not_connected_text_view)!!
 
-        val buttonHome: Button = view.findViewById(R.id.back_to_home_button)
+        val buttonHome: ImageButton = view.findViewById(R.id.back_to_home_button)
         buttonHome.setOnClickListener { // Create an intent to return to the previous fragment
             val intent = Intent(this.context, MainActivity::class.java)
             intent.putExtra("fragment", "chatHome")
@@ -77,7 +78,7 @@ class RealChatFragment : Fragment() {
                     externUser = it
                     chatList = db.getChat(hostId, externId)
                     view.findViewById<TextView>(R.id.title_chat).text = externUser.username
-                    val button = view.findViewById<Button>(R.id.send_text)
+                    val button = view.findViewById<ImageButton>(R.id.send_text)
                     button?.visibility = View.VISIBLE
                     button.setOnClickListener{
                         val chat = db.addChat(hostId, externId,textMsg.text.toString())
@@ -128,7 +129,7 @@ class RealChatFragment : Fragment() {
     }
 
 
-    private fun fetchChats() {
+    fun fetchChats() {
         var chats : ArrayList<Model.Chat> = arrayListOf()
         db.getChat(hostId,externId).thenAccept{
             chats = it as ArrayList<Model.Chat>
@@ -146,7 +147,7 @@ class RealChatFragment : Fragment() {
         } else {
             noChats.visibility = View.GONE
             queryList.sortBy { LocalDateTime.parse(it.date) }
-            chatAdapter = ChatAdapter(queryList, externUser)
+            chatAdapter = ChatAdapter(queryList, externUser, this.activity as MainActivity, this)
             chatRecyclerView.adapter = chatAdapter
         }
     }
