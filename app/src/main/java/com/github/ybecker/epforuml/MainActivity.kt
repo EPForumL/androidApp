@@ -17,6 +17,7 @@ import com.github.ybecker.epforuml.chat.RealChatFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.sensor.MapsFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
 
@@ -112,6 +113,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 R.id.nav_settings -> replaceFragmentAndClose(SettingsFragment())
                 R.id.nav_chat -> replaceFragmentAndClose(ChatHomeFragment())
+                R.id.nav_map -> replaceFragment(MapsFragment())
             }
             true
         }

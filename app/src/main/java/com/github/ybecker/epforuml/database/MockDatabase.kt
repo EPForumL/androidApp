@@ -5,6 +5,7 @@ import android.util.Log
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
@@ -421,6 +422,10 @@ class MockDatabase : Database() {
         }
     }
 
+    override fun getOtherUsers(userId: String): CompletableFuture<List<User>> {
+        return CompletableFuture.completedFuture(users.values.toList().filter { it.userId != userId })
+    }
+
     override fun removeChat(chatId: String): Boolean {
         return try {
             chats.remove(chatId)
@@ -428,5 +433,11 @@ class MockDatabase : Database() {
         } catch (e: Exception) {
             false
         }
+    }
+
+    override fun updateLocalization(userId: String, position: LatLng, sharesLocation: Boolean) {
+        users[userId]?.longitude = position.longitude
+        users[userId]?.latitude = position.latitude
+        users[userId]?.sharesLocation = sharesLocation
     }
 }
