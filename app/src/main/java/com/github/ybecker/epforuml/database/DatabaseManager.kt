@@ -18,6 +18,7 @@ object DatabaseManager {
     fun getDatabase(): Database {
         return db
     }
+
     /**
      * Modify the current instance of the Database to a MockDatabase
      */

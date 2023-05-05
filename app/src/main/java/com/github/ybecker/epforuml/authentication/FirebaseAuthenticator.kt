@@ -138,8 +138,8 @@ class FirebaseAuthenticator(
                     Toast.LENGTH_LONG
                 ).show()
             }
+            signInResult.complete(null)
         }
-        signInResult.complete(null)
     }
 
     /**
@@ -190,5 +190,6 @@ class FirebaseAuthenticator(
                 .replace(fragment.id, AccountFragment())
                 .commit()
         }
+        signInResult.complete(null)
     }
 }

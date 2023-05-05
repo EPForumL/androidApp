@@ -3,8 +3,9 @@ package com.github.ybecker.epforuml.database
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
-import java.time.LocalDateTime
+import com.google.android.gms.maps.model.LatLng
 import java.util.concurrent.CompletableFuture
+import java.time.LocalDateTime
 
 /**
  * An abstract class that defines a set of methods to be implemented by concrete database implementations.
@@ -385,4 +386,20 @@ abstract class Database {
      */
     abstract fun removeAnswerEndorsement(answerId: String)
 
+    /**
+     * Returns a list of all users except the user passed in parameter
+     * @param userId the id of the user not included
+     *
+     * @return the list of users except the user with id "userId"
+     */
+    abstract fun getOtherUsers(userId: String): CompletableFuture<List<User>>
+
+    /**
+     * Changes the current location of the user in the database and whether to share the
+     * localization or not.
+     * @param userId the id of the user
+     * @param position the new position of the user
+     * @param sharesLocation whether to share the localization or not
+     */
+    abstract fun updateLocalization(userId: String, position: LatLng, sharesLocation: Boolean)
 }

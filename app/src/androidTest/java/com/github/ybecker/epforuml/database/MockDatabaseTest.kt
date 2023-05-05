@@ -507,4 +507,23 @@ class MockDatabaseTest {
             assertThat(it.size, equalTo(0))
             }.join()
         }
+
+    @Test
+    fun getOtherUsersDoesNotContainTheUser() {
+        db.getOtherUsers(user.userId).thenAccept {
+            assertThat(it.filter { user2 -> user2.userId != user.userId }.size, equalTo(it.size))
+        }.join()
+    }
+
+    @Test
+    fun getOtherUsersGivesAllOtherUsers() {
+        db.getOtherUsers(user.userId).thenAccept { users ->
+            db.registeredUsers().thenAccept {
+                val usersIds = users.map { user2 -> user2.userId }
+                it.forEach { id ->
+                    assertThat(usersIds.contains(id), equalTo(true))
+                }
+            }
+        }.join()
+    }
 }
