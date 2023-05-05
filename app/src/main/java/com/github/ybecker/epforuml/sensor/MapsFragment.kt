@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 
 import android.os.Bundle
 import android.os.Looper
+import android.provider.ContactsContract.Data
 import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -149,9 +150,11 @@ class MapsFragment : Fragment(),
             return
         } else if (DatabaseManager.user?.sharesLocation == false) {
             // If user disables the location sharing, put fake coordinates
-            DatabaseManager.user?.latitude = -200.0
-            DatabaseManager.user?.longitude = -200.0
-            DatabaseManager.syncUserWithDatabase()
+            val userId = DatabaseManager.user?.userId
+            val position = LatLng(-200.0, -200.0)
+            DatabaseManager.user?.latitude = position.latitude
+            DatabaseManager.user?.longitude = position.longitude
+            DatabaseManager.db.updateLocalization(userId!!, position, false)
             return
         }
 
@@ -172,7 +175,12 @@ class MapsFragment : Fragment(),
             if (it != null) {
                 it.latitude = location.latitude
                 it.longitude = location.longitude
-                DatabaseManager.syncUserWithDatabase()
+                val sharesLocation = DatabaseManager.user?.sharesLocation ?: false
+                DatabaseManager.db.updateLocalization(
+                    it.userId,
+                    LatLng(location.latitude, location.longitude),
+                    sharesLocation
+                )
             }
         }
     }
@@ -217,19 +225,24 @@ class MapsFragment : Fragment(),
      * Checks which permissions where granted after asking the user.
      */
     private fun onRequestPermissionsResult(permissions: Map<String, Boolean>) {
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                // Precise location access granted.
-                // requireActivity().invalidateOptionsMenu()
-                DatabaseManager.user?.sharesLocation = true
-                DatabaseManager.syncUserWithDatabase()
-                getCurrentLocation()
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                // Only approximate location access granted.
-                DatabaseManager.user?.sharesLocation = true
-                DatabaseManager.syncUserWithDatabase()
-                getCurrentLocation()
+        DatabaseManager.user.let { user ->
+            if (user != null) {
+                val position = LatLng(user.latitude, user.longitude)
+                when {
+                    permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                        // Precise location access granted.
+                        // requireActivity().invalidateOptionsMenu()
+                        DatabaseManager.user?.sharesLocation = true
+                        DatabaseManager.db.updateLocalization(user.userId, position, true)
+                        getCurrentLocation()
+                    }
+                    permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                        // Only approximate location access granted.
+                        DatabaseManager.user?.sharesLocation = true
+                        DatabaseManager.db.updateLocalization(user.userId, position, true)
+                        getCurrentLocation()
+                    }
+                }
             }
         }
     }
@@ -260,8 +273,11 @@ class MapsFragment : Fragment(),
             R.id.share_position -> {
                 // Change state of the share position button and save it to the user
                 if (DatabaseManager.user != null) {
-                    DatabaseManager.user?.sharesLocation = !menuItem.isChecked
-                    DatabaseManager.syncUserWithDatabase()
+                    val sharesLocation = !menuItem.isChecked
+                    DatabaseManager.user!!.sharesLocation = sharesLocation
+                    val position = LatLng(DatabaseManager.user!!.latitude, DatabaseManager.user!!.longitude)
+                    DatabaseManager.db
+                        .updateLocalization(DatabaseManager.user!!.userId, position, sharesLocation)
                     getCurrentLocation()
                     menuItem.isChecked = !menuItem.isChecked
                 }

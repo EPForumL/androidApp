@@ -25,16 +25,4 @@ object DatabaseManager {
     fun useMockDatabase() {
         db = MockDatabase()
     }
-
-    /**
-     * Synchronizes the local user with the database user.
-     * Should be used when modifying the local user.
-     */
-    fun syncUserWithDatabase() {
-        user.let {
-            if (it != null) {
-                db.updateUser(it)
-            }
-        }
-    }
 }

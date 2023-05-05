@@ -9,6 +9,7 @@ import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.github.ybecker.epforuml.notifications.NotificationType
 import com.github.ybecker.epforuml.notifications.PushNotificationService
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -552,6 +553,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             future.completeExceptionally(it)
         }
         return future
+    }
+
+    override fun updateLocalization(userId: String, position: LatLng, sharesLocation: Boolean) {
+        db.child(usersPath).child(userId).child(longitudePath).setValue(position.longitude)
+        db.child(usersPath).child(userId).child(latitudePath).setValue(position.latitude)
+        db.child(usersPath).child(userId).child(sharesLocationPath).setValue(sharesLocation)
     }
 
     override fun addStatus(userId: String, courseId: String, status: UserStatus) {
