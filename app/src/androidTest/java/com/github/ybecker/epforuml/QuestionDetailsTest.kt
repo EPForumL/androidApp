@@ -9,6 +9,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.*
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -232,6 +233,9 @@ class QuestionDetailsTest {
             .perform(click())
 
         onView(withText(question.questionTitle)).perform(click())
+        // Scroll to the end of the page
+        onView(withId(R.id.question_details_layout)).perform(ViewActions.swipeUp())
+
 
         onViewWithTimeout(withId(R.id.notificationCount), matches(withText("1")))
     }

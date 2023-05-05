@@ -51,13 +51,6 @@ class MainActivityTest {
     }
 
     @Test
-    fun questionIsClickable() {
-        onView(withText(question.questionTitle))
-            .perform(scrollTo())
-            .check(ViewAssertions.matches(ViewMatchers.isClickable()))
-    }
-
-    @Test
     fun newActivityContainsCorrectData() {
         onView(withText(question.questionTitle))
             .perform(scrollTo(), click())
