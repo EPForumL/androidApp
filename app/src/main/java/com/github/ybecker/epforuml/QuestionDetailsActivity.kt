@@ -100,13 +100,12 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
 
     private fun updateRecycler() {
-        db.getQuestionById(questionId).thenAccept {
-            question = it
-            if (MainActivity.isConnected()) {
-                answerRecyclerView.adapter = AnswerAdapter(question!!, this)
-            } else {
-                answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, answersCache)
+        if (MainActivity.isConnected()) {
+            db.getQuestionById(questionId).thenAccept {q ->
+                answerRecyclerView.adapter = AnswerAdapter(q!!, this)
             }
+        } else {
+            answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, answersCache)
         }
     }
 
