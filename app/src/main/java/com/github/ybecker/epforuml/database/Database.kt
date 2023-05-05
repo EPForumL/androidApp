@@ -5,6 +5,7 @@ import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
 import java.util.concurrent.CompletableFuture
+import java.time.LocalDateTime
 
 /**
  * An abstract class that defines a set of methods to be implemented by concrete database implementations.
@@ -32,6 +33,14 @@ abstract class Database {
      * @return a list of every registered user
      */
     abstract fun registeredUsers(): CompletableFuture<List<String>>
+
+    /**
+     * Returns a list of all questions in the current database.
+     *
+     * @return a list of every questions
+     */
+    abstract fun getQuestions(): CompletableFuture<List<Question>>
+
     /**
      * Retrieves a list of questions for a given course.
      *

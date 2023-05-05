@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             "SavedQuestionsFragment" -> replaceFragment(SavedQuestionsFragment())
             "RealChat" -> replaceFragment(RealChatFragment())
             "chatHome" -> replaceFragment(ChatHomeFragment())
+            "MyQuestionsFragment" -> replaceFragment(MyQuestionsFragment())
             else -> {}
         }
 

@@ -5,8 +5,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.messaging.FirebaseMessaging
-import junit.framework.TestCase.assertNull
-import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
 import java.time.LocalDateTime
@@ -57,6 +56,16 @@ class MockDatabaseTest {
 
             db.addChat(chat2.senderId, chat2.receiverId, chat2.text)
         }
+
+
+    @Test
+    fun getQuestionsTest() {
+        val questions = db.getQuestions().get()
+        assertEquals(6, questions.size)
+        assertTrue(questions.contains(question1))
+        assertTrue(questions.contains(question2))
+        assertTrue(questions.contains(question3))
+    }
 
     @Test
     fun addAndGetUser(){
@@ -170,6 +179,8 @@ class MockDatabaseTest {
             assertTrue(it.map { it.courseId }.containsAll(courseOfMockDB.map { it.courseId }))
         }.join()
     }
+
+
 
     @Test
     fun getAnswerFromQuestionTest(){

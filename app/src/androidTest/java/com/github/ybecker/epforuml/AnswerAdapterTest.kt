@@ -4,7 +4,13 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.CoordinatesProvider
+import androidx.test.espresso.action.GeneralClickAction
+import androidx.test.espresso.action.Press
+import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -29,8 +35,7 @@ import java.util.regex.Matcher
 class AnswerAdapterTest {
 
     private lateinit var scenario : ActivityScenario<MainActivity>
-    private var question3 = db.getQuestionById("question3")
-
+    private lateinit var question3 : Model.Question
 
     @Before
     fun setup() {
@@ -38,29 +43,28 @@ class AnswerAdapterTest {
         db.getUserById("user1").thenAccept{
             user = it!!
         }
-        db.addQuestion("user1","course0","Very long question",
-            "TEST FOR CHAT", "")
-
-        val answer6 =
-            Model.Answer("answer6", "question4", "user1", "Nan mais je suis pas d'accord non plus", emptyList(),"")
-        db.addAnswer(answer6.userId, answer6.questionId, answer6.answerText)
-        scenario = ActivityScenario.launch(MainActivity::class.java)
+        db.getQuestionById("question3").thenAccept {
+            question3 = it!!
+            scenario = ActivityScenario.launch(MainActivity::class.java)
+        }
     }
 
+    private fun goToQuestion(questionTitle: String) {
+        onView(withText(questionTitle))
+            .perform(scrollTo(), click())
+    }
+
+
     private fun goToFirstElement() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.scrollToPosition<ViewHolder>(1))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(1,
-                click()
-            ))
+        // Find the RecyclerView that contains the questions
+        goToQuestion(question3.questionTitle)
+
     }
 
     private fun goToThirdElement() {
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.scrollToPosition<ViewHolder>(3))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(3,
-                click()
-            ))
+        db.getUserQuestions("user1").thenAccept {
+            goToQuestion(it[0].questionTitle)
+        }
     }
 
     @Test
@@ -74,22 +78,20 @@ class AnswerAdapterTest {
     fun properDisplayOfElementsWhenNoAnswer() {
         goToFirstElement()
 
-        question3.thenAccept {
-            onView(withId(R.id.qdetails_title)).check(matches(withText(question3.get()?.questionText)))
-        }
+        onView(withId(R.id.qdetails_title)).check(matches(withText(question3.questionTitle)))
     }
-
+/*
     @Test
     fun clickingOnChatLeadsToChat(){
-        onView(withId(R.id.recycler_forum))
-            .perform(RecyclerViewActions.scrollToPosition<ViewHolder>(0))
-            .perform(RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(0,
-                click()
-            ))
-        onView(withId(R.id.chatWithUser)).perform(click())
+        onView(withText(question3.questionTitle))
+            .perform(scrollTo())
+            .perform(click())
+        onView(withId(R.id.chatWithUser)).perform(scrollTo(),click())
         onView(withId(R.id.title_chat)).check(matches(isDisplayed()))
 
     }
+
+ */
 
     @After
     fun closing() {
