@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.database
 
+import com.github.ybecker.epforuml.QuestionTextType
 import com.github.ybecker.epforuml.UserStatus
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -32,10 +33,10 @@ class MockDatabaseTest {
         user = db.addUser("0","TestUser", "testEmail").get()
         nullUser = db.addUser("1","nullUser", "testEmail").get()
 
-        db.addQuestion(user.userId, sdp.courseId, "Question about Cirrus CI", "How do I fix the CI ?", "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg").thenAccept{
+        db.addQuestion(user.userId, sdp.courseId, "Question about Cirrus CI", "How do I fix the CI ?", QuestionTextType.TEXT, "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg").thenAccept{
             question1 = it
         }
-        db.addQuestion(user.userId, sdp.courseId, "About the Scrum master", "What is the exact role of a Scrum Master ?", "").thenAccept {
+        db.addQuestion(user.userId, sdp.courseId, "About the Scrum master", "What is the exact role of a Scrum Master ?", QuestionTextType.TEXT, "").thenAccept {
             question2 = it
         }
         db.addQuestion(user.userId, sdp.courseId, "Very long question",
@@ -43,7 +44,7 @@ class MockDatabaseTest {
                         "long long long long long long long long long long long long long long long" +
                         "long long long long long long long long long long long long long long long" +
                         "long long long long long long long long long long long long long long long " +
-                        "question" ,"").thenAccept{
+                        "question" , QuestionTextType.TEXT,"").thenAccept{
             question3 =it }
 
         answer1 = db.addAnswer(user.userId, question1.questionId, "Try to re-run the CI.")
@@ -133,7 +134,7 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetQuestionByIdTest(){
-        val question = db.addQuestion(user.userId, sdp.courseId, "Question","I have a question.", "")
+        val question = db.addQuestion(user.userId, sdp.courseId, "Question","I have a question.", QuestionTextType.TEXT, "")
         question.thenAccept{ q->
         db.getQuestionById(q.questionId).thenAccept {
             assertThat(it, equalTo(question))
@@ -150,7 +151,7 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetAnswerByIdTest(){
-        val question = db.addQuestion(user.userId, sdp.courseId, "Question","I have a question.", "")
+        val question = db.addQuestion(user.userId, sdp.courseId, "Question","I have a question.", QuestionTextType.TEXT, "")
 
 
         question.thenAccept{ q->
@@ -185,7 +186,7 @@ class MockDatabaseTest {
     @Test
     fun getAnswerFromQuestionTest(){
 
-        val q1 = db.addQuestion(user.userId, sdp.courseId, "Kotlin","Should we use Kotlin for Android Development?","")
+        val q1 = db.addQuestion(user.userId, sdp.courseId, "Kotlin","Should we use Kotlin for Android Development?", QuestionTextType.TEXT,"")
         q1.thenAccept{ q->
 
             db.getQuestionAnswers(q.questionId).thenAccept {
@@ -204,7 +205,7 @@ class MockDatabaseTest {
 
     @Test
     fun getAnswerFromQuestionWithoutAnyAnswerTest(){
-        val q2 = db.addQuestion(user.userId, sdp.courseId, "XML vs JetpackCompose","We prefer to use XML over Jetpack Compose.","")
+        val q2 = db.addQuestion(user.userId, sdp.courseId, "XML vs JetpackCompose","We prefer to use XML over Jetpack Compose.", QuestionTextType.TEXT,"")
         q2.thenAccept{ q->
             db.getQuestionAnswers(q.questionId).thenAccept {
                 assertThat(it, equalTo(listOf()))
@@ -224,7 +225,7 @@ class MockDatabaseTest {
 
     @Test
     fun getQuestionTitleTest(){
-        val q = db.addQuestion(user.userId, sdp.courseId, "chatGPT","He is a friend of mine :)","")
+        val q = db.addQuestion(user.userId, sdp.courseId, "chatGPT","He is a friend of mine :)", QuestionTextType.TEXT,"")
         q.thenAccept{ q->
             db.getQuestionById(q.questionId).thenAccept {
                 assertThat(it?.questionTitle, equalTo(q.questionTitle))
@@ -301,7 +302,7 @@ class MockDatabaseTest {
             assertThat(it?.answerText, equalTo(""))
         }
 
-        val newQuestion = db.addQuestion(user.userId, question1.questionId, "title", null, "URI")
+        val newQuestion = db.addQuestion(user.userId, question1.questionId, "title", null, QuestionTextType.TEXT, "URI")
         newQuestion.thenAccept{ q->
             db.getQuestionById(q.questionId).thenAccept {
                 assertThat(it?.questionText, equalTo(""))
@@ -525,5 +526,17 @@ class MockDatabaseTest {
                 }
             }
         }.join()
+    }
+
+    @Test
+    fun QuestionTextTypeTest() {
+        db.addQuestion(user.userId, sdp.courseId, "TESTQUESTION", "TESTTEXTQUESTION",QuestionTextType.TEXT, "").thenAccept {
+            assertThat(it.questionType, equalTo(QuestionTextType.TEXT.getName()))
+        }.join()
+
+        db.addQuestion(user.userId, sdp.courseId, "TESTQUESTIONLATEX", "TESTTEXTQUESTION",QuestionTextType.LATEX, "").thenAccept {
+            assertThat(it.questionType, equalTo(QuestionTextType.LATEX.getName()))
+        }.join()
+
     }
 }
