@@ -14,7 +14,7 @@ class Model {
         val userId: String,
         val questionTitle: String,
         val questionText: String,
-        val questionType: String,
+        val questionTextType: String,
         val imageURI : String,
         var answers: List<String>,
         var followers: List<String>
@@ -38,6 +38,7 @@ class Model {
             parcel.writeString(userId)
             parcel.writeString(questionTitle)
             parcel.writeString(questionText)
+            parcel.writeString(questionTextType)
             parcel.writeString(imageURI)
             parcel.writeStringList(answers)
             parcel.writeStringList(followers)

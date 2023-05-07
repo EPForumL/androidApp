@@ -691,11 +691,11 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun QuestionTextTypeTest() {
         db.addQuestion(romain.userId, sdp.courseId, "TESTQUESTION", "TESTTEXTQUESTION",QuestionTextType.TEXT, "").thenAccept {
-            assertThat(it.questionType, equalTo(QuestionTextType.TEXT.getName()))
+            assertThat(it.questionTextType, equalTo(QuestionTextType.TEXT.getName()))
         }.join()
 
         db.addQuestion(romain.userId, sdp.courseId, "TESTQUESTIONLATEX", "TESTTEXTQUESTION",QuestionTextType.LATEX, "").thenAccept {
-            assertThat(it.questionType, equalTo(QuestionTextType.LATEX.getName()))
+            assertThat(it.questionTextType, equalTo(QuestionTextType.LATEX.getName()))
         }.join()
 
     }
