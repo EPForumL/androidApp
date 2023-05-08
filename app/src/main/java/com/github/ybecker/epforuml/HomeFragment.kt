@@ -30,7 +30,6 @@ class HomeFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MyQuestionsAdapter
-    private val user = DatabaseManager.user
     private var questionsMap = mutableMapOf<Course, List<Question>>()
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -119,7 +118,7 @@ class HomeFragment : Fragment() {
                         if (course != null) {
                             // Filter the questions corresponding to each course and store the result in the questions map
                             val courseQuestion = questions.filter { question -> question.courseId == course.courseId }
-                            questionsMap.set(course, courseQuestion)
+                            questionsMap[course] = courseQuestion
                         }
                     }
                 }

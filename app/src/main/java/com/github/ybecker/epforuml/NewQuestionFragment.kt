@@ -112,6 +112,7 @@ class NewQuestionFragment : Fragment() {
                             course.courseId,
                             questTitle.text.toString(),
                             questBody.text.toString(),
+                            QuestionTextType.TEXT,
                             imageURI.text.toString()
                         ).thenAccept {
                             //mainActivity.intent.extras.

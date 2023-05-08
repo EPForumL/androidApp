@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml.database
 
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.QuestionTextType
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
@@ -114,10 +115,11 @@ abstract class Database {
      * @param courseId the course in which to add the question
      * @param questionTitle the title of the question itself
      * @param questionText the text of the question itself
+     * @param questionTextType the type of the question's text
      * @param image_uri the uri to an image linked with the question
      * @return the question that was posted in database
      */
-    abstract fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,  image_uri: String): CompletableFuture<Question>
+    abstract fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, questionTextType: QuestionTextType, image_uri: String): CompletableFuture<Question>
 
     /**
      * Posts a new answer to a question in a given course.

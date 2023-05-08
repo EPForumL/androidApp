@@ -5,6 +5,7 @@ import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.QuestionTextType
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.github.ybecker.epforuml.notifications.NotificationType
@@ -61,6 +62,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val questionTextPath = "questionText"
     private val questionTitlePath = "questionTitle"
     private val answerTextPath = "answerText"
+    private val questionTextTypePath = "questionTextType"
 
     private val questionURIPath = "imageURI"
 
@@ -736,6 +738,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         val questionText = dataSnapshot.child(questionTextPath).getValue(String::class.java)
 
+        val questionTextType = dataSnapshot.child(questionTextTypePath).getValue(String::class.java)
+
         val questionURI = dataSnapshot.child(questionURIPath).getValue(String::class.java)
 
         // save every answers in a List using getAnswers private method
@@ -749,8 +753,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             questionSnapshot.key?.let { followers.add(it) }
         }
 
-        if(questionId!=null && courseId!=null && userId!=null && questionTitle!=null && questionText!=null && questionURI!=null){
-            return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers, followers)
+        if(questionId!=null && courseId!=null && userId!=null && questionTitle!=null &&
+            questionText!=null && questionTextType!=null && questionURI!=null){
+            return Question(questionId, courseId, userId, questionTitle, questionText, questionTextType, questionURI, answers, followers)
         }
         return null
     }
@@ -820,7 +825,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, questionTextType: QuestionTextType, image_uri: String): CompletableFuture<Question> {
         val question_future = CompletableFuture<Question>()
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
@@ -831,7 +836,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             future = uploadToFirebase(image_uri)
         }
         future.thenAccept{
-            var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+            var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", questionTextType.getName(), it, emptyList(), emptyList())
             // add the new question in the db
             newChildRef.setValue(question)
             question_future.complete(question)

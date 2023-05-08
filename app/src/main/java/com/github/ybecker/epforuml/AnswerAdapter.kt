@@ -182,6 +182,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
+        // use QuestionTextType.getValue(questioNTextType)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
