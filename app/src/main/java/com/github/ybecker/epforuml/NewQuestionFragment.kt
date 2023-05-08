@@ -69,12 +69,14 @@ class NewQuestionFragment : Fragment() {
     ) {
         setUpArgs(view)
         val submitButton = view.findViewById<Button>(R.id.btn_submit)
-        submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
+        val isAnonymous = view.findViewById<Switch>(R.id.anonymous_switch).isChecked
+        submitButton?.setOnClickListener(submitButtonListener(spinner, isAnonymous, coursesList, user))
         setTakeImage(view, questBody, questTitle)
     }
 
     private fun submitButtonListener(
         spinner: Spinner,
+        isAnonymous: Boolean,
         coursesList: List<Model.Course>,
         user: Model.User?
     ): (v: View) -> Unit = {
@@ -110,6 +112,7 @@ class NewQuestionFragment : Fragment() {
                         db.addQuestion(
                             user.userId,
                             course.courseId,
+                            isAnonymous,
                             questTitle.text.toString(),
                             questBody.text.toString(),
                             imageURI.text.toString()

@@ -100,8 +100,8 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addUser("0", "Romain", "testEmail1").get()
         theo = db.addUser("1","Theo", "testEmail2").get()
 
-        question1Future =  db.addQuestion(romain.userId, sdp.courseId, "About SDP", "I have question about the SDP course !","")
-        question2Future =  db.addQuestion(romain.userId, sdp.courseId, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !","")
+        question1Future =  db.addQuestion(romain.userId, sdp.courseId, false, "About SDP", "I have question about the SDP course !","")
+        question2Future =  db.addQuestion(romain.userId, sdp.courseId, false, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !","")
 
         answer2Future = CompletableFuture()
         answer1Future = CompletableFuture()
@@ -173,7 +173,7 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addAndgetQuestionByIdTest() {
-        val question = db.addQuestion(romain.userId, sdp.courseId, "Question","I have a question.", "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
+        val question = db.addQuestion(romain.userId, sdp.courseId, false, "Question","I have a question.", "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg")
         question.thenAccept{
             db.getQuestionById(it.questionId).thenAccept {q->
                 assertThat(q, equalTo(question))
@@ -494,7 +494,7 @@ class FirebaseDatabaseAdapterTest {
                 assertThat(a?.answerText, equalTo(""))
             }.join()
 
-            val newQuestion = db.addQuestion(romain.userId, q1.questionId, "title", null, "URI")
+            val newQuestion = db.addQuestion(romain.userId, q1.questionId, false, "title", null, "URI")
             newQuestion.thenAccept{q->
                 db.getQuestionById(q.questionId).thenAccept {
                     assertThat(it?.questionText, equalTo(""))
@@ -656,14 +656,14 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun addQuestionWithNoURI(){
-        db.addQuestion("0","0","URI","????","").thenAccept{
+        db.addQuestion("0","0",false, "URI","????","").thenAccept{
             assertThat(it.imageURI, `is`(""))
         }
     }
 
     @Test
     fun addQuestionWithValidURI(){
-        db.addQuestion("0","0","URI","????","content://media/external/images/media/1000000157").thenAccept{
+        db.addQuestion("0","0",false, "URI","????","content://media/external/images/media/1000000157").thenAccept{
             assertThat(it.imageURI, `is`(""))
         }
     }

@@ -61,6 +61,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val questionTextPath = "questionText"
     private val questionTitlePath = "questionTitle"
     private val answerTextPath = "answerText"
+    private val isAnonymousPath = "isAnonymous"
 
     private val questionURIPath = "imageURI"
 
@@ -732,6 +733,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         val userId = dataSnapshot.child(userIdPath).getValue(String::class.java)
 
+        val isAnonymous = dataSnapshot.child(isAnonymousPath).getValue(Boolean::class.java)
+
         val questionTitle = dataSnapshot.child(questionTitlePath).getValue(String::class.java)
 
         val questionText = dataSnapshot.child(questionTextPath).getValue(String::class.java)
@@ -749,8 +752,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             questionSnapshot.key?.let { followers.add(it) }
         }
 
-        if(questionId!=null && courseId!=null && userId!=null && questionTitle!=null && questionText!=null && questionURI!=null){
-            return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers, followers)
+        if(questionId!=null && courseId!=null && userId!=null && isAnonymous!=null && questionTitle!=null && questionText!=null && questionURI!=null){
+            return Question(questionId, courseId, userId, isAnonymous, questionTitle, questionText, questionURI, answers, followers)
         }
         return null
     }
@@ -820,7 +823,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String, isAnonymous: Boolean, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
         val question_future = CompletableFuture<Question>()
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
@@ -831,7 +834,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             future = uploadToFirebase(image_uri)
         }
         future.thenAccept{
-            var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+            var question = Question(questionId, courseId, userId, isAnonymous, questionTitle, questionText ?: "", it, emptyList(), emptyList())
             // add the new question in the db
             newChildRef.setValue(question)
             question_future.complete(question)
