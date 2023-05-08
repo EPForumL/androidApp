@@ -843,10 +843,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             //add the question in the user's questions list
             db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
 
-            this.getUserById(userId).thenAccept {
-                PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+            if(isAnonymous){
+                PushNotificationService().sendNotification(MainActivity.context,"someone Anonymous", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+            } else {
+                this.getUserById(userId).thenAccept {
+                    PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+                }
             }
-
         }
         return question_future
     }
