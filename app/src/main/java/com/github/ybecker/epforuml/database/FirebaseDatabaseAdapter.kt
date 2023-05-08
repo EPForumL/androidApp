@@ -61,7 +61,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val questionTextPath = "questionText"
     private val questionTitlePath = "questionTitle"
     private val answerTextPath = "answerText"
-    private val isAnonymousPath = "isAnonymous"
+    private val isAnonymousPath = "anonymous"
 
     private val questionURIPath = "imageURI"
 

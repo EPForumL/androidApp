@@ -106,4 +106,6 @@
     <string name="share_position">Share position</string>
     <string name="localization_text">Share position</string>
 
+    <string name="qdetail_username_text">Username asks :</string>
+
 </resources>
