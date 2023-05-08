@@ -11,6 +11,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity
 import com.dsphotoeditor.sdk.utils.DsPhotoEditorConstants
 import android.net.Uri
+import android.view.View
+import android.widget.TextView
 import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions.*
 import com.github.ybecker.epforuml.authentication.LoginActivity
@@ -20,10 +22,14 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import androidx.test.espresso.Espresso.onData
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
+import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions
+import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -31,7 +37,10 @@ import junit.framework.TestCase.*
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.android.awaitFrame
 import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.isEmptyOrNullString
 
 @RunWith(AndroidJUnit4::class)
 class NewQuestionTest {
@@ -284,9 +293,6 @@ class NewQuestionTest {
 
     }
 
-
-
-
     @Test
     fun goesBackToNewQuestionWhenDone() {
 
@@ -330,6 +336,119 @@ class NewQuestionTest {
         onView(withId(R.id.image_uri)).check(matches(withText("URI")))
         scenario.close()
 
+    }
+
+
+    @Test
+    fun AnonymousQuestionTest(){
+        Firebase.auth.signOut()
+
+        val user = db.addUser("AUSERID", "AUSER", "").get()
+        DatabaseManager.user = user
+
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+
+        // Click on the new quest button
+        onView(withId(R.id.new_question_button)).perform(click())
+
+        // Check that the new fragment is displayed
+        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+
+        //Body of the question
+        onView(withId(R.id.question_details_edittext)).perform(typeText("Text"))
+
+        //Title of the question
+        val title = "New Anonymous Question"
+        onView(withId(R.id.question_title_edittext)).perform(typeText(title))
+
+        //Selection of the spinner
+        onView(withId(R.id.subject_spinner)).perform(click())
+        val secondItem = onData(anything()).atPosition(1)
+        secondItem.perform(click())
+
+        //Click the anonymous switch and submit
+        onView(withId(R.id.anonymous_switch)).perform(click())
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.btn_submit)).perform(click())
+
+        //Check that de DB has an anonymous question and the the username is in the anonymousUsers list
+        onView(withText(title)).perform(click())
+
+        val allQuestions = db.getQuestions().get()
+
+        assertTrue(allQuestions.map { it.isAnonymous }.contains(true))
+        assertTrue(allQuestions.filter { it.isAnonymous }[0].userId == user.userId)
+
+        val usernameText: ViewInteraction = onView(withId(R.id.qdetails_question_username))
+        val expectedText = getText(usernameText).removeSuffix(" asks :")
+        assertTrue(DatabaseManager.anonymousUsers.contains(expectedText))
+
+
+        scenario.close()
+    }
+
+    @Test
+    fun AnonymousAnswerTest(){
+
+        //Send anonymous question as in previous test
+        Firebase.auth.signOut()
+        val user = db.addUser("AUSERID", "AUSER", "").get()
+        DatabaseManager.user = user
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+        // Click on the new quest button
+        onView(withId(R.id.new_question_button)).perform(click())
+        // Check that the new fragment is displayed
+        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+        //Body of the question
+        onView(withId(R.id.question_details_edittext)).perform(typeText("Text"))
+        //Title of the question
+        val title = "New Anonymous Question"
+        onView(withId(R.id.question_title_edittext)).perform(typeText(title))
+        //Selection of the spinner
+        onView(withId(R.id.subject_spinner)).perform(click())
+        val secondItem = onData(anything()).atPosition(1)
+        secondItem.perform(click())
+        //Click the anonymous switch and submit
+        onView(withId(R.id.anonymous_switch)).perform(click())
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.btn_submit)).perform(click())
+        onView(withText(title)).perform(click())
+
+        // add an answer to the anonymous question
+        val answerText = "F"
+        onView(withId(R.id.qdetails_answer_text)).perform(typeText(answerText))
+        onView(withId(R.id.post_reply_button)).perform(typeText(answerText))
+
+        // change the current user
+        val secondUser = db.addUser("OTHERUSERID", "OTHERUSER", "").get()
+        DatabaseManager.user = secondUser
+
+        onView(withId(R.id.qdetails_answer_text)).perform(typeText(answerText))
+        onView(withId(R.id.post_reply_button)).perform(typeText(answerText))
+
+        //TODO finish this test
+        scenario.close()
+    }
+
+
+    fun getText(matcher: ViewInteraction): String {
+        var text = String()
+        matcher.perform(object : ViewAction {
+            override fun getConstraints(): Matcher<View> {
+                return isAssignableFrom(TextView::class.java)
+            }
+
+            override fun getDescription(): String {
+                return "Text of the view"
+            }
+
+            override fun perform(uiController: UiController, view: View) {
+                val tv = view as TextView
+                text = tv.text.toString()
+            }
+        })
+
+        return text
     }
 
 }
