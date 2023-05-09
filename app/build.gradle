@@ -153,7 +153,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:21.0.1"
 
     // Latex
-    // implementation 'in.hourglass.mathrender:katexmathview:1.0.3'
+    implementation 'io.github.iffanmajid:katexmathview:1.0.3'
 }
 
 tasks.withType(Test) {

@@ -22,11 +22,11 @@ import katex.hourglass.`in`.mathlib.MathView
  */
 class NewQuestionFragment : Fragment() {
 
-    private lateinit var questBody : EditText
-    private lateinit var questTitle : EditText
+    private lateinit var questBody: EditText
+    private lateinit var questTitle: EditText
     private lateinit var imageURI: TextView
     private lateinit var takePictureButton: Button
-    private lateinit var image_uri : String
+    private lateinit var image_uri: String
 
     private lateinit var mainActivity: MainActivity
 
@@ -52,7 +52,7 @@ class NewQuestionFragment : Fragment() {
                 courseNamesList
             )
             spinner.adapter = adapter
-            setUpArgs(view,spinner,coursesList,user)
+            setUpArgs(view, spinner, coursesList, user)
         }
 
         return view
@@ -91,8 +91,7 @@ class NewQuestionFragment : Fragment() {
                 "Question title or body cannot be empty",
                 Toast.LENGTH_SHORT
             ).show()
-        }
-        else {
+        } else {
             // Get the selected course from the spinner
             val selectedItemPosition = spinner.selectedItemPosition
             if (selectedItemPosition != Spinner.INVALID_POSITION) {
@@ -119,6 +118,7 @@ class NewQuestionFragment : Fragment() {
             }
         }
     }
+
     private fun setTakeImage(
         view: View,
         questBody: EditText,
@@ -136,9 +136,9 @@ class NewQuestionFragment : Fragment() {
     }
 
     private fun setUpArgs(view: View): Triple<EditText, EditText, TextView> {
-         questBody = view.findViewById(R.id.question_details_edittext)
-         questTitle = view.findViewById(R.id.question_title_edittext)
-         imageURI = view.findViewById(R.id.image_uri)
+        questBody = view.findViewById(R.id.question_details_edittext)
+        questTitle = view.findViewById(R.id.question_title_edittext)
+        imageURI = view.findViewById(R.id.image_uri)
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
         imageURI.text = image_uri

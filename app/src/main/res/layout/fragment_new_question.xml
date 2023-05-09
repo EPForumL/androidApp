@@ -59,15 +59,6 @@
             android:layout_marginTop="16dp"
             android:text="@string/new_question_details" />
 
-        <katex.hourglass.in.mathlib.MathView
-            app:setTextColor="@color/textColor"
-            app:setTextSize="14sp"
-            app:setClickable="true"
-            app:setText="$x=\\frac{1+y}{1+2z^2}$"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
         <EditText
             android:id="@+id/question_details_edittext"
             android:layout_width="match_parent"
@@ -77,6 +68,19 @@
             android:maxLines="10"
             android:minLines="5"
             tools:ignore="LabelFor" />
+
+        <!--
+        TODO: Use popup window to show latex text
+        <katex.hourglass.in.mathlib.MathView
+            android:id="@+id/question_details_latex"
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:autofillHints="Question body"
+            android:inputType="textMultiLine"
+            android:maxLines="10"
+            android:minLines="5"
+            tools:ignore="LabelFor" />
+        -->
 
         <!-- Anonymous Switch -->
         <TextView
