@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoActivityResumedException
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -13,6 +12,8 @@ import com.dsphotoeditor.sdk.utils.DsPhotoEditorConstants
 import android.net.Uri
 import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.*
 import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions.*
 import com.github.ybecker.epforuml.authentication.LoginActivity
@@ -22,13 +23,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 import androidx.test.espresso.Espresso.onData
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.contrib.RecyclerViewActions
+import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import androidx.test.espresso.util.HumanReadables
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.google.firebase.auth.ktx.auth
@@ -380,8 +381,8 @@ class NewQuestionTest {
         assertTrue(allQuestions.filter { it.isAnonymous }[0].userId == user.userId)
 
         val usernameText: ViewInteraction = onView(withId(R.id.qdetails_question_username))
-        val expectedText = getText(usernameText).removeSuffix(" asks :")
-        assertTrue(DatabaseManager.anonymousUsers.contains(expectedText))
+        val text = getText(usernameText).removeSuffix(" asks :")
+        assertTrue(DatabaseManager.anonymousUsers.contains(text))
 
 
         scenario.close()
@@ -416,18 +417,63 @@ class NewQuestionTest {
 
         // add an answer to the anonymous question
         val answerText = "F"
-        onView(withId(R.id.qdetails_answer_text)).perform(typeText(answerText))
-        onView(withId(R.id.post_reply_button)).perform(typeText(answerText))
+        onView(withId(R.id.write_reply_box)).perform(typeText(answerText))
+        onView(withId(R.id.post_reply_button)).perform(click())
 
         // change the current user
         val secondUser = db.addUser("OTHERUSERID", "OTHERUSER", "").get()
         DatabaseManager.user = secondUser
 
-        onView(withId(R.id.qdetails_answer_text)).perform(typeText(answerText))
-        onView(withId(R.id.post_reply_button)).perform(typeText(answerText))
+        onView(withId(R.id.write_reply_box)).perform(typeText(answerText))
+        onView(withId(R.id.post_reply_button)).perform(click())
 
-        //TODO finish this test
+
+        //get title name
+        val usernameText: ViewInteraction = onView(withId(R.id.qdetails_question_username))
+        val text = getText(usernameText).removeSuffix(" asks :")
+        // get text of first item
+        var firstItemText = ""
+        getText(onView(withId(R.id.answers_recycler)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(0, GetTextFromRecyclerViewItemAction(0, firstItemText))))
+        // get text of second item
+        var secondItemText = ""
+        getText(onView(withId(R.id.answers_recycler)).perform(actionOnItemAtPosition<RecyclerView.ViewHolder>(1, GetTextFromRecyclerViewItemAction(2, secondItemText))))
+
+        assertThat(firstItemText, not(equalTo(secondItemText)))
+        assertThat(firstItemText, equalTo(text))
+
         scenario.close()
+    }
+
+    class GetTextFromRecyclerViewItemAction(private val position: Int, var returnVal: String) : ViewAction {
+
+        override fun getDescription(): String {
+            return "Get text from RecyclerView item at position $position"
+        }
+
+        override fun getConstraints(): Matcher<View> {
+            return isAssignableFrom(RecyclerView::class.java)
+        }
+
+        override fun perform(uiController: UiController?, view: View?) {
+            if (view is RecyclerView) {
+                val viewHolder = view.findViewHolderForAdapterPosition(position)
+                if (viewHolder != null && viewHolder.itemView is TextView) {
+                    returnVal = (viewHolder.itemView as TextView).text.toString()
+                } else {
+                    throw PerformException.Builder()
+                        .withActionDescription(description)
+                        .withViewDescription(HumanReadables.describe(view))
+                        .withCause(Throwable("No TextView found at position: $position"))
+                        .build()
+                }
+            } else {
+                throw PerformException.Builder()
+                    .withActionDescription(description)
+                    .withViewDescription(HumanReadables.describe(view))
+                    .withCause(Throwable("View is not a RecyclerView"))
+                    .build()
+            }
+        }
     }
 
 
