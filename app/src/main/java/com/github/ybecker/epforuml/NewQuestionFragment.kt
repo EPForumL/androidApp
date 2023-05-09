@@ -6,17 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.CameraActivity
-import com.google.firebase.storage.FirebaseStorage
-import java.io.File
-import java.io.FileOutputStream
-import java.util.concurrent.CompletableFuture
+import katex.hourglass.`in`.mathlib.MathView
+
 
 /**
  * A simple [Fragment] subclass.
@@ -57,9 +54,9 @@ class NewQuestionFragment : Fragment() {
             spinner.adapter = adapter
             setUpArgs(view,spinner,coursesList,user)
         }
-        return view
 
-        }
+        return view
+    }
 
     private fun setUpArgs(
         view: View,
