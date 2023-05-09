@@ -11,10 +11,13 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
@@ -37,6 +40,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
         return when (viewType) {
             HEADER_ITEM_TYPE -> {
                 HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.question_details_header_item, parent, false))
+
             }
 
             else -> {
@@ -51,10 +55,28 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
         return question.answers.size + HEADER_ITEM_COUNT
     }
 
+
+    private fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
+        Glide.with(imageView.context)
+            .load(imageUrl)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(imageView)
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> {
                 holder.headerText.text = question.questionText
+
+
+
+                if (question!!.imageURI == "") {
+                    holder.image.visibility = View.GONE
+                } else {
+                    holder.image.visibility = View.VISIBLE
+                    displayImageFromFirebaseStorage(question!!.imageURI, holder.image)
+                }
+
             }
 
             is AnswerViewHolder -> {
@@ -182,6 +204,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
+        val image : ImageView = itemView.findViewById(R.id.image_question)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
