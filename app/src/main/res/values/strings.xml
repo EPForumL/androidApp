@@ -105,5 +105,6 @@
     <string name="change_map_perm">Change permissions</string>
     <string name="share_position">Share position</string>
     <string name="localization_text">Share position</string>
+    <string name="record_voice_note">Record Voice Note</string>
 
 </resources>

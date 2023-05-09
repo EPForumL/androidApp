@@ -1,22 +1,22 @@
 package com.github.ybecker.epforuml
 
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.CameraActivity
-import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.io.FileOutputStream
-import java.util.concurrent.CompletableFuture
 
 /**
  * A simple [Fragment] subclass.
@@ -28,6 +28,7 @@ class NewQuestionFragment : Fragment() {
     private lateinit var questBody : EditText
     private lateinit var questTitle : EditText
     private lateinit var imageURI: TextView
+    private lateinit var recordVoiceNote: Button
     private lateinit var takePictureButton: Button
     private lateinit var image_uri : String
 
@@ -69,9 +70,13 @@ class NewQuestionFragment : Fragment() {
     ) {
         setUpArgs(view)
         val submitButton = view.findViewById<Button>(R.id.btn_submit)
+        recordVoiceNote = view.findViewById(R.id.voice_note_button)
         submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
-        setTakeImage(view, questBody, questTitle)
-    }
+        recordVoiceNote.setOnClickListener{
+            onVoiceNoteButtonClick(view)
+        }
+            setTakeImage(view, questBody, questTitle)
+        }
 
     private fun submitButtonListener(
         spinner: Spinner,
@@ -148,5 +153,42 @@ class NewQuestionFragment : Fragment() {
         return Triple(questBody, questTitle, imageURI)
     }
 
+    private fun onVoiceNoteButtonClick(view: View) {
+        // Check if the device has a microphone
+        if (mainActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
+            // Create an intent to start the voice recording activity
+            val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+            // Start the activity and wait for a result
+            startActivityForResult(intent, REQUEST_CODE_VOICE_NOTE)
+        } else {
+            // Show an error message if the device does not have a microphone
+            Toast.makeText(this.mainActivity, "No microphone found on the device", Toast.LENGTH_SHORT).show()
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_VOICE_NOTE && resultCode == Activity.RESULT_OK) {
+            // Get the URI of the recorded audio file from the intent
+            val audioUri = data?.data
+            if (audioUri != null) {
+                // Create a new file to save the recorded audio
+                val outputFile = File(mainActivity.getExternalFilesDir(Environment.DIRECTORY_MUSIC), "voice_note_${System.currentTimeMillis()}.3gp")
+                // Create an input stream from the audio URI
+                val inputStream = mainActivity.contentResolver.openInputStream(audioUri)
+                // Create an output stream to the file
+                val outputStream = FileOutputStream(outputFile)
+                // Copy the contents of the input stream to the output stream
+                inputStream?.copyTo(outputStream)
+                // Close the streams
+                inputStream?.close()
+                outputStream.close()
+                // Show a message indicating that the voice note was saved
+                Toast.makeText(mainActivity, "Voice note saved to ${outputFile.absolutePath}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    companion object {
+        private const val REQUEST_CODE_VOICE_NOTE = 1
+    }
 
 }
