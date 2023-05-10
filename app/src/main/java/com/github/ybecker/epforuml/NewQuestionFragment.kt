@@ -1,18 +1,17 @@
 package com.github.ybecker.epforuml
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.CameraActivity
-import katex.hourglass.`in`.mathlib.MathView
 
 
 /**
@@ -53,6 +52,13 @@ class NewQuestionFragment : Fragment() {
             )
             spinner.adapter = adapter
             setUpArgs(view, spinner, coursesList, user)
+        }
+
+        val latexButton = view.findViewById<ImageButton>(R.id.show_latex_button)
+        latexButton.setOnClickListener {
+            val latexWindow = Dialog(requireContext())
+            latexWindow.setContentView(R.layout.latex_window)
+            latexWindow.show()
         }
 
         return view
@@ -144,6 +150,4 @@ class NewQuestionFragment : Fragment() {
         imageURI.text = image_uri
         return Triple(questBody, questTitle, imageURI)
     }
-
-
 }

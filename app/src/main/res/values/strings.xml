@@ -105,5 +105,6 @@
     <string name="change_map_perm">Change permissions</string>
     <string name="share_position">Share position</string>
     <string name="localization_text">Share position</string>
+    <string name="latex_button_description">Shows the latex display of the written text</string>
 
 </resources>

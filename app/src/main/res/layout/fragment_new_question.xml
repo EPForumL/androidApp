@@ -59,6 +59,18 @@
             android:layout_marginTop="16dp"
             android:text="@string/new_question_details" />
 
+        <ImageButton
+            android:id="@+id/show_latex_button"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginVertical="4dp"
+            android:layout_marginStart="4dp"
+            android:scaleType="fitCenter"
+            android:background="@color/fui_transparent"
+            android:layout_gravity="start"
+            app:srcCompat="@drawable/latex_logo"
+            android:contentDescription="@string/latex_button_description" />
+
         <EditText
             android:id="@+id/question_details_edittext"
             android:layout_width="match_parent"
