@@ -2,7 +2,6 @@ package com.github.ybecker.epforuml.database
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.github.ybecker.epforuml.QuestionTextType
 import com.google.android.gms.maps.model.LatLng
 
 class Model {
@@ -14,13 +13,11 @@ class Model {
         val userId: String,
         val questionTitle: String,
         val questionText: String,
-        val questionTextType: String,
         val imageURI : String,
         var answers: List<String>,
         var followers: List<String>
         ) : Parcelable {
         constructor(parcel: Parcel) : this(
-            parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
@@ -38,7 +35,6 @@ class Model {
             parcel.writeString(userId)
             parcel.writeString(questionTitle)
             parcel.writeString(questionText)
-            parcel.writeString(questionTextType)
             parcel.writeString(imageURI)
             parcel.writeStringList(answers)
             parcel.writeStringList(followers)
