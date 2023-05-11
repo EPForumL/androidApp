@@ -17,21 +17,20 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-175dp">
 
         <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/image_question"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
             android:contentDescription="@string/image"
-            android:scaleType="centerCrop"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
         <VideoView
-            android:id="@+id/video_question"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:id="@+id/video_question"
             android:adjustViewBounds="true"
             android:visibility="gone" />
     </FrameLayout>

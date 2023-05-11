@@ -107,10 +107,10 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
                     if (isImageURI(question.imageURI)) {
                         holder.image.visibility = VISIBLE
                         displayImageFromFirebaseStorage(question.imageURI, holder.image)
-                    } /*else {
+                    } else {
                         holder.video.visibility = VISIBLE
                         displayVideoFromFirebaseStorage(question.imageURI, holder.video)
-                    }*/
+                    }
                 }
 
             }
@@ -268,7 +268,7 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
         val image : ImageView = itemView.findViewById(R.id.image_question)
-        //val video : VideoView = itemView.findViewById(R.id.video_question)
+        val video : VideoView = itemView.findViewById(R.id.video_question)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
