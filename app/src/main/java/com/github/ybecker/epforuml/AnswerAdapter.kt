@@ -3,6 +3,8 @@ package com.github.ybecker.epforuml
 import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.net.Uri
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -11,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.VideoView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -23,7 +26,6 @@ import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
-//private val questionId : String, private val questionText : String, private val answerList : List<String>,
 class AnswerAdapter(private val question: Model.Question, private var anonymouseNameMap : HashMap<String, String>, private val mainActivity: Activity)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -63,18 +65,36 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
             .into(imageView)
     }
 
+    private fun displayVideoFromFirebaseStorage(videoUrl: String, videoView: VideoView) {
+        videoView.setVideoURI(Uri.parse(videoUrl))
+        videoView.requestFocus()
+
+        videoView.setOnPreparedListener { mediaPlayer ->
+            // Réglage de la boucle pour la lecture en continu de la vidéo
+            mediaPlayer.isLooping = true
+            // Démarrage de la lecture de la vidéo
+            videoView.start()
+        }
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> {
                 holder.headerText.text = question.questionText
 
-
-
-                if (question!!.imageURI == "") {
+                if (question.imageURI == "") {
                     holder.image.visibility = View.GONE
+                    holder.video.visibility = View.GONE
                 } else {
-                    holder.image.visibility = View.VISIBLE
-                    displayImageFromFirebaseStorage(question!!.imageURI, holder.image)
+                    if (question.imageURI.endsWith(".jpg") || question.imageURI.endsWith(".png")) {
+                        holder.image.visibility = View.VISIBLE
+                        holder.video.visibility = View.GONE
+                        displayImageFromFirebaseStorage(question.imageURI, holder.image)
+                    } else {
+                        holder.image.visibility = View.GONE
+                        holder.video.visibility = View.VISIBLE
+                        displayVideoFromFirebaseStorage(question.imageURI, holder.video)
+                    }
                 }
 
             }
@@ -223,6 +243,7 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
         val image : ImageView = itemView.findViewById(R.id.image_question)
+        val video : VideoView = itemView.findViewById(R.id.video_question)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {

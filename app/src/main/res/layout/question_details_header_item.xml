@@ -15,12 +15,25 @@
     android:textSize="30sp"
     android:id="@+id/qdetails_question_content"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/image_question"
-        android:layout_weight="1"
-        android:contentDescription="@string/image" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/image_question"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/image"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+
+        <VideoView
+            android:id="@+id/video_question"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:visibility="gone" />
+    </FrameLayout>
 
 </LinearLayout>
