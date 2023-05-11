@@ -85,7 +85,7 @@ class ForumAdapterTest {
         onView(withText(testStr)).check(doesNotExist())
 
         DatabaseManager.db.availableCourses().thenAccept {
-            DatabaseManager.db.addQuestion("0",it[0].courseId, testStr, testStr, "")
+            DatabaseManager.db.addQuestion("0",it[0].courseId, false, testStr, testStr, "")
         }.join()
 
 
