@@ -17,22 +17,23 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-175dp">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/image_question"
             android:contentDescription="@string/image"
+            android:layout_marginTop="-175dp"
             android:visibility="gone"/>
 
-        <VideoView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/video_question"
-            android:adjustViewBounds="true"
-            android:visibility="gone" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:resize_mode="fixed_width"
+            app:use_controller="true"
+            android:visibility="gone"/>
     </FrameLayout>
 
 </LinearLayout>

@@ -23,6 +23,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
@@ -81,17 +82,13 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
         }
     }
 
-//    TODO check later
-//    private fun displayVideoFromFirebaseStorage(videoUrl: String, videoPlayer: PlayerView) {
-//        val videoUri = Uri.parse(videoUrl)
-//        val videoSource = ProgressiveMediaSource.Factory(DefaultDataSourceFactory(videoPlayer.context)).createMediaSource(videoUri)
-//
-//        val player = SimpleExoPlayer.Builder(videoPlayer.context).build()
-//        player.prepare(videoSource)
-//        player.playWhenReady = true
-//
-//        videoPlayer.player = player
-//    }
+    private fun displayVideoFromFirebaseStorage(videoUrl: String, videoView: PlayerView) {
+        val player = videoView.player ?: SimpleExoPlayer.Builder(videoView.context).build()
+        videoView.player = player
+        player.setMediaItem(MediaItem.fromUri(videoUrl))
+        player.prepare()
+        player.play()
+    }
 
     private fun isImageURI(uri: String): Boolean {
         val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif")
@@ -256,19 +253,10 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
         return CLASSIC_ITEM_TYPE
     }
 
-
-    //TODO check later
-//    class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//        val headerText: TextView = itemView.findViewById(R.id.qdetails_question_content)
-//        val image: ImageView = itemView.findViewById(R.id.image_question)
-//        val video: PlayerView = itemView.findViewById(R.id.video_question)
-//    }
-
-
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
         val image : ImageView = itemView.findViewById(R.id.image_question)
-        val video : VideoView = itemView.findViewById(R.id.video_question)
+        val video: PlayerView = itemView.findViewById(R.id.video_question)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
