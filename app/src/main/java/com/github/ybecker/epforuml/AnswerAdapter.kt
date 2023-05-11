@@ -23,6 +23,10 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
@@ -77,27 +81,40 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
         }
     }
 
+//    TODO check later
+//    private fun displayVideoFromFirebaseStorage(videoUrl: String, videoPlayer: PlayerView) {
+//        val videoUri = Uri.parse(videoUrl)
+//        val videoSource = ProgressiveMediaSource.Factory(DefaultDataSourceFactory(videoPlayer.context)).createMediaSource(videoUri)
+//
+//        val player = SimpleExoPlayer.Builder(videoPlayer.context).build()
+//        player.prepare(videoSource)
+//        player.playWhenReady = true
+//
+//        videoPlayer.player = player
+//    }
+
+    private fun isImageURI(uri: String): Boolean {
+        val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif")
+        return imageExtensions.any { extension -> uri.contains(".$extension") }
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> {
                 holder.headerText.text = question.questionText
 
-                if (question.imageURI == "") {
-                    holder.image.visibility = View.GONE
-                    holder.video.visibility = View.GONE
-                } else {
-                    if (question.imageURI.endsWith(".jpg") || question.imageURI.endsWith(".png")) {
-                        holder.image.visibility = View.VISIBLE
-                        holder.video.visibility = View.GONE
+                if (question.imageURI != "") {
+                    if (isImageURI(question.imageURI)) {
+                        holder.image.visibility = VISIBLE
                         displayImageFromFirebaseStorage(question.imageURI, holder.image)
-                    } else {
-                        holder.image.visibility = View.GONE
-                        holder.video.visibility = View.VISIBLE
+                    } /*else {
+                        holder.video.visibility = VISIBLE
                         displayVideoFromFirebaseStorage(question.imageURI, holder.video)
-                    }
+                    }*/
                 }
 
             }
+
 
             is AnswerViewHolder -> {
                 //holder.answerText.text = currentAnswerItem
@@ -193,7 +210,7 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
                     val endorsementButton = holder.itemView.findViewById<ImageButton>(R.id.endorsementButton)
 
                     if(endorserName != null  && endorserName.isNotEmpty()){
-                        endorsementText.text = "Approved by "+endorserName+"."
+                        endorsementText.text = "Approved by ${endorserName}."
                         endorsementText.visibility = VISIBLE
                         endorsementButton.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_blue), PorterDuff.Mode.SRC_IN)
                     } else {
@@ -240,10 +257,18 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
     }
 
 
+    //TODO check later
+//    class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+//        val headerText: TextView = itemView.findViewById(R.id.qdetails_question_content)
+//        val image: ImageView = itemView.findViewById(R.id.image_question)
+//        val video: PlayerView = itemView.findViewById(R.id.video_question)
+//    }
+
+
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
         val image : ImageView = itemView.findViewById(R.id.image_question)
-        val video : VideoView = itemView.findViewById(R.id.video_question)
+        //val video : VideoView = itemView.findViewById(R.id.video_question)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
