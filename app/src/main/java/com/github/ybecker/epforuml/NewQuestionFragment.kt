@@ -104,18 +104,17 @@ class NewQuestionFragment : Fragment() {
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-                    if (imageURI.text == "null") {
-                        db.addQuestion(
-                            user.userId,
-                            course.courseId,
-                            anonymousSwitch.isChecked,
-                            questTitle.text.toString(),
-                            questBody.text.toString(),
-                            imageURI.text.toString()
-                        ).thenAccept {
-                            //mainActivity.intent.extras.
-                            mainActivity.replaceFragment(HomeFragment())
-                        }
+
+                    db.addQuestion(
+                        user.userId,
+                        course.courseId,
+                        anonymousSwitch.isChecked,
+                        questTitle.text.toString(),
+                        questBody.text.toString(),
+                        imageURI.text.toString()
+                    ).thenAccept {
+                        //mainActivity.intent.extras.
+                        mainActivity.replaceFragment(HomeFragment())
                     }
                 }
             }

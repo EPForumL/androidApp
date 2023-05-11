@@ -7,12 +7,20 @@
     android:layout_marginHorizontal="30dp"
     android:layout_marginVertical="10dp"
     android:id="@+id/qdetails_answer_item">
-    
+
     <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="@string/new_question_details"
     android:textSize="30sp"
     android:id="@+id/qdetails_question_content"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/image_question"
+        android:layout_weight="1"
+        android:contentDescription="@string/image" />
+
 
 </LinearLayout>

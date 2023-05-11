@@ -103,7 +103,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         user = DatabaseManager.user ?: Model.User()
         userId = user.userId
 
-        setUpImage()
+        //setUpImage()
         endorsementSetup()
 
         // only allow posting answer if user is connected
@@ -276,20 +276,5 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpImage() {
-        val image: ImageView = findViewById(R.id.image_question)
-        if (question!!.imageURI == "") {
-            image.visibility = View.GONE
-        } else {
-            image.visibility = View.VISIBLE
-            displayImageFromFirebaseStorage(question!!.imageURI, image)
-        }
-    }
 
-    private fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
-        Glide.with(imageView.context)
-            .load(imageUrl)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(imageView)
-    }
 }
