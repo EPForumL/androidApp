@@ -106,5 +106,9 @@
     <string name="share_position">Share position</string>
     <string name="localization_text">Share position</string>
     <string name="latex_button_description">Shows the latex display of the written text</string>
+    <string name="latex_output">Latex output</string>
+    <string name="latex_input">Latex input</string>
+    <string name="render">Render</string>
+    <string name="latex_close">Close</string>
 
 </resources>
