@@ -73,6 +73,17 @@
         <!-- Anonymous Switch -->
 
         <Button
+            android:id="@+id/play_note_button"
+            android:layout_width="257dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/button_bg"
+            android:drawableStart="@drawable/ic_microphone"
+            android:drawablePadding="8dp"
+            android:text="Play_voice_note" />
+
+
+        <Button
             android:id="@+id/voice_note_button"
             android:layout_width="257dp"
             android:layout_height="wrap_content"

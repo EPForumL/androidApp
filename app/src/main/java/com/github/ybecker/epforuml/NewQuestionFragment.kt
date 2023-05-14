@@ -1,22 +1,35 @@
 package com.github.ybecker.epforuml
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaRecorder
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.sensor.AndroidAudioRecorder
 import com.github.ybecker.epforuml.sensor.CameraActivity
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+import android.Manifest
+import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
 
 /**
  * A simple [Fragment] subclass.
@@ -25,11 +38,21 @@ import java.io.FileOutputStream
  */
 class NewQuestionFragment : Fragment() {
 
+    private var mediaRecorder: MediaRecorder? = null
+    private var audioFile: File? = null
+    private var isRecording = false
+
+    private var audioRecorder: AndroidAudioRecorder? = null
+
+    private var audioPlayer: AndroidAudioPlayer? = null
+
     private lateinit var questBody : EditText
     private lateinit var questTitle : EditText
     private lateinit var imageURI: TextView
     private lateinit var recordVoiceNote: Button
     private lateinit var takePictureButton: Button
+    private lateinit var playVoiceNote: Button
+
     private lateinit var image_uri : String
 
     private lateinit var mainActivity: MainActivity
@@ -68,15 +91,147 @@ class NewQuestionFragment : Fragment() {
         coursesList: List<Model.Course>,
         user: Model.User?,
     ) {
-        setUpArgs(view)
+
+        questBody = view.findViewById(R.id.question_details_edittext)
+        questTitle = view.findViewById(R.id.question_title_edittext)
+        imageURI = view.findViewById(R.id.image_uri)
+        questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
+        questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
+        imageURI.text = image_uri
+
         val submitButton = view.findViewById<Button>(R.id.btn_submit)
         recordVoiceNote = view.findViewById(R.id.voice_note_button)
+        playVoiceNote = view.findViewById(R.id.play_note_button)
+
+
+
+        //Set up the listeners
+
         submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
-        recordVoiceNote.setOnClickListener{
-            onVoiceNoteButtonClick(view)
+
+        setRecordButtonListener(view)
+
+        setTakeImageListener(view, questBody, questTitle)
+
+        setPlayButtonListener(view)
+    }
+
+
+
+
+
+    private fun setTakeImageListener(
+        view: View,
+        questBody: EditText,
+        questTitle: EditText
+    ) {
+        takePictureButton = view.findViewById(R.id.takeImage)
+        takePictureButton.setOnClickListener {
+            val questionDetails = questBody.text.toString()
+            val questionTitle = questTitle.text.toString()
+            val intent = Intent(this.mainActivity, CameraActivity::class.java)
+            intent.putExtra("questionTitle", questionTitle)
+            intent.putExtra("questionDetails", questionDetails)
+            startActivity(intent)
         }
-            setTakeImage(view, questBody, questTitle)
+    }
+
+
+    private fun setPlayButtonListener(View: View){
+
+        playVoiceNote.setOnClickListener {
+            if (audioPlayer == null) {
+                audioPlayer = context?.let { it1 -> AndroidAudioPlayer(it1) }
+            }
+
+            if (audioFile != null) {
+
+                audioPlayer?.playFile(audioFile!!)
+            }
+
         }
+    }
+    private fun setRecordButtonListener(View: View){
+
+        recordVoiceNote.setOnClickListener {
+
+            if (hasRecordAudioPermission()) {
+
+                startRecording()
+            }
+            else {
+                requestRecordAudioPermission()
+            }
+        }
+     }
+
+
+    private fun startRecording(){
+        if (audioRecorder == null) {
+            audioRecorder = context?.let { it1 -> AndroidAudioRecorder(it1) }
+        }
+        if (audioRecorder?.recorder == null) {
+
+            val fileName = "recording.3gp"
+            val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+            audioFile = File(storageDir, fileName)
+            isRecording = true
+
+            audioRecorder?.start(audioFile!!)
+            updateRecordButtonText()
+
+        } else {
+            audioRecorder?.stop()
+            isRecording = false
+            updateRecordButtonText()
+        }
+    }
+
+
+    private fun hasRecordAudioPermission(): Boolean {
+        val permission = Manifest.permission.RECORD_AUDIO
+        val result = ContextCompat.checkSelfPermission(requireContext(), permission)
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestRecordAudioPermission() {
+        val permission = Manifest.permission.RECORD_AUDIO
+        ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), REQUEST_RECORD_AUDIO_PERMISSION)
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, perform the action
+                startRecording()
+            } else {
+                // Permission denied, show a message or handle it accordingly
+                Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    companion object {
+        private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
+    }
+
+
+    private fun updateRecordButtonText() {
+        if (isRecording) {
+            recordVoiceNote.text = "Stop Recording"
+        } else {
+            recordVoiceNote.text = "Start New Recording"
+        }
+    }
+
+
 
     private fun submitButtonListener(
         spinner: Spinner,
@@ -111,84 +266,21 @@ class NewQuestionFragment : Fragment() {
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-                    if (imageURI.text == "null") {
-                        db.addQuestion(
-                            user.userId,
-                            course.courseId,
-                            questTitle.text.toString(),
-                            questBody.text.toString(),
-                            imageURI.text.toString()
-                        ).thenAccept {
-                            //mainActivity.intent.extras.
-                            mainActivity.replaceFragment(HomeFragment())
-                        }
+                    //if (imageURI.text == "null") {
+                    db.addQuestion(
+                        user.userId,
+                        course.courseId,
+                        questTitle.text.toString(),
+                        questBody.text.toString(),
+                        imageURI.text.toString()
+                    ).thenAccept {
+                        //mainActivity.intent.extras.
+                        mainActivity.replaceFragment(HomeFragment())
                     }
+                    //}
                 }
             }
         }
-    }
-    private fun setTakeImage(
-        view: View,
-        questBody: EditText,
-        questTitle: EditText
-    ) {
-        takePictureButton = view.findViewById(R.id.takeImage)
-        takePictureButton.setOnClickListener {
-            val questionDetails = questBody.text.toString()
-            val questionTitle = questTitle.text.toString()
-            val intent = Intent(this.mainActivity, CameraActivity::class.java)
-            intent.putExtra("questionTitle", questionTitle)
-            intent.putExtra("questionDetails", questionDetails)
-            startActivity(intent)
-        }
-    }
-
-    private fun setUpArgs(view: View): Triple<EditText, EditText, TextView> {
-         questBody = view.findViewById(R.id.question_details_edittext)
-         questTitle = view.findViewById(R.id.question_title_edittext)
-         imageURI = view.findViewById(R.id.image_uri)
-        questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
-        questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
-        imageURI.text = image_uri
-        return Triple(questBody, questTitle, imageURI)
-    }
-
-    private fun onVoiceNoteButtonClick(view: View) {
-        // Check if the device has a microphone
-        if (mainActivity.packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
-            // Create an intent to start the voice recording activity
-            val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
-            // Start the activity and wait for a result
-            startActivityForResult(intent, REQUEST_CODE_VOICE_NOTE)
-        } else {
-            // Show an error message if the device does not have a microphone
-            Toast.makeText(this.mainActivity, "No microphone found on the device", Toast.LENGTH_SHORT).show()
-        }
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_VOICE_NOTE && resultCode == Activity.RESULT_OK) {
-            // Get the URI of the recorded audio file from the intent
-            val audioUri = data?.data
-            if (audioUri != null) {
-                // Create a new file to save the recorded audio
-                val outputFile = File(mainActivity.getExternalFilesDir(Environment.DIRECTORY_MUSIC), "voice_note_${System.currentTimeMillis()}.3gp")
-                // Create an input stream from the audio URI
-                val inputStream = mainActivity.contentResolver.openInputStream(audioUri)
-                // Create an output stream to the file
-                val outputStream = FileOutputStream(outputFile)
-                // Copy the contents of the input stream to the output stream
-                inputStream?.copyTo(outputStream)
-                // Close the streams
-                inputStream?.close()
-                outputStream.close()
-                // Show a message indicating that the voice note was saved
-                Toast.makeText(mainActivity, "Voice note saved to ${outputFile.absolutePath}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-    companion object {
-        private const val REQUEST_CODE_VOICE_NOTE = 1
     }
 
 }
