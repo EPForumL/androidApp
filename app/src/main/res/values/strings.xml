@@ -112,4 +112,7 @@
     <string name="latex_save">Save</string>
     <string name="latex_cancel">Cancel</string>
 
+    <string name="qdetail_username_text">Username asks :</string>
+    <string name="anonymous">Anonymous</string>
+
 </resources>

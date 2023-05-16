@@ -3,25 +3,28 @@ package com.github.ybecker.epforuml
 import android.app.Activity
 import android.content.Intent
 import android.graphics.PorterDuff
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
 import java.util.concurrent.CompletableFuture
+import kotlin.random.Random
+
 //private val questionId : String, private val questionText : String, private val answerList : List<String>,
-class AnswerAdapter(private val question: Model.Question, private val mainActivity: Activity)
+class AnswerAdapter(private val question: Model.Question, private var anonymouseNameMap : HashMap<String, String>, private val mainActivity: Activity)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -37,6 +40,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
         return when (viewType) {
             HEADER_ITEM_TYPE -> {
                 HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.question_details_header_item, parent, false))
+
             }
 
             else -> {
@@ -51,10 +55,28 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
         return question.answers.size + HEADER_ITEM_COUNT
     }
 
+
+    private fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
+        Glide.with(imageView.context)
+            .load(imageUrl)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(imageView)
+    }
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> {
                 holder.headerText.text = question.questionText
+
+
+
+                if (question!!.imageURI == "") {
+                    holder.image.visibility = View.GONE
+                } else {
+                    holder.image.visibility = View.VISIBLE
+                    displayImageFromFirebaseStorage(question!!.imageURI, holder.image)
+                }
+
             }
 
             is AnswerViewHolder -> {
@@ -66,6 +88,26 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
 
                     val currentAnswerItem = futureAnswer.get() ?: Model.Answer()
                     val endorsementList = futureLikeList.get()
+                    db.getUserById(currentAnswerItem.userId).thenAccept {
+                        if(!question.isAnonymous) {
+                            holder.username.text = it?.username
+                        } else {
+                            if(anonymouseNameMap.contains(it?.userId)) {
+                                holder.username.text = anonymouseNameMap[it?.userId]
+                            } else {
+                                if(anonymouseNameMap.size < DatabaseManager.anonymousUsers.size){
+                                    var leftAnonymousNames = DatabaseManager.anonymousUsers.toMutableList()
+                                    leftAnonymousNames.removeAll(anonymouseNameMap.values)
+                                    val name = leftAnonymousNames[Random.nextInt(0, leftAnonymousNames.size)]
+
+                                    anonymouseNameMap[it?.userId!!] = name
+                                    holder.username.text = name
+                                } else {
+                                    holder.username.text = mainActivity.getString(R.string.anonymous)
+                                }
+                            }
+                        }
+                    }
 
                     holder.answerText.text = currentAnswerItem.answerText
                     holder.button.setOnClickListener{
@@ -78,8 +120,6 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
                         intent.putExtra("externID", currentAnswerItem.userId)
                         startActivity(mainActivity,intent,null)
                     }
-                    // TODO : change userId to username (need to use future)
-                    holder.username.text = currentAnswerItem.userId
 
                     val like = holder.itemView.findViewById<ImageButton>(R.id.likeButton)
                     val counter = holder.itemView.findViewById<TextView>(R.id.likeCount)
@@ -182,6 +222,7 @@ class AnswerAdapter(private val question: Model.Question, private val mainActivi
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
+        val image : ImageView = itemView.findViewById(R.id.image_question)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
