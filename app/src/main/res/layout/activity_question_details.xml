@@ -137,6 +137,19 @@
         </androidx.cardview.widget.CardView>
 
         <ImageButton
+            android:id="@+id/question_details_latex"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:clickable="true"
+            android:visibility="visible"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/latex_logo"
+            android:background="@drawable/round_corner"
+            app:tint="@color/white"
+            android:layout_margin="8dp" />
+
+        <ImageButton
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:id="@+id/post_reply_button"

@@ -55,11 +55,11 @@ class NewQuestionFragment : Fragment() {
             )
             spinner.adapter = adapter
             setUpArgs(view, spinner, coursesList, user)
-        }
 
-        // Shows the latex renderer dialog
-        val latexButton = view.findViewById<ImageButton>(R.id.show_latex_button)
-        latexButton.setOnClickListener { LatexDialog(requireContext(), questBody).show() }
+            // Shows the latex renderer dialog
+            val latexButton = view.findViewById<ImageButton>(R.id.show_latex_button)
+            latexButton.setOnClickListener { LatexDialog(requireContext(), questBody).show() }
+        }
 
         return view
     }

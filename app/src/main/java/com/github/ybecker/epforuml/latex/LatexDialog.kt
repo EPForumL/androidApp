@@ -2,10 +2,12 @@ package com.github.ybecker.epforuml.latex
 
 import android.app.Dialog
 import android.content.Context
+import android.webkit.WebSettings
 import android.widget.Button
 import android.widget.EditText
 import com.github.ybecker.epforuml.R
-import katex.hourglass.`in`.mathlib.MathView
+//import katex.hourglass.`in`.mathlib.MathView
+import com.github.ybecker.epforuml.latex.MathView
 
 /**
  * Custom dialog class that shows a dialog containing a latex renderer. You can enter latex code
@@ -15,7 +17,7 @@ import katex.hourglass.`in`.mathlib.MathView
  * @param context: The base activity context
  * @param targetEditText: The editText that will contain the saved text
  */
-class LatexDialog(context: Context, private val targetEditText: EditText) : Dialog(context) {
+class LatexDialog(context: Context, private val targetEditText: EditText?) : Dialog(context) {
     private val editText: EditText
     private val latexView: MathView
     private val renderButton: Button
@@ -35,7 +37,7 @@ class LatexDialog(context: Context, private val targetEditText: EditText) : Dial
 
         // Save text and close dialog
         saveButton.setOnClickListener {
-            targetEditText.text = editText.text
+            targetEditText?.text = editText.text
             cancel()
         }
 
@@ -46,8 +48,8 @@ class LatexDialog(context: Context, private val targetEditText: EditText) : Dial
     override fun show() {
         // Fill the latex editText with the text already filled before calling the dialog and
         // update the latex mathView
-        editText.text = targetEditText.text
-        updateLatexView(targetEditText.text.toString())
+        editText.text = targetEditText?.text
+        updateLatexView(targetEditText?.text.toString())
         super.show()
     }
 

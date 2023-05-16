@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.webkit.WebSettings
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -20,6 +21,8 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+//import katex.hourglass.`in`.mathlib.MathView
+import com.github.ybecker.epforuml.latex.MathView
 import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
@@ -66,9 +69,9 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> {
-                holder.headerText.text = question.questionText
-
-
+                // Sets the mathView text for the question detail and disables zooming on the view
+                holder.headerText.setDisplayText(question.questionText)
+                holder.headerText.settings.displayZoomControls = false
 
                 if (question!!.imageURI == "") {
                     holder.image.visibility = View.GONE
@@ -109,7 +112,10 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
                         }
                     }
 
-                    holder.answerText.text = currentAnswerItem.answerText
+                    // Sets the mathView text for the answer and disables zooming on the view
+                    holder.answerText.setDisplayText(currentAnswerItem.answerText)
+                    holder.answerText.settings.displayZoomControls = false
+
                     holder.button.setOnClickListener{
                         db.addChatsWith(DatabaseManager.user!!.userId, currentAnswerItem.userId)
                         val intent = Intent(
@@ -221,13 +227,13 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
 
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
+        val headerText : MathView = itemView.findViewById(R.id.qdetails_question_content)
         val image : ImageView = itemView.findViewById(R.id.image_question)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val username : TextView = itemView.findViewById(R.id.qdetails_answer_username)
-        val answerText : TextView = itemView.findViewById(R.id.qdetails_answer_text)
+        val answerText : MathView = itemView.findViewById(R.id.qdetails_answer_text)
         val button : ImageButton = itemView.findViewById(R.id.chatWithUser)
     }
 

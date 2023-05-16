@@ -18,6 +18,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.latex.LatexDialog
 import kotlin.random.Random
 
 class QuestionDetailsActivity : AppCompatActivity() {
@@ -211,7 +212,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun answerPostingSetup() {
         val replyBox : EditText = findViewById(R.id.write_reply_box)
-        val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
+        val sendButton : ImageButton = findViewById(R.id.post_reply_button)
+        val latexButton : ImageButton = findViewById(R.id.question_details_latex)
+
+        latexButton.setOnClickListener { LatexDialog(this, replyBox).show() }
 
         if (userId.isNotEmpty()) {
             // store content of box as a new answer to corresponding question

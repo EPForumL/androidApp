@@ -8,12 +8,21 @@
     android:layout_marginVertical="10dp"
     android:id="@+id/qdetails_answer_item">
 
+    <!--
     <TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/new_question_details"
-    android:textSize="30sp"
-    android:id="@+id/qdetails_question_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/new_question_details"
+        android:textSize="30sp"
+        android:id="@+id/qdetails_question_content"/> -->
+
+    <com.github.ybecker.epforuml.latex.MathView
+        android:id="@+id/qdetails_question_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:setTextSize="16sp"
+        app:setTextColor="@color/textColor"
+        app:setText="@string/new_question_details" />
 
     <ImageView
         android:layout_width="wrap_content"
