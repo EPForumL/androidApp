@@ -251,7 +251,7 @@ class CameraActivity : AppCompatActivity() {
                                 "$uri"
                         Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
                             .show()
-                        goToEdit(uri.toString())
+                        goBackToQuestion(uri.toString())
                         Log.d(TAG, msg)
                     } else {
                         recording?.close()
@@ -327,15 +327,15 @@ class CameraActivity : AppCompatActivity() {
 
     }
 
-/*    private fun goBackToQuestion(){
+    private fun goBackToQuestion(uri : String){
         val intent  = Intent(this, MainActivity::class.java)
-        intent.putExtra("uri", Uri.fromFile(videoFile))
+        intent.putExtra("uri", uri)
         intent.putExtra("fragment", "NewQuestionFragment")
         intent.putExtra("questionTitle", getIntent().getStringExtra("questionTitle"))
         intent.putExtra("questionDetails", getIntent().getStringExtra("questionDetails"))
         startActivity(intent)
 
-    }*/
+    }
 
     override fun onDestroy() {
         super.onDestroy()
