@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/new_question_scrollview"
     android:layout_height="match_parent">
 
@@ -58,6 +59,18 @@
             android:layout_marginTop="16dp"
             android:text="@string/new_question_details" />
 
+        <ImageButton
+            android:id="@+id/show_latex_button"
+            android:layout_width="40dp"
+            android:layout_height="20dp"
+            android:layout_marginVertical="4dp"
+            android:layout_marginStart="4dp"
+            android:scaleType="fitCenter"
+            android:background="@color/fui_transparent"
+            android:layout_gravity="start"
+            app:srcCompat="@drawable/latex_logo"
+            android:contentDescription="@string/latex_button_description" />
+
         <EditText
             android:id="@+id/question_details_edittext"
             android:layout_width="match_parent"
@@ -67,6 +80,19 @@
             android:maxLines="10"
             android:minLines="5"
             tools:ignore="LabelFor" />
+
+        <!--
+        TODO: Use popup window to show latex text
+        <katex.hourglass.in.mathlib.MathView
+            android:id="@+id/question_details_latex"
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:autofillHints="Question body"
+            android:inputType="textMultiLine"
+            android:maxLines="10"
+            android:minLines="5"
+            tools:ignore="LabelFor" />
+        -->
 
         <!-- Anonymous Switch -->
         <TextView
