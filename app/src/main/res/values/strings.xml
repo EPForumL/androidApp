@@ -109,6 +109,7 @@
     <string name="latex_output">Latex output</string>
     <string name="latex_input">Latex input</string>
     <string name="render">Render</string>
-    <string name="latex_close">Close</string>
+    <string name="latex_save">Save</string>
+    <string name="latex_cancel">Cancel</string>
 
 </resources>

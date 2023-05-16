@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.latex.LatexDialog
 import com.github.ybecker.epforuml.sensor.CameraActivity
 import katex.hourglass.`in`.mathlib.MathView
 
@@ -55,29 +56,9 @@ class NewQuestionFragment : Fragment() {
             setUpArgs(view, spinner, coursesList, user)
         }
 
+        // Shows the latex renderer dialog
         val latexButton = view.findViewById<ImageButton>(R.id.show_latex_button)
-        latexButton.setOnClickListener {
-            val latexWindow = Dialog(requireContext())
-            latexWindow.setContentView(R.layout.latex_window)
-
-            val editText = latexWindow.findViewById<EditText>(R.id.latex_editText)
-            editText.text = questBody.text
-
-            val latexView = latexWindow.findViewById<MathView>(R.id.latex_mathView)
-            latexView.setDisplayText(questBody.text.toString())
-
-            val renderButton = latexWindow.findViewById<Button>(R.id.latex_render_button)
-            renderButton.setOnClickListener {
-                latexView.setDisplayText(editText.text.toString())
-            }
-            val closeButton = latexWindow.findViewById<Button>(R.id.latex_close_button)
-            closeButton.setOnClickListener {
-                questBody.text = editText.text
-                latexWindow.cancel()
-            }
-
-            latexWindow.show()
-        }
+        latexButton.setOnClickListener { LatexDialog(requireContext(), questBody).show() }
 
         return view
     }

@@ -49,20 +49,49 @@
         android:id="@+id/latex_mathView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/latex_close_button"
+        android:layout_above="@+id/latex_quit_container"
         android:layout_below="@+id/latex_output"
         android:layout_marginVertical="10dp"
-        android:layout_marginBottom="250dp"
+        android:layout_marginBottom="200dp"
         app:setTextSize="12sp"
         app:setTextColor="@color/textColor"/>
 
-    <Button
-        android:id="@+id/latex_close_button"
-        android:layout_width="wrap_content"
+    <!--
+    <EditText
+        android:id="@+id/latex_mathView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/latex_quit_container"
+        android:layout_below="@+id/latex_output"
+        android:layout_marginVertical="10dp"
+        android:layout_marginBottom="200dp" /> -->
+
+    <LinearLayout
+        android:id="@+id/latex_quit_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
-        android:text="@string/latex_close" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/latex_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="20dp"
+            android:text="@string/latex_save"
+            android:layout_weight="1.0"/>
+
+        <Button
+            android:id="@+id/latex_cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="60dp"
+            android:text="@string/latex_cancel"
+            android:layout_weight="1.0"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
