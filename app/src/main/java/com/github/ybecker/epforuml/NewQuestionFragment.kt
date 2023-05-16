@@ -7,16 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
+
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.CameraActivity
-import com.google.firebase.storage.FirebaseStorage
-import java.io.File
-import java.io.FileOutputStream
-import java.util.concurrent.CompletableFuture
+
 
 /**
  * A simple [Fragment] subclass.
@@ -37,7 +34,6 @@ class NewQuestionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val user = DatabaseManager.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
 
         mainActivity = activity as MainActivity
@@ -69,12 +65,14 @@ class NewQuestionFragment : Fragment() {
     ) {
         setUpArgs(view)
         val submitButton = view.findViewById<Button>(R.id.btn_submit)
-        submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
+        val anonymousSwitch = view.findViewById<Switch>(R.id.anonymous_switch)
+        submitButton?.setOnClickListener(submitButtonListener(spinner, anonymousSwitch, coursesList, user))
         setTakeImage(view, questBody, questTitle)
     }
 
     private fun submitButtonListener(
         spinner: Spinner,
+        anonymousSwitch: Switch,
         coursesList: List<Model.Course>,
         user: Model.User?
     ): (v: View) -> Unit = {
@@ -106,17 +104,17 @@ class NewQuestionFragment : Fragment() {
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-                    if (imageURI.text == "null") {
-                        db.addQuestion(
-                            user.userId,
-                            course.courseId,
-                            questTitle.text.toString(),
-                            questBody.text.toString(),
-                            imageURI.text.toString()
-                        ).thenAccept {
-                            //mainActivity.intent.extras.
-                            mainActivity.replaceFragment(HomeFragment())
-                        }
+
+                    db.addQuestion(
+                        user.userId,
+                        course.courseId,
+                        anonymousSwitch.isChecked,
+                        questTitle.text.toString(),
+                        questBody.text.toString(),
+                        imageURI.text.toString()
+                    ).thenAccept {
+                        //mainActivity.intent.extras.
+                        mainActivity.replaceFragment(HomeFragment())
                     }
                 }
             }

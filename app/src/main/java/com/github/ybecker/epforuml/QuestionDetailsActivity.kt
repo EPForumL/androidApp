@@ -1,7 +1,6 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
-import android.net.Uri
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.MenuItem
@@ -19,6 +18,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import kotlin.random.Random
 
 class QuestionDetailsActivity : AppCompatActivity() {
 
@@ -37,6 +37,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var newIntent : Intent
     private lateinit var comingFromFragment : String
+
+    private lateinit var username :String
 
     private var answersCache : ArrayList<Model.Answer> = arrayListOf()
 
@@ -62,6 +64,24 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         hideContentWhenNotConnectedToInternet()
 
+        answerRecyclerView = findViewById(R.id.answers_recycler)
+        answerRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        // create answer view
+        question = intent.getParcelableExtra("question")
+        questionId = question!!.questionId
+        val title : TextView = findViewById(R.id.qdetails_title)
+        title.text = question!!.questionTitle
+
+        db.getUserById(question!!.userId).thenAccept {
+
+            if(question?.isAnonymous!!){
+                username = DatabaseManager.anonymousUsers[Random.nextInt(0, DatabaseManager.anonymousUsers.size)]
+            } else {
+                username = it?.username!!
+            }
+            findViewById<TextView>(R.id.qdetails_question_username).text = getString(R.string.qdetail_username_text).replace("Username", username)
+        }
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
 
@@ -74,24 +94,16 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
 
         swipeRefreshLayout.setColorSchemeColors(
-            ContextCompat.getColor(this, R.color.purple_500)
+            ContextCompat.getColor(this, R.color.highlight)
         )
 
-        answerRecyclerView = findViewById(R.id.answers_recycler)
-        answerRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        // create answer view
-        question = intent.getParcelableExtra("question")
-        questionId = question!!.questionId
-        val title : TextView = findViewById(R.id.qdetails_title)
-        title.text = question!!.questionTitle
         updateRecycler()
 
         // retrieve user
         user = DatabaseManager.user ?: Model.User()
         userId = user.userId
 
-        setUpImage()
+        //setUpImage()
         endorsementSetup()
 
         // only allow posting answer if user is connected
@@ -102,7 +114,11 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private fun updateRecycler() {
         if (MainActivity.isConnected()) {
             db.getQuestionById(questionId).thenAccept {q ->
-                answerRecyclerView.adapter = AnswerAdapter(q!!, this)
+                if(!q?.isAnonymous!!){
+                    answerRecyclerView.adapter = AnswerAdapter(q!!, hashMapOf(),this)
+                } else {
+                    answerRecyclerView.adapter = AnswerAdapter(q!!, hashMapOf(Pair(q.userId, username)),this)
+                }
             }
         } else {
             answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, answersCache)
@@ -260,20 +276,5 @@ class QuestionDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun setUpImage() {
-        val image: ImageView = findViewById(R.id.image_question)
-        if (question!!.imageURI == "") {
-            image.visibility = View.GONE
-        } else {
-            image.visibility = View.VISIBLE
-            displayImageFromFirebaseStorage(question!!.imageURI, image)
-        }
-    }
 
-    private fun displayImageFromFirebaseStorage(imageUrl: String, imageView: ImageView) {
-        Glide.with(imageView.context)
-            .load(imageUrl)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(imageView)
-    }
 }
