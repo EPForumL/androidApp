@@ -853,14 +853,18 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return question_future
     }
+
     private fun uploadToFirebase(uri: String) : CompletableFuture<String>{
         val url = CompletableFuture<String>()
+
+        var extention: String
+
         if(uri == "" || uri.equals(null)){
             url.complete("")
 
-        }else{
+        } else {
             val fileRef: StorageReference =
-                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".jpg")
+                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + getExtension(uri))
             fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
                 fileRef.downloadUrl.addOnSuccessListener { uri ->
                     url.complete(uri.toString())
@@ -875,5 +879,13 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return url
     }
 
+    private fun getExtension(uri: String): String {
+        val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "webp")
+
+        if (imageExtensions.any { extension -> uri.contains(".$extension")}) {
+                return ".jpeg"
+        }
+        return ".mp4"
+    }
 
 }

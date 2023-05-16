@@ -91,7 +91,7 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
     }
 
     private fun isImageURI(uri: String): Boolean {
-        val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif")
+        val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "webp")
         return imageExtensions.any { extension -> uri.contains(".$extension") }
     }
 
@@ -145,7 +145,7 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
 
                     holder.answerText.text = currentAnswerItem.answerText
                     holder.button.setOnClickListener{
-                        db.addChatsWith(DatabaseManager.user!!.userId, currentAnswerItem.userId)
+                        db.addChatsWith(user!!.userId, currentAnswerItem.userId)
                         val intent = Intent(
                             mainActivity,
                             MainActivity::class.java

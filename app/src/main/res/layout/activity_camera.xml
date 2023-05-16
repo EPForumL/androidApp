@@ -15,14 +15,14 @@
         app:layout_constraintVertical_bias="0.5"
         tools:layout_editor_absoluteX="89dp" />
 
-    <Button
+    <ImageButton
         android:id="@+id/image_capture_button"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginBottom="40dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="20dp"
         android:elevation="2dp"
-        android:text="@string/take_photo"
+        android:background="@drawable/camera"
+        android:contentDescription="@string/take_photo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/viewFinder"
         app:layout_constraintHorizontal_bias="0.455"

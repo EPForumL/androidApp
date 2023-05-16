@@ -24,7 +24,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/image_question"
             android:contentDescription="@string/image"
-            android:layout_marginTop="-175dp"
             android:visibility="gone"/>
 
         <com.google.android.exoplayer2.ui.PlayerView
