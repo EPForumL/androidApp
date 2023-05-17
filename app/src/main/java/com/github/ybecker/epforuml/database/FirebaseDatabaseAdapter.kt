@@ -61,6 +61,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val questionTextPath = "questionText"
     private val questionTitlePath = "questionTitle"
     private val answerTextPath = "answerText"
+    private val isAnonymousPath = "anonymous"
 
     private val questionURIPath = "imageURI"
     private val questioAudioPath = "audioPath"
@@ -728,6 +729,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         val userId = dataSnapshot.child(userIdPath).getValue(String::class.java)
 
+        val isAnonymous = dataSnapshot.child(isAnonymousPath).getValue(Boolean::class.java)
+
         val questionTitle = dataSnapshot.child(questionTitlePath).getValue(String::class.java)
 
         val questionText = dataSnapshot.child(questionTextPath).getValue(String::class.java)
@@ -747,8 +750,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         val audioPath = dataSnapshot.child(questioAudioPath).getValue(String::class.java)
 
 
-        if(questionId!=null && courseId!=null && userId!=null && questionTitle!=null && questionText!=null && questionURI!=null&& audioPath!=null){
-            return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers, followers,audioPath)
+        if(questionId!=null && courseId!=null && userId!=null&& isAnonymous!=null && questionTitle!=null && questionText!=null && questionURI!=null&& audioPath!=null){
+            return Question(questionId, courseId, userId,isAnonymous,  questionTitle, questionText, questionURI, answers, followers,audioPath)
+
         }
         return null
     }
@@ -818,8 +822,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String, audioPath : String): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String,isAnonymous: Boolean, questionTitle: String, questionText: String?, image_uri: String, audioPath : String): CompletableFuture<Question> {
         val questionFuture = CompletableFuture<Question>()
+
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
@@ -833,7 +838,8 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             futureAudio = uploadAudioToFirebase(audioPath)
         }
         CompletableFuture.allOf(futureAudio,futureURI).thenAccept{_ ->
-            val question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", futureURI.get(), emptyList(), emptyList(), futureAudio.get())
+            val question = Question(questionId, courseId, userId,isAnonymous, questionTitle, questionText ?: "", futureURI.get(), emptyList(), emptyList(), futureAudio.get())
+
             // add the new question in the db
             newChildRef.setValue(question)
             questionFuture.complete(question)
@@ -842,8 +848,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             //add the question in the user's questions list
             db.child(usersPath).child(userId).child(questionsPath).child(questionId).setValue(questionId)
 
-            this.getUserById(userId).thenAccept {
-                PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+            if(isAnonymous){
+                PushNotificationService().sendNotification(MainActivity.context,"someone Anonymous", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+            } else {
+                this.getUserById(userId).thenAccept {
+                    PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
+                }
             }
         }
         return questionFuture

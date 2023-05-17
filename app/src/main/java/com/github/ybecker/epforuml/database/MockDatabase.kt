@@ -26,42 +26,43 @@ class MockDatabase : Database() {
         courses[course1.courseId] = course1
         val course2 = Course("course1","SDP", mutableListOf(), emptyList())
         courses[course2.courseId] = course2
-//        val course3 = Course("course2","AnalyseI", mutableListOf(), emptyList())
-//        courses[course3.courseId] = course3
-//        val course4 = Course("course3","AnalyseII", mutableListOf(), emptyList())
-//        courses[course4.courseId] = course4
-//        val course5 = Course("course4","AnalyseIII", mutableListOf(), emptyList())
-//        courses[course5.courseId] = course5
-//        val course6 = Course("course5","AnalyseIV", mutableListOf(), emptyList())
-//        courses[course6.courseId] = course6
-//        val course7 = Course("course6","Algo", mutableListOf(), emptyList())
-//        courses[course7.courseId] = course7
-//        val course8 = Course("course7","TOC", mutableListOf(), emptyList())
-//        courses[course8.courseId] = course8
-//        val course9 = Course("course8","POO", mutableListOf(), emptyList())
-//        courses[course9.courseId] = course9
-//        val course10 = Course("course9","POS", mutableListOf(), emptyList())
-//        courses[course10.courseId] = course10
-//        val course11 = Course("course10","OS", mutableListOf(), emptyList())
-//        courses[course11.courseId] = course11
-//        val course12 = Course("course11","Database", mutableListOf(), emptyList())
-//        courses[course12.courseId] = course12
+        val course3 = Course("course2","AnalyseI", mutableListOf(), emptyList())
+        courses[course3.courseId] = course3
+        val course4 = Course("course3","AnalyseII", mutableListOf(), emptyList())
+        courses[course4.courseId] = course4
+        val course5 = Course("course4","AnalyseIII", mutableListOf(), emptyList())
+        courses[course5.courseId] = course5
+        val course6 = Course("course5","AnalyseIV", mutableListOf(), emptyList())
+        courses[course6.courseId] = course6
+        val course7 = Course("course6","Algo", mutableListOf(), emptyList())
+        courses[course7.courseId] = course7
+        val course8 = Course("course7","TOC", mutableListOf(), emptyList())
+        courses[course8.courseId] = course8
+        val course9 = Course("course8","POO", mutableListOf(), emptyList())
+        courses[course9.courseId] = course9
+        val course10 = Course("course9","POS", mutableListOf(), emptyList())
+        courses[course10.courseId] = course10
+        val course11 = Course("course10","OS", mutableListOf(), emptyList())
+        courses[course11.courseId] = course11
+        val course12 = Course("course11","Database", mutableListOf(), emptyList())
+        courses[course12.courseId] = course12
 
         val user1 = User("user1", "TestUser", "", emptyList(), emptyList(), emptyList())
         users[user1.userId] = user1
         val userWithCredentials = User("userX", "Jean Dupont", "jdupont@epfl.ch")
         users[userWithCredentials.userId] = userWithCredentials
 
-        val question1 = Question("question1", "course1", "user1", "About ci",
+        val question1 = Question("question1", "course1", "user1", false,"About ci",
                                 "How do I fix the CI ?",
             "",
             mutableListOf(), emptyList(),"")
         questions[question1.questionId] = question1
-        val question2 = Question("question2", "course0", "user1", "About Scrum master",
+        val question2 = Question("question2", "course0", "user1", false,"About Scrum master",
                                 "What is a Scrum Master ?", "" , mutableListOf(), emptyList(),"")
 
+
         questions[question2.questionId] = question2
-        val question3 = Question("question3", "course0", "user1", "Very long question",
+        val question3 = Question("question3", "course0", "user1", false,"Very long question",
             "Extremely long long long long long long long long long long long long long " +
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long" +
@@ -160,9 +161,9 @@ class MockDatabase : Database() {
         return course
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String, audioPath : String): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String, isAnonymous:Boolean, questionTitle: String, questionText: String?, image_uri: String, audioPath : String): CompletableFuture<Question> {
         val questionId = "question${questions.size + 1}"
-        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", image_uri, emptyList(), emptyList(),"")
+        val question = Question(questionId, courseId, userId, isAnonymous, questionTitle,questionText ?: "", image_uri, emptyList(), emptyList(),"")
 
         questions[questionId] = question
         courses[courseId]?.questions = courses[courseId]?.questions?.plus(question.questionId) ?: listOf(question.questionId)

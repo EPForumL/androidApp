@@ -108,4 +108,7 @@
     <string name="record_voice_note">Record Voice Note</string>
     <string name="play_voice_note">Play voice note</string>
 
+    <string name="qdetail_username_text">Username asks :</string>
+    <string name="anonymous">Anonymous</string>
+
 </resources>

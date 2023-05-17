@@ -13,8 +13,10 @@ import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.AndroidAudioRecorder
 import com.github.ybecker.epforuml.sensor.CameraActivity
@@ -56,7 +58,6 @@ class NewQuestionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val user = DatabaseManager.user
         val view = inflater.inflate(R.layout.fragment_new_question, container, false)
 
         mainActivity = activity as MainActivity
@@ -102,12 +103,10 @@ class NewQuestionFragment : Fragment() {
 
         //Set up the listeners
 
-        submitButton?.setOnClickListener(submitButtonListener(spinner, coursesList, user))
-
+        val anonymousSwitch = view.findViewById<Switch>(R.id.anonymous_switch)
+        submitButton?.setOnClickListener(submitButtonListener(spinner, anonymousSwitch, coursesList, user))
+        setTakeImage(view, questBody, questTitle)
         setRecordButtonListener(view)
-
-        setTakeImageListener(view, questBody, questTitle)
-
         setPlayButtonListener(view)
     }
 
@@ -234,6 +233,7 @@ class NewQuestionFragment : Fragment() {
 
     private fun submitButtonListener(
         spinner: Spinner,
+        anonymousSwitch: Switch,
         coursesList: List<Model.Course>,
         user: Model.User?
     ): (v: View) -> Unit = {
@@ -271,12 +271,14 @@ class NewQuestionFragment : Fragment() {
                     }
                     db.addQuestion(
                         user.userId,
-                        course.courseId,
+                        course.courseId,                        
+                        anonymousSwitch.isChecked,
                         questTitle.text.toString(),
                         questBody.text.toString(),
                         imageURI.text.toString(),
                         audioFilePath
                     ).thenAccept {
+
                         mainActivity.replaceFragment(HomeFragment())
                     }
                 }

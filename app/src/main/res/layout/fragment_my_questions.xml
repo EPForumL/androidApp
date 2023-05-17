@@ -14,8 +14,9 @@
         <TextView
             android:id="@+id/course_title_text_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:textSize="20sp"
+            android:text="My Questions"
             android:textStyle="bold"
             android:text="My Questions"
             android:textColor="@android:color/white"
