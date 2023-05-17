@@ -94,6 +94,10 @@ class MathView : WebView {
         loadData()
     }
 
+    fun getDisplayText(): String? {
+        return display_text
+    }
+
     private val offlineKatexConfig: String
         private get() {
             val offline_config = """<!DOCTYPE html>

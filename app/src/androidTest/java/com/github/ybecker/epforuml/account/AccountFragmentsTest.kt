@@ -44,12 +44,6 @@ class AccountFragmentsTest {
     }
 
     @Test
-    fun test() {
-        // Temporary comment until we find a solution for the CI ...
-    }
-
-
-    @Test
     fun checkGuestAccountFragmentLayout() {
         onView(ViewMatchers.withId(R.id.guestButton))
             .perform(click())

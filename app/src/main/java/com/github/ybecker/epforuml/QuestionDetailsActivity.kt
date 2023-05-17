@@ -9,6 +9,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity.Companion.context
@@ -215,9 +216,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val sendButton : ImageButton = findViewById(R.id.post_reply_button)
         val latexButton : ImageButton = findViewById(R.id.question_details_latex)
 
-        latexButton.setOnClickListener { LatexDialog(this, replyBox).show() }
-
         if (userId.isNotEmpty()) {
+            latexButton.setOnClickListener { LatexDialog(this, replyBox).show() }
+            latexButton.isVisible = true
             // store content of box as a new answer to corresponding question
             sendButton.setOnClickListener {
                 if (question != null) {
