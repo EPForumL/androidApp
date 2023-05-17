@@ -12,15 +12,15 @@ check_android_task:
   install_emulator_script:
     sdkmanager --install "system-images;android-30;google_apis;x86"
 
-  create_avd_script:
+  create_avd_script: |
     echo no | avdmanager create avd --force \
-    --name emulator \
-    --package "system-images;android-30;google_apis;x86" \
-    --device "Nexus 5" \
-    --sdcard 512M \
-    --abi google_apis/x86_64 \
-    --tag google_apis \
-    --advanced
+      --name emulator \
+      --package "system-images;android-30;google_apis;x86" \
+      --device "Nexus 5" \
+      --sdcard 512M \
+      --abi google_apis/x86_64 \
+      --tag google_apis \
+      --additional-args "--camera-front emulated --camera-back none --mic emulated"
 
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator \
@@ -39,21 +39,13 @@ check_android_task:
   wait_for_avd_script:
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 3; done; input keyevent 82'
 
-  enable_camera_script:
-    adb shell "setprop camera.front 1"
-    adb shell "setprop camera.back 1"
-
-  enable_microphone_script:
-    adb shell "setprop microphone.enabled 1"
-
   disable_animations_script: |
     adb shell settings put global window_animation_scale 0.0
     adb shell settings put global transition_animation_scale 0.0
     adb shell settings put global animator_duration_scale 0.0
 
   prepare_codeclimate_script: |
-    curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-    chmod +x ./cc-test-reporter
+    curl -L https://codeclimate.com/downloads/test-reportchmod +x ./cc-test-reporter
     ./cc-test-reporter before-build
 
   screen_record_background_script:
