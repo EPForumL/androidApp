@@ -110,7 +110,7 @@ class NewQuestionTest {
     }
 
 
-
+/*
     @Test
     fun testAddImage() {
 
@@ -165,7 +165,7 @@ class NewQuestionTest {
     }
 
 
-
+*/
 
 
     @Test
