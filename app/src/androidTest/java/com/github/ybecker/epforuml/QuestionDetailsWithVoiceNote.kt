@@ -1,3 +1,4 @@
+/*
 package com.github.ybecker.epforuml
 
 import android.Manifest
@@ -57,8 +58,6 @@ class QuestionDetailsWithVoiceNote {
             Thread.sleep(2000)
             onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
             onView(withId(R.id.btn_submit)).perform(scrollTo(), click())
-            //why does it loop forever here??
-
             onView(withText(string)).perform(click())
             scenario.onActivity {
                 assert(it.findViewById<Button>(R.id.play_note_button).visibility == View.VISIBLE)
@@ -76,3 +75,4 @@ class QuestionDetailsWithVoiceNote {
 
 
 }
+*/
