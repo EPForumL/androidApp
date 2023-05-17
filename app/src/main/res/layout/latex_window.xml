@@ -53,6 +53,7 @@
         android:layout_below="@+id/latex_output"
         android:layout_marginVertical="10dp"
         android:layout_marginBottom="200dp"
+        android:scrollbars="none"
         app:setTextSize="12sp"
         app:setTextColor="@color/textColor" />
 

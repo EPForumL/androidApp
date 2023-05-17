@@ -11,6 +11,8 @@ import com.github.ybecker.epforuml.R
 
 /**
  * Created by lingaraj on 3/15/17.
+ * The katex.hourglass.in.mathlib.MathView library directly imported to the project
+ * to be able to modify the html code to display the latex.
  */
 class MathView : WebView {
     private val TAG = "KhanAcademyKatexView"

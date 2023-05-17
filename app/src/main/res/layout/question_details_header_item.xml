@@ -20,6 +20,7 @@
         android:id="@+id/qdetails_question_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scrollbars="none"
         app:setTextSize="16sp"
         app:setTextColor="@color/textColor"
         app:setText="@string/new_question_details" />
