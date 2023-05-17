@@ -13,6 +13,10 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -54,15 +58,14 @@ class CameraTest {
         } catch (e: Exception) {
             Log.e("NewQuestionFragment", "Error lauching activity: \${e.message}")
         }
-}/*
+}
 
     @Test
     fun navigatesCorrectly(){
+        Firebase.auth.signOut()
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
-        // go to MainActivity
-        onView(ViewMatchers.withId(R.id.guestButton)).perform(ViewActions.click())
-
-        onView(ViewMatchers.withId(R.id.home_layout_parent)).check(matches(ViewMatchers.isDisplayed()))
 
         // open navigation drawer
         onView(ViewMatchers.withContentDescription(R.string.open))
@@ -75,7 +78,6 @@ class CameraTest {
 
         onView(ViewMatchers.withId(R.id.image_capture_button)).check(matches(ViewMatchers.isDisplayed()))
         onView(ViewMatchers.withId(R.id.image_capture_button)).perform(ViewActions.click())
-
-
+        scenario.close()
     }
-*/}
+}

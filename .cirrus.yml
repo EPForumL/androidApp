@@ -24,7 +24,6 @@ check_android_task:
     --camera-front emulated \
     --camera-webcam-list webcam0 \
     --microphone yes \
-    --advanced
 
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
