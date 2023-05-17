@@ -12,25 +12,16 @@ check_android_task:
   install_emulator_script:
     sdkmanager --install "system-images;android-30;google_apis;x86"
   create_avd_script:
-    echo no | avdmanager create avd --force \
-      --name emulator \
+    echo no | avdmanager create avd --force
+      --name emulator
       --package "system-images;android-30;google_apis;x86"
-    echo "skin.name=480x800" >> $ANDROID_HOME/emulator/device_config.ini
-    echo "skin.path=480x800" >> $ANDROID_HOME/emulator/device_config.ini
-    echo "hw.camera.front=emulated" >> $ANDROID_HOME/emulator/device_config.ini
-    echo "hw.camera.back=none" >> $ANDROID_HOME/emulator/device_config.ini
-    echo "hw.audioInput=no" >> $ANDROID_HOME/emulator/device_config.ini
-
-
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
       -avd emulator
-      -no-audio
       -no-boot-anim
       -gpu swiftshader_indirect
       -no-snapshot
       -no-window
-      -camera-back none
   assemble_instrumented_tests_script: |
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest
