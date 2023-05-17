@@ -105,13 +105,10 @@ class NewQuestionFragment : Fragment() {
 
         val anonymousSwitch = view.findViewById<Switch>(R.id.anonymous_switch)
         submitButton?.setOnClickListener(submitButtonListener(spinner, anonymousSwitch, coursesList, user))
-        setTakeImage(view, questBody, questTitle)
+        setTakeImageListener(view, questBody, questTitle)
         setRecordButtonListener(view)
         setPlayButtonListener(view)
     }
-
-
-
 
 
     private fun setTakeImageListener(
