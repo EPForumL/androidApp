@@ -137,6 +137,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-messaging:23.1.2'
     implementation 'com.google.gms:google-services:4.3.8'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     // Circular ImageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'

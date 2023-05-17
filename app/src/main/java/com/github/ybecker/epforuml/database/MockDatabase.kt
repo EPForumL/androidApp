@@ -55,10 +55,10 @@ class MockDatabase : Database() {
         val question1 = Question("question1", "course1", "user1", "About ci",
                                 "How do I fix the CI ?",
             "",
-            mutableListOf(), emptyList())
+            mutableListOf(), emptyList(),"")
         questions[question1.questionId] = question1
         val question2 = Question("question2", "course0", "user1", "About Scrum master",
-                                "What is a Scrum Master ?", "" , mutableListOf(), emptyList())
+                                "What is a Scrum Master ?", "" , mutableListOf(), emptyList(),"")
 
         questions[question2.questionId] = question2
         val question3 = Question("question3", "course0", "user1", "Very long question",
@@ -66,7 +66,7 @@ class MockDatabase : Database() {
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long" +
                     "long long long long long long long long long long long long long long long " +
-                    "question" ,"", mutableListOf(), emptyList())
+                    "question" ,"", mutableListOf(), emptyList(),"")
 
         questions[question3.questionId] = question3
 
@@ -160,9 +160,9 @@ class MockDatabase : Database() {
         return course
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String, audioPath : String): CompletableFuture<Question> {
         val questionId = "question${questions.size + 1}"
-        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", image_uri, emptyList(), emptyList())
+        val question = Question(questionId, courseId, userId, questionTitle,questionText ?: "", image_uri, emptyList(), emptyList(),"")
 
         questions[questionId] = question
         courses[courseId]?.questions = courses[courseId]?.questions?.plus(question.questionId) ?: listOf(question.questionId)

@@ -117,7 +117,7 @@ abstract class Database {
      * @param image_uri the uri to an image linked with the question
      * @return the question that was posted in database
      */
-    abstract fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,  image_uri: String): CompletableFuture<Question>
+    abstract fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?,  image_uri: String, audioPath : String): CompletableFuture<Question>
 
     /**
      * Posts a new answer to a question in a given course.

@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
@@ -17,9 +18,9 @@ import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.io.File
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.coroutineContext
 
 
 /**
@@ -63,6 +64,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val answerTextPath = "answerText"
 
     private val questionURIPath = "imageURI"
+    private val questioAudioPath = "audioPath"
 
     private val emailPath = "email"
     private val profilePicPath = "profilePic"
@@ -748,9 +750,11 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         dataSnapshot.child(followersPath).children.forEach { questionSnapshot ->
             questionSnapshot.key?.let { followers.add(it) }
         }
+        val audioPath = dataSnapshot.child(questioAudioPath).getValue(String::class.java)
 
-        if(questionId!=null && courseId!=null && userId!=null && questionTitle!=null && questionText!=null && questionURI!=null){
-            return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers, followers)
+
+        if(questionId!=null && courseId!=null && userId!=null && questionTitle!=null && questionText!=null && questionURI!=null&& audioPath!=null){
+            return Question(questionId, courseId, userId, questionTitle, questionText, questionURI, answers, followers,audioPath)
         }
         return null
     }
@@ -820,18 +824,22 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
+    override fun addQuestion(userId: String, courseId: String, questionTitle: String, questionText: String?, image_uri: String, audioPath : String): CompletableFuture<Question> {
         val question_future = CompletableFuture<Question>()
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-        var future = CompletableFuture.completedFuture("")
+        var futureURI = CompletableFuture.completedFuture("")
         if (image_uri != "null") {
-            future = uploadToFirebase(image_uri)
+            futureURI = uploadImageToFirebase(image_uri)
         }
-        future.thenAccept{
-            var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+        var futureAudio = CompletableFuture.completedFuture("")
+        if(audioPath != "null"){
+            futureAudio = uploadAudioToFirebase(audioPath)
+        }
+        CompletableFuture.allOf(futureAudio,futureURI).thenAccept{_ ->
+            var question = Question(questionId, courseId, userId, questionTitle, questionText ?: "", futureURI.get(), emptyList(), emptyList(), futureAudio.get())
             // add the new question in the db
             newChildRef.setValue(question)
             question_future.complete(question)
@@ -843,11 +851,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             this.getUserById(userId).thenAccept {
                 PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", questionTitle, questionText ?: "", courseId, NotificationType.QUESTION)
             }
-
         }
+
+
         return question_future
     }
-    private fun uploadToFirebase(uri: String) : CompletableFuture<String>{
+    private fun uploadImageToFirebase(uri: String) : CompletableFuture<String>{
         val url = CompletableFuture<String>()
         if(uri == "" || uri.equals(null)){
             url.complete("")
@@ -856,6 +865,27 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             val fileRef: StorageReference =
                 FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".jpg")
             fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
+                fileRef.downloadUrl.addOnSuccessListener { uri ->
+                    url.complete(uri.toString())
+                }
+            }.addOnFailureListener {
+                url.completeExceptionally(it)
+            }.addOnCanceledListener {
+                url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
+            }
+
+        }
+        return url
+    }
+    private fun uploadAudioToFirebase(path: String) : CompletableFuture<String>{
+        val url = CompletableFuture<String>()
+        if(path == "" || path.equals(null)){
+            url.complete("")
+
+        }else{
+            val fileRef: StorageReference =
+                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".mp4")
+            fileRef.putFile(File(path).toUri()).addOnSuccessListener {
                 fileRef.downloadUrl.addOnSuccessListener { uri ->
                     url.complete(uri.toString())
                 }

@@ -2,7 +2,6 @@ package com.github.ybecker.epforuml.database
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.android.gms.maps.model.LatLng
 
 class Model {
 
@@ -15,7 +14,8 @@ class Model {
         val questionText: String,
         val imageURI : String,
         var answers: List<String>,
-        var followers: List<String>
+        var followers: List<String>,
+        val audioPath : String
         ) : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
@@ -25,8 +25,9 @@ class Model {
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.createStringArrayList()!!,
-            parcel.createStringArrayList()!!
-        ) {
+            parcel.createStringArrayList()!!,
+            parcel.readString()!!
+            ) {
         }
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -38,6 +39,8 @@ class Model {
             parcel.writeString(imageURI)
             parcel.writeStringList(answers)
             parcel.writeStringList(followers)
+            parcel.writeString(audioPath)
+
         }
 
         override fun describeContents(): Int {

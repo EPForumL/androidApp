@@ -1,16 +1,11 @@
 package com.github.ybecker.epforuml
 
-import android.app.Activity
-import android.content.ActivityNotFoundException
-import android.content.ContentValues.TAG
+
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,9 +19,6 @@ import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.AndroidAudioRecorder
 import com.github.ybecker.epforuml.sensor.CameraActivity
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 import android.Manifest
 import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
@@ -266,18 +258,20 @@ class NewQuestionFragment : Fragment() {
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-                    //if (imageURI.text == "null") {
+                    var audioFilePath= "null"
+                    if(audioFile != null){
+                        audioFilePath = audioFile!!.absolutePath
+                    }
                     db.addQuestion(
                         user.userId,
                         course.courseId,
                         questTitle.text.toString(),
                         questBody.text.toString(),
-                        imageURI.text.toString()
+                        imageURI.text.toString(),
+                        audioFilePath
                     ).thenAccept {
-                        //mainActivity.intent.extras.
                         mainActivity.replaceFragment(HomeFragment())
                     }
-                    //}
                 }
             }
         }
