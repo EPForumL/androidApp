@@ -4,13 +4,14 @@ import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoActivityResumedException
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity
 import com.dsphotoeditor.sdk.utils.DsPhotoEditorConstants
 import android.net.Uri
+import android.view.View
+import androidx.test.espresso.*
 import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions.*
 import com.github.ybecker.epforuml.authentication.LoginActivity
@@ -24,6 +25,8 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.util.HumanReadables
+import androidx.test.espresso.util.TreeIterables
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -32,6 +35,9 @@ import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.android.awaitFrame
 import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Matchers.hasSize
+import java.lang.Thread.sleep
+import java.util.concurrent.TimeoutException
+import java.util.regex.Matcher
 
 @RunWith(AndroidJUnit4::class)
 class NewQuestionTest {
@@ -102,6 +108,64 @@ class NewQuestionTest {
         scenario.close()
 
     }
+
+
+
+    @Test
+    fun testAddImage() {
+
+        Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
+
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
+
+        // Launch the fragment
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+
+        // Click on the new quest button
+        onView(withId(R.id.new_question_button)).perform(click())
+
+        // Check that the new fragment is displayed
+        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+
+        //Body of the question
+        val questBody = "Text From User"
+        onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
+
+        // Close the keyboard
+        Espresso.closeSoftKeyboard()
+
+        //Title of the question
+        onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title"))
+
+        // Close the keyboard
+        Espresso.closeSoftKeyboard()
+
+        // Scroll to the end of the page
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+
+        //click on the image button
+        onView(withId(R.id.takeImage)).perform(click())
+
+        onView(withId(R.id.camera_layout_parent)).check(matches(isDisplayed()))
+
+        //click on the camera button
+
+        onView(withId(R.id.image_capture_button)).perform(click())
+
+
+        scenario.close()
+
+    }
+
+
+
 
 
     @Test
