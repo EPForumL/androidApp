@@ -137,15 +137,16 @@ class NewQuestionFragment : Fragment() {
             }
 
             if (audioFile != null) {
-                //audioPlayer?.playFile(audioFile!!)
+                recordVoiceNote.isClickable = false
+                audioPlayer?.playFile(audioFile!!.toURI())
             }
-
+            recordVoiceNote.isClickable = true
         }
     }
     private fun setRecordButtonListener(View: View){
 
         recordVoiceNote.setOnClickListener {
-
+            playVoiceNote.isClickable = false
             if (hasRecordAudioPermission()) {
 
                 startRecording()
@@ -153,6 +154,7 @@ class NewQuestionFragment : Fragment() {
             else {
                 requestRecordAudioPermission()
             }
+            playVoiceNote.isClickable = true
         }
      }
 
