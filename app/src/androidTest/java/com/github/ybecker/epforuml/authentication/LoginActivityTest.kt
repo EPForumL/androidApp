@@ -46,6 +46,7 @@ class LoginActivityTest {
         Intents.release()
     }
 
+
     @Test
     fun checkLoginActivityHasExpectedComponents() {
         scenario = ActivityScenario.launch(LoginActivity::class.java)
@@ -84,4 +85,6 @@ class LoginActivityTest {
 
         assertTrue(DatabaseManager.user == null)
     }
+
+
 }
