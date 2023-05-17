@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml
 
+import android.Manifest
 import android.content.Intent
 import android.view.View
 import android.widget.Button
@@ -11,19 +12,22 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import kotlin.concurrent.thread
 
 @RunWith(AndroidJUnit4::class)
 class QuestionDetailsWithVoiceNote {
 
     private lateinit var scenario: ActivityScenario<MainActivity>
+    @get:Rule
+    var permissionCamera: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.RECORD_AUDIO)
 
     @Before
     fun setUp(){
