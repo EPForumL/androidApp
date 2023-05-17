@@ -21,6 +21,7 @@ import com.github.ybecker.epforuml.sensor.CameraActivity
 import java.io.File
 import java.util.*
 import android.Manifest
+import androidx.core.net.toUri
 import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
 
 /**
@@ -138,7 +139,7 @@ class NewQuestionFragment : Fragment() {
 
             if (audioFile != null) {
                 recordVoiceNote.isClickable = false
-                audioPlayer?.playFile(audioFile!!.toURI())
+                audioPlayer?.playFile(audioFile!!.toUri())
             }
             recordVoiceNote.isClickable = true
         }

@@ -20,7 +20,6 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
-import java.net.URI
 
 class QuestionDetailsActivity : AppCompatActivity() {
 
@@ -158,7 +157,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             playButton.visibility = View.GONE
         }
         playButton.setOnClickListener{
-           audioPlayer.playFile(URI.create(question!!.audioPath))
+           audioPlayer.playFile(Uri.parse(question!!.audioPath))
         }
     }
     private fun endorsementSetup() {

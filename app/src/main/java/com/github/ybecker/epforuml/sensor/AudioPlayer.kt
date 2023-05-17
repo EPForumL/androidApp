@@ -1,8 +1,9 @@
 package com.github.ybecker.epforuml.sensor
 
-import java.net.URI
+import android.net.Uri
+
 
 interface AudioPlayer {
-    fun playFile(uri: URI)
+    fun playFile(uri: Uri)
     fun stop()
 }
