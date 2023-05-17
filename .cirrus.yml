@@ -12,9 +12,20 @@ check_android_task:
   install_emulator_script:
     sdkmanager --install "system-images;android-30;google_apis;x86"
   create_avd_script:
-    echo no | avdmanager create avd --force
-      --name emulator
-      --package "system-images;android-30;google_apis;x86"
+    echo no | avdmanager create avd --force \
+    --name emulator \
+    --package "system-images;android-30;google_apis;x86" \
+    --device "Nexus 5" \
+    --sdcard 512M \
+    --abi google_apis/x86_64 \
+    --tag google_apis \
+    --audio yes \
+    --camera-back emulated \
+    --camera-front emulated \
+    --camera-webcam-list webcam0 \
+    --microphone yes \
+    --advanced
+
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
       -avd emulator
