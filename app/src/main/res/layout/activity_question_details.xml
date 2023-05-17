@@ -59,6 +59,16 @@
         android:layout_weight="1"
         android:contentDescription="@string/image" />
 
+    <Button
+        android:id="@+id/play_note_button"
+        android:layout_width="257dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/button_bg"
+        android:drawableStart="@drawable/ic_microphone"
+        android:drawablePadding="8dp"
+        android:text="@string/play_voice_note"
+        android:layout_gravity="center"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"

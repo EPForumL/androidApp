@@ -137,8 +137,7 @@ class NewQuestionFragment : Fragment() {
             }
 
             if (audioFile != null) {
-
-                audioPlayer?.playFile(audioFile!!)
+                //audioPlayer?.playFile(audioFile!!)
             }
 
         }
