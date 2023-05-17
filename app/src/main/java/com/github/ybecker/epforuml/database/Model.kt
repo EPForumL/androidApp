@@ -1,8 +1,9 @@
 package com.github.ybecker.epforuml.database
 
+import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.android.gms.maps.model.LatLng
+import androidx.annotation.RequiresApi
 
 class Model {
 
@@ -11,16 +12,19 @@ class Model {
         val questionId: String,
         val courseId: String,
         val userId: String,
+        val isAnonymous: Boolean,
         val questionTitle: String,
         val questionText: String,
         val imageURI : String,
         var answers: List<String>,
         var followers: List<String>
         ) : Parcelable {
+        @RequiresApi(Build.VERSION_CODES.Q)
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
+            parcel.readBoolean(),
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.readString()!!,
@@ -29,10 +33,12 @@ class Model {
         ) {
         }
 
+        @RequiresApi(Build.VERSION_CODES.Q)
         override fun writeToParcel(parcel: Parcel, flags: Int) {
             parcel.writeString(questionId)
             parcel.writeString(courseId)
             parcel.writeString(userId)
+            parcel.writeBoolean(isAnonymous)
             parcel.writeString(questionTitle)
             parcel.writeString(questionText)
             parcel.writeString(imageURI)
@@ -45,6 +51,7 @@ class Model {
         }
 
         companion object CREATOR : Parcelable.Creator<Question> {
+            @RequiresApi(Build.VERSION_CODES.Q)
             override fun createFromParcel(parcel: Parcel): Question {
                 return Question(parcel)
             }
