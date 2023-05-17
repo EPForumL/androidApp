@@ -21,6 +21,8 @@ import com.github.ybecker.epforuml.sensor.CameraActivity
 import java.io.File
 import java.util.*
 import android.Manifest
+import android.annotation.SuppressLint
+import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
 
@@ -134,20 +136,22 @@ class NewQuestionFragment : Fragment() {
 
         playVoiceNote.setOnClickListener {
             if (audioPlayer == null) {
+                recordVoiceNote.isEnabled = false
                 audioPlayer = context?.let { it1 -> AndroidAudioPlayer(it1) }
+                recordVoiceNote.isEnabled = true
             }
 
             if (audioFile != null) {
-                recordVoiceNote.isClickable = false
+                recordVoiceNote.isEnabled = false
                 audioPlayer?.playFile(audioFile!!.toUri())
+                recordVoiceNote.isEnabled = true
             }
-            recordVoiceNote.isClickable = true
+
         }
     }
     private fun setRecordButtonListener(View: View){
 
         recordVoiceNote.setOnClickListener {
-            playVoiceNote.isClickable = false
             if (hasRecordAudioPermission()) {
 
                 startRecording()
@@ -155,12 +159,12 @@ class NewQuestionFragment : Fragment() {
             else {
                 requestRecordAudioPermission()
             }
-            playVoiceNote.isClickable = true
         }
      }
 
 
     private fun startRecording(){
+        playVoiceNote.isEnabled = false
         if (audioRecorder == null) {
             audioRecorder = context?.let { it1 -> AndroidAudioRecorder(it1) }
         }
@@ -179,6 +183,7 @@ class NewQuestionFragment : Fragment() {
             isRecording = false
             updateRecordButtonText()
         }
+        playVoiceNote.isEnabled = false
     }
 
 
