@@ -1,4 +1,3 @@
-/*
 package com.github.ybecker.epforuml
 
 import android.Manifest
@@ -11,6 +10,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
@@ -54,14 +54,14 @@ class QuestionDetailsWithVoiceNote {
 
     @Test
     fun submitMakesCorrectUpload() {
-            onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
-            Thread.sleep(2000)
-            onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
-            onView(withId(R.id.btn_submit)).perform(scrollTo(), click())
-            onView(withText(string)).perform(click())
-            scenario.onActivity {
-                assert(it.findViewById<Button>(R.id.play_note_button).visibility == View.VISIBLE)
-            }
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+        Thread.sleep(2000)
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+        onView(withId(R.id.btn_submit)).perform(scrollTo(), click())
+        onView(withText(string)).perform(click())
+        onView(withId(R.id.play_note_button)).perform(scrollTo())
+        onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
+
     }
 
     @Test
@@ -75,4 +75,3 @@ class QuestionDetailsWithVoiceNote {
 
 
 }
-*/
