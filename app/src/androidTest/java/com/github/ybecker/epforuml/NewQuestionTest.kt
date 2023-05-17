@@ -483,7 +483,7 @@ class NewQuestionTest {
         //Send anonymous question as in previous test
         Firebase.auth.signOut()
         val title = "TITLE"
-        db.addQuestion("OTHERUSER", "course0", true, title, "text", "")
+        db.addQuestion("OTHERUSER", "course0", true, title, "text", "","")
         val user = db.addUser("AUSERID", "AUSER", "").get()
         DatabaseManager.user = user
         val scenario = ActivityScenario.launch(MainActivity::class.java)
