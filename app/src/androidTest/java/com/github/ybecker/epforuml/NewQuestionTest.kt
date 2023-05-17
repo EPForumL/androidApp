@@ -284,33 +284,6 @@ class NewQuestionTest {
 
     }
 
-
-
-
-    @Test
-    fun goesBackToNewQuestionWhenDone() {
-
-/*        scenario = ActivityScenario.launch(MainActivity::class.java)
-
-        onView(withId(R.id.new_question_button)).perform(click())
-
-        onView(withId(R.id.question_title_edittext)).check(matches(isDisplayed()))
-        onView(withId(R.id.question_details_edittext)).check(matches(isDisplayed()))
-        onView(withId(R.id.subject_spinner)).check(matches(isDisplayed()))
-        onView(withId(R.id.image_uri)).check(matches(isDisplayed()))
-
-        onView(withId(R.id.btn_submit)).check(matches(isDisplayed()))
-        onView(withId(R.id.btn_submit)).check(matches(isClickable()))
-
-
-        onView(withId(R.id.takeImage)).check(matches(isDisplayed()))
-        onView(withId(R.id.takeImage)).check(matches(isClickable()))
-
-        onView(withId(R.id.uploadButton)).check(matches(isDisplayed()))
-        onView(withId(R.id.uploadButton)).check(matches(isClickable()))
-        scenario.close()*/
-    }
-
     @Test
     fun setsCorrectlyByIntent() {
         val intent = Intent(
