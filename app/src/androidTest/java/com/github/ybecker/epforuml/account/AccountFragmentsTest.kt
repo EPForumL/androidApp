@@ -2,11 +2,13 @@ package com.github.ybecker.epforuml.account
 
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.firebase.ui.auth.KickoffActivity
@@ -54,7 +56,12 @@ class AccountFragmentsTest {
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
 
+        onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
+
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+
+
+
         onView(ViewMatchers.withId(R.id.nav_account))
             .perform(click())
 
@@ -76,6 +83,8 @@ class AccountFragmentsTest {
 
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
+
+        onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
         onView(ViewMatchers.withId(R.id.nav_account))
             .perform(click())
 
@@ -101,6 +110,8 @@ class AccountFragmentsTest {
 
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
+
+        onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
         onView(ViewMatchers.withId(R.id.nav_account))
             .perform(click())
         onView(ViewMatchers.withId(R.id.signOutButton))
@@ -122,6 +133,8 @@ class AccountFragmentsTest {
 
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
+
+        onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
         onView(ViewMatchers.withId(R.id.nav_account))
             .perform(click())
         onView(ViewMatchers.withId(R.id.deleteAccountButton))
