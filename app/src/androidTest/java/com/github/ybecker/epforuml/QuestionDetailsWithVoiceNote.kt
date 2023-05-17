@@ -40,8 +40,8 @@ class QuestionDetailsWithVoiceNote {
             MainActivity::class.java
         )
         intent.putExtra("fragment", "NewQuestionFragment")
-        intent.putExtra("questionTitle", "Luna")
-        intent.putExtra("questionDetails", "Godier")
+        intent.putExtra("questionTitle", "voicenote")
+        intent.putExtra("questionDetails", "voicenote")
         scenario = ActivityScenario.launch(intent)
     }
 
@@ -57,7 +57,7 @@ class QuestionDetailsWithVoiceNote {
             onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
             onView(withId(R.id.btn_submit)).perform(scrollTo(), click())
             //why does it loop forever here??
-            onView(withText("Luna")).perform(click())
+            onView(withText("voicenote")).perform(click())
             scenario.onActivity {
                 assert(it.findViewById<Button>(R.id.play_note_button).visibility == View.VISIBLE)
             }
