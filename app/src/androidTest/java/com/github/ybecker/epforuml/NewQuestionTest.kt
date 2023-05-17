@@ -473,6 +473,8 @@ class NewQuestionTest {
         val usernameText: ViewInteraction = onView(withId(R.id.qdetails_question_username))
         val text = getText(usernameText).removeSuffix(" asks :")
 
+        Thread.sleep(1000)
+
         // get text of first item
         TextOnItemEqual(1, text, R.id.qdetails_answer_username)
 
