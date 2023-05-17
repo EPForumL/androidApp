@@ -416,7 +416,7 @@ class NewQuestionTest {
         secondItem.perform(click())
 
         //Click the anonymous switch and submit
-        onView(withId(R.id.anonymous_switch)).perform(click())
+        onView(withId(R.id.anonymous_switch)).perform(scrollTo(), click())
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
         onView(withId(R.id.btn_submit)).perform(click())
 
@@ -458,7 +458,7 @@ class NewQuestionTest {
         val secondItem = onData(anything()).atPosition(1)
         secondItem.perform(click())
         //Click the anonymous switch and submit
-        onView(withId(R.id.anonymous_switch)).perform(click())
+        onView(withId(R.id.anonymous_switch)).perform(scrollTo(), click())
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
         onView(withId(R.id.btn_submit)).perform(click())
 
