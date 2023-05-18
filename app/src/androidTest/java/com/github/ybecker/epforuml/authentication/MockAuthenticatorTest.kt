@@ -85,7 +85,10 @@ class MockAuthenticatorTest {
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
         val user = DatabaseManager.db.getUserById("0").join()
         val size = user?.connections?.size!!
-        scenario.onActivity { MockAuthenticator(it).signOut().join() }
-        assertTrue(user.connections.size == size-1)
+        scenario.onActivity {
+            MockAuthenticator(it).signOut().join()
+            assertTrue(user.connections.size == size-1)
+        }
+
     }
 }
