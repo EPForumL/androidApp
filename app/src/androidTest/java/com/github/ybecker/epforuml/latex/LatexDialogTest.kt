@@ -129,7 +129,7 @@ class LatexDialogTest {
     }
 
     /*
-    // TODO: Find why it fails on CI
+    TODO: Find why it fails on CI
     @Test
     fun checkTextIsSavedWhenClickOnSave() {
         lateinit var dialog: LatexDialog
