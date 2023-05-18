@@ -25,12 +25,27 @@
         app:setTextColor="@color/textColor"
         app:setText="@string/new_question_details" />
 
-    <ImageView
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/image_question"
-        android:layout_weight="1"
-        android:contentDescription="@string/image" />
+        android:id="@+id/img_vid_frameLayout">
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/image_question"
+            android:contentDescription="@string/image"
+            android:clickable="true"
+            android:visibility="gone"/>
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/video_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:resize_mode="fixed_width"
+            app:use_controller="true"
+            android:clickable="true"
+            android:visibility="gone"/>
+    </FrameLayout>
 
 </LinearLayout>

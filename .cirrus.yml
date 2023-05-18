@@ -37,6 +37,9 @@ check_android_task:
     ./cc-test-reporter before-build
   screen_record_background_script:
     for n in $(seq 1 20); do adb exec-out screenrecord --time-limit=180 --output-format=h264 - > $n.h264; done
+#  add_permissions:
+#    adb shell pm grant com.github.ybecker.epforuml android.permission.CAMERA
+#    adb shell pm grant com.github.ybecker.epforuml android.permission.RECORD_AUDIO
   check_script:
     ./gradlew check connectedCheck --no-parallel
   report_codeclimate_script: |
