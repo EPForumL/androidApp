@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.scrollTo
@@ -20,6 +21,7 @@ import androidx.test.uiautomator.UiSelector
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
+import com.github.ybecker.epforuml.util.EspressoIdlingResource
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -54,11 +56,21 @@ class CameraTest {
 
  */
 
+    private fun registerIdlingResource() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+    }
+
+    private fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
+    }
+
     @Test
     fun navigatesCorrectly(){
+        registerIdlingResource()
+
         val scenario = ActivityScenario.launch(MainActivity::class.java)
         scenario.onActivity {
-            MockAuthenticator(it).signOut()
+            MockAuthenticator(it).signIn()
         }
 
         onView(withId(R.id.new_question_button)).perform(click())
@@ -78,5 +90,7 @@ class CameraTest {
             .perform(click())
 
         scenario.close()
+
+        unregisterIdlingResource()
     }
 }
