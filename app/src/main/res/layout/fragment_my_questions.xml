@@ -2,7 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_my_questions_layout"
-    android:layout_width="match_parent"
+    android:layout_width= "match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp">
 
@@ -16,8 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="20sp"
-            android:text="My Questions"
             android:textStyle="bold"
+            android:text="My Questions"
             android:textColor="@android:color/white"
             android:background="@color/main_highlight"
             android:padding="10dp"

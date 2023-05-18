@@ -1,8 +1,10 @@
 package com.github.ybecker.epforuml.camera
 
-import com.github.ybecker.epforuml.R
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission_group.CAMERA
 import android.app.Activity
 import android.content.Intent
+import android.media.MediaRecorder.VideoSource.CAMERA
 import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -10,16 +12,26 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.R
+import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertTrue
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import android.Manifest
+
 
 
 @RunWith(AndroidJUnit4::class)
 class CameraTest {
+    @get:Rule
+    var permissionCamera: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
     @Test
     fun newQuestionSetsUpWhenIntentFilled(){
@@ -54,15 +66,14 @@ class CameraTest {
         } catch (e: Exception) {
             Log.e("NewQuestionFragment", "Error lauching activity: \${e.message}")
         }
-}/*
+}
 
-    @Test
+/*    @Test
     fun navigatesCorrectly(){
+        Firebase.auth.signOut()
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
-        // go to MainActivity
-        onView(ViewMatchers.withId(R.id.guestButton)).perform(ViewActions.click())
-
-        onView(ViewMatchers.withId(R.id.home_layout_parent)).check(matches(ViewMatchers.isDisplayed()))
 
         // open navigation drawer
         onView(ViewMatchers.withContentDescription(R.string.open))
@@ -75,7 +86,6 @@ class CameraTest {
 
         onView(ViewMatchers.withId(R.id.image_capture_button)).check(matches(ViewMatchers.isDisplayed()))
         onView(ViewMatchers.withId(R.id.image_capture_button)).perform(ViewActions.click())
-
-
-    }
-*/}
+        scenario.close()
+    }*/
+}
