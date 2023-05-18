@@ -64,7 +64,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val isAnonymousPath = "anonymous"
 
     private val questionURIPath = "imageURI"
-    private val questioAudioPath = "audioPath"
+    private val questionAudioPath = "audioPath"
 
     private val emailPath = "email"
     private val profilePicPath = "profilePic"
@@ -747,11 +747,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         dataSnapshot.child(followersPath).children.forEach { questionSnapshot ->
             questionSnapshot.key?.let { followers.add(it) }
         }
-        val audioPath = dataSnapshot.child(questioAudioPath).getValue(String::class.java)
+
+        val audioPath = dataSnapshot.child(questionAudioPath).getValue(String::class.java)
 
 
         if(questionId!=null && courseId!=null && userId!=null&& isAnonymous!=null && questionTitle!=null && questionText!=null && questionURI!=null&& audioPath!=null){
-            return Question(questionId, courseId, userId,isAnonymous,  questionTitle, questionText, questionURI, answers, followers,audioPath)
+            return Question(questionId, courseId, userId,isAnonymous,  questionTitle, questionText, questionURI, answers, followers, audioPath)
 
         }
         return null
@@ -860,8 +861,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
     private fun uploadImageToFirebase(uri: String) : CompletableFuture<String>{
         val url = CompletableFuture<String>()
-
-        var extention: String
 
         if(uri == "" || uri.equals(null)){
             url.complete("")
