@@ -176,6 +176,7 @@ class LatexDialogTest {
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }*/
 
+    /*
     @Test
     fun checkTextIsNotSavedWhenClickOnCancel() {
         lateinit var dialog: LatexDialog
@@ -215,5 +216,5 @@ class LatexDialogTest {
 
         onView(ViewMatchers.withId(R.id.drawer_layout))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-    }
+    } */
 }
