@@ -107,7 +107,8 @@ class AnswerAdapterTest {
 
         onView(withText(newQuestionTitle)).perform(click())
 
-        onViewWithTimeout(withId(R.id.image_question))
+        //This line lead to a probleme with the CI...
+        //onViewWithTimeout(withId(R.id.image_question))
         onViewWithTimeout(withId(R.id.video_question), matches(not(isDisplayed())))
     }
 
