@@ -93,7 +93,7 @@ class AnswerAdapterTest {
     val testImageURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/download.jpg?alt=media&token=2549027a-607c-489f-895b-904ab78ebcd9"
 
     @Test
-    fun ImageVisibleWhenVideoOnHeaderTest(){
+    fun ImageVisibleWhenImageOnHeaderTest(){
         Firebase.auth.signOut()
         val user = db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user

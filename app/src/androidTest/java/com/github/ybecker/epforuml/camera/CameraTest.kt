@@ -26,7 +26,10 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 @RunWith(AndroidJUnit4::class)
 class CameraTest {
     @get:Rule
-    var permissionCamera: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        Manifest.permission.CAMERA,
+        Manifest.permission.RECORD_AUDIO
+    )
 
     @Test
     fun newQuestionSetsUpWhenIntentFilled(){
@@ -84,6 +87,8 @@ class CameraTest {
         scenario.close()
     }*/
 
+
+    // We should activate the camera authorisation in the ci
 
     @Test
     fun openCameraActivityTest(){
