@@ -46,10 +46,11 @@ class MapFragmentTest {
         Intents.release()
     }
 
+    /////////////////
     @Test
     fun checkMapLayout() {
         // Here again temporary comment until we find a solution for the CI fails
-        /*
+
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
@@ -63,12 +64,14 @@ class MapFragmentTest {
         openContextualActionModeOverflowMenu()
 
         Espresso.onView(ViewMatchers.withText(R.string.share_position))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed())) */
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
+
+    /////////
     @Test
     fun checkClickOnShareLocation() {
-        /*
+
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
@@ -82,6 +85,6 @@ class MapFragmentTest {
             .check(ViewAssertions.matches(not(ViewMatchers.isChecked())))
         Espresso.onView(ViewMatchers.withText(R.string.share_position))
             .perform(click())
-        openContextualActionModeOverflowMenu() */
+        openContextualActionModeOverflowMenu()
     }
 }

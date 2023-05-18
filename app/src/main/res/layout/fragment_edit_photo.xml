@@ -6,6 +6,7 @@
     android:layout_gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="16dp"
+    android:id="@+id/fragment_edit_photo_layout"
     tools:context=".sensor.EditPhotoActivity">
 
 
