@@ -1,28 +1,29 @@
 package com.github.ybecker.epforuml.chat
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.R.*
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.ArrayList
 
 /**
  * A fragment representing a chat which is a list of messages.
@@ -103,13 +104,56 @@ class RealChatFragment : Fragment() {
         chatRecyclerView.setHasFixedSize(false)
         // Update questions list
         if (user != null) fetchChats()
-        startTimer()
+        //startTimer()
+        setUpDbListener()
+    }
+
+    private fun setUpDbListener() {
+        if(db.getDbInstance()!=null){
+            val database = db.getDbInstance().reference
+            val docRef: DatabaseReference = database.child("chats")
+            docRef.addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                    // Called when a new child is added to "chats"
+                    val chat = dataSnapshot.getValue(Model.Chat::class.java)
+                    // Process the new chat data
+                    fetchChats()
+                }
+
+                override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                    // Called when a child in "chats" is updated
+                    val chat = dataSnapshot.getValue(Model.Chat::class.java)
+                    // Process the updated chat data
+                    fetchChats()
+                }
+
+                override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                    // Called when a child is removed from "chats"
+                    fetchChats()
+                }
+
+                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                    // Called when a child in "chats" changes its position
+                    fetchChats()
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Called when the listener is canceled or there is an error
+                    // Handle the error accordingly
+                }
+            })
+        }
+
+
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        stopTimer()
+       // stopTimer()
     }
+
+
 
     private fun startTimer() {
         timer = Timer()

@@ -6,6 +6,7 @@ import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
@@ -447,5 +448,9 @@ class MockDatabase : Database() {
         users[userId]?.longitude = position.longitude
         users[userId]?.latitude = position.latitude
         users[userId]?.sharesLocation = sharesLocation
+    }
+
+    override fun getDbInstance(): FirebaseDatabase {
+        TODO("Not yet implemented")
     }
 }

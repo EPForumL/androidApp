@@ -4,6 +4,7 @@ import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.FirebaseDatabase
 import java.util.concurrent.CompletableFuture
 import java.time.LocalDateTime
 
@@ -403,4 +404,7 @@ abstract class Database {
      * @param sharesLocation whether to share the localization or not
      */
     abstract fun updateLocalization(userId: String, position: LatLng, sharesLocation: Boolean)
+
+    abstract fun getDbInstance(): FirebaseDatabase
+
 }
