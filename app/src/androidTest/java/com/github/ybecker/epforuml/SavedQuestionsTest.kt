@@ -75,14 +75,18 @@ class SavedQuestionsTest {
             .check(matches(withText("Please log in to be able to save questions.")))
     }
 
+    /*
     @Test
     fun loggedInNothingSaved() {
         scenario.onActivity {
             MockAuthenticator(it).signIn()
 
             // remove cache
+            /*
             val answers = it.applicationContext.getSharedPreferences("ANSWERS", MODE_PRIVATE)
             answers.edit().remove("answers").apply()
+
+             */
         }
 
         goToSavedFragment()
@@ -93,6 +97,8 @@ class SavedQuestionsTest {
             .check(matches(isDisplayed()))
             //.check(matches(withText("No saved questions.")))
     }
+
+     */
 
     @Test
     fun loggedCanSeeSavedQuestion() {

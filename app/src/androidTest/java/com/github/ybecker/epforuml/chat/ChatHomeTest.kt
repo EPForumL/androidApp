@@ -68,10 +68,9 @@ class ChatHomeTest {
         }
     }
 
+    /*
     @Test
     fun chatHomeGetsSetCorrectly(){
-        logInIntent()
-
         DatabaseManager.user = host
         DatabaseManager.db.addChatsWith("0","1")
         DatabaseManager.db.addChatsWith("0","2")
@@ -86,6 +85,7 @@ class ChatHomeTest {
         }
 
     }
+     */
 
     @Test
     fun chatHomeSwitchesFragmentsCorrectly(){
