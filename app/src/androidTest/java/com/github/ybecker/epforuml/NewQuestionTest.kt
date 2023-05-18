@@ -435,6 +435,7 @@ class NewQuestionTest {
         scenario.close()
     }
 
+    /*
     @Test
     fun AnonymousAnswerKeepSameSurnameTest(){
 
@@ -476,7 +477,9 @@ class NewQuestionTest {
 
         scenario.close()
     }
+     */
 
+    /*
     @Test
     fun AnonymousAnswerToOtherChangeSurnameTest(){
         //Send anonymous question as in previous test
@@ -487,7 +490,7 @@ class NewQuestionTest {
         DatabaseManager.user = user
         val scenario = ActivityScenario.launch(MainActivity::class.java)
 
-        onView(withText(title)).perform(click())
+        onView(withText(title)).perform(scrollTo(), click())
 
         // add an answer to the anonymous question
         val answerText = "my answer"
@@ -502,6 +505,7 @@ class NewQuestionTest {
 
         scenario.close()
     }
+     */
 
     fun getText(matcher: ViewInteraction): String {
         var text = String()

@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
@@ -20,6 +21,9 @@ import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.sensor.MapsFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +35,30 @@ class MainActivity : AppCompatActivity() {
             if (connectivityManager == null) { return false }
 
             return (connectivityManager?.getNetworkCapabilities(connectivityManager?.activeNetwork) != null)
+        }
+
+
+        /**
+         * Saved question cache and answer cache to device
+         */
+        fun saveDataToDevice(questionCache: ArrayList<Model.Question>, answerCache: ArrayList<Model.Answer>) {
+            val sharedQuestions : SharedPreferences = context.getSharedPreferences("QUESTIONS", MODE_PRIVATE)
+            val sharedAnswers : SharedPreferences = context.getSharedPreferences("ANSWERS", MODE_PRIVATE)
+
+            val questionsEditor = sharedQuestions.edit()
+            val answersEditor = sharedAnswers.edit()
+
+            val qGson = Gson()
+            val aGson = Gson()
+
+            val qJson = qGson.toJson(questionCache)
+            val aJson = aGson.toJson(answerCache)
+
+            questionsEditor.putString("questions", qJson)
+            answersEditor.putString("answers", aJson)
+
+            questionsEditor.apply()
+            answersEditor.apply()
         }
     }
 
@@ -58,6 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         // initialize DB to Mock
         //DatabaseManager.useMockDatabase()
+
         drawerLayout = findViewById(R.id.drawer_layout)
         val navView : NavigationView = findViewById(R.id.nav_view)
 
@@ -67,6 +96,10 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // load all data from device
+        loadDataFromDevice()
+
+        /*
         // retrieve list of questions if any
         // TODO : optimize and only allow when logged in
         val newCache : ArrayList<Model.Question>? = intent.getParcelableArrayListExtra("savedQuestions")
@@ -78,6 +111,8 @@ class MainActivity : AppCompatActivity() {
         if (newAnswersCache != null) {
             answersCache = newAnswersCache
         }
+
+         */
 
         // get retrieve name of fragment to display if any
         val fragment : String? = intent.extras?.getString("fragment")
@@ -139,13 +174,12 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.closeDrawers()
     }
 
-    fun replaceFragmentAndClose(fragment: Fragment) {
+    private fun replaceFragmentAndClose(fragment: Fragment) {
         replaceFragment(fragment)
         drawerLayout.closeDrawers()
     }
 
 
-    // TODO : move this to QuestionDetails
     private fun updateAnswersCacheIfConnected() {
         if (isConnected()) {
             answersCache.clear()
@@ -154,6 +188,38 @@ class MainActivity : AppCompatActivity() {
                 db.getQuestionAnswers(question.questionId).thenAccept { answerList ->
                     answersCache.addAll(answerList)
                 }
+            }
+        }
+    }
+
+
+
+    /**
+     * Helper function for function below
+     */
+    inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object: TypeToken<T>() {}.type)
+
+    private fun loadDataFromDevice() {
+        val sharedQuestions : SharedPreferences = context.getSharedPreferences("QUESTIONS", MODE_PRIVATE)
+        val sharedAnswers : SharedPreferences = context.getSharedPreferences("ANSWERS", MODE_PRIVATE)
+
+        val qGson = Gson()
+        val aGson = Gson()
+
+        val qJson =  sharedQuestions.getString("questions", null)
+        val aJson =  sharedAnswers.getString("answers", null)
+
+        if (qJson != null) {
+            val cacheTmp = qGson.fromJson<ArrayList<Model.Question>>(qJson)
+            if (cacheTmp != null) {
+                cache = cacheTmp
+            }
+        }
+
+        if (aJson != null) {
+            val answerCacheTmp = aGson.fromJson<ArrayList<Model.Answer>>(aJson)
+            if (answerCacheTmp != null) {
+                answersCache = answerCacheTmp
             }
         }
     }
