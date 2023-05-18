@@ -110,7 +110,7 @@ class RealChatFragment : Fragment() {
 
     private fun setUpDbListener() {
         if(db.getDbInstance()!=null){
-            val database = db.getDbInstance().reference
+            val database = db.getDbInstance()!!.reference
             val docRef: DatabaseReference = database.child("chats")
             docRef.addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
