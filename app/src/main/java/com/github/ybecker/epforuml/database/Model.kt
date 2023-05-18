@@ -69,7 +69,14 @@ class Model {
     }
 
     // This class represent a user an answer
-    data class Answer(val answerId: String, val questionId: String, val userId: String, val answerText: String, var like: List<String>, val endorsed: String)
+    data class Answer(
+            val answerId: String,
+            val questionId: String,
+            val userId: String,
+            val answerText: String,
+            var like: List<String>,
+            val endorsed: String
+        )
         : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString()!!,

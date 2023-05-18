@@ -14,6 +14,7 @@ import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.R.*
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
+import java.lang.Thread.sleep
 
 /**
  * A fragment representing a list of Chats.

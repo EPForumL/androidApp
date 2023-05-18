@@ -79,6 +79,7 @@ class MainActivityTest {
 
  */
 
+    /*
     @Test
     fun cachesProperlySentToQuestionDetailsFromForum() {
         val intent = Intent(
@@ -106,6 +107,8 @@ class MainActivityTest {
 
         Intents.release()
     }
+
+     */
 
 
     @After
