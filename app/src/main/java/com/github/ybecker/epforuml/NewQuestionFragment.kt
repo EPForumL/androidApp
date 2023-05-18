@@ -131,17 +131,15 @@ class NewQuestionFragment : Fragment() {
     private fun setPlayButtonListener(View: View){
 
         playVoiceNote.setOnClickListener {
+            recordVoiceNote.isEnabled = false
             if (audioPlayer == null) {
-                recordVoiceNote.isEnabled = false
                 audioPlayer = context?.let { it1 -> AndroidAudioPlayer(it1) }
-                recordVoiceNote.isEnabled = true
             }
 
             if (audioFile != null) {
-                recordVoiceNote.isEnabled = false
                 audioPlayer?.playFile(audioFile!!.toUri())
-                recordVoiceNote.isEnabled = true
             }
+            recordVoiceNote.isEnabled = true
 
         }
     }
@@ -179,7 +177,7 @@ class NewQuestionFragment : Fragment() {
             isRecording = false
             updateRecordButtonText()
         }
-        playVoiceNote.isEnabled = false
+        playVoiceNote.isEnabled = true
     }
 
 
