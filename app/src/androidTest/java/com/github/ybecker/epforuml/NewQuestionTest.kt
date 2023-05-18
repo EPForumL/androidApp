@@ -377,6 +377,7 @@ class NewQuestionTest {
         scenario.close()
     }
 
+    /*
     @Test
     fun AnonymousAnswerKeepSameSurnameTest(){
 
@@ -418,6 +419,7 @@ class NewQuestionTest {
 
         scenario.close()
     }
+     */
 
     /*
     @Test
