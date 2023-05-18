@@ -105,6 +105,12 @@
     <string name="change_map_perm">Change permissions</string>
     <string name="share_position">Share position</string>
     <string name="localization_text">Share position</string>
+    <string name="latex_button_description">Shows the latex display of the written text</string>
+    <string name="latex_output">Latex output</string>
+    <string name="latex_input">Latex input</string>
+    <string name="render">Render</string>
+    <string name="latex_save">Save</string>
+    <string name="latex_cancel">Cancel</string>
     <string name="record_voice_note">Record Voice Note</string>
     <string name="play_voice_note">Play voice note</string>
 

@@ -18,6 +18,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
@@ -26,6 +27,8 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.util.EspressoIdlingResource
 import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
@@ -452,6 +455,35 @@ class QuestionDetailsTest {
 
         onView((withId(R.id.title_saved))).check(matches(isDisplayed()))
 
+    }
+
+    @Test
+    fun checkLatexButtonIsHiddenWhenNotLoggedIn() {
+        Firebase.auth.signOut()
+        scenario.onActivity {
+            MockAuthenticator(it).signOut()
+            it.startActivity(intent)
+        }
+
+        //Thread.sleep(10000)
+
+        onView(withId(R.id.question_details_latex))
+            .check(matches(not(isDisplayed())))
+    }
+
+    @Test
+    fun checkLatexButtonExistAndOpensDialog() {
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+            it.startActivity(intent)
+        }
+
+        onView(withId(R.id.question_details_latex))
+            .check(matches(isDisplayed()))
+            .perform(click())
+
+        onView(withId(R.id.latex_window_root))
+            .check(matches(isDisplayed()))
     }
 
 

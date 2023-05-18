@@ -44,15 +44,8 @@ class AccountFragmentsTest {
     }
 
     @Test
-    fun test() {
-        assertTrue(true)
-        // Temporary comment until we find a solution for the CI ...
-    }
-
-
-    @Test
     fun checkGuestAccountFragmentLayout() {
-        onView(ViewMatchers.withId(R.id.guestButton))
+        onView(withId(R.id.guestButton))
             .perform(click())
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
@@ -63,7 +56,7 @@ class AccountFragmentsTest {
 
 
 
-        onView(ViewMatchers.withId(R.id.nav_account))
+        onView(withId(R.id.nav_account))
             .perform(click())
 
         checkGuest()
@@ -71,7 +64,8 @@ class AccountFragmentsTest {
 
     @Test
     fun checkSignInOpensSignInIntent() {
-        onView(ViewMatchers.withId(R.id.signInButton)).perform(click())
+        onView(withId(R.id.signInButton)).perform(click())
+        Thread.sleep(2000)
         Intents.intended(IntentMatchers.hasComponent(KickoffActivity::class.java.name))
     }
 
@@ -86,14 +80,14 @@ class AccountFragmentsTest {
             .perform(click())
 
         onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
-        onView(ViewMatchers.withId(R.id.nav_account))
+        onView(withId(R.id.nav_account))
             .perform(click())
 
-        onView(ViewMatchers.withId(R.id.titleAccount))
+        onView(withId(R.id.titleAccount))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.signOutButton))
+        onView(withId(R.id.signOutButton))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.deleteAccountButton))
+        onView(withId(R.id.deleteAccountButton))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
@@ -113,10 +107,12 @@ class AccountFragmentsTest {
             .perform(click())
 
         onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
-        onView(ViewMatchers.withId(R.id.nav_account))
+        onView(withId(R.id.nav_account))
             .perform(click())
-        onView(ViewMatchers.withId(R.id.signOutButton))
+        onView(withId(R.id.signOutButton))
             .perform(click())
+
+        Thread.sleep(2000)
 
         assertTrue(DatabaseManager.user == null)
         checkGuest()
@@ -129,6 +125,7 @@ class AccountFragmentsTest {
         assertTrue(DatabaseManager.user != null)
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        Thread.sleep(2000)
 
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
@@ -136,10 +133,12 @@ class AccountFragmentsTest {
             .perform(click())
 
         onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
-        onView(ViewMatchers.withId(R.id.nav_account))
+        onView(withId(R.id.nav_account))
             .perform(click())
-        onView(ViewMatchers.withId(R.id.deleteAccountButton))
+        onView(withId(R.id.deleteAccountButton))
             .perform(click())
+
+        Thread.sleep(2000)
 
         assertTrue(DatabaseManager.user == null)
         val user = DatabaseManager.db.getUserById("0").join()
@@ -148,9 +147,9 @@ class AccountFragmentsTest {
     }
 
     private fun checkGuest() {
-        onView(ViewMatchers.withId(R.id.titleAccountGuest))
+        onView(withId(R.id.titleAccountGuest))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.signInButtonAccount))
+        onView(withId(R.id.signInButtonAccount))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 }
