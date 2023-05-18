@@ -158,7 +158,7 @@ class LatexDialogTest {
         onView(ViewMatchers.withId(R.id.latex_render_button))
             .perform(ViewActions.click())
 
-        Thread.sleep(1000)
+        Thread.sleep(2000)
 
         assertThat(input.text.toString(), Is(text2))
         assertThat(rendered.getDisplayText(), Is(text2))
@@ -166,7 +166,7 @@ class LatexDialogTest {
         onView(ViewMatchers.withId(R.id.latex_save_button))
             .perform(ViewActions.click())
 
-        Thread.sleep(1000)
+        Thread.sleep(2000)
 
         assertThat(targetEditText.text.toString(), Is(text2))
 

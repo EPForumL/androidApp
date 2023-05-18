@@ -469,11 +469,13 @@ class NewQuestionTest {
         onView(withId(R.id.write_reply_box)).perform(typeText(answerText)).perform(closeSoftKeyboard())
         onView(withId(R.id.post_reply_button)).perform(click())
 
+        Thread.sleep(2000)
+
         //get title name
         val usernameText: ViewInteraction = onView(withId(R.id.qdetails_question_username))
         val text = getText(usernameText).removeSuffix(" asks :")
 
-        Thread.sleep(1000)
+        Thread.sleep(2000)
 
         // get text of first item
         TextOnItemEqual(1, text, R.id.qdetails_answer_username)
