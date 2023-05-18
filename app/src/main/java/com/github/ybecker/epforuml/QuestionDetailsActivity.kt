@@ -163,6 +163,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 answersCache.addAll(it)
                 newIntent.putParcelableArrayListExtra("savedAnswers", answersCache)
             }
+
+            MainActivity.saveDataToDevice(cache, answersCache)
         }
     }
 

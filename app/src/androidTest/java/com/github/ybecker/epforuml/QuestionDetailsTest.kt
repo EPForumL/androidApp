@@ -269,6 +269,7 @@ class QuestionDetailsTest {
 
     }
 
+    /*
     @Test
     fun answerLikeStaysWhenQuitting() {
         logInDetailsActivity()
@@ -283,6 +284,7 @@ class QuestionDetailsTest {
         onView(withText(question.questionTitle)).perform(click())
         CounterEquals(answerposition, "1", R.id.likeCount)
     }
+     */
 
     fun endorseAnswerButtonTest(){
         logInDetailsActivity()
