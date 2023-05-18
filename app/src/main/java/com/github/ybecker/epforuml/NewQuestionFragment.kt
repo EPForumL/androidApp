@@ -1,6 +1,6 @@
 package com.github.ybecker.epforuml
 
-
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
@@ -18,8 +18,9 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
-import com.github.ybecker.epforuml.sensor.AndroidAudioRecorder
+import com.github.ybecker.epforuml.latex.LatexDialog
 import com.github.ybecker.epforuml.sensor.CameraActivity
+import com.github.ybecker.epforuml.sensor.AndroidAudioRecorder
 import java.io.File
 import java.util.*
 import android.Manifest
@@ -75,11 +76,15 @@ class NewQuestionFragment : Fragment() {
                 courseNamesList
             )
             spinner.adapter = adapter
-            setUpArgs(view,spinner,coursesList,user)
-        }
-        return view
+            setUpArgs(view, spinner, coursesList, user)
 
+            // Shows the latex renderer dialog
+            val latexButton = view.findViewById<ImageButton>(R.id.show_latex_button)
+            latexButton.setOnClickListener { LatexDialog(requireContext(), questBody).show() }
         }
+
+        return view
+    }
 
     private fun setUpArgs(
         view: View,
@@ -252,8 +257,7 @@ class NewQuestionFragment : Fragment() {
                 "Question title or body cannot be empty",
                 Toast.LENGTH_SHORT
             ).show()
-        }
-        else {
+        } else {
             // Get the selected course from the spinner
             val selectedItemPosition = spinner.selectedItemPosition
             if (selectedItemPosition != Spinner.INVALID_POSITION) {
@@ -270,7 +274,7 @@ class NewQuestionFragment : Fragment() {
                     }
                     db.addQuestion(
                         user.userId,
-                        course.courseId,                        
+                        course.courseId,
                         anonymousSwitch.isChecked,
                         questTitle.text.toString(),
                         questBody.text.toString(),
@@ -285,4 +289,29 @@ class NewQuestionFragment : Fragment() {
         }
     }
 
+    private fun setTakeImage(
+        view: View,
+        questBody: EditText,
+        questTitle: EditText
+    ) {
+        takePictureButton = view.findViewById(R.id.takeImage)
+        takePictureButton.setOnClickListener {
+            val questionDetails = questBody.text.toString()
+            val questionTitle = questTitle.text.toString()
+            val intent = Intent(this.mainActivity, CameraActivity::class.java)
+            intent.putExtra("questionTitle", questionTitle)
+            intent.putExtra("questionDetails", questionDetails)
+            startActivity(intent)
+        }
+    }
+
+    private fun setUpArgs(view: View): Triple<EditText, EditText, TextView> {
+        questBody = view.findViewById(R.id.question_details_edittext)
+        questTitle = view.findViewById(R.id.question_title_edittext)
+        imageURI = view.findViewById(R.id.image_uri)
+        questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
+        questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
+        imageURI.text = image_uri
+        return Triple(questBody, questTitle, imageURI)
+    }
 }
