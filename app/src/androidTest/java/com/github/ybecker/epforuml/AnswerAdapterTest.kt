@@ -100,7 +100,7 @@ class AnswerAdapterTest {
         val newQuestionTitle = "TESTUMAGEQUESTION"
 
         db.availableCourses().thenAccept {
-            db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testImageURI)
+            db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testImageURI, "")
         }.join()
 
         onView(withId(R.id.swipe_refresh_layout)).perform(ViewActions.swipeDown())
@@ -119,7 +119,7 @@ class AnswerAdapterTest {
         val newQuestionTitle = "TESTUMAGEQUESTION"
 
         db.availableCourses().thenAccept {
-            db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testVideoURI)
+            db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testVideoURI, "")
         }.join()
 
         onView(withId(R.id.swipe_refresh_layout)).perform(ViewActions.swipeDown())

@@ -20,7 +20,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import android.Manifest
-
+import com.github.ybecker.epforuml.database.DatabaseManager
 
 
 @RunWith(AndroidJUnit4::class)
@@ -83,7 +83,7 @@ class CameraTest {
         onView(ViewMatchers.withId(R.id.image_capture_button)).perform(ViewActions.click())
         scenario.close()
     }*/
-}
+
 
     @Test
     fun openCameraActivityTest(){

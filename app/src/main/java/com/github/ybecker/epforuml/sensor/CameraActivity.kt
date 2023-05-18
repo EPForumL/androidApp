@@ -222,7 +222,7 @@ class CameraActivity : AppCompatActivity() {
                     } else {
                         recording?.close()
                         recording = null
-                        Toast.makeText(this, "Error during the recording", LENGTH_SHORT)
+                        Toast.makeText(this, "Error during the recording", LENGTH_SHORT).show()
                         Log.e(TAG, "Video capture ends with error: " +
                                 "${recordEvent.error}")
                     }
