@@ -24,6 +24,7 @@ import androidx.camera.core.Preview
 import androidx.camera.core.CameraSelector
 import android.util.Log
 import android.view.MotionEvent
+import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.video.*
@@ -175,27 +176,6 @@ class CameraActivity : AppCompatActivity() {
 
     }
 
-//    private val requestPermissions = registerForActivityResult(
-//        ActivityResultContracts.RequestMultiplePermissions()
-//    ) { onRequestPermissionsResult(it) }
-//
-//    private fun onRequestPermissionsResult(permissions: Map<String, Boolean>) {
-//        DatabaseManager.user.let { user ->
-//            if (user != null) {
-//                val position = LatLng(user.latitude, user.longitude)
-//                when {
-//                    permissions.getOrDefault(Manifest.permission.CAMERA, false) -> {
-//                        // Precise location access granted.
-//                        // requireActivity().invalidateOptionsMenu()
-//                        DatabaseManager.user?.sharesLocation = true
-//                        DatabaseManager.db.updateLocalization(user.userId, position, true)
-//                        startRecordingVideo()
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     private fun startRecordingVideo() {
 
         val videoCapture = this.videoCapture ?: return
@@ -225,6 +205,7 @@ class CameraActivity : AppCompatActivity() {
             .setContentValues(contentValues)
             .build()
 
+        // launch a new Recording
         recording = videoCapture.output
             .prepareRecording(this, mediaStoreOutputOptions)
             .apply {
@@ -236,6 +217,7 @@ class CameraActivity : AppCompatActivity() {
                 ) {
                     withAudioEnabled()
                 }
+            // start the new recording
             }.start(ContextCompat.getMainExecutor(context)) { recordEvent ->
             when (recordEvent) {
                 is VideoRecordEvent.Start -> {
@@ -243,19 +225,21 @@ class CameraActivity : AppCompatActivity() {
                     Log.d(TAG, "Start recording")
 
                 }
+                //when the video ends
                 is VideoRecordEvent.Finalize -> {
                     isRecording=false
                     val uri = recordEvent.outputResults.outputUri
+                    //when no errors the video is saved correctly, we can go back the the question
                     if (!recordEvent.hasError()) {
                         val msg = "Video capture succeeded: " +
                                 "$uri"
-                        Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
-                            .show()
                         goBackToQuestion(uri.toString())
                         Log.d(TAG, msg)
+                    //if there is an error stop recording, and stay on the activity so the user can retake a video
                     } else {
                         recording?.close()
                         recording = null
+                        Toast.makeText(this, "Error during the recording", LENGTH_SHORT)
                         Log.e(TAG, "Video capture ends with error: " +
                                 "${recordEvent.error}")
                     }
@@ -288,9 +272,10 @@ class CameraActivity : AppCompatActivity() {
             imageCapture = ImageCapture.Builder()
                 .build()
 
+            //Set up a new recorder in videoCapture with low quality (the free Firebase bandwidth is limited)
             val recorder = Recorder.Builder()
                 .setExecutor(ContextCompat.getMainExecutor(this))
-                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+                .setQualitySelector(QualitySelector.from(Quality.LOWEST))
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
 

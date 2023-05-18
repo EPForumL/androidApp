@@ -880,9 +880,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
 
     private fun getExtension(uri: String): String {
-        val imageExtensions = arrayOf("jpg", "jpeg", "png", "gif", "webp")
-
-        if (imageExtensions.any { extension -> uri.contains(".$extension")}) {
+        if (uri.contains("images")) {
                 return ".jpeg"
         }
         return ".mp4"

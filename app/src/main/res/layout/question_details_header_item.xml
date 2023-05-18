@@ -20,10 +20,11 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/image_question"
             android:contentDescription="@string/image"
+            android:clickable="true"
             android:visibility="gone"/>
 
         <com.google.android.exoplayer2.ui.PlayerView
@@ -32,6 +33,7 @@
             android:layout_height="wrap_content"
             app:resize_mode="fixed_width"
             app:use_controller="true"
+            android:clickable="true"
             android:visibility="gone"/>
     </FrameLayout>
 

@@ -93,6 +93,26 @@ class AnswerAdapterTest {
 
  */
 
+    @Test
+    fun PlayerViewVisibleWhenVideoOnHeaderTest(){
+
+    }
+
+    @Test
+    fun ImageViewVisibleWhenVideoOnHeaderTest(){
+
+    }
+
+    @Test
+    fun PopUpOnVideoTest(){
+
+    }
+
+    @Test
+    fun PopUpOnImageTest(){
+
+    }
+
     @After
     fun closing() {
         scenario.close()
