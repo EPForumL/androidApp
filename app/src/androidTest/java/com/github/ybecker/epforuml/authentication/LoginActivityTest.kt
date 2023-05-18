@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Test
 import org.junit.runner.RunWith
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
@@ -22,6 +23,7 @@ import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.util.EspressoIdlingResource
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertTrue
@@ -44,6 +46,7 @@ class LoginActivityTest {
     @After
     fun endTests() {
         Intents.release()
+        scenario.close()
     }
 
 
@@ -85,6 +88,4 @@ class LoginActivityTest {
 
         assertTrue(DatabaseManager.user == null)
     }
-
-
 }

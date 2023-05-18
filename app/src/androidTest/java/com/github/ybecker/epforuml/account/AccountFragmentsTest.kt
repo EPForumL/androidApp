@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.account
 
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
@@ -17,6 +18,7 @@ import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.util.EspressoIdlingResource
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.junit.After
@@ -29,8 +31,18 @@ import junit.framework.TestCase.assertTrue
 class AccountFragmentsTest {
     lateinit var scenario: ActivityScenario<LoginActivity>
 
+    private fun registerIdlingResource() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
+    }
+
+    private fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
+    }
+
     @Before
     fun initScenario() {
+        registerIdlingResource()
+
         Firebase.auth.signOut()
         DatabaseManager.user = null
         scenario = ActivityScenario.launch(LoginActivity::class.java)
@@ -39,20 +51,15 @@ class AccountFragmentsTest {
 
     @After
     fun closeScenario() {
-        scenario.close()
         Intents.release()
-    }
+        scenario.close()
 
-    @Test
-    fun test() {
-        assertTrue(true)
-        // Temporary comment until we find a solution for the CI ...
+        unregisterIdlingResource()
     }
-
 
     @Test
     fun checkGuestAccountFragmentLayout() {
-        onView(ViewMatchers.withId(R.id.guestButton))
+        onView(withId(R.id.guestButton))
             .perform(click())
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
@@ -63,7 +70,7 @@ class AccountFragmentsTest {
 
 
 
-        onView(ViewMatchers.withId(R.id.nav_account))
+        onView(withId(R.id.nav_account))
             .perform(click())
 
         checkGuest()
@@ -71,7 +78,7 @@ class AccountFragmentsTest {
 
     @Test
     fun checkSignInOpensSignInIntent() {
-        onView(ViewMatchers.withId(R.id.signInButton)).perform(click())
+        onView(withId(R.id.signInButton)).perform(click())
         Intents.intended(IntentMatchers.hasComponent(KickoffActivity::class.java.name))
     }
 
@@ -86,14 +93,14 @@ class AccountFragmentsTest {
             .perform(click())
 
         onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
-        onView(ViewMatchers.withId(R.id.nav_account))
+        onView(withId(R.id.nav_account))
             .perform(click())
 
-        onView(ViewMatchers.withId(R.id.titleAccount))
+        onView(withId(R.id.titleAccount))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.signOutButton))
+        onView(withId(R.id.signOutButton))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.deleteAccountButton))
+        onView(withId(R.id.deleteAccountButton))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 
@@ -113,9 +120,9 @@ class AccountFragmentsTest {
             .perform(click())
 
         onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
-        onView(ViewMatchers.withId(R.id.nav_account))
+        onView(withId(R.id.nav_account))
             .perform(click())
-        onView(ViewMatchers.withId(R.id.signOutButton))
+        onView(withId(R.id.signOutButton))
             .perform(click())
 
         assertTrue(DatabaseManager.user == null)
@@ -136,9 +143,9 @@ class AccountFragmentsTest {
             .perform(click())
 
         onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
-        onView(ViewMatchers.withId(R.id.nav_account))
+        onView(withId(R.id.nav_account))
             .perform(click())
-        onView(ViewMatchers.withId(R.id.deleteAccountButton))
+        onView(withId(R.id.deleteAccountButton))
             .perform(click())
 
         assertTrue(DatabaseManager.user == null)
@@ -148,9 +155,9 @@ class AccountFragmentsTest {
     }
 
     private fun checkGuest() {
-        onView(ViewMatchers.withId(R.id.titleAccountGuest))
+        onView(withId(R.id.titleAccountGuest))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.signInButtonAccount))
+        onView(withId(R.id.signInButtonAccount))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
     }
 }
