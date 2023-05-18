@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml
 
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.UiController
@@ -16,6 +17,7 @@ import androidx.test.espresso.action.*
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.database.DatabaseManager
@@ -93,14 +95,14 @@ class AnswerAdapterTest {
             .perform(click())
 
         onView(withId(R.id.answers_recycler)).perform(
-            RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
                 1,
                 scrollTo()
             )
         )
 
         onView(withId(R.id.answers_recycler)).perform(
-            RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
                 1,
                 performOnViewChild(R.id.chatWithUser, click())
             )
@@ -117,7 +119,19 @@ class AnswerAdapterTest {
                 return click().constraints
             }
 
- */
+            override fun getDescription(): String {
+                return "click on a child view with id $viewId"
+            }
+
+            override fun perform(uiController: UiController?, view: View?) {
+                view?.findViewById<View>(viewId)?.let {
+                    viewAction.perform(uiController, it)
+                }
+            }
+        }
+    }
+
+
     val testVideoURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/PumpedUpKicksDancingKidMeme.mp4?alt=media&token=476c2953-ffe3-4a9d-88b1-62243fd7dd95"
     val testImageURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/blue-horizontal-lens-flares-pack-260nw-2202148279.webp?alt=media&token=21e5b75a-f6dc-47e5-ac9c-105722597f46"
 
@@ -190,21 +204,10 @@ class AnswerAdapterTest {
 //        onView(withId(R.id.back_button)).perform(click())
 //        onViewWithTimeout(withId(R.id.popUpLayout), doesNotExist())
 //    }
-            override fun getDescription(): String {
-                return "click on a child view with id $viewId"
-            }
-
-            override fun perform(uiController: UiController?, view: View?) {
-                view?.findViewById<View>(viewId)?.let {
-                    viewAction.perform(uiController, it)
-                }
-            }
-        }
-    }
-
 
     @After
     fun closing() {
         scenario.close()
     }
+
 }

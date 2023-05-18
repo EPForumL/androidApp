@@ -118,7 +118,7 @@ class CameraTest {
 
         unregisterIdlingResource()
     }
-    }*/
+
 
 
     // We should activate the camera authorisation in the ci
