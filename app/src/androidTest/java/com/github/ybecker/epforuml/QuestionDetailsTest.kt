@@ -155,11 +155,12 @@ class QuestionDetailsTest {
     fun loggedInCanPost() {
         logInDetailsActivity()
 
-        onView(withId(R.id.write_reply_box)).check(matches(isDisplayed()))
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
     }
 
  */
+
+
 
     @Test
     fun cannotPostEmptyAnswer() {
@@ -174,7 +175,7 @@ class QuestionDetailsTest {
             .check(matches(hasDescendant(not(withText("")))))
     }
 
-    /*
+
     @Test
     fun writeAnswerAndPostIsDisplayed() {
         logInDetailsActivity()
@@ -202,7 +203,7 @@ class QuestionDetailsTest {
 
     }
 
-     */
+
 
     @Test
     fun guestUserCannotPostAnswers() {
@@ -266,7 +267,7 @@ class QuestionDetailsTest {
 
     }
 
-    /*
+
     @Test
     fun answerLikeStaysWhenQuitting() {
         logInDetailsActivity()
@@ -281,7 +282,7 @@ class QuestionDetailsTest {
         onView(withText(question.questionTitle)).perform(click())
         CounterEquals(answerposition, "1", R.id.likeCount)
     }
-     */
+
 
     fun endorseAnswerButtonTest(){
         logInDetailsActivity()
@@ -357,22 +358,21 @@ class QuestionDetailsTest {
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
 
-    /*
+/*
     @Test
     fun clickingToggleAltersDrawable() {
         logInDetailsActivity()
-        Thread.sleep(1000)
+
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
-        Thread.sleep(1000)
+
         onView(withId(R.id.toggle_save_question))
             .perform(click())
-        Thread.sleep(1000)
+
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
-
-     */
+ */
 
     @Test
     fun toggleOnWhenQuestionSaved() {
@@ -385,7 +385,7 @@ class QuestionDetailsTest {
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
 
-    /*
+
     @Test
     fun guestCannotSaveQuestion() {
         logOutDetailsActivity()
@@ -394,7 +394,7 @@ class QuestionDetailsTest {
             .check(matches(not(isDisplayed())))
     }
 
-     */
+
 
 
     @Test
