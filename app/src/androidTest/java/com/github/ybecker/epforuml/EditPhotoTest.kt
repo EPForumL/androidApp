@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class EditPhotoTest {
 
-    /*@Test
+    @Test
     fun displaysEditorOnCorrectWorkflow(){
         Intents.init()
         val intent = Intent(
@@ -39,7 +39,7 @@ class EditPhotoTest {
         }
         Intents.release()
         scenario.close()
-    }*/
+    }
 
     @Test
     fun failsWithIncorrectUri(){

@@ -4,6 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.CoordinatesProvider
 import androidx.test.espresso.action.GeneralClickAction
@@ -80,18 +81,50 @@ class AnswerAdapterTest {
 
         onView(withId(R.id.qdetails_title)).check(matches(withText(question3.questionTitle)))
     }
-/*
+
     @Test
     fun clickingOnChatLeadsToChat(){
         onView(withText(question3.questionTitle))
             .perform(scrollTo())
             .perform(click())
-        onView(withId(R.id.chatWithUser)).perform(scrollTo(),click())
-        onView(withId(R.id.title_chat)).check(matches(isDisplayed()))
 
+        onView(withId(R.id.answers_recycler)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
+                1,
+                scrollTo()
+            )
+        )
+
+        onView(withId(R.id.answers_recycler)).perform(
+            RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
+                1,
+                performOnViewChild(R.id.chatWithUser, click())
+            )
+        )
+
+        //onView(withId(R.id.chatWithUser)).perform(scrollTo(),click())
+        onView(withId(R.id.title_chat)).check(matches(isDisplayed()))
     }
 
- */
+
+    private fun performOnViewChild(viewId: Int, viewAction: ViewAction): ViewAction {
+        return object : ViewAction {
+            override fun getConstraints(): org.hamcrest.Matcher<View> {
+                return click().constraints
+            }
+
+            override fun getDescription(): String {
+                return "click on a child view with id $viewId"
+            }
+
+            override fun perform(uiController: UiController?, view: View?) {
+                view?.findViewById<View>(viewId)?.let {
+                    viewAction.perform(uiController, it)
+                }
+            }
+        }
+    }
+
 
     @After
     fun closing() {
