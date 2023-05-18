@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml.camera
 
-import com.github.ybecker.epforuml.R
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
@@ -8,11 +7,19 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject
+import androidx.test.uiautomator.UiSelector
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.R
+import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import junit.framework.TestCase.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,7 +29,7 @@ import org.junit.runner.RunWith
 class CameraTest {
 
     @Test
-    fun newQuestionSetsUpWhenIntentFilled(){
+    fun newQuestionSetsUpWhenIntentFilled() {
 
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -54,28 +61,31 @@ class CameraTest {
         } catch (e: Exception) {
             Log.e("NewQuestionFragment", "Error lauching activity: \${e.message}")
         }
-}/*
+    }
 
     @Test
     fun navigatesCorrectly(){
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
-        // go to MainActivity
-        onView(ViewMatchers.withId(R.id.guestButton)).perform(ViewActions.click())
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity {
+            MockAuthenticator(it).signOut()
+        }
 
-        onView(ViewMatchers.withId(R.id.home_layout_parent)).check(matches(ViewMatchers.isDisplayed()))
+        onView(withId(R.id.new_question_button)).perform(click())
+        onView(withId(R.id.takeImage))
+            .perform(scrollTo())
+            .perform(click())
 
-        // open navigation drawer
-        onView(ViewMatchers.withContentDescription(R.string.open))
-            .perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.nav_home)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.new_question_button)).perform(ViewActions.click())
-        onView(ViewMatchers.withId(R.id.takeImage)).check(matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.takeImage)).perform(ViewActions.scrollTo())
-        onView(ViewMatchers.withId(R.id.takeImage)).perform(ViewActions.click())
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        onView(ViewMatchers.withId(R.id.image_capture_button)).check(matches(ViewMatchers.isDisplayed()))
-        onView(ViewMatchers.withId(R.id.image_capture_button)).perform(ViewActions.click())
+        val allowPermissions: UiObject = device.findObject(UiSelector().text("While using the app"))
+        if (allowPermissions.exists()) {
+            allowPermissions.click()
+        }
 
+        onView(withId(R.id.image_capture_button))
+            .check(matches(isDisplayed()))
+            .perform(click())
 
+        scenario.close()
     }
-*/}
+}
