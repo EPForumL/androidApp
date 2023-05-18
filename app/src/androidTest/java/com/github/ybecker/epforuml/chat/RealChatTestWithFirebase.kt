@@ -57,11 +57,18 @@ class RealChatTestWithFirebase {
                 val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
                 oldItemCount= view.adapter?.itemCount ?: 0
             }
-            DatabaseManager.db.addChat(extern.userId, host.userId, "GREAT!")
+            val chat = DatabaseManager.db.addChat(extern.userId, host.userId, "GREAT!")
             Thread.sleep(3000)
             scenario.onActivity { activity ->
                 val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
                 assertEquals(oldItemCount+1, view.adapter?.itemCount ?: 0)
+            }
+
+            DatabaseManager.db.removeChat(chat!!.chatId!!)
+            Thread.sleep(3000)
+            scenario.onActivity { activity ->
+                val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
+                assertEquals(oldItemCount, view.adapter?.itemCount ?: 0)
             }
             scenario.close()
         }
