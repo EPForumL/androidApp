@@ -18,52 +18,54 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import io.reactivex.Completable
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.CompletableFuture
 
 
 @RunWith(AndroidJUnit4::class)
 class RealChatTestWithFirebase {
     private lateinit var host : Model.User
     private lateinit var extern : Model.User
-    private lateinit var useless : Model.User
     private lateinit var scenario : ActivityScenario<Activity>
-
-    @Before
-    fun setTestsUp(){
-        Firebase.auth.signOut()
-        //set up database
-        host = DatabaseManager.db.addUser("0", "HostUser", "testEmail").get()
-        extern = DatabaseManager.db.addUser("2", "ExternUser", "testEmail").get()
-        useless = DatabaseManager.db.addUser("1", "Useless", "testEmail").get()
-        setUpChats()
-
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MainActivity::class.java)
-        intent.putExtra("externID", extern.userId)
-
-        scenario = ActivityScenario.launch(intent)
-
-    }
-    @After
-    fun tearDown(){
-        scenario.close()
-    }
+    private var oldItemCount : Int = 0
 
     @Test
     fun addMessageRefresh() {
-        navigateToChat()
-        DatabaseManager.db.addChat(extern.userId, host.userId, "GREAT!")
-        scenario.onActivity { activity ->
-            val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
-            assertEquals(4, view.adapter?.itemCount ?: 0)
+        Firebase.auth.signOut()
+        CompletableFuture.allOf(DatabaseManager.db.getUserById("0"),DatabaseManager.db.getUserById("1")).thenAccept{
+            DatabaseManager.db.getUserById("0").thenAccept{
+                DatabaseManager.user = it!!
+                host = it!!
+            }
+            DatabaseManager.db.getUserById("1").thenAccept{
+                host = it!!
+            }
+
+            val intent = Intent(
+                ApplicationProvider.getApplicationContext(),
+                MainActivity::class.java)
+            intent.putExtra("externID", extern.userId)
+
+            scenario = ActivityScenario.launch(intent)
+            navigateToChat()
+            scenario.onActivity { activity ->
+                val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
+                oldItemCount= view.adapter?.itemCount ?: 0
+            }
+            DatabaseManager.db.addChat(extern.userId, host.userId, "GREAT!")
+            Thread.sleep(3000)
+            scenario.onActivity { activity ->
+                val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
+                assertEquals(oldItemCount+1, view.adapter?.itemCount ?: 0)
+            }
+            scenario.close()
         }
     }
-
     private fun navigateToChat() {
         Espresso.onView(withContentDescription(R.string.open))
             .perform(click())
@@ -73,14 +75,5 @@ class RealChatTestWithFirebase {
             val view: RecyclerView = activity.findViewById(R.id.recycler_chat_home)
             view.findViewById<CardView>(R.id.buttonChatWith).performClick()
         }
-    }
-
-    private fun setUpChats() {
-        DatabaseManager.user = host
-        DatabaseManager.db.addChatsWith(host.userId, extern.userId)
-        DatabaseManager.db.addChatsWith(extern.userId, host.userId)
-        DatabaseManager.db.addChat(host.userId, extern.userId, "Hey Extern!")
-        DatabaseManager.db.addChat(extern.userId, host.userId, "Hey Host!")
-        DatabaseManager.db.addChat(host.userId, extern.userId, "HYD?")
     }
 }

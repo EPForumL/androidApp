@@ -114,16 +114,13 @@ class RealChatFragment : Fragment() {
             val docRef: DatabaseReference = database.child("chats")
             docRef.addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    // Called when a new child is added to "chats"
-                    val chat = dataSnapshot.getValue(Model.Chat::class.java)
-
                     // Process the new chat data
                     fetchChats()
                 }
 
                 override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
                     // Called when a child in "chats" is updated
-                    val chat = dataSnapshot.getValue(Model.Chat::class.java)
+                    //val chat = dataSnapshot.getValue(Model.Chat::class.java)
                     // Process the updated chat data
                     fetchChats()
                 }
