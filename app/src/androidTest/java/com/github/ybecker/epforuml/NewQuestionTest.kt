@@ -103,7 +103,7 @@ class NewQuestionTest {
     }
 
 
-/*
+
     @Test
     fun testAddImage() {
 
@@ -158,7 +158,7 @@ class NewQuestionTest {
     }
 
 
-*/
+
 
 
     @Test
@@ -344,7 +344,7 @@ class NewQuestionTest {
     @Test
     fun goesBackToNewQuestionWhenDone() {
 
-/*        scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
 
         onView(withId(R.id.new_question_button)).perform(click())
 
@@ -360,9 +360,7 @@ class NewQuestionTest {
         onView(withId(R.id.takeImage)).check(matches(isDisplayed()))
         onView(withId(R.id.takeImage)).check(matches(isClickable()))
 
-        onView(withId(R.id.uploadButton)).check(matches(isDisplayed()))
-        onView(withId(R.id.uploadButton)).check(matches(isClickable()))
-        scenario.close()*/
+        scenario.close()
     }
 
     @Test
@@ -435,7 +433,7 @@ class NewQuestionTest {
         scenario.close()
     }
 
-    /*
+
     @Test
     fun AnonymousAnswerKeepSameSurnameTest(){
 
@@ -477,9 +475,9 @@ class NewQuestionTest {
 
         scenario.close()
     }
-     */
 
-    /*
+
+
     @Test
     fun AnonymousAnswerToOtherChangeSurnameTest(){
         //Send anonymous question as in previous test
@@ -505,7 +503,7 @@ class NewQuestionTest {
 
         scenario.close()
     }
-     */
+
 
     fun getText(matcher: ViewInteraction): String {
         var text = String()

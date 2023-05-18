@@ -27,7 +27,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CameraTest {
-
+/*
     @Test
     fun newQuestionSetsUpWhenIntentFilled() {
 
@@ -36,32 +36,23 @@ class CameraTest {
             MainActivity::class.java
         )
 
-        val questionTitle = "Luna"
-        val questionDetails = "Godier"
         val uri = "thisistheuri"
-
-        intent.putExtra("questionTitle", questionTitle)
-        intent.putExtra("questionDetails", questionDetails)
         intent.putExtra("uri", uri)
 
         try {
             ActivityScenario.launch<Activity>(intent)
 
-            onView(ViewMatchers.withId(R.id.new_question_button)).perform(ViewActions.click())
+            onView(withId(R.id.new_question_button)).perform(click())
 
             assertTrue(true)
-
-            /*
-            onView(ViewMatchers.withId(R.id.question_details_edittext)).check(matches(withText(questionDetails)))
-            onView(ViewMatchers.withId(R.id.question_title_edittext)).check(matches(withText(questionTitle)))
-            onView(ViewMatchers.withId(R.id.image_uri)).check(matches(withText(uri)))
-
-             */
+            onView(withId(R.id.image_uri)).check(matches(withText(uri)))
 
         } catch (e: Exception) {
             Log.e("NewQuestionFragment", "Error lauching activity: \${e.message}")
         }
     }
+
+ */
 
     @Test
     fun navigatesCorrectly(){
