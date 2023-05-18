@@ -4,8 +4,15 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageButton
 import androidx.core.graphics.drawable.toBitmap
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.NoMatchingViewException
+import androidx.test.espresso.ViewAssertion
+import androidx.test.espresso.ViewInteraction
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.BoundedMatcher
+import androidx.test.espresso.matcher.ViewMatchers
 import org.hamcrest.Description
+import org.hamcrest.Matcher
 
 class ImageButtonHasDrawableMatcher {
 

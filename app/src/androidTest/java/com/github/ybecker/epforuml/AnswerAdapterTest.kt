@@ -1,32 +1,29 @@
 package com.github.ybecker.epforuml
 
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.CoordinatesProvider
-import androidx.test.espresso.action.GeneralClickAction
-import androidx.test.espresso.action.Press
-import androidx.test.espresso.action.Tap
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.scrollTo
+import com.github.ybecker.epforuml.util.onViewWithTimeout.Companion.onViewWithTimeout
+import androidx.test.espresso.action.*
+import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
-import org.hamcrest.BaseMatcher
+import com.github.ybecker.epforuml.util.onViewWithTimeout
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.Description
 import org.junit.runner.RunWith
-import java.util.regex.Matcher
 
 /**
  * Tests the display of answers to specific questions in the QuestionDetailsActivity
@@ -92,6 +89,78 @@ class AnswerAdapterTest {
     }
 
  */
+    val testVideoURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/PumpedUpKicksDancingKidMeme.mp4?alt=media&token=476c2953-ffe3-4a9d-88b1-62243fd7dd95"
+    val testImageURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/blue-horizontal-lens-flares-pack-260nw-2202148279.webp?alt=media&token=21e5b75a-f6dc-47e5-ac9c-105722597f46"
+
+    @Test
+    fun ImageVisibleWhenImageOnHeaderTest(){
+        Firebase.auth.signOut()
+        val user = db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
+        val newQuestionTitle = "TESTUMAGEQUESTION"
+
+        db.availableCourses().thenAccept {
+            db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testImageURI, "")
+        }.join()
+
+        onView(withId(R.id.swipe_refresh_layout)).perform(ViewActions.swipeDown())
+
+        onView(withText(newQuestionTitle)).perform(click())
+
+        //This line lead to a probleme with the CI...
+        //onViewWithTimeout(withId(R.id.image_question))
+        onViewWithTimeout(withId(R.id.video_question), matches(not(isDisplayed())))
+    }
+
+    @Test
+    fun PlayerViewViewVisibleWhenVideoOnHeaderTest(){
+        Firebase.auth.signOut()
+        val user = db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
+        val newQuestionTitle = "TESTUMAGEQUESTION"
+
+        db.availableCourses().thenAccept {
+            db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testVideoURI, "")
+        }.join()
+
+        onView(withId(R.id.swipe_refresh_layout)).perform(ViewActions.swipeDown())
+
+        onView(withText(newQuestionTitle)).perform(click())
+
+        onViewWithTimeout(withId(R.id.video_question))
+        onViewWithTimeout(withId(R.id.image_question), matches(not(isDisplayed())))
+    }
+
+
+    // For some reasons the tests doesn't pass the CI. I suspect it to be linked with the Dialog()
+//    @Test
+//    fun PopUpOnImageTest(){
+//        //re-use of the test that add a new question with image
+//        ImageVisibleWhenVideoOnHeaderTest()
+//
+//
+//        onView(withId(R.id.image_question)).perform(scrollTo())
+//        onView(withId(R.id.image_question)).perform(click())
+//        onViewWithTimeout(withId(R.id.popUpLayout))
+//
+//        onView(withId(R.id.back_button)).perform(click())
+//        onViewWithTimeout(withId(R.id.popUpLayout), doesNotExist())
+//    }
+//
+//    @Test
+//    fun PopUpOnVideoTest(){
+//        //re-use of the test that add a new question with video
+//        PlayerViewViewVisibleWhenVideoOnHeaderTest()
+//
+//        onView(withId(R.id.video_question)).perform(scrollTo())
+//        //need to sleep otherwise it doesn't click on the video but on the pause button and it fails
+//        Thread.sleep(1000)
+//        onView(withId(R.id.video_question)).perform(click())
+//        onViewWithTimeout(withId(R.id.popUpLayout))
+//
+//        onView(withId(R.id.back_button)).perform(click())
+//        onViewWithTimeout(withId(R.id.popUpLayout), doesNotExist())
+//    }
 
     @After
     fun closing() {

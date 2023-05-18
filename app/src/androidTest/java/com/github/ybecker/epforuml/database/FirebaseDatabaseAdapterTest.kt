@@ -100,9 +100,8 @@ class FirebaseDatabaseAdapterTest {
         romain = db.addUser("0", "Romain", "testEmail1").get()
         theo = db.addUser("1","Theo", "testEmail2").get()
 
-        question1Future =  db.addQuestion(romain.userId, sdp.courseId,false, "About SDP", "I have question about the SDP course !","","")
-        question2Future =  db.addQuestion(romain.userId, sdp.courseId, false,"Kotlin", "I think that the lambda with 'it' in Kotlin are great !","","")
-
+        question1Future =  db.addQuestion(romain.userId, sdp.courseId, false, "About SDP", "I have question about the SDP course !","https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/download.jpg?alt=media&token=2549027a-607c-489f-895b-904ab78ebcd9", "")
+        question2Future =  db.addQuestion(romain.userId, sdp.courseId, false, "Kotlin", "I think that the lambda with 'it' in Kotlin are great !","","")
 
         answer2Future = CompletableFuture()
         answer1Future = CompletableFuture()

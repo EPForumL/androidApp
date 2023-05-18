@@ -47,8 +47,8 @@ class Model {
             parcel.writeString(imageURI)
             parcel.writeStringList(answers)
             parcel.writeStringList(followers)
-            parcel.writeString(audioPath)
-
+            // At some point audioPath might be null.
+            parcel.writeString(audioPath ?: "")
         }
 
         override fun describeContents(): Int {

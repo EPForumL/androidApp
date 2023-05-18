@@ -27,6 +27,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.util.EspressoIdlingResource
 import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
+import com.github.ybecker.epforuml.util.onViewWithTimeout.Companion.onViewWithTimeout
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.fail
@@ -565,27 +566,5 @@ class QuestionDetailsTest {
                 }
             }
         }
-    }
-
-
-    //instead of Thread.sleep()
-    private fun onViewWithTimeout(
-        matcher: Matcher<View>,
-        retryAssertion: ViewAssertion = matches(isDisplayed())
-    ): ViewInteraction {
-        repeat(20) { i ->
-            try {
-                val viewInteraction = onView(matcher)
-                viewInteraction.check(retryAssertion)
-                return viewInteraction
-            } catch (e: NoMatchingViewException) {
-                if (i >= 20) {
-                    throw e
-                } else {
-                    Thread.sleep(200)
-                }
-            }
-        }
-        throw AssertionError("View matcher is broken for $matcher")
     }
 }
