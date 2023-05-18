@@ -116,7 +116,7 @@ class QuestionDetailsTest {
     fun setup() {
         DatabaseManager.useMockDatabase()
 
-        registerIdlingResource()
+        //registerIdlingResource()
 
         intent = Intent(
             ApplicationProvider.getApplicationContext(),
@@ -494,7 +494,7 @@ class QuestionDetailsTest {
     fun closing() {
         scenario.close()
 
-        unregisterIdlingResource()
+        //unregisterIdlingResource()
     }
 
     private fun performOnViewChild(viewId: Int, viewAction: ViewAction): ViewAction {
