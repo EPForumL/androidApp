@@ -116,6 +116,7 @@ class RealChatFragment : Fragment() {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
                     // Called when a new child is added to "chats"
                     val chat = dataSnapshot.getValue(Model.Chat::class.java)
+
                     // Process the new chat data
                     fetchChats()
                 }
