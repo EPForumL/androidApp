@@ -72,6 +72,4 @@ class QuestionDetailsWithVoiceNote {
         }
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
     }
-
-
 }

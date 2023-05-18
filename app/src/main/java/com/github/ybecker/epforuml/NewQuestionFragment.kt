@@ -131,15 +131,18 @@ class NewQuestionFragment : Fragment() {
     private fun setPlayButtonListener(View: View){
 
         playVoiceNote.setOnClickListener {
-            recordVoiceNote.isEnabled = false
             if (audioPlayer == null) {
+                recordVoiceNote.isEnabled = false
                 audioPlayer = context?.let { it1 -> AndroidAudioPlayer(it1) }
+                recordVoiceNote.isEnabled = true
             }
 
             if (audioFile != null) {
+                recordVoiceNote.isEnabled = false
                 audioPlayer?.playFile(audioFile!!.toUri())
+                recordVoiceNote.isEnabled = true
             }
-            recordVoiceNote.isEnabled = true
+
 
         }
     }
@@ -158,7 +161,6 @@ class NewQuestionFragment : Fragment() {
 
 
     private fun startRecording(){
-        playVoiceNote.isEnabled = false
         if (audioRecorder == null) {
             audioRecorder = context?.let { it1 -> AndroidAudioRecorder(it1) }
         }
@@ -168,7 +170,6 @@ class NewQuestionFragment : Fragment() {
             val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC)
             audioFile = File(storageDir, fileName)
             isRecording = true
-
             audioRecorder?.start(audioFile!!)
             updateRecordButtonText()
 
@@ -177,7 +178,6 @@ class NewQuestionFragment : Fragment() {
             isRecording = false
             updateRecordButtonText()
         }
-        playVoiceNote.isEnabled = true
     }
 
 
@@ -219,8 +219,12 @@ class NewQuestionFragment : Fragment() {
     private fun updateRecordButtonText() {
         if (isRecording) {
             recordVoiceNote.text = "Stop Recording"
+            playVoiceNote.isEnabled = false
+
         } else {
             recordVoiceNote.text = "Start New Recording"
+            playVoiceNote.isEnabled = true
+
         }
     }
 
