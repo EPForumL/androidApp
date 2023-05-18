@@ -26,7 +26,7 @@ import java.security.Permission
 
 @RunWith(AndroidJUnit4::class)
 class MapFragmentTest {
-    lateinit var scenario: ActivityScenario<LoginActivity>
+    lateinit var scenario: ActivityScenario<MainActivity>
 
     @get:Rule
     val grantPermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -36,7 +36,7 @@ class MapFragmentTest {
         DatabaseManager.useMockDatabase()
         Firebase.auth.signOut()
         DatabaseManager.user = null
-        scenario = ActivityScenario.launch(LoginActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
         Intents.init()
     }
 
