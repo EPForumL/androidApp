@@ -3,6 +3,7 @@ package com.github.ybecker.epforuml.database
 import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
+
 import androidx.annotation.RequiresApi
 
 class Model {
@@ -17,7 +18,8 @@ class Model {
         val questionText: String,
         val imageURI : String,
         var answers: List<String>,
-        var followers: List<String>
+        var followers: List<String>,
+        val audioPath : String
         ) : Parcelable {
         @RequiresApi(Build.VERSION_CODES.Q)
         constructor(parcel: Parcel) : this(
@@ -29,8 +31,9 @@ class Model {
             parcel.readString()!!,
             parcel.readString()!!,
             parcel.createStringArrayList()!!,
-            parcel.createStringArrayList()!!
-        ) {
+            parcel.createStringArrayList()!!,
+            parcel.readString()!!
+            ) {
         }
 
         @RequiresApi(Build.VERSION_CODES.Q)
@@ -44,6 +47,8 @@ class Model {
             parcel.writeString(imageURI)
             parcel.writeStringList(answers)
             parcel.writeStringList(followers)
+            parcel.writeString(audioPath)
+
         }
 
         override fun describeContents(): Int {

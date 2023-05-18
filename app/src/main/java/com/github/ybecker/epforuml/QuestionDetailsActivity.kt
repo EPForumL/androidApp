@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml
 
 import android.content.Intent
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -16,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
 import kotlin.random.Random
 
 class QuestionDetailsActivity : AppCompatActivity() {
@@ -35,6 +37,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var newIntent : Intent
     private lateinit var comingFromFragment : String
+    private lateinit var audioPlayer : AndroidAudioPlayer
 
     private lateinit var username :String
 
@@ -44,6 +47,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_question_details)
 
+        audioPlayer = AndroidAudioPlayer(this)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         // retrieve cache value
@@ -106,6 +110,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         // only allow posting answer if user is connected
         answerPostingSetup()
+        setVoiceNoteButton()
     }
 
 
@@ -163,8 +168,15 @@ class QuestionDetailsActivity : AppCompatActivity() {
             MainActivity.saveDataToDevice(cache, answersCache)
         }
     }
-
-
+    private fun setVoiceNoteButton(){
+        val playButton = findViewById<Button>(R.id.play_note_button)
+        if(question!!.audioPath == "null" || question!!.audioPath == ""){
+            playButton.visibility = View.GONE
+        }
+        playButton.setOnClickListener{
+           audioPlayer.playFile(Uri.parse(question!!.audioPath))
+        }
+    }
     private fun endorsementSetup() {
         db.getQuestionFollowers(questionId).thenAccept {
             val notificationButton = findViewById<ImageButton>(R.id.addFollowButton)
@@ -209,6 +221,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
     }
 
 
+
     private fun answerPostingSetup() {
         val replyBox : EditText = findViewById(R.id.write_reply_box)
         val sendButton : ImageButton =  findViewById(R.id.post_reply_button)
@@ -218,24 +231,19 @@ class QuestionDetailsActivity : AppCompatActivity() {
             sendButton.setOnClickListener {
                 if (question != null) {
                     val replyText : String = replyBox.text.toString()
-
                     // allow only non-empty answers
                     if (replyText != "") {
                         replyBox.setText("")
-
                         db.addAnswer(userId, question!!.questionId, replyText)
                         updateRecycler()
                         updateNewIntent()
                     }
                 }
             }
-
             saveToggle = findViewById(R.id.toggle_save_question)
             switchImageButton()
-
             saveToggle.setOnClickListener {
                 // question is saved, will be unsaved after click
-                //if (questionIsSaved) {
                 if (isSavedQuestion()) {
                     cache.remove(question!!)
                 }
@@ -243,7 +251,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 else {
                     cache.add(question!!)
                 }
-
                 updateNewIntent()
                 switchImageButton()
             }

@@ -1,9 +1,9 @@
 package com.github.ybecker.epforuml.database
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
@@ -17,9 +17,9 @@ import com.google.firebase.messaging.ktx.messaging
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.io.File
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
-import kotlin.coroutines.coroutineContext
 
 
 /**
@@ -64,6 +64,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val isAnonymousPath = "anonymous"
 
     private val questionURIPath = "imageURI"
+    private val questioAudioPath = "audioPath"
 
     private val emailPath = "email"
     private val profilePicPath = "profilePic"
@@ -176,8 +177,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     //Note that using user.subscriptions in the main is false because you don't take new values in the db into account !
     override fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>> {
-        val future = CompletableFuture<List<Any>>()
-
         // use private getListOfAny methode with correct arguents
         return  getListOfAny(listOf(usersPath,userId,subscriptionsPath), coursesPath) { ds -> getCourse(ds) }
                 //cast the future to the a list of courses future
@@ -187,15 +186,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     override fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>> {
         val future = CompletableFuture<List<String>>()
 
-        db.child(coursesPath).child(courseId).child(notificationsPath).get().addOnSuccessListener(){
+        db.child(coursesPath).child(courseId).child(notificationsPath).get().addOnSuccessListener {
             val tokens = mutableListOf<String>()
 
             for(courseSnapshot in it.children){
                 val token = courseSnapshot.value as String
-                if(token!=null){
-                    tokens.add(token)
-                }
-            }
+                tokens.add(token)        }
             future.complete(tokens)
         }
         return future
@@ -204,7 +200,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     override fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>> {
         val future = CompletableFuture<List<String>>()
 
-        db.child(coursesPath).child(courseId).child(notificationsPath).get().addOnSuccessListener(){
+        db.child(coursesPath).child(courseId).child(notificationsPath).get().addOnSuccessListener {
             val userIds = mutableListOf<String>()
 
             for(courseSnapshot in it.children){
@@ -441,9 +437,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             val chats =  mutableListOf<Chat>()
             for(chatSnapshot in it.children){
                 val chat = retrieveChat(chatSnapshot)
-                if((chat!!.senderId == userId1 && chat!!.receiverId == userId2) ||
-                    (chat!!.senderId == userId2 && chat!!.receiverId == userId1)){
-                    chats.add(chat!!)
+                if((chat!!.senderId == userId1 && chat.receiverId == userId2) ||
+                    (chat.senderId == userId2 && chat.receiverId == userId1)){
+                    chats.add(chat)
                 }
             }
             future.complete(chats)
@@ -512,7 +508,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.w(ContentValues.TAG, "Listener was cancelled at .info/connected")
+                Log.w(TAG, "Listener was cancelled at .info/connected")
             }
         })
     }
@@ -751,9 +747,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         dataSnapshot.child(followersPath).children.forEach { questionSnapshot ->
             questionSnapshot.key?.let { followers.add(it) }
         }
+        val audioPath = dataSnapshot.child(questioAudioPath).getValue(String::class.java)
 
-        if(questionId!=null && courseId!=null && userId!=null && isAnonymous!=null && questionTitle!=null && questionText!=null && questionURI!=null){
-            return Question(questionId, courseId, userId, isAnonymous, questionTitle, questionText, questionURI, answers, followers)
+
+        if(questionId!=null && courseId!=null && userId!=null&& isAnonymous!=null && questionTitle!=null && questionText!=null && questionURI!=null&& audioPath!=null){
+            return Question(questionId, courseId, userId,isAnonymous,  questionTitle, questionText, questionURI, answers, followers,audioPath)
+
         }
         return null
     }
@@ -823,21 +822,27 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return true
     }
 
-    override fun addQuestion(userId: String, courseId: String, isAnonymous: Boolean, questionTitle: String, questionText: String?, image_uri: String): CompletableFuture<Question> {
-        val question_future = CompletableFuture<Question>()
+    override fun addQuestion(userId: String, courseId: String,isAnonymous: Boolean, questionTitle: String, questionText: String?, image_uri: String, audioPath : String): CompletableFuture<Question> {
+        val questionFuture = CompletableFuture<Question>()
+
         // create a space for the new question in db and save its id
         val newChildRef = db.child(questionsPath).push()
         val questionId = newChildRef.key ?: error("Failed to generate question ID")
         // create the new question using given parameters
-        var future = CompletableFuture.completedFuture("")
+        var futureURI = CompletableFuture.completedFuture("")
         if (image_uri != "null") {
-            future = uploadToFirebase(image_uri)
+            futureURI = uploadImageToFirebase(image_uri)
         }
-        future.thenAccept{
-            var question = Question(questionId, courseId, userId, isAnonymous, questionTitle, questionText ?: "", it, emptyList(), emptyList())
+        var futureAudio = CompletableFuture.completedFuture("")
+        if(audioPath != "null"){
+            futureAudio = uploadAudioToFirebase(audioPath)
+        }
+        CompletableFuture.allOf(futureAudio,futureURI).thenAccept{_ ->
+            val question = Question(questionId, courseId, userId,isAnonymous, questionTitle, questionText ?: "", futureURI.get(), emptyList(), emptyList(), futureAudio.get())
+
             // add the new question in the db
             newChildRef.setValue(question)
-            question_future.complete(question)
+            questionFuture.complete(question)
             //add the question in the course's questions list
             db.child(coursesPath).child(courseId).child(questionsPath).child(questionId).setValue(questionId)
             //add the question in the user's questions list
@@ -851,10 +856,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 }
             }
         }
-        return question_future
+        return questionFuture
     }
-
-    private fun uploadToFirebase(uri: String) : CompletableFuture<String>{
+    private fun uploadImageToFirebase(uri: String) : CompletableFuture<String>{
         val url = CompletableFuture<String>()
 
         var extention: String
@@ -866,6 +870,28 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             val fileRef: StorageReference =
                 FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + getExtension(uri))
             fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
+                fileRef.downloadUrl.addOnSuccessListener { uri ->
+                    url.complete(uri.toString())
+                }
+            }.addOnFailureListener {
+                url.completeExceptionally(it)
+            }.addOnCanceledListener {
+                url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
+            }
+
+        }
+        return url
+    }
+
+    private fun uploadAudioToFirebase(path: String) : CompletableFuture<String>{
+        val url = CompletableFuture<String>()
+        if(path == "" || path.equals(null)){
+            url.complete("")
+
+        }else{
+            val fileRef: StorageReference =
+                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".mp4")
+            fileRef.putFile(File(path).toUri()).addOnSuccessListener {
                 fileRef.downloadUrl.addOnSuccessListener { uri ->
                     url.complete(uri.toString())
                 }

@@ -18,12 +18,10 @@ check_android_task:
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
       -avd emulator
-      -no-audio
       -no-boot-anim
       -gpu swiftshader_indirect
       -no-snapshot
       -no-window
-      -camera-back none
   assemble_instrumented_tests_script: |
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest
