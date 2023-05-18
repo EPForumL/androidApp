@@ -24,6 +24,7 @@ import androidx.camera.core.Preview
 import androidx.camera.core.CameraSelector
 import android.util.Log
 import android.view.MotionEvent
+import android.widget.ImageButton
 import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCaptureException
@@ -69,44 +70,26 @@ class CameraActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
-
-//            requestPermissions.launch(
-//                arrayOf(
-//                    Manifest.permission.CAMERA,
-//                    Manifest.permission.RECORD_AUDIO
-//                )
-//            )
         }
 
         // Set up the listeners for take photo and video capture buttons
-//        viewBinding.imageCaptureButton.setOnClickListener{
-//            takePhoto()
-//        }
-
-
-        // Set up the listeners for take photo and video capture buttons
         val captureButton = viewBinding.imageCaptureButton
-        captureButton.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    captureButton.setColorFilter(ContextCompat.getColor(MainActivity.context, R.color.shade2), PorterDuff.Mode.SRC_IN)
-                    captureButton.postDelayed({
-                        startRecordingVideo()
-                    }, 500)
-                    true
-                }
-                MotionEvent.ACTION_UP -> {
-                    captureButton.setColorFilter(ContextCompat.getColor(MainActivity.context, R.color.shade3), PorterDuff.Mode.SRC_IN)
-                    viewBinding.imageCaptureButton.removeCallbacks(null)
-                    if (isRecording) {
-                        stopRecordingVideo()
-                    } else {
-                        takePhoto()
-                    }
-                    true
-                }
-                else -> false
+
+
+        captureButton.setOnClickListener {
+            (it as ImageButton).setColorFilter(ContextCompat.getColor(MainActivity.context, R.color.shade3), PorterDuff.Mode.SRC_IN)
+            viewBinding.imageCaptureButton.removeCallbacks(null)
+            if (isRecording) {
+                stopRecordingVideo()
+            } else {
+                takePhoto()
             }
+        }
+
+        captureButton.setOnLongClickListener {
+            (it as ImageButton).setColorFilter(ContextCompat.getColor(MainActivity.context, R.color.shade2), PorterDuff.Mode.SRC_IN)
+            startRecordingVideo()
+            true
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()

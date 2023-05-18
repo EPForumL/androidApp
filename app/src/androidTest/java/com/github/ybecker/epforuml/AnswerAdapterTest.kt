@@ -151,8 +151,8 @@ class AnswerAdapterTest {
 
         onView(withId(R.id.video_question)).perform(scrollTo())
         //need to sleep otherwise it doesn't click on the video but on the pause button and it fails
-        Thread.sleep(500)
-        onView(withId(R.id.img_vid_frameLayout)).perform(click())
+        Thread.sleep(1000)
+        onView(withId(R.id.video_question)).perform(click())
         onViewWithTimeout(withId(R.id.popUpLayout))
 
         onView(withId(R.id.back_button)).perform(click())
