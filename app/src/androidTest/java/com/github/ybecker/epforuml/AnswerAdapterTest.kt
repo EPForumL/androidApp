@@ -90,7 +90,7 @@ class AnswerAdapterTest {
 
  */
     val testVideoURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/PumpedUpKicksDancingKidMeme.mp4?alt=media&token=476c2953-ffe3-4a9d-88b1-62243fd7dd95"
-    val testImageURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/download.jpg?alt=media&token=2549027a-607c-489f-895b-904ab78ebcd9"
+    val testImageURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/small-test-tube-icon-symbol-260nw-2280511809.webp?alt=media&token=905da401-d77a-451c-bcb1-94114cb7e34a"
 
     @Test
     fun ImageVisibleWhenImageOnHeaderTest(){
