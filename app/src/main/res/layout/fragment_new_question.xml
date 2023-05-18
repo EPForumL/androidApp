@@ -49,6 +49,7 @@
             android:autofillHints="Question title"
             android:inputType="text"
             android:maxLines="1"
+            android:minHeight="48dp"
             android:padding="8dp"
             tools:ignore="LabelFor" />
 
@@ -94,7 +95,30 @@
             tools:ignore="LabelFor" />
         -->
 
+
         <!-- Anonymous Switch -->
+
+        <Button
+            android:id="@+id/play_note_button"
+            android:layout_width="257dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/button_bg"
+            android:drawableStart="@drawable/ic_microphone"
+            android:drawablePadding="8dp"
+            android:text="Play_voice_note" />
+
+
+        <Button
+            android:id="@+id/voice_note_button"
+            android:layout_width="257dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/button_bg"
+            android:drawableStart="@drawable/ic_microphone"
+            android:drawablePadding="8dp"
+            android:text="@string/record_voice_note" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,20 +132,13 @@
             android:padding="8dp"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="15dp" />
-
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="@string/add_content" />
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="13dp" />
 
         <TextView
             android:id="@+id/image_uri"

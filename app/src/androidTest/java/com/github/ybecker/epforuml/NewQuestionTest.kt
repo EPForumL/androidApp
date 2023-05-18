@@ -343,6 +343,7 @@ class NewQuestionTest {
 
     }
 
+
     @Test
     fun goesBackToNewQuestionWhenDone() {
 
@@ -417,7 +418,7 @@ class NewQuestionTest {
         secondItem.perform(click())
 
         //Click the anonymous switch and submit
-        onView(withId(R.id.anonymous_switch)).perform(click())
+        onView(withId(R.id.anonymous_switch)).perform(scrollTo(), click())
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
         onView(withId(R.id.btn_submit)).perform(click())
 
@@ -460,7 +461,7 @@ class NewQuestionTest {
         val secondItem = onData(anything()).atPosition(1)
         secondItem.perform(click())
         //Click the anonymous switch and submit
-        onView(withId(R.id.anonymous_switch)).perform(click())
+        onView(withId(R.id.anonymous_switch)).perform(scrollTo(), click())
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
         onView(withId(R.id.btn_submit)).perform(click())
 
@@ -491,7 +492,7 @@ class NewQuestionTest {
         //Send anonymous question as in previous test
         Firebase.auth.signOut()
         val title = "TITLE"
-        db.addQuestion("OTHERUSER", "course0", true, title, "text", "")
+        db.addQuestion("OTHERUSER", "course0", true, title, "text", "","")
         val user = db.addUser("AUSERID", "AUSER", "").get()
         DatabaseManager.user = user
         val scenario = ActivityScenario.launch(MainActivity::class.java)
