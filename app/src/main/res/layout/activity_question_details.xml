@@ -61,6 +61,16 @@
         android:id="@+id/qdetails_title"/>
 
 
+    <Button
+        android:id="@+id/play_note_button"
+        android:layout_width="257dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/button_bg"
+        android:drawableStart="@drawable/ic_microphone"
+        android:drawablePadding="8dp"
+        android:text="@string/play_voice_note"
+        android:layout_gravity="center"/>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
@@ -75,7 +85,6 @@
             android:layout_weight="1"
             tools:listitem="@layout/question_details_answer_item" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -135,6 +144,19 @@
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+        <ImageButton
+            android:id="@+id/question_details_latex"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:clickable="true"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/latex_logo"
+            android:background="@drawable/round_corner"
+            app:tint="@color/white"
+            android:layout_margin="8dp" />
 
         <ImageButton
             android:layout_width="45dp"

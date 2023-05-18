@@ -1,19 +1,33 @@
 package com.github.ybecker.epforuml
 
+import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.media.MediaRecorder
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.latex.LatexDialog
 import com.github.ybecker.epforuml.sensor.CameraActivity
-
+import com.github.ybecker.epforuml.sensor.AndroidAudioRecorder
+import java.io.File
+import java.util.*
+import android.Manifest
+import android.annotation.SuppressLint
+import androidx.compose.ui.graphics.Color
+import androidx.core.net.toUri
+import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
 
 /**
  * A simple [Fragment] subclass.
@@ -22,10 +36,21 @@ import com.github.ybecker.epforuml.sensor.CameraActivity
  */
 class NewQuestionFragment : Fragment() {
 
+    private var mediaRecorder: MediaRecorder? = null
+    private var audioFile: File? = null
+    private var isRecording = false
+
+    private var audioRecorder: AndroidAudioRecorder? = null
+
+    private var audioPlayer: AndroidAudioPlayer? = null
+
     private lateinit var questBody : EditText
     private lateinit var questTitle : EditText
     private lateinit var imageURI: TextView
+    private lateinit var recordVoiceNote: Button
     private lateinit var takePictureButton: Button
+    private lateinit var playVoiceNote: Button
+
     private lateinit var image_uri : String
 
     private lateinit var mainActivity: MainActivity
@@ -51,11 +76,15 @@ class NewQuestionFragment : Fragment() {
                 courseNamesList
             )
             spinner.adapter = adapter
-            setUpArgs(view,spinner,coursesList,user)
-        }
-        return view
+            setUpArgs(view, spinner, coursesList, user)
 
+            // Shows the latex renderer dialog
+            val latexButton = view.findViewById<ImageButton>(R.id.show_latex_button)
+            latexButton.setOnClickListener { LatexDialog(requireContext(), questBody).show() }
         }
+
+        return view
+    }
 
     private fun setUpArgs(
         view: View,
@@ -63,12 +92,148 @@ class NewQuestionFragment : Fragment() {
         coursesList: List<Model.Course>,
         user: Model.User?,
     ) {
-        setUpArgs(view)
+
+        questBody = view.findViewById(R.id.question_details_edittext)
+        questTitle = view.findViewById(R.id.question_title_edittext)
+        imageURI = view.findViewById(R.id.image_uri)
+        questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
+        questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
+        imageURI.text = image_uri
+
         val submitButton = view.findViewById<Button>(R.id.btn_submit)
+        recordVoiceNote = view.findViewById(R.id.voice_note_button)
+        playVoiceNote = view.findViewById(R.id.play_note_button)
+
+
+
+        //Set up the listeners
+
         val anonymousSwitch = view.findViewById<Switch>(R.id.anonymous_switch)
         submitButton?.setOnClickListener(submitButtonListener(spinner, anonymousSwitch, coursesList, user))
-        setTakeImage(view, questBody, questTitle)
+        setTakeImageListener(view, questBody, questTitle)
+        setRecordButtonListener(view)
+        setPlayButtonListener(view)
     }
+
+
+    private fun setTakeImageListener(
+        view: View,
+        questBody: EditText,
+        questTitle: EditText
+    ) {
+        takePictureButton = view.findViewById(R.id.takeImage)
+        takePictureButton.setOnClickListener {
+            val questionDetails = questBody.text.toString()
+            val questionTitle = questTitle.text.toString()
+            val intent = Intent(this.mainActivity, CameraActivity::class.java)
+            intent.putExtra("questionTitle", questionTitle)
+            intent.putExtra("questionDetails", questionDetails)
+            startActivity(intent)
+        }
+    }
+
+
+    private fun setPlayButtonListener(View: View){
+
+        playVoiceNote.setOnClickListener {
+            if (audioPlayer == null) {
+                recordVoiceNote.isEnabled = false
+                audioPlayer = context?.let { it1 -> AndroidAudioPlayer(it1) }
+                recordVoiceNote.isEnabled = true
+            }
+
+            if (audioFile != null) {
+                recordVoiceNote.isEnabled = false
+                audioPlayer?.playFile(audioFile!!.toUri())
+                recordVoiceNote.isEnabled = true
+            }
+
+
+        }
+    }
+    private fun setRecordButtonListener(View: View){
+
+        recordVoiceNote.setOnClickListener {
+            if (hasRecordAudioPermission()) {
+
+                startRecording()
+            }
+            else {
+                requestRecordAudioPermission()
+            }
+        }
+     }
+
+
+    private fun startRecording(){
+        if (audioRecorder == null) {
+            audioRecorder = context?.let { it1 -> AndroidAudioRecorder(it1) }
+        }
+        if (audioRecorder?.recorder == null) {
+
+            val fileName = "recording.3gp"
+            val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+            audioFile = File(storageDir, fileName)
+            isRecording = true
+            audioRecorder?.start(audioFile!!)
+            updateRecordButtonText()
+
+        } else {
+            audioRecorder?.stop()
+            isRecording = false
+            updateRecordButtonText()
+        }
+    }
+
+
+    private fun hasRecordAudioPermission(): Boolean {
+        val permission = Manifest.permission.RECORD_AUDIO
+        val result = ContextCompat.checkSelfPermission(requireContext(), permission)
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestRecordAudioPermission() {
+        val permission = Manifest.permission.RECORD_AUDIO
+        ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), REQUEST_RECORD_AUDIO_PERMISSION)
+    }
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, perform the action
+                startRecording()
+            } else {
+                // Permission denied, show a message or handle it accordingly
+                Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    companion object {
+        private const val REQUEST_RECORD_AUDIO_PERMISSION = 200
+    }
+
+
+    private fun updateRecordButtonText() {
+        if (isRecording) {
+            recordVoiceNote.text = "Stop Recording"
+            playVoiceNote.isEnabled = false
+
+        } else {
+            recordVoiceNote.text = "Start New Recording"
+            playVoiceNote.isEnabled = true
+
+        }
+    }
+
+
 
     private fun submitButtonListener(
         spinner: Spinner,
@@ -92,8 +257,7 @@ class NewQuestionFragment : Fragment() {
                 "Question title or body cannot be empty",
                 Toast.LENGTH_SHORT
             ).show()
-        }
-        else {
+        } else {
             // Get the selected course from the spinner
             val selectedItemPosition = spinner.selectedItemPosition
             if (selectedItemPosition != Spinner.INVALID_POSITION) {
@@ -104,22 +268,27 @@ class NewQuestionFragment : Fragment() {
 
                 // If the course is found, add the question to the database and navigate to the home screen
                 if (course != null) {
-
+                    var audioFilePath= "null"
+                    if(audioFile != null){
+                        audioFilePath = audioFile!!.absolutePath
+                    }
                     db.addQuestion(
                         user.userId,
                         course.courseId,
                         anonymousSwitch.isChecked,
                         questTitle.text.toString(),
                         questBody.text.toString(),
-                        imageURI.text.toString()
+                        imageURI.text.toString(),
+                        audioFilePath
                     ).thenAccept {
-                        //mainActivity.intent.extras.
+
                         mainActivity.replaceFragment(HomeFragment())
                     }
                 }
             }
         }
     }
+
     private fun setTakeImage(
         view: View,
         questBody: EditText,
@@ -137,14 +306,12 @@ class NewQuestionFragment : Fragment() {
     }
 
     private fun setUpArgs(view: View): Triple<EditText, EditText, TextView> {
-         questBody = view.findViewById(R.id.question_details_edittext)
-         questTitle = view.findViewById(R.id.question_title_edittext)
-         imageURI = view.findViewById(R.id.image_uri)
+        questBody = view.findViewById(R.id.question_details_edittext)
+        questTitle = view.findViewById(R.id.question_title_edittext)
+        imageURI = view.findViewById(R.id.image_uri)
         questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
         questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
         imageURI.text = image_uri
         return Triple(questBody, questTitle, imageURI)
     }
-
-
 }

@@ -11,9 +11,11 @@ import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
+import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -357,6 +359,7 @@ class NewQuestionTest {
 
     }
 
+
     @Test
     fun goesBackToNewQuestionWhenDone() {
 
@@ -429,7 +432,7 @@ class NewQuestionTest {
         secondItem.perform(click())
 
         //Click the anonymous switch and submit
-        onView(withId(R.id.anonymous_switch)).perform(click())
+        onView(withId(R.id.anonymous_switch)).perform(scrollTo(), click())
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
         onView(withId(R.id.btn_submit)).perform(click())
 
@@ -472,7 +475,7 @@ class NewQuestionTest {
         val secondItem = onData(anything()).atPosition(1)
         secondItem.perform(click())
         //Click the anonymous switch and submit
-        onView(withId(R.id.anonymous_switch)).perform(click())
+        onView(withId(R.id.anonymous_switch)).perform(scrollTo(), click())
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
         onView(withId(R.id.btn_submit)).perform(click())
 
@@ -482,9 +485,13 @@ class NewQuestionTest {
         onView(withId(R.id.write_reply_box)).perform(typeText(answerText)).perform(closeSoftKeyboard())
         onView(withId(R.id.post_reply_button)).perform(click())
 
+        Thread.sleep(2000)
+
         //get title name
         val usernameText: ViewInteraction = onView(withId(R.id.qdetails_question_username))
         val text = getText(usernameText).removeSuffix(" asks :")
+
+        Thread.sleep(2000)
 
         // get text of first item
         TextOnItemEqual(1, text, R.id.qdetails_answer_username)
@@ -499,7 +506,7 @@ class NewQuestionTest {
         //Send anonymous question as in previous test
         Firebase.auth.signOut()
         val title = "TITLE"
-        db.addQuestion("OTHERUSER", "course0", true, title, "text", "")
+        db.addQuestion("OTHERUSER", "course0", true, title, "text", "","")
         val user = db.addUser("AUSERID", "AUSER", "").get()
         DatabaseManager.user = user
         val scenario = ActivityScenario.launch(MainActivity::class.java)
@@ -520,6 +527,35 @@ class NewQuestionTest {
         scenario.close()
     }
 
+
+    @Test
+    fun checkLatexButtonExistAndOpensDialog() {
+        Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
+
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
+
+
+        // Launch the fragment
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+
+        // Click on the new quest button
+        onView(withId(R.id.new_question_button)).perform(click())
+
+        // Check that the new fragment is displayed
+        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.show_latex_button))
+            .check(matches(isDisplayed()))
+            .perform(click())
+
+        onView(withId(R.id.latex_window_root))
+            .check(matches(isDisplayed()))
+    }
 
     fun getText(matcher: ViewInteraction): String {
         var text = String()

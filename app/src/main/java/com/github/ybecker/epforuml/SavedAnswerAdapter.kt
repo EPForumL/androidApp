@@ -16,6 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.latex.MathView
+//import katex.hourglass.`in`.mathlib.MathView
+
+
 import java.util.concurrent.CompletableFuture
 
 class SavedAnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<Model.Answer>)
@@ -54,7 +58,7 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> {
-                holder.headerText.text = questionText
+                holder.headerText.setDisplayText(questionText)
             }
 
             is AnswerViewHolder -> {
@@ -158,7 +162,7 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
 
 
     class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val headerText : TextView = itemView.findViewById(R.id.qdetails_question_content)
+        val headerText : MathView = itemView.findViewById(R.id.qdetails_question_content)
     }
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {

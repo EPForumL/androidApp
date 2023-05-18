@@ -1,7 +1,10 @@
 package com.github.ybecker.epforuml.camera
 
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission_group.CAMERA
 import android.app.Activity
 import android.content.Intent
+import android.media.MediaRecorder.VideoSource.CAMERA
 import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -18,18 +21,29 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject
 import androidx.test.uiautomator.UiSelector
+import androidx.test.rule.GrantPermissionRule
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.util.EspressoIdlingResource
+import com.github.ybecker.epforuml.R
+import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertTrue
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import android.Manifest
+
 
 
 @RunWith(AndroidJUnit4::class)
 class CameraTest {
-/*
+    @get:Rule
+    var permissionCamera: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
+
     @Test
     fun newQuestionSetsUpWhenIntentFilled() {
 
@@ -54,7 +68,7 @@ class CameraTest {
         }
     }
 
- */
+
 
     private fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
