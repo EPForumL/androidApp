@@ -147,6 +147,8 @@ class LatexDialogTest {
         val rendered = dialog.findViewById<MathView>(R.id.latex_mathView)
         assertThat(rendered.getDisplayText(), Is(text))
 
+        Thread.sleep(1000)
+
         val text2 = "test2"
         onView(ViewMatchers.withId(R.id.latex_editText))
             .perform(ViewActions.click())
