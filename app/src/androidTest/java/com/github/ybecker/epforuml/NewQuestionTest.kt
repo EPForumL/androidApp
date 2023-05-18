@@ -32,6 +32,7 @@ import org.hamcrest.Matchers
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.lang.Thread.sleep
 
 
 @RunWith(AndroidJUnit4::class)
@@ -161,6 +162,62 @@ class NewQuestionTest {
 
 
 */
+
+
+    @Test
+    fun testAddImage() {
+
+        Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
+
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
+
+        // Launch the fragment
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+
+        // Click on the new quest button
+        onView(withId(R.id.new_question_button)).perform(click())
+
+        // Check that the new fragment is displayed
+        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+
+        //Body of the question
+        val questBody = "Text From User"
+        onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
+
+        // Close the keyboard
+        Espresso.closeSoftKeyboard()
+
+        //Title of the question
+        onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title"))
+
+        // Close the keyboard
+        Espresso.closeSoftKeyboard()
+
+        // Scroll to the end of the page
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+
+        //click on the image button
+        onView(withId(R.id.takeImage)).perform(click())
+
+        sleep(2000)
+        onView(withId(R.id.camera_layout_parent)).check(matches(isDisplayed()))
+
+        //click on the camera button
+
+        onView(withId(R.id.image_capture_button)).perform(click())
+
+
+        scenario.close()
+
+    }
+
 
 
     @Test
