@@ -450,7 +450,7 @@ class MockDatabase : Database() {
         users[userId]?.sharesLocation = sharesLocation
     }
 
-    override fun getDbInstance(): FirebaseDatabase {
+    override fun getDbInstance(): FirebaseDatabase? {
         return null
     }
 }

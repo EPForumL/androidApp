@@ -405,6 +405,6 @@ abstract class Database {
      */
     abstract fun updateLocalization(userId: String, position: LatLng, sharesLocation: Boolean)
 
-    abstract fun getDbInstance(): FirebaseDatabase
+    abstract fun getDbInstance(): FirebaseDatabase?
 
 }

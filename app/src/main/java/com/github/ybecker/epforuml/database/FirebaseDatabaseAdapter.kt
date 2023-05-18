@@ -580,7 +580,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).child(sharesLocationPath).setValue(sharesLocation)
     }
 
-    override fun getDbInstance(): FirebaseDatabase {
+    override fun getDbInstance(): FirebaseDatabase? {
         return dbInstance
     }
 
