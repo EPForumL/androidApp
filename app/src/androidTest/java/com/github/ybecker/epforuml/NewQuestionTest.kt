@@ -16,6 +16,10 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiObject
+import androidx.test.uiautomator.UiSelector
 import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
@@ -145,6 +149,13 @@ class NewQuestionTest {
 
         //click on the image button
         onView(withId(R.id.takeImage)).perform(click())
+
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+
+        val allowPermissions: UiObject = device.findObject(UiSelector().text("While using the app"))
+        if (allowPermissions.exists()) {
+            allowPermissions.click()
+        }
 
         onView(withId(R.id.camera_layout_parent)).check(matches(isDisplayed()))
 
