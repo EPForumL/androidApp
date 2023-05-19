@@ -5,25 +5,28 @@ container:
   kvm: true
 
 env:
-  CC_TEST_REPORTER_ID: ENCRYPTED[!a23d333dba641c36b488663d1c3a140e6c745bb25b4b96b7b14a0a0d1751082f785bfe7107f1fc0a9e3e3355124f80c5!]
-
+  CC_TEST_REPORTER_ID: ENCRYPTED[!54f7b8f65c44f69e037c57fabcd1ce35fc40ca4b906b4f7ec86ce97027304b04dc30a59405dd2f494c7f235d4f8c6ce3!]
+  MAPS_API_KEY: ENCRYPTED[!72b644ee1719a79c8a5534975980e85647b26a8b43a578c7c492cdd529674c6d3d491277af964a5d75cbc57fdcad8bea!]
 check_android_task:
   name: Run Android tests
   install_emulator_script:
-    sdkmanager --install "system-images;android-30;google_apis_playstore;x86"
+    sdkmanager --install "system-images;android-30;google_apis;x86"
   create_avd_script:
     echo no | avdmanager create avd --force
       --name emulator
-      --package "system-images;android-30;google_apis_playstore;x86"
+      --package "system-images;android-30;google_apis;x86"
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
       -avd emulator
+      -no-audio
       -no-boot-anim
       -gpu swiftshader_indirect
       -no-snapshot
       -no-window
+      -camera-back none
   assemble_instrumented_tests_script: |
     chmod +x gradlew
+    echo MAPS_API_KEY=$MAPS_API_KEY >> local.properties
     ./gradlew assembleDebugAndroidTest
   wait_for_avd_script:
     adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 3; done; input keyevent 82'
@@ -37,14 +40,12 @@ check_android_task:
     ./cc-test-reporter before-build
   screen_record_background_script:
     for n in $(seq 1 20); do adb exec-out screenrecord --time-limit=180 --output-format=h264 - > $n.h264; done
-#  add_permissions:
-#    adb shell pm grant com.github.ybecker.epforuml android.permission.CAMERA
-#    adb shell pm grant com.github.ybecker.epforuml android.permission.RECORD_AUDIO
   check_script:
-    ./gradlew check connectedCheck --no-parallel
+    ./gradlew check connectedCheck
   report_codeclimate_script: |
     export JACOCO_SOURCE_PATH=app/src/main/java/
     ./cc-test-reporter format-coverage ./app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml --input-type jacoco
+    sed -i -e 's/null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,//g' ./coverage/codeclimate.json
     ./cc-test-reporter upload-coverage
   lint_script:
     ./gradlew lintDebug
@@ -57,9 +58,9 @@ check_android_task:
     android_lint_artifacts:
       path: ./app/build/reports/lint-results-debug.xml
       format: android-lint
-    test_artifacts:
-      path: "./app/build/test-results/**/*.xml"
-      format: junit
-    androidtest_artifacts:
-      path: "./app/build/outputs/**/*.xml"
-      format: junit
+      test_artifacts:
+        path: "./app/build/test-results/**/*.xml"
+        format: junit
+      androidtest_artifacts:
+        path: "./app/build/outputs/**/*.xml"
+        format: junit
