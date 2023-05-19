@@ -80,14 +80,6 @@ class QuestionDetailsTest {
             )
     }
 
-    private fun goToQuestion() {
-        onView(withId(R.id.recycler_forum))
-            .perform(
-                RecyclerViewActions.actionOnItem<ViewHolder>(
-                    withText(question.questionTitle),
-                    click()
-                ))
-    }
     private fun logInDetailsActivity() {
         scenario.onActivity {
             MockAuthenticator(it).signIn().join()
@@ -102,7 +94,7 @@ class QuestionDetailsTest {
         }
     }
 
-
+/*
     private fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
     }
@@ -110,6 +102,8 @@ class QuestionDetailsTest {
     private fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
+
+ */
 
 
     @Before

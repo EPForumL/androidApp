@@ -31,6 +31,7 @@ import junit.framework.TestCase.assertTrue
 class AccountFragmentsTest {
     lateinit var scenario: ActivityScenario<LoginActivity>
 
+    /*
     private fun registerIdlingResource() {
 
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
@@ -39,10 +40,11 @@ class AccountFragmentsTest {
     private fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
+     */
 
     @Before
     fun initScenario() {
-        registerIdlingResource()
+        //registerIdlingResource()
 
         Firebase.auth.signOut()
         DatabaseManager.user = null
@@ -55,7 +57,7 @@ class AccountFragmentsTest {
         Intents.release()
         scenario.close()
 
-        unregisterIdlingResource()
+        //unregisterIdlingResource()
     }
 
     @Test

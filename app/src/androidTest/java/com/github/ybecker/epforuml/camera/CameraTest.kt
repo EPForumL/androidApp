@@ -74,7 +74,7 @@ class CameraTest {
         }
 }
 
-
+/*
 
     private fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
@@ -83,10 +83,10 @@ class CameraTest {
     private fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
-
+ */
     @Test
     fun navigatesCorrectly(){
-        registerIdlingResource()
+       // registerIdlingResource()
 
         val scenario = ActivityScenario.launch(MainActivity::class.java)
         scenario.onActivity {
@@ -116,7 +116,7 @@ class CameraTest {
 
         scenario.close()
 
-        unregisterIdlingResource()
+        //unregisterIdlingResource()
     }
 
 

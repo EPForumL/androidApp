@@ -3,10 +3,7 @@ package com.github.ybecker.epforuml.authentication
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import com.github.ybecker.epforuml.MainActivity
-import com.github.ybecker.epforuml.QuestionDetailsActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
-import com.github.ybecker.epforuml.database.Model
-import com.github.ybecker.epforuml.sensor.CameraActivity
 import com.github.ybecker.epforuml.util.EspressoIdlingResource
 import java.util.concurrent.CompletableFuture
 
