@@ -140,6 +140,8 @@ class RealChatFragment : Fragment() {
                     // Handle the error accordingly
                 }
             })
+        }else{
+            startTimer()
         }
 
 
@@ -148,7 +150,7 @@ class RealChatFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-       // stopTimer()
+        stopTimer()
     }
 
 
