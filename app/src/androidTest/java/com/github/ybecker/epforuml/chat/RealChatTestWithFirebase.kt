@@ -8,6 +8,9 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.MainActivity
@@ -16,10 +19,12 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import org.hamcrest.Matchers
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDateTime
 
 
 @RunWith(AndroidJUnit4::class)
@@ -45,25 +50,14 @@ class RealChatTestWithFirebase {
 
     @Test
     fun addMessageRefresh() {
-        scenario.onActivity { activity ->
-        val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
-        oldItemCount= view.adapter?.itemCount ?: 0
-    }
-        val chat = DatabaseManager.db.addChat(externUserId, hostUserId, "GREAT!")
-        Thread.sleep(3000)
-        scenario.onActivity { activity ->
-            val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
-            assertEquals(oldItemCount+1, view.adapter?.itemCount ?: 0)
-        }
-
+        val localDateTime = LocalDateTime.now().toString()
+        val chat = DatabaseManager.db.addChat(externUserId, hostUserId, localDateTime)
+        Thread.sleep(10000)
+        Espresso.onView(withText(localDateTime)).check(matches(isDisplayed()))
         DatabaseManager.db.removeChat(chat!!.chatId!!)
-        Thread.sleep(3000)
-        scenario.onActivity { activity ->
-            val view: RecyclerView = activity.findViewById(R.id.recycler_chat)
-            assertEquals(oldItemCount, view.adapter?.itemCount ?: 0)
-        }
+        Thread.sleep(10000)
+        Espresso.onView(withText(localDateTime)).check(doesNotExist())
         scenario.close()
-
 
         }
     private fun navigateToChat() {
