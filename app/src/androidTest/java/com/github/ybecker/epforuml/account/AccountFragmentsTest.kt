@@ -66,9 +66,7 @@ class AccountFragmentsTest {
 
         onView(withId(R.id.drawer_layout)).perform(ViewActions.swipeUp())
 
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-
-
+        //InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         onView(withId(R.id.nav_account))
             .perform(click())
@@ -110,11 +108,11 @@ class AccountFragmentsTest {
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
         assertTrue(DatabaseManager.user != null)
 
-        Thread.sleep(2000)
+        //Thread.sleep(2000)
 
         Intents.intended(IntentMatchers.hasComponent(MainActivity::class.java.name))
 
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
+        //InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
         onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
