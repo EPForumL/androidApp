@@ -161,7 +161,7 @@ class NewQuestionTest {
 
     }
 */
-/*
+
     @Test
     fun testAddVoice() {
 
@@ -243,7 +243,7 @@ class NewQuestionTest {
         DatabaseManager.user = user
 
         // Launch the fragment
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
 
         //Scroll to the end of the page
         onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
@@ -313,7 +313,7 @@ class NewQuestionTest {
 
     }
 
-    */
+
 
         @Test
     fun testAddQuestionWithEmptyTitle() {
@@ -324,8 +324,8 @@ class NewQuestionTest {
         DatabaseManager.user = user
 
 
-        // Launch the fragment
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+            // Launch the fragment
+            val scenario = ActivityScenario.launch(MainActivity::class.java)
 
 
 
