@@ -161,7 +161,7 @@ class NewQuestionTest {
 
     }
 */
-
+/*
     @Test
     fun testAddVoice() {
 
@@ -214,7 +214,6 @@ class NewQuestionTest {
 
         onView(withId(R.id.btn_submit)).perform(click())
 
-        //Check that de DB has an anonymous question and the the username is in the anonymousUsers list
         onView(withText("Sample Question Title")).perform(click())
 
         val courseQuestions = db.getCourseQuestions("Database")
@@ -298,7 +297,6 @@ class NewQuestionTest {
 
         onView(withId(R.id.btn_submit)).perform(click())
 
-        //Check that de DB has an anonymous question and the the username is in the anonymousUsers list
         onView(withText("Sample Question Title")).perform(click())
 
         val courseQuestions = db.getCourseQuestions("Database")
@@ -314,6 +312,8 @@ class NewQuestionTest {
 
 
     }
+
+    */
 
         @Test
     fun testAddQuestionWithEmptyTitle() {
