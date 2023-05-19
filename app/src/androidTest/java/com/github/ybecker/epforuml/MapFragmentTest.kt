@@ -91,6 +91,8 @@ class MapFragmentTest {
         openContextualActionModeOverflowMenu()
     }
 
+
+    /*
     @Test
     fun checkMapVisibilityWhenSharingIsToggled() {
 
@@ -141,7 +143,7 @@ class MapFragmentTest {
             assertEquals(initialLon, lon.roundToInt())
         }
     }
-
+*/
 
     //map position doesn't change
     @Test

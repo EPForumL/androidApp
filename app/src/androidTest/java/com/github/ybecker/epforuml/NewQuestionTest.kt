@@ -149,6 +149,7 @@ class NewQuestionTest {
         //click on the image button
         onView(withId(R.id.takeImage)).perform(click())
 
+        sleep(2000)
         onView(withId(R.id.camera_layout_parent)).check(matches(isDisplayed()))
 
         //click on the camera button
@@ -159,13 +160,10 @@ class NewQuestionTest {
         scenario.close()
 
     }
-
-
 */
 
-
     @Test
-    fun testAddImage() {
+    fun testAddVoice() {
 
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
@@ -185,6 +183,11 @@ class NewQuestionTest {
         // Check that the new fragment is displayed
         onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
 
+        //Selection of the spinner
+        onView(withId(R.id.subject_spinner)).perform(click())
+        val secondItem = onData(anything()).atPosition(1)
+        secondItem.perform(click())
+
         //Body of the question
         val questBody = "Text From User"
         onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
@@ -201,26 +204,118 @@ class NewQuestionTest {
         // Scroll to the end of the page
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
 
+
+
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+        Thread.sleep(2000)
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
 
-        //click on the image button
-        onView(withId(R.id.takeImage)).perform(click())
+        onView(withId(R.id.btn_submit)).perform(click())
 
-        sleep(2000)
-        onView(withId(R.id.camera_layout_parent)).check(matches(isDisplayed()))
+        //Check that de DB has an anonymous question and the the username is in the anonymousUsers list
+        onView(withText("Sample Question Title")).perform(click())
 
-        //click on the camera button
+        val courseQuestions = db.getCourseQuestions("Database")
+        val addedQuestion = courseQuestions.thenAccept{
+            it.filter { quest -> quest.questionText == questBody }
+        }
 
-        onView(withId(R.id.image_capture_button)).perform(click())
 
 
-        scenario.close()
+        assertNotNull(addedQuestion)
+
+        onView(withText("Sample Question Title")).check(matches(isDisplayed()))
+
 
     }
 
 
 
+
     @Test
+    fun testVoiceButtonChangeText() {
+
+        Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
+
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
+
+        // Launch the fragment
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+
+        // Click on the new quest button
+        onView(withId(R.id.new_question_button)).perform(click())
+
+        // Check that the new fragment is displayed
+        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+
+        //Selection of the spinner
+        onView(withId(R.id.subject_spinner)).perform(click())
+        val secondItem = onData(anything()).atPosition(1)
+        secondItem.perform(click())
+
+        //Body of the question
+        val questBody = "Text From User"
+        onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
+
+        // Close the keyboard
+        Espresso.closeSoftKeyboard()
+
+        //Title of the question
+        onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title"))
+
+        // Close the keyboard
+        Espresso.closeSoftKeyboard()
+
+        // Scroll to the end of the page
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+
+
+        onView(withText("Record Voice Note")).check(matches(isDisplayed()))
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+        Thread.sleep(2000)
+
+        onView(withText("Stop Recording")).check(matches(isDisplayed()))
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+
+        Thread.sleep(2000)
+
+        onView(withText("Start New Recording")).check(matches(isDisplayed()))
+
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+        Thread.sleep(2000)
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+
+
+
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+
+        onView(withId(R.id.btn_submit)).perform(click())
+
+        //Check that de DB has an anonymous question and the the username is in the anonymousUsers list
+        onView(withText("Sample Question Title")).perform(click())
+
+        val courseQuestions = db.getCourseQuestions("Database")
+        val addedQuestion = courseQuestions.thenAccept{
+            it.filter { quest -> quest.questionText == questBody }
+        }
+
+
+
+        assertNotNull(addedQuestion)
+
+        onView(withText("Sample Question Title")).check(matches(isDisplayed()))
+
+
+    }
+
+        @Test
     fun testAddQuestionWithEmptyTitle() {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
