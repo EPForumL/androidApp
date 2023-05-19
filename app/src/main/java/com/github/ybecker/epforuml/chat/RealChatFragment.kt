@@ -139,10 +139,7 @@ class RealChatFragment : Fragment() {
                     // Called when the listener is canceled or there is an error
                     // Handle the error accordingly
                 }
-            })
-        }else{
-            startTimer()
-        }
+            })}
 
 
 
