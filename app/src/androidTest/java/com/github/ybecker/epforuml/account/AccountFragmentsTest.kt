@@ -32,6 +32,7 @@ class AccountFragmentsTest {
     lateinit var scenario: ActivityScenario<LoginActivity>
 
     private fun registerIdlingResource() {
+
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
     }
 
