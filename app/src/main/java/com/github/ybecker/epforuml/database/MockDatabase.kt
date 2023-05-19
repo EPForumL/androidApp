@@ -451,6 +451,6 @@ class MockDatabase : Database() {
     }
 
     override fun getDbInstance(): FirebaseDatabase {
-        TODO("Not yet implemented")
+        return null
     }
 }
