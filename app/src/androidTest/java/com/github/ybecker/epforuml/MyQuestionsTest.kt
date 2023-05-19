@@ -85,7 +85,7 @@ class MyQuestionsTest {
     }
 
 
-    //test that if we add a question, it is displayed in the my questions page
+    ///test that if we add a question, it is displayed in the my questions page
 
     @Test
     fun testAddAQuestionInMyQuestion() {
