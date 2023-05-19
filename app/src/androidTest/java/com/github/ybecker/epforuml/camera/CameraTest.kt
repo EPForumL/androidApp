@@ -1,35 +1,37 @@
 package com.github.ybecker.epforuml.camera
 
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission_group.CAMERA
 import android.app.Activity
 import android.content.Intent
+import android.media.MediaRecorder.VideoSource.CAMERA
 import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.longClick
-import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
-import com.github.ybecker.epforuml.util.onViewWithTimeout.Companion.onViewWithTimeout
+import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import android.Manifest
-import com.github.ybecker.epforuml.database.DatabaseManager
+
 
 
 @RunWith(AndroidJUnit4::class)
 class CameraTest {
     @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        Manifest.permission.CAMERA,
-        Manifest.permission.RECORD_AUDIO
-    )
+    var permissionCamera: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
     @Test
     fun newQuestionSetsUpWhenIntentFilled(){
@@ -50,7 +52,7 @@ class CameraTest {
         try {
             ActivityScenario.launch<Activity>(intent)
 
-            onView(withId(R.id.new_question_button)).perform(ViewActions.click())
+            onView(ViewMatchers.withId(R.id.new_question_button)).perform(ViewActions.click())
 
             assertTrue(true)
 
@@ -86,41 +88,4 @@ class CameraTest {
         onView(ViewMatchers.withId(R.id.image_capture_button)).perform(ViewActions.click())
         scenario.close()
     }*/
-
-
-    // We should activate the camera authorisation in the ci
-//
-//    @Test
-//    fun openCameraActivityTest(){
-//        DatabaseManager.useMockDatabase()
-//
-//        ActivityScenario.launch(MainActivity::class.java)
-//
-//        onView(withId(R.id.new_question_button)).perform(click())
-//        onView(withId(R.id.takeImage)).perform(click())
-//        onViewWithTimeout(withId(R.id.viewFinder))
-//    }
-//
-//    @Test
-//    fun takesPhotoSaveItTest(){
-//        openCameraActivityTest()
-//        onView(withId(R.id.image_capture_button)).perform(click())
-//        //as I cannot test if editview is displayed, I check that the photoActivity is not here
-//        //TODO find a way of testing that, the viewFinder seem displyer but in background
-//        //onViewWithTimeout(withId(R.id.viewFinder), matches(not(isDisplayed())))
-//    }
-//
-//    @Test
-//    fun takesVideoGoBackInQuestionDetailTest(){
-//        openCameraActivityTest()
-//        onView(withId(R.id.image_capture_button)).perform(longClick())
-//        //take a 1 sec video
-//        //Thread.sleep(1000)
-//        onView(withId(R.id.image_capture_button)).perform(click())
-//        // TODO check why the video is not stopped ?
-//        //onView(withId(R.id.image_capture_button)).check(doesNotExist())
-//        //onViewWithTimeout(withText("video"))
-//    }
-
 }
-

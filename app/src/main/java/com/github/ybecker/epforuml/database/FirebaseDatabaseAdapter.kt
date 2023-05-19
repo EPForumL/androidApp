@@ -64,7 +64,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     private val isAnonymousPath = "anonymous"
 
     private val questionURIPath = "imageURI"
-    private val questionAudioPath = "audioPath"
+    private val questioAudioPath = "audioPath"
 
     private val emailPath = "email"
     private val profilePicPath = "profilePic"
@@ -747,12 +747,11 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         dataSnapshot.child(followersPath).children.forEach { questionSnapshot ->
             questionSnapshot.key?.let { followers.add(it) }
         }
-
-        val audioPath = dataSnapshot.child(questionAudioPath).getValue(String::class.java)
+        val audioPath = dataSnapshot.child(questioAudioPath).getValue(String::class.java)
 
 
         if(questionId!=null && courseId!=null && userId!=null&& isAnonymous!=null && questionTitle!=null && questionText!=null && questionURI!=null&& audioPath!=null){
-            return Question(questionId, courseId, userId,isAnonymous,  questionTitle, questionText, questionURI, answers, followers, audioPath)
+            return Question(questionId, courseId, userId,isAnonymous,  questionTitle, questionText, questionURI, answers, followers,audioPath)
 
         }
         return null
@@ -861,13 +860,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
     }
     private fun uploadImageToFirebase(uri: String) : CompletableFuture<String>{
         val url = CompletableFuture<String>()
-
         if(uri == "" || uri.equals(null)){
             url.complete("")
 
-        } else {
+        }else{
             val fileRef: StorageReference =
-                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + getExtension(uri))
+                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".jpg")
             fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
                 fileRef.downloadUrl.addOnSuccessListener { uri ->
                     url.complete(uri.toString())
@@ -881,7 +879,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return url
     }
-
     private fun uploadAudioToFirebase(path: String) : CompletableFuture<String>{
         val url = CompletableFuture<String>()
         if(path == "" || path.equals(null)){
@@ -904,11 +901,5 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return url
     }
 
-    private fun getExtension(uri: String): String {
-        if (uri.contains("images")) {
-                return ".jpeg"
-        }
-        return ".mp4"
-    }
 
 }
