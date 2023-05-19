@@ -438,6 +438,34 @@ class NewQuestionTest {
         scenario.close()
     }
 
+
+    @Test
+
+    fun testVoiceButtonDisplayed() {
+        Firebase.auth.signOut()
+        DatabaseManager.useMockDatabase()
+
+        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        DatabaseManager.user = user
+
+        // Launch the fragment
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+
+        // Click on the new quest button
+        onView(withId(R.id.new_question_button)).perform(click())
+
+
+        //Scroll to the end of the page
+        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+        onView(withText("Record Voice Note")).check(matches(isDisplayed()))
+        onView(withText("Play_voice_note")).check(matches(isDisplayed()))
+
+    }
+
+
     /*
     @Test
     fun AnonymousAnswerKeepSameSurnameTest(){
