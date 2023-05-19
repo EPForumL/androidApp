@@ -43,7 +43,6 @@ class RealChatFragment : Fragment() {
 
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var chatRecyclerView: RecyclerView
-    private lateinit var timer: Timer
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -143,30 +142,6 @@ class RealChatFragment : Fragment() {
 
 
 
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        stopTimer()
-    }
-
-
-
-    private fun startTimer() {
-        timer = Timer()
-        timer.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                // Code to refresh the fragment goes here
-                activity?.runOnUiThread {
-                    // Update the UI
-                    fetchChats()
-                }
-            }
-        }, 0, 2000)
-    }
-
-    private fun stopTimer() {
-        timer.cancel()
     }
 
 
