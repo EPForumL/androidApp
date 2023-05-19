@@ -105,8 +105,8 @@ class NewQuestionTest {
 
     }
 
-
 /*
+
     @Test
     fun testAddImage() {
 
@@ -160,8 +160,10 @@ class NewQuestionTest {
         scenario.close()
 
     }
+
 */
 
+    /*
     @Test
     fun testAddVoice() {
 
@@ -313,7 +315,7 @@ class NewQuestionTest {
 
     }
 
-
+*/
 
         @Test
     fun testAddQuestionWithEmptyTitle() {

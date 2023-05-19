@@ -85,8 +85,6 @@ class MapFragmentTest {
     @Test
     fun checkUserCoordinates() {
 
-
-
         // Sign in user
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
@@ -139,9 +137,6 @@ class MapFragmentTest {
     }
 
 
-
-
-
     //map position doesn't change
     @Test
     fun checkMapPermissionDoesntChange() {
@@ -190,6 +185,8 @@ class MapFragmentTest {
 
 
     }
+
+
 
 }
 
