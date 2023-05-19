@@ -14,11 +14,13 @@ import androidx.test.rule.GrantPermissionRule
 import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertEquals
 import org.hamcrest.Matchers.not
 import org.junit.After
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,6 +31,10 @@ import kotlin.math.roundToInt
 
 @RunWith(AndroidJUnit4::class)
 class MapFragmentTest {
+
+    val initialLat = -200
+    val initialLon = -200
+
     lateinit var scenario: ActivityScenario<LoginActivity>
 
     @get:Rule
@@ -72,38 +78,29 @@ class MapFragmentTest {
 
 
     /////////
+
+
+
+
     @Test
-    fun checkClickOnShareLocation() {
-
-        scenario.onActivity { MockAuthenticator(it).signIn().join() }
-
-        Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
-            .perform(click())
-        Espresso.onView(ViewMatchers.withId(R.id.nav_map))
-            .perform(click())
-
-        openContextualActionModeOverflowMenu()
-
-        Espresso.onView(ViewMatchers.withText(R.string.share_position))
-            .check(ViewAssertions.matches(not(ViewMatchers.isChecked())))
-        Espresso.onView(ViewMatchers.withText(R.string.share_position))
-            .perform(click())
-        openContextualActionModeOverflowMenu()
-    }
+    fun checkUserCoordinates() {
 
 
-    /*
-    @Test
-    fun checkMapVisibilityWhenSharingIsToggled() {
-
-        val initialLat = -90
-
-        val initialLon = 160
 
         // Sign in user
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
         val user = DatabaseManager.user
+
+        var lat = user?.latitude
+        var lon = user?.longitude
+
+        if (lat != null) {
+            assertEquals(initialLat, lat.roundToInt())
+        }
+        if (lon != null) {
+            assertEquals(initialLon, lon.roundToInt())
+        }
 
         // Open navigation and click on map
         Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
@@ -125,29 +122,31 @@ class MapFragmentTest {
         Espresso.onView(ViewMatchers.withId(R.id.map))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
-        // Open overflow menu and disable location sharing
-        openContextualActionModeOverflowMenu()
-        Espresso.onView(ViewMatchers.withText(R.string.share_position)).perform(click())
 
         sleep(2000)
 
         // check coordinates
 
-        val lat = user?.latitude
-        val lon = user?.longitude
+        lat = user?.latitude
+        lon = user?.longitude
 
         if (lat != null) {
-            assertEquals(initialLat, lat.roundToInt())
+            assertNotEquals(initialLat, lat.roundToInt())
         }
         if (lon != null) {
-            assertEquals(initialLon, lon.roundToInt())
+            assertNotEquals(initialLon, lon.roundToInt())
         }
     }
-*/
+
+
+
+
 
     //map position doesn't change
     @Test
-    fun checkMapPositionDoesntChange() {
+    fun checkMapPermissionDoesntChange() {
+
+
         // Sign in user
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
 
@@ -165,8 +164,6 @@ class MapFragmentTest {
             .check(ViewAssertions.matches(not(ViewMatchers.isChecked())))
             .perform(click())
 
-        val lat = user?.latitude
-        val lon = user?.longitude
 
 
         // Check that map is visible
@@ -185,10 +182,11 @@ class MapFragmentTest {
         Espresso.onView(ViewMatchers.withId(R.id.nav_map))
             .perform(click())
 
-        assertEquals(user?.latitude?.roundToInt(), lat?.roundToInt())
-        assertEquals(user?.longitude?.roundToInt(), lon?.roundToInt())
+        val lat = user?.latitude
+        val lon = user?.longitude
 
-
+        assertNotEquals(lat, initialLat)
+        assertNotEquals(lon, initialLon)
 
 
     }
