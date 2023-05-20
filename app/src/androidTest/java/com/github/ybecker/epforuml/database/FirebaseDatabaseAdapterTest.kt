@@ -24,12 +24,15 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
+import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class FirebaseDatabaseAdapterTest {
 
 
@@ -132,7 +135,7 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
-    fun addMessageRefresh() {
+    fun AAAaddMessageRefresh() {
         Firebase.auth.signOut()
         DatabaseManager.user = romain
 
