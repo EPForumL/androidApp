@@ -95,7 +95,7 @@ class LatexDialogTest {
         assertThat(rendered.getDisplayText(), Is(text))
     }
 
-    /*
+
     // TODO: Check for CI...
     @Test
     fun checkMathViewChangesWhenClickOnRender() {
@@ -128,10 +128,10 @@ class LatexDialogTest {
 
         assertThat(input.text.toString(), Is(text2))
         assertThat(rendered.getDisplayText(), Is(text2))
-    } */
+    }
 
-    /*
-    TODO: Find why it fails on CI
+
+    //TODO: Find why it fails on CI
     @Test
     fun checkTextIsSavedWhenClickOnSave() {
         lateinit var dialog: LatexDialog
@@ -174,9 +174,9 @@ class LatexDialogTest {
 
         onView(ViewMatchers.withId(R.id.drawer_layout))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-    }*/
+    }
 
-    /*
+/*
     @Test
     fun checkTextIsNotSavedWhenClickOnCancel() {
         lateinit var dialog: LatexDialog
@@ -216,5 +216,7 @@ class LatexDialogTest {
 
         onView(ViewMatchers.withId(R.id.drawer_layout))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-    } */
+    }
+
+ */
 }
