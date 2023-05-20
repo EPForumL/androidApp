@@ -397,19 +397,6 @@ class MockDatabaseTest {
     }
 
     @Test
-    fun getNotificationTokenTest(){
-        val futureToken = CompletableFuture<String>()
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            futureToken.complete(it)
-        }
-        val token = futureToken.get()
-        db.addNotification(user.userId, sdp.courseId).join()
-        db.getCourseNotificationTokens(sdp.courseId).thenAccept {
-            assertThat(it, equalTo(listOf(token)))
-        }.join()
-    }
-
-    @Test
     fun removeNotification(){
         db.addNotification(user.userId, sdp.courseId).join()
 

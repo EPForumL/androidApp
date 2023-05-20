@@ -613,20 +613,6 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
-    fun getNotificationTokenTest(){
-        val futureToken = CompletableFuture<String>()
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            futureToken.complete(it)
-        }
-        val token = futureToken.get()
-        db.addNotification(romain.userId, sdp.courseId).join()
-        db.getCourseNotificationTokens(sdp.courseId).thenAccept {
-            assertThat(it, equalTo(listOf(token)))
-        }.join()
-    }
-
-
-    @Test
     fun setUserPresenceAddsConnection() {
         db.addUser("0", "test", "testEmail").thenAccept { user ->
             db.setUserPresence(user.userId)

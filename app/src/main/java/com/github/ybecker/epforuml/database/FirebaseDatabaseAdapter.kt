@@ -14,7 +14,6 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.File
@@ -183,20 +182,6 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 as CompletableFuture<List<Course>>
     }
 
-    override fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>> {
-        val future = CompletableFuture<List<String>>()
-
-        db.child(coursesPath).child(courseId).child(notificationsPath).get().addOnSuccessListener {
-            val tokens = mutableListOf<String>()
-
-            for(courseSnapshot in it.children){
-                val token = courseSnapshot.value as String
-                tokens.add(token)        }
-            future.complete(tokens)
-        }
-        return future
-    }
-
     override fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>> {
         val future = CompletableFuture<List<String>>()
 
@@ -213,6 +198,24 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return future
     }
+
+    override fun getUserNotificationCourseIds(userId: String): CompletableFuture<List<String>> {
+        val future = CompletableFuture<List<String>>()
+
+        db.child(usersPath).child(userId).child(notificationsPath).get().addOnSuccessListener {
+            val coursesId = mutableListOf<String>()
+
+            for(courseSnapshot in it.children){
+                val courseId = courseSnapshot.key
+                if(courseId!=null){
+                    coursesId.add(courseId)
+                }
+            }
+            future.complete(coursesId)
+        }
+        return future
+    }
+
 
     override fun addCourse(courseName: String): Course {
         // create a space for the new course in db and save its id
@@ -353,20 +356,15 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     override fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).setValue(it)
-            future.complete(true)
-        }.addOnFailureListener { e ->
-            Log.e(TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
-            future.complete(false)
-        }
-
+        db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).setValue(userId)
+        db.child(usersPath).child(userId).child(notificationsPath).child(courseId).setValue(courseId)
         Firebase.messaging.subscribeToTopic(courseId)
         return future
     }
 
     override fun removeNotification(userId: String, courseId: String) {
         db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).removeValue()
+        db.child(usersPath).child(userId).child(notificationsPath).child(courseId).removeValue()
         Firebase.messaging.unsubscribeFromTopic(courseId)
     }
 
@@ -667,6 +665,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
             subscriptionSnapshot.key?.let { subscriptions.add(it) }
         }
 
+        // save every notification in a List using getCourse private method
+        val notification = arrayListOf<String>()
+        dataSnapshot.child(notificationsPath).children.forEach {subscriptionSnapshot ->
+            subscriptionSnapshot.key?.let { notification.add(it) }
+        }
+
         val chatsWith = arrayListOf<String>()
         dataSnapshot.child("chatsWith").children.forEach {chatsWithSnapshot -> chatsWithSnapshot.key?.let {
             chatsWith.add(
@@ -708,6 +712,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
                 questions,
                 answers,
                 subscriptions,
+                notification,
                 chatsWith,
                 profilePic ?: "",
                 userInfo ?: "",
