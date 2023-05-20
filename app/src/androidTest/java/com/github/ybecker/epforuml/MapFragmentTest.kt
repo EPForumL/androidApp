@@ -16,17 +16,18 @@ import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import junit.framework.TestCase
 import org.hamcrest.Matchers.not
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 import java.security.Permission
+import kotlin.math.roundToInt
 
 @RunWith(AndroidJUnit4::class)
 class MapFragmentTest {
-    lateinit var scenario: ActivityScenario<MainActivity>
+    lateinit var scenario: ActivityScenario<LoginActivity>
+    val initialLat = -200
+    val initialLon = -200
 
     @get:Rule
     val grantPermission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -36,7 +37,7 @@ class MapFragmentTest {
         DatabaseManager.useMockDatabase()
         Firebase.auth.signOut()
         DatabaseManager.user = null
-        scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario = ActivityScenario.launch(LoginActivity::class.java)
         Intents.init()
     }
 
@@ -68,6 +69,9 @@ class MapFragmentTest {
     }
 
 
+
+
+
     /////////
     @Test
     fun checkClickOnShareLocation() {
@@ -87,4 +91,111 @@ class MapFragmentTest {
             .perform(click())
         openContextualActionModeOverflowMenu()
     }
+
+
+    @Test
+    fun checkUserCoordinates() {
+
+        // Sign in user
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
+
+        val user = DatabaseManager.user
+
+        var lat = user?.latitude
+        var lon = user?.longitude
+
+        if (lat != null) {
+            TestCase.assertEquals(initialLat, lat.roundToInt())
+        }
+        if (lon != null) {
+            TestCase.assertEquals(initialLon, lon.roundToInt())
+        }
+
+        // Open navigation and click on map
+        Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(ViewMatchers.withId(R.id.nav_map))
+            .perform(click())
+
+
+        // Open overflow menu and enable location sharing
+        openContextualActionModeOverflowMenu()
+        Espresso.onView(ViewMatchers.withText(R.string.share_position))
+            .check(ViewAssertions.matches(not(ViewMatchers.isChecked())))
+            .perform(click())
+
+
+        Thread.sleep(2000)
+
+        // Check that map is visible
+        Espresso.onView(ViewMatchers.withId(R.id.map))
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+
+
+        Thread.sleep(2000)
+
+        // check coordinates
+
+        lat = user?.latitude
+        lon = user?.longitude
+
+        if (lat != null) {
+            Assert.assertNotEquals(initialLat, lat.roundToInt())
+        }
+        if (lon != null) {
+            Assert.assertNotEquals(initialLon, lon.roundToInt())
+        }
+    }
+
+
+    //map position doesn't change
+    @Test
+    fun checkMapPermissionDoesntChange() {
+
+
+        // Sign in user
+        scenario.onActivity { MockAuthenticator(it).signIn().join() }
+
+        val user = DatabaseManager.user
+
+        // Open navigation and click on map
+        Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(ViewMatchers.withId(R.id.nav_map))
+            .perform(click())
+
+        // Open overflow menu and enable location sharing
+        openContextualActionModeOverflowMenu()
+        Espresso.onView(ViewMatchers.withText(R.string.share_position))
+            .check(ViewAssertions.matches(not(ViewMatchers.isChecked())))
+            .perform(click())
+
+
+
+        // Check that map is visible
+        Espresso.onView(ViewMatchers.withId(R.id.map))
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+
+        // Open menu
+
+        Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(ViewMatchers.withId(R.id.nav_home))
+            .perform(click())
+
+        Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
+            .perform(click())
+        Espresso.onView(ViewMatchers.withId(R.id.nav_map))
+            .perform(click())
+
+        val lat = user?.latitude
+        val lon = user?.longitude
+
+        Assert.assertNotEquals(lat, initialLat)
+        Assert.assertNotEquals(lon, initialLon)
+
+
+    }
+
+
 }
