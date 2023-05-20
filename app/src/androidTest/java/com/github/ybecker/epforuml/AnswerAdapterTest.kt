@@ -77,7 +77,7 @@ class AnswerAdapterTest {
 
         onView(withId(R.id.qdetails_title)).check(matches(withText(question3.questionTitle)))
     }
-/*
+
     @Test
     fun clickingOnChatLeadsToChat(){
         onView(withText(question3.questionTitle))
@@ -88,7 +88,7 @@ class AnswerAdapterTest {
 
     }
 
- */
+
     val testVideoURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/PumpedUpKicksDancingKidMeme.mp4?alt=media&token=476c2953-ffe3-4a9d-88b1-62243fd7dd95"
     val testImageURI = "https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/blue-horizontal-lens-flares-pack-260nw-2202148279.webp?alt=media&token=21e5b75a-f6dc-47e5-ac9c-105722597f46"
 
