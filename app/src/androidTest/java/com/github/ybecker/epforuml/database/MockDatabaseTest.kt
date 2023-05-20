@@ -374,7 +374,7 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf()))
         }.join()
 
-        db.addNotification(user.userId, sdp.courseId).join()
+        db.addNotification(user.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))
@@ -388,8 +388,8 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf()))
         }.join()
 
-        db.addNotification(user.userId, sdp.courseId).join()
-        db.addNotification(nullUser.userId, sdp.courseId).join()
+        db.addNotification(user.userId, sdp.courseId)
+        db.addNotification(nullUser.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId, nullUser.userId)))
@@ -398,7 +398,7 @@ class MockDatabaseTest {
 
     @Test
     fun removeNotification(){
-        db.addNotification(user.userId, sdp.courseId).join()
+        db.addNotification(user.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))

@@ -354,12 +354,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).child(subscriptionsPath).child(courseId).removeValue()
     }
 
-    override fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean> {
-        val future = CompletableFuture<Boolean>()
+    override fun addNotification(userId: String, courseId: String) {
         db.child(coursesPath).child(courseId).child(notificationsPath).child(userId).setValue(userId)
         db.child(usersPath).child(userId).child(notificationsPath).child(courseId).setValue(courseId)
         Firebase.messaging.subscribeToTopic(courseId)
-        return future
     }
 
     override fun removeNotification(userId: String, courseId: String) {

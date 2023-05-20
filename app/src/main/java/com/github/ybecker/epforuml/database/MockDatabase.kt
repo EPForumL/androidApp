@@ -252,8 +252,7 @@ class MockDatabase : Database() {
         }
     }
 
-    override fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean> {
-        val future = CompletableFuture<Boolean>()
+    override fun addNotification(userId: String, courseId: String) {
         val course = courses[courseId]
         val user = users[userId]
         if(course != null && user != null) {
@@ -261,10 +260,7 @@ class MockDatabase : Database() {
             courses[courseId] = course.copy(notifications = updatedCourseNotification)
             val updatedUserNotification = user.notifications + userId
             users[userId] = user.copy(notifications = updatedUserNotification)
-            future.complete(true)
         }
-
-        return future
     }
 
     override fun removeNotification(userId: String, courseId: String) {
