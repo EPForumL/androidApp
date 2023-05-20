@@ -68,7 +68,7 @@ class ChatHomeTest {
         }
     }
 
-    /*
+
     @Test
     fun chatHomeGetsSetCorrectly(){
         DatabaseManager.user = host
@@ -85,7 +85,7 @@ class ChatHomeTest {
         }
 
     }
-     */
+
 
     @Test
     fun chatHomeSwitchesFragmentsCorrectly(){
@@ -125,7 +125,7 @@ class ChatHomeTest {
 
     }
 
-    /*
+
     @Test
     fun chatWithNewUserSwitchesActivity(){
         DatabaseManager.user = host
@@ -136,5 +136,5 @@ class ChatHomeTest {
         onView(withId(R.id.searchView)).check(matches(isDisplayed()))
         onView(withId(R.id.listView)).check(matches(isDisplayed()))
     }
-     */
+
 }
