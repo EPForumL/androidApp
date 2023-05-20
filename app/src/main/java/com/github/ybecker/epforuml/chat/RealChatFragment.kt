@@ -113,30 +113,18 @@ class RealChatFragment : Fragment() {
             val docRef: DatabaseReference = database.child("chats")
             docRef.addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    // Process the new chat data
                     fetchChats()
                 }
-
-                override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    // Called when a child in "chats" is updated
-                    //val chat = dataSnapshot.getValue(Model.Chat::class.java)
-                    // Process the updated chat data
-                    fetchChats()
-                }
-
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                    // Called when a child is removed from "chats"
                     fetchChats()
+                }
+                override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
                 }
 
                 override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    // Called when a child in "chats" changes its position
-                    fetchChats()
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    // Called when the listener is canceled or there is an error
-                    // Handle the error accordingly
                 }
             })}
 
