@@ -44,7 +44,7 @@ class AccountFragmentsTest {
 
     @Before
     fun initScenario() {
-        registerIdlingResource()
+        //registerIdlingResource()
 
         Firebase.auth.signOut()
         DatabaseManager.user = null
@@ -57,7 +57,7 @@ class AccountFragmentsTest {
         Intents.release()
         scenario.close()
 
-        unregisterIdlingResource()
+        //unregisterIdlingResource()
     }
 
     @Test
