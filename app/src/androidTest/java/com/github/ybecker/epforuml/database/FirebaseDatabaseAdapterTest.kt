@@ -139,6 +139,7 @@ class FirebaseDatabaseAdapterTest {
         Thread.sleep(10000) // wait for all futures to complete
         Firebase.auth.signOut()
         DatabaseManager.user = romain
+        DatabaseManager.db = db
 
         val intent = Intent(
             ApplicationProvider.getApplicationContext(),
