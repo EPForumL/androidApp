@@ -258,7 +258,8 @@ class MockDatabase : Database() {
         if(course != null && user != null) {
             val updatedCourseNotification = course.notifications + userId
             courses[courseId] = course.copy(notifications = updatedCourseNotification)
-            val updatedUserNotification = user.notifications + userId
+
+            val updatedUserNotification = user.notifications + courseId
             users[userId] = user.copy(notifications = updatedUserNotification)
         }
     }
@@ -269,8 +270,9 @@ class MockDatabase : Database() {
         if(course != null && user != null) {
             val updatedCourseNotification = course.notifications.filter { it != userId }
             courses[courseId] = course.copy(notifications = updatedCourseNotification)
-            val updatedUserNotification = course.notifications.filter { it != userId }
-            courses[courseId] = course.copy(notifications = updatedUserNotification)
+
+            val updatedUserNotification = user.notifications.filter { it != courseId }
+            users[userId] = user.copy(notifications = updatedUserNotification)
         }
     }
 

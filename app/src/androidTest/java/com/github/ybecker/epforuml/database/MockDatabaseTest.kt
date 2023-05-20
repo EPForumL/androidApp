@@ -394,6 +394,10 @@ class MockDatabaseTest {
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId, nullUser.userId)))
         }.join()
+
+        db.getUserNotificationCourseIds(user.userId).thenAccept {
+            assertThat(it, equalTo(listOf(sdp.courseId)))
+        }.join()
     }
 
     @Test
@@ -404,11 +408,20 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf(user.userId)))
         }.join()
 
+        db.getUserNotificationCourseIds(user.userId).thenAccept {
+            assertThat(it, equalTo(listOf(sdp.courseId)))
+        }.join()
+
         db.removeNotification(user.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf()))
         }.join()
+
+        db.getUserNotificationCourseIds(user.userId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
     }
 
     @Test
