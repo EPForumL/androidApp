@@ -6,6 +6,7 @@ import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.firebase.messaging.FirebaseMessaging
 import junit.framework.TestCase.*
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
 import java.time.LocalDateTime
@@ -531,5 +532,10 @@ class MockDatabaseTest {
                 }
             }
         }.join()
+    }
+
+    @Test
+    fun testInstance(){
+        assert(db.getDbInstance()==null)
     }
 }

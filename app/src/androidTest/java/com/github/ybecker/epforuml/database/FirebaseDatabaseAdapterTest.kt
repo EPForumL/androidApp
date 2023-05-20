@@ -732,6 +732,12 @@ class FirebaseDatabaseAdapterTest {
         }.join()
     }
 
+    @Test
+    fun testInstance(){
+        val instance = db.getDbInstance()
+        assert(instance==database)
+    }
+
     private fun navigateToChat() {
         Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(ViewActions.click())
