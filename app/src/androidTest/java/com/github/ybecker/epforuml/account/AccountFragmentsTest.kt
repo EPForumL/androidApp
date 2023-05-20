@@ -54,8 +54,6 @@ class AccountFragmentsTest {
 
         InstrumentationRegistry.getInstrumentation().waitForIdleSync()
 
-
-
         onView(withId(R.id.nav_account))
             .perform(click())
 
