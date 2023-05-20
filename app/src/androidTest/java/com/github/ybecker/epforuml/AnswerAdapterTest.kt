@@ -75,7 +75,7 @@ class AnswerAdapterTest {
     }
 
     @Test
-    fun recyclerViewIseDisplayed() {
+    fun recyclerViewIsDisplayed() {
         goToThirdElement()
         onView(withId(R.id.qdetails_title)).check(matches(isDisplayed()))
         onView(withId(R.id.answers_recycler)).check(matches(isDisplayed()))
