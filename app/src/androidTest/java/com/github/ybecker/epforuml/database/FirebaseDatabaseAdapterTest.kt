@@ -1,9 +1,19 @@
 package com.github.ybecker.epforuml.database
 
+import android.content.Intent
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -16,6 +26,7 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
 
 @RunWith(AndroidJUnit4::class)
@@ -118,6 +129,34 @@ class FirebaseDatabaseAdapterTest {
 
         db.addChatsWith(romain.userId, theo.userId)
         db.addChat(romain.userId, theo.userId ,"Hi Theo this is Romain!")
+    }
+
+    @Test
+    fun addMessageRefresh() {
+        Firebase.auth.signOut()
+        DatabaseManager.user = romain
+
+        val intent = Intent(
+            ApplicationProvider.getApplicationContext(),
+            MainActivity::class.java)
+        intent.putExtra("externID", theo.userId)
+
+
+        scenario = ActivityScenario.launch(intent)
+        navigateToChat()
+        val localDateTime = LocalDateTime.now().toString()
+        val chat = db.addChat(theo.userId, romain.userId, localDateTime)
+        Thread.sleep(1000)
+        Espresso.onView(ViewMatchers.withText(localDateTime)).check(
+            ViewAssertions.matches(
+                ViewMatchers.isDisplayed()
+            )
+        )
+        db.removeChat(chat!!.chatId!!)
+        Thread.sleep(1000)
+        Espresso.onView(ViewMatchers.withText(localDateTime)).check(ViewAssertions.doesNotExist())
+        scenario.close()
+
     }
 
     @Test
@@ -686,5 +725,15 @@ class FirebaseDatabaseAdapterTest {
                 }
             }
         }.join()
+    }
+
+    private fun navigateToChat() {
+        Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
+            .perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.nav_chat)).perform(ViewActions.click())
+        scenario.onActivity { activity ->
+            val view: RecyclerView = activity.findViewById(R.id.recycler_chat_home)
+            view.findViewById<CardView>(R.id.buttonChatWith).performClick()
+        }
     }
 }
