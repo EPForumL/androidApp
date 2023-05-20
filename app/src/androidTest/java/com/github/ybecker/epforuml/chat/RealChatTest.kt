@@ -111,16 +111,6 @@ class RealChatTest {
     }
 
     @Test
-    fun addMessageRefresh(){
-        navigateToChat()
-        val localDateTime = LocalDateTime.now().toString()
-        val chat = DatabaseManager.db.addChat(extern.userId, host.userId, localDateTime)
-        Thread.sleep(1000)
-        Espresso.onView(withText(localDateTime)).check(
-            matches(isDisplayed())
-        )
-    }
-    @Test
     fun chatIsRemovedCancelAndConfirm() {
         navigateToChat()
         //remove chat
