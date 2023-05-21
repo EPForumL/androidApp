@@ -1,6 +1,7 @@
 package com.github.ybecker.epforuml
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -57,15 +58,19 @@ class HomeFragment : Fragment() {
 
         // Set up the new question button and navigate to the new question fragment when clicked
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
-        newQuestionButton.setOnClickListener {
-            // Navigate to the new fragment to add a new question
-            val intent = Intent(
-                context,
-                MainActivity::class.java
-            )
+        if (DatabaseManager.user == null) {
+            newQuestionButton.visibility = View.GONE
+        } else {
+            newQuestionButton.setOnClickListener {
+                // Navigate to the new fragment to add a new question
+                val intent = Intent(
+                    context,
+                    MainActivity::class.java
+                )
 
-            intent.putExtra("fragment", "NewQuestionFragment")
-            startActivity(intent)
+                intent.putExtra("fragment", "NewQuestionFragment")
+                startActivity(intent)
+            }
         }
 
         return view
