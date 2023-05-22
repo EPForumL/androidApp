@@ -83,20 +83,20 @@ abstract class Database {
     abstract fun getUserSubscriptions(userId: String): CompletableFuture<List<Course>>
 
     /**
-     * Returns a list of token for every user that subscribed to notification for the given course.
-     *
-     * @param course the course from which to get the notification list
-     * @return a list of token for every user that subscribed to notification for the given course
-     */
-    abstract fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>>
-
-    /**
      * Returns a list of userId of every user that subscribed to notification for the given course.
      *
-     * @param course the course from which to get the notification list
+     * @param courseId the course from which to get the notification list
      * @return a list of userId of every user that subscribed to notification for the given course
      */
     abstract fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>>
+
+    /**
+     * Returns a list of courseId of every course that the user subscribed to notification for.
+     *
+     * @param userId the user from which to get the notification list
+     * @return a list of courseId of every course that the user subscribed to notification for
+     */
+    abstract fun getUserNotificationCourseIds(userId: String): CompletableFuture<List<String>>
 
     /**
      * Posts a new course in the forum
@@ -217,9 +217,8 @@ abstract class Database {
      *
      * @param user the user that want to have notification
      * @param course the course to which the user want the notifications
-     * @return if the fuction worked correctly (it depend on FirebaseMessaging ans it may crash)
      */
-    abstract fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean>
+    abstract fun addNotification(userId: String, courseId: String)
 
     /**
      * remove the user from the list of the user to notify.
