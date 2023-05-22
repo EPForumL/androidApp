@@ -301,6 +301,16 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         //add the answer in the user's questions list
         db.child(usersPath).child(userId).child(answersPath).child(answerId).setValue(answerId)
 
+        getQuestionById(questionId).thenAccept {question ->
+            if(question?.isAnonymous == true){
+                PushNotificationService().sendNotification(MainActivity.context,"someone Anonymous", answerText ?: "", "", questionId, NotificationType.ANSWER)
+            } else {
+                getUserById(userId).thenAccept {
+                    PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", answerText ?: "", "", questionId, NotificationType.ANSWER)
+                }
+            }
+        }
+
         return answer
     }
 
@@ -327,6 +337,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     override fun addQuestionFollower(userId: String, questionId: String) {
         db.child(questionsPath).child(questionId).child(followersPath).child(userId).setValue(userId)
+
+        //add notifications
+        db.child(usersPath).child(userId).child(notificationsPath).child(questionsPath).setValue(questionId)
+        Firebase.messaging.subscribeToTopic(questionId)
     }
 
     override fun addAnswerLike(userId: String, answerId: String) {
@@ -368,6 +382,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     override fun removeQuestionFollower(userId: String, questionId: String) {
         db.child(questionsPath).child(questionId).child(followersPath).child(userId).removeValue()
+
+        //remove notifications
+        db.child(usersPath).child(userId).child(notificationsPath).child(questionId).removeValue()
+        Firebase.messaging.unsubscribeFromTopic(questionId)
     }
 
     override fun removeAnswerLike(userId: String, answerId: String) {
