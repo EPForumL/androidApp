@@ -614,10 +614,14 @@ class FirebaseDatabaseAdapterTest {
             assertThat(it, equalTo(listOf()))
         }.join()
 
-        db.addNotification(romain.userId, sdp.courseId).join()
+        db.addNotification(romain.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(romain.userId)))
+        }.join()
+
+        db.getUserNotificationCourseIds(romain.userId).thenAccept {
+            assertThat(it, equalTo(listOf(sdp.courseId)))
         }.join()
 
     }
@@ -625,15 +629,15 @@ class FirebaseDatabaseAdapterTest {
     @Test
     fun removeNotificationTest(){
 
-        db.addNotification(romain.userId, sdp.courseId).join()
-
-        db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
-            assertThat(it, equalTo(listOf(romain.userId)))
-        }.join()
+        addNotificationTest()
 
         db.removeNotification(romain.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
+        db.getCourseNotificationUserIds(romain.userId).thenAccept {
             assertThat(it, equalTo(listOf()))
         }.join()
 
@@ -645,27 +649,13 @@ class FirebaseDatabaseAdapterTest {
             assertThat(it, equalTo(listOf()))
         }.join()
 
-        db.addNotification(romain.userId, sdp.courseId).join()
-        db.addNotification(theo.userId, sdp.courseId).join()
+        db.addNotification(romain.userId, sdp.courseId)
+        db.addNotification(theo.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(romain.userId, theo.userId)))
         }.join()
     }
-
-    @Test
-    fun getNotificationTokenTest(){
-        val futureToken = CompletableFuture<String>()
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            futureToken.complete(it)
-        }
-        val token = futureToken.get()
-        db.addNotification(romain.userId, sdp.courseId).join()
-        db.getCourseNotificationTokens(sdp.courseId).thenAccept {
-            assertThat(it, equalTo(listOf(token)))
-        }.join()
-    }
-
 
     @Test
     fun setUserPresenceAddsConnection() {

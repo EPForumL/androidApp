@@ -375,7 +375,7 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf()))
         }.join()
 
-        db.addNotification(user.userId, sdp.courseId).join()
+        db.addNotification(user.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))
@@ -389,33 +389,28 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf()))
         }.join()
 
-        db.addNotification(user.userId, sdp.courseId).join()
-        db.addNotification(nullUser.userId, sdp.courseId).join()
+        db.addNotification(user.userId, sdp.courseId)
+        db.addNotification(nullUser.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId, nullUser.userId)))
         }.join()
-    }
 
-    @Test
-    fun getNotificationTokenTest(){
-        val futureToken = CompletableFuture<String>()
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            futureToken.complete(it)
-        }
-        val token = futureToken.get()
-        db.addNotification(user.userId, sdp.courseId).join()
-        db.getCourseNotificationTokens(sdp.courseId).thenAccept {
-            assertThat(it, equalTo(listOf(token)))
+        db.getUserNotificationCourseIds(user.userId).thenAccept {
+            assertThat(it, equalTo(listOf(sdp.courseId)))
         }.join()
     }
 
     @Test
     fun removeNotification(){
-        db.addNotification(user.userId, sdp.courseId).join()
+        db.addNotification(user.userId, sdp.courseId)
 
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf(user.userId)))
+        }.join()
+
+        db.getUserNotificationCourseIds(user.userId).thenAccept {
+            assertThat(it, equalTo(listOf(sdp.courseId)))
         }.join()
 
         db.removeNotification(user.userId, sdp.courseId)
@@ -423,6 +418,11 @@ class MockDatabaseTest {
         db.getCourseNotificationUserIds(sdp.courseId).thenAccept {
             assertThat(it, equalTo(listOf()))
         }.join()
+
+        db.getUserNotificationCourseIds(user.userId).thenAccept {
+            assertThat(it, equalTo(listOf()))
+        }.join()
+
     }
 
     @Test

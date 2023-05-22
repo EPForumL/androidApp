@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -81,6 +82,12 @@ class FirebaseAuthenticator(
     override fun deleteUser(): CompletableFuture<Void> {
         signOutResult = CompletableFuture()
         val user = DatabaseManager.user
+
+        //unsubscribe the device to every users' notifications
+        DatabaseManager.db.getUserNotificationCourseIds(user?.userId ?: "").thenAccept { courseList ->
+            courseList.forEach { Firebase.messaging.unsubscribeFromTopic(it) }
+        }
+
         if (user != null) {
             AuthUI.getInstance()
                 .delete(activity)
@@ -99,6 +106,11 @@ class FirebaseAuthenticator(
      * @param txt: The text to show on the toast
      */
     private fun logout(txt: String) {
+        //unsubscribe the device to every users' notifications
+        DatabaseManager.db.getUserNotificationCourseIds(DatabaseManager.user?.userId ?: "").thenAccept { courseList ->
+            courseList.forEach { Firebase.messaging.unsubscribeFromTopic(it) }
+        }
+
         DatabaseManager.user?.let { DatabaseManager.db.removeUserConnection(it.userId) }
         // User is logged out
         DatabaseManager.user = null
@@ -169,6 +181,12 @@ class FirebaseAuthenticator(
      */
     private fun gotToActivity(newUser: Model.User) {
         DatabaseManager.user = newUser
+
+        //subscribe the device to every users' notification
+        DatabaseManager.db.getUserNotificationCourseIds(DatabaseManager.user?.userId ?: "").thenAccept { courseList ->
+            courseList.forEach { Firebase.messaging.subscribeToTopic(it) }
+        }
+
         DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)
         DatabaseManager.user!!.connections.add(true)
 
