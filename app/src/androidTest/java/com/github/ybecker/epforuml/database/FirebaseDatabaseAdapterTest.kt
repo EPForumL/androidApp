@@ -17,7 +17,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import junit.framework.TestCase.*
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.equalTo
@@ -620,7 +619,7 @@ class FirebaseDatabaseAdapterTest {
             assertThat(it, equalTo(listOf(romain.userId)))
         }.join()
 
-        db.getUserNotificationCourseIds(romain.userId).thenAccept {
+        db.getUserNotificationIds(romain.userId).thenAccept {
             assertThat(it, equalTo(listOf(sdp.courseId)))
         }.join()
 

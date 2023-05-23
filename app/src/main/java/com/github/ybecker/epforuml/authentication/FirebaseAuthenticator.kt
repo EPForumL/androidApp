@@ -1,10 +1,7 @@
 package com.github.ybecker.epforuml.authentication
 
-import android.content.ContentValues
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCaller
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -19,14 +16,9 @@ import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 /**
  * Authenticator implementation that uses firebase authentication mechanisms
@@ -84,8 +76,8 @@ class FirebaseAuthenticator(
         val user = DatabaseManager.user
 
         //unsubscribe the device to every users' notifications
-        DatabaseManager.db.getUserNotificationCourseIds(user?.userId ?: "").thenAccept { courseList ->
-            courseList.forEach { Firebase.messaging.unsubscribeFromTopic(it) }
+        DatabaseManager.db.getUserNotificationIds(user?.userId ?: "").thenAccept {
+            it.forEach { id -> Firebase.messaging.unsubscribeFromTopic(id) }
         }
 
         if (user != null) {
@@ -107,8 +99,8 @@ class FirebaseAuthenticator(
      */
     private fun logout(txt: String) {
         //unsubscribe the device to every users' notifications
-        DatabaseManager.db.getUserNotificationCourseIds(DatabaseManager.user?.userId ?: "").thenAccept { courseList ->
-            courseList.forEach { Firebase.messaging.unsubscribeFromTopic(it) }
+        DatabaseManager.db.getUserNotificationIds(DatabaseManager.user?.userId ?: "").thenAccept {
+            it.forEach { id -> Firebase.messaging.unsubscribeFromTopic(id) }
         }
 
         DatabaseManager.user?.let { DatabaseManager.db.removeUserConnection(it.userId) }
@@ -183,8 +175,8 @@ class FirebaseAuthenticator(
         DatabaseManager.user = newUser
 
         //subscribe the device to every users' notification
-        DatabaseManager.db.getUserNotificationCourseIds(DatabaseManager.user?.userId ?: "").thenAccept { courseList ->
-            courseList.forEach { Firebase.messaging.subscribeToTopic(it) }
+        DatabaseManager.db.getUserNotificationIds(DatabaseManager.user?.userId ?: "").thenAccept {
+            it.forEach { id -> Firebase.messaging.subscribeToTopic(id) }
         }
 
         DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)

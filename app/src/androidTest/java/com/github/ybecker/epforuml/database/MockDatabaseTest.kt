@@ -4,13 +4,10 @@ import com.github.ybecker.epforuml.UserStatus
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*
-import com.google.firebase.messaging.FirebaseMessaging
 import junit.framework.TestCase.*
-import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.Before
 import java.time.LocalDateTime
-import java.util.concurrent.CompletableFuture
 
 class MockDatabaseTest {
 
@@ -396,7 +393,7 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf(user.userId, nullUser.userId)))
         }.join()
 
-        db.getUserNotificationCourseIds(user.userId).thenAccept {
+        db.getUserNotificationIds(user.userId).thenAccept {
             assertThat(it, equalTo(listOf(sdp.courseId)))
         }.join()
     }
@@ -409,7 +406,7 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf(user.userId)))
         }.join()
 
-        db.getUserNotificationCourseIds(user.userId).thenAccept {
+        db.getUserNotificationIds(user.userId).thenAccept {
             assertThat(it, equalTo(listOf(sdp.courseId)))
         }.join()
 
@@ -419,7 +416,7 @@ class MockDatabaseTest {
             assertThat(it, equalTo(listOf()))
         }.join()
 
-        db.getUserNotificationCourseIds(user.userId).thenAccept {
+        db.getUserNotificationIds(user.userId).thenAccept {
             assertThat(it, equalTo(listOf()))
         }.join()
 
