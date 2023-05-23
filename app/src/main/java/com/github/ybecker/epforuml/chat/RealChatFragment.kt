@@ -83,7 +83,7 @@ class RealChatFragment : Fragment() {
                     button.setOnClickListener{
                         val chat = db.addChat(hostId, externId,textMsg.text.toString())
                         queryList.add(chat)
-                        textMsg.text =""
+                        textMsg.setText("")
                         displayChats()
                     }
                 }else{
