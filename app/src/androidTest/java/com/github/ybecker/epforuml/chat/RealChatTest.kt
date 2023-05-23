@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.chat
 
 import android.app.Activity
 import android.content.Intent
+import android.text.TextUtils.isEmpty
 import android.widget.EditText
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -108,10 +109,8 @@ class RealChatTest {
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
             assertEquals(4, view.adapter?.itemCount ?:0 )
+            assert(activity.findViewById<EditText>(R.id.edit_text_message).text.isEmpty())
         }
-        //check chat box is emptied
-        
-        Espresso.onView(withId(R.id.edit_text_message)).check(matches(isEmpty()))
         
     }
 
