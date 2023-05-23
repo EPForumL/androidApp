@@ -576,6 +576,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).child(sharesLocationPath).setValue(sharesLocation)
     }
 
+    override fun getDbInstance(): FirebaseDatabase? {
+        return dbInstance
+    }
+
     override fun addStatus(userId: String, courseId: String, status: UserStatus) {
         db.child(usersPath).child(userId).child(statusPath).child(courseId).setValue(status.name)
     }

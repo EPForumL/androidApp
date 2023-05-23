@@ -1,28 +1,29 @@
 package com.github.ybecker.epforuml.chat
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.R.*
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.ArrayList
 
 /**
  * A fragment representing a chat which is a list of messages.
@@ -42,7 +43,6 @@ class RealChatFragment : Fragment() {
 
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var chatRecyclerView: RecyclerView
-    private lateinit var timer: Timer
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,6 +83,7 @@ class RealChatFragment : Fragment() {
                     button.setOnClickListener{
                         val chat = db.addChat(hostId, externId,textMsg.text.toString())
                         queryList.add(chat)
+                        textMsg.setText("")
                         displayChats()
                     }
                 }else{
@@ -103,29 +104,33 @@ class RealChatFragment : Fragment() {
         chatRecyclerView.setHasFixedSize(false)
         // Update questions list
         if (user != null) fetchChats()
-        startTimer()
+        //startTimer()
+        setUpDbListener()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        stopTimer()
-    }
-
-    private fun startTimer() {
-        timer = Timer()
-        timer.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                // Code to refresh the fragment goes here
-                activity?.runOnUiThread {
-                    // Update the UI
+    private fun setUpDbListener() {
+        if(db.getDbInstance()!=null){
+            val database = db.getDbInstance()!!.reference
+            val docRef: DatabaseReference = database.child("chats")
+            docRef.addChildEventListener(object : ChildEventListener {
+                override fun onChildAdded(dataSnapshot: DataSnapshot, previousChildName: String?) {
                     fetchChats()
                 }
-            }
-        }, 0, 2000)
-    }
+                override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+                    fetchChats()
+                }
+                override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                }
 
-    private fun stopTimer() {
-        timer.cancel()
+                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                }
+            })}
+
+
+
     }
 
 
