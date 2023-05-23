@@ -90,12 +90,12 @@ abstract class Database {
     abstract fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>>
 
     /**
-     * Returns a list of courseId of every course that the user subscribed to notification for.
+     * Returns a list of Ids of every topics that the user asks notification for.
      *
      * @param userId the user from which to get the notification list
-     * @return a list of courseId of every course that the user subscribed to notification for
+     * @return a list of Ids of every topics that the user asks notification for
      */
-    abstract fun getUserNotificationCourseIds(userId: String): CompletableFuture<List<String>>
+    abstract fun getUserNotificationIds(userId: String): CompletableFuture<List<String>>
 
     /**
      * Posts a new course in the forum

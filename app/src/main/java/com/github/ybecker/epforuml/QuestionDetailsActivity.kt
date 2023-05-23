@@ -211,7 +211,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
                     notificationButton.tag = listOf(true, newCount)
                     notificationButton.setColorFilter(ContextCompat.getColor(context, R.color.yellow), PorterDuff.Mode.SRC_IN)
                 } else {
-                    db.removeQuestionFollower(userId, questionId)
                     db.removeQuestionFollower(user.userId, questionId)
                     val newCount = count-1
                     followButton.text =(newCount).toString()

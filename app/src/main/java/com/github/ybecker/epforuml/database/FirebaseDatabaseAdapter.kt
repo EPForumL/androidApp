@@ -199,7 +199,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
-    override fun getUserNotificationCourseIds(userId: String): CompletableFuture<List<String>> {
+    override fun getUserNotificationIds(userId: String): CompletableFuture<List<String>> {
         val future = CompletableFuture<List<String>>()
 
         db.child(usersPath).child(userId).child(notificationsPath).get().addOnSuccessListener {
@@ -339,7 +339,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(questionsPath).child(questionId).child(followersPath).child(userId).setValue(userId)
 
         //add notifications
-        db.child(usersPath).child(userId).child(notificationsPath).child(questionsPath).setValue(questionId)
+        db.child(usersPath).child(userId).child(notificationsPath).child(questionId).setValue(questionId)
         Firebase.messaging.subscribeToTopic(questionId)
     }
 
