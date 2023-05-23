@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.account
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,9 +12,12 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.FirebaseDatabaseAdapter
+import com.github.ybecker.epforuml.database.Model
 
 /**
  * The signed-in account fragment.
@@ -45,40 +49,57 @@ class AccountFragment : Fragment() {
     }
 
     private fun profilePictureManagement(view: View): View {
-        val profilePic = view.findViewById<ImageView>(R.id.profilePicture)
-        // Get the user profile picture and set profilePic to it or just sets it to the
-        // standard image when no profile picture was added to the user.
+        val localUser = DatabaseManager.user
+        if (localUser != null) {
+            val profilePic = view.findViewById<ImageView>(R.id.profilePicture)
 
-        val user = DatabaseManager.user
-        val picturePath = user?.profilePic
-        if (picturePath != "") {
-            val uri = Uri.parse((Uri.decode(picturePath)))
-            profilePic.setImageURI(uri)
-        } else {
-            // Standard image when no profile picture was added
-            profilePic.setImageResource(R.drawable.nav_account)
-        }
+            // Load the profile picture stored in Firebase storage (if any)
+            DatabaseManager.db.getUserById(localUser.userId).thenAccept { user ->
+                if (user != null) {
+                    loadProfilePictureToView(view.context, user.profilePic, profilePic)
+                }
+            }
 
-        // Activity used to select a picture in the phone's gallery
-        val profilePickEdit = registerForActivityResult(
-            ActivityResultContracts.PickVisualMedia()
-        ) {
-            if (it != null) {
-                val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                context?.contentResolver?.takePersistableUriPermission(it, flag)
-                profilePic.setImageURI(it)
-                DatabaseManager.user?.profilePic = it.toString()
-                DatabaseManager.db.updateUser(DatabaseManager.user!!)
+            // Activity used to select a picture in the phone's gallery
+            val profilePickEdit = registerForActivityResult(
+                ActivityResultContracts.PickVisualMedia()
+            ) { onPickImageResult(it, localUser.userId, view.context, profilePic) }
+
+            // Launches the picture gallery activity when we click on the profile picture
+            profilePic.setOnClickListener {
+                profilePickEdit.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
             }
         }
 
-        // Launches the picture gallery activity when we click on the profile picture
-        profilePic.setOnClickListener {
-            profilePickEdit.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        }
-
         return view
+    }
+
+    private fun loadProfilePictureToView(context: Context, url: String, profileView: ImageView) {
+        // Loads the profile picture from Firebase and store it into the profileView
+        Glide.with(context)
+            .load(url)
+            .error(R.drawable.nav_account)
+            .into(profileView)
+    }
+
+    private fun onPickImageResult(uri: Uri?, userId: String, context: Context, profileView: ImageView) {
+        if (uri != null) {
+            val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            context.contentResolver?.takePersistableUriPermission(uri, flag)
+
+            // Upload the image to Firebase storage, change the profile picture image and change
+            // the user's profile pic url
+            FirebaseDatabaseAdapter.uploadImageToFirebase(uri.toString()).thenAccept { url ->
+                loadProfilePictureToView(context, url, profileView)
+                DatabaseManager.db.getUserById(userId).thenAccept { user ->
+                    if (user != null) {
+                        user.profilePic = url
+                        DatabaseManager.db.updateUser(user)
+                    }
+                }
+            }
+        }
     }
 }

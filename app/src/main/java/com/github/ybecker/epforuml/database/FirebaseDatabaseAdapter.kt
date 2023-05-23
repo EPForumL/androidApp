@@ -866,27 +866,46 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return questionFuture
     }
-    private fun uploadImageToFirebase(uri: String) : CompletableFuture<String>{
-        val url = CompletableFuture<String>()
 
-        if(uri == "" || uri.equals(null)){
-            url.complete("")
+    companion object {
+        /**
+         * Upload the image stored locally at the given uri to Firebase storage.
+         *
+         * @param uri the uri of the locally stored image
+         * @return a future containing the image url
+         */
+        fun uploadImageToFirebase(uri: String) : CompletableFuture<String>{
+            val url = CompletableFuture<String>()
 
-        } else {
-            val fileRef: StorageReference =
-                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + getExtension(uri))
-            fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
-                fileRef.downloadUrl.addOnSuccessListener { uri ->
-                    url.complete(uri.toString())
+            if(uri == "" || uri.equals(null)){
+                url.complete("")
+
+            } else {
+                val fileRef: StorageReference =
+                    FirebaseStorage
+                        .getInstance("gs://epforuml-38150.appspot.com")
+                        .reference
+                        .child(System.currentTimeMillis().toString() + getExtension(uri))
+                fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
+                    fileRef.downloadUrl.addOnSuccessListener { uri ->
+                        url.complete(uri.toString())
+                    }
+                }.addOnFailureListener {
+                    url.completeExceptionally(it)
+                }.addOnCanceledListener {
+                    url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
                 }
-            }.addOnFailureListener {
-                url.completeExceptionally(it)
-            }.addOnCanceledListener {
-                url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
-            }
 
+            }
+            return url
         }
-        return url
+
+        private fun getExtension(uri: String): String {
+            if (uri.contains("images")) {
+                return ".jpeg"
+            }
+            return ".mp4"
+        }
     }
 
     private fun uploadAudioToFirebase(path: String) : CompletableFuture<String>{
@@ -896,7 +915,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         }else{
             val fileRef: StorageReference =
-                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".mp4")
+                FirebaseStorage
+                    .getInstance("gs://epforuml-38150.appspot.com")
+                    .reference.child(System.currentTimeMillis().toString() + ".mp4")
             fileRef.putFile(File(path).toUri()).addOnSuccessListener {
                 fileRef.downloadUrl.addOnSuccessListener { uri ->
                     url.complete(uri.toString())
@@ -910,12 +931,4 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return url
     }
-
-    private fun getExtension(uri: String): String {
-        if (uri.contains("images")) {
-                return ".jpeg"
-        }
-        return ".mp4"
-    }
-
 }
