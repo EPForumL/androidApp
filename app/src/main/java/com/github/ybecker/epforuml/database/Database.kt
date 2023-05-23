@@ -1,11 +1,10 @@
 package com.github.ybecker.epforuml.database
 
-import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.FirebaseDatabase
 import java.util.concurrent.CompletableFuture
-import java.time.LocalDateTime
 
 /**
  * An abstract class that defines a set of methods to be implemented by concrete database implementations.
@@ -402,4 +401,7 @@ abstract class Database {
      * @param sharesLocation whether to share the localization or not
      */
     abstract fun updateLocalization(userId: String, position: LatLng, sharesLocation: Boolean)
+
+    abstract fun getDbInstance(): FirebaseDatabase?
+
 }
