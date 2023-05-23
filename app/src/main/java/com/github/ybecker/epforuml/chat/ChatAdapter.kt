@@ -29,6 +29,7 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
         val itemViewHost = LayoutInflater.from(parent.context).inflate(R.layout.chat_item, parent, false)
         return ChatViewHolder(itemViewHost)
     }
+
     override fun getItemCount(): Int {
         return chatList.size
     }

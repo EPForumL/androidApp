@@ -17,7 +17,6 @@ import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.authentication.FirebaseAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.FirebaseDatabaseAdapter
-import com.github.ybecker.epforuml.database.Model
 
 /**
  * The signed-in account fragment.
@@ -76,14 +75,6 @@ class AccountFragment : Fragment() {
         return view
     }
 
-    private fun loadProfilePictureToView(context: Context, url: String, profileView: ImageView) {
-        // Loads the profile picture from Firebase and store it into the profileView
-        Glide.with(context)
-            .load(url)
-            .error(R.drawable.nav_account)
-            .into(profileView)
-    }
-
     private fun onPickImageResult(uri: Uri?, userId: String, context: Context, profileView: ImageView) {
         if (uri != null) {
             val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -100,6 +91,23 @@ class AccountFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    companion object {
+        /**
+         * Load the Firebase storage image stored at the given url to the given ImageView
+         *
+         * @param context the context linked to the ImageView
+         * @param url the image url
+         * @param imageView the imageView that will contain the image
+         */
+        fun loadProfilePictureToView(context: Context, url: String, imageView: ImageView) {
+            // Loads the profile picture from Firebase and store it into the profileView
+            Glide.with(context)
+                .load(url)
+                .error(R.drawable.nav_account)
+                .into(imageView)
         }
     }
 }
