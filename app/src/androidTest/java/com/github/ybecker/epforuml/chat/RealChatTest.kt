@@ -108,9 +108,10 @@ class RealChatTest {
         scenario.onActivity { activity ->
             val view : RecyclerView = activity.findViewById(R.id.recycler_chat)
             assertEquals(4, view.adapter?.itemCount ?:0 )
-            assertEquals(activity.findViewById<EditText>(R.id.edit_text_message).text, "")
         }
         //check chat box is emptied
+        
+        Espresso.onView(withId(R.id.edit_text_message)).check(matches(isEmpty()))
         
     }
 
