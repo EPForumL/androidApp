@@ -354,7 +354,7 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(list)
     }
 
-    override fun getUserNotificationCourseIds(userId: String): CompletableFuture<List<String>> {
+    override fun getUserNotificationIds(userId: String): CompletableFuture<List<String>> {
         val list = users[userId]?.notifications
         if(list == null || list.isEmpty()){
             return CompletableFuture.completedFuture(listOf())
