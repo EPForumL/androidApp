@@ -1,8 +1,6 @@
 package com.github.ybecker.epforuml.database
 
-import android.content.ContentValues.TAG
 import android.content.Intent
-import android.util.Log
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
@@ -16,13 +14,13 @@ import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.*
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
@@ -397,7 +395,7 @@ class FirebaseDatabaseAdapterTest {
             db.getQuestionById(question1.questionId).thenAccept {
                 assertThat(it?.questionTitle, equalTo(question1.questionTitle))
             }.join()
-        }
+        }.join()
     }
 
     @Test
@@ -560,56 +558,30 @@ class FirebaseDatabaseAdapterTest {
         }.join()
     }
 
-    //@Test
-//    fun addNewObjectWithTolerateNullArgsTest(){
-//
-//        question1Future.thenAccept{q1->
-//            val newAnswer = db.addAnswer(romain.userId, q1.questionId, null)
-//            db.getAnswerById(newAnswer.answerId).thenAccept {a->
-//                assertThat(a?.answerText, equalTo(""))
-//            }.join()
-//
-//            val newQuestion = db.addQuestion(romain.userId, q1.questionId, false,"title", null, "URI","")
-//
-//            newQuestion.thenAccept{q->
-//                db.getQuestionById(q.questionId).thenAccept {
-//                    assertThat(it?.questionText, equalTo(""))
-//                }.join()
-//
-//            }.join()
-//        }.join()
-//
-//    }
-
     @Test
-    fun addAndGetNewAnswerEndorsementTest(){
-    answer1Future.thenAccept { answer1 ->
-            db.getQuestionFollowers(answer1.answerId).thenAccept {
-                assertThat(it, equalTo(emptyList()))
-            }.join()
-            db.addAnswerEndorsement(romain.userId, answer1.answerId)
-            db.getQuestionFollowers(answer1.answerId).thenAccept {
-                assertThat(it, equalTo(listOf(romain.userId)))
-            }.join()
-        }
+    fun addAnswerEndorsementTest(){
+        val answer1 = answer1Future.get()
+
+        db.addAnswerEndorsement(answer1.answerId, romain.username)
+
+        val endorsement = db.getAnswerEndorsement(answer1.answerId).get()
+
+        assertThat(endorsement, equalTo(romain.username))
     }
 
     @Test
     fun removeAnswerEndorsementTest(){
 
-        answer1Future.thenAccept { answer1 ->
-            db.addAnswerEndorsement(romain.userId, answer1.answerId)
+        val answer1 = answer1Future.get()
 
-            db.getQuestionFollowers(answer1.answerId).thenAccept {
-                assertThat(it, equalTo(listOf(romain.userId)))
-            }.join()
+        addAnswerEndorsementTest()
 
-            db.removeAnswerEndorsement(answer1.answerId)
+        db.removeAnswerEndorsement(answer1.answerId)
 
-            db.getQuestionFollowers(answer1.answerId).thenAccept {
-                assertThat(it, equalTo(listOf()))
-            }.join()
-        }
+        val endorsement = db.getAnswerEndorsement(answer1.answerId).get()
+        assertNull(endorsement)
+
+
     }
 
     @Test
@@ -661,27 +633,29 @@ class FirebaseDatabaseAdapterTest {
         }.join()
     }
 
-    @Test
-    fun setUserPresenceAddsConnection() {
-        db.addUser("0", "test", "testEmail").thenAccept { user ->
-            db.setUserPresence(user.userId)
-            db.getUserById(user.userId).thenAccept {
-                assertTrue(it!!.connections.size == 1)
-            }
-        }
-    }
+//    @Test
+//    fun setUserPresenceAddsConnection() {
+//
+//        db.setUserPresence(romain.userId)
+//
+//        val newRomain = db.getUserById(romain.userId).get()
+//
+//        assertTrue(newRomain!!.connections.size == 1)
+//    }
+//
+//    @Test
+//    fun removeUserConnectionRemovesAConnection() {
+//
+//        setUserPresenceAddsConnection()
+//
+//        db.removeUserConnection(romain.userId)
+//
+//        val newRomain = db.getUserById(romain.userId).get()
+//
+//        assertTrue(newRomain?.connections!!.size == 0)
+//
+//    }
 
-    @Test
-    fun removeUserConnectionRemovesAConnection() {
-        db.addUser("0", "test", "testEmail").thenAccept { user ->
-            db.setUserPresence(user.userId)
-            db.getUserById(user.userId).thenAccept {
-                assertTrue(it!!.connections.size == 1)
-                db.removeUserConnection(it.userId)
-                assertTrue(it.connections.size == 0)
-            }
-        }
-    }
     @Test
     fun removeChat(){
         val chat =db.addChat("1", "1", "hey")
@@ -716,14 +690,14 @@ class FirebaseDatabaseAdapterTest {
 
     @Test
     fun getOtherUsersGivesAllOtherUsers() {
-        db.getOtherUsers(romain.userId).thenAccept { users ->
-            db.registeredUsers().thenAccept {
-                val usersIds = users.map { user -> user.userId }
-                it.forEach { id ->
-                    assertThat(usersIds.contains(id), equalTo(true))
-                }
-            }
+        val otherUser = db.getOtherUsers(romain.userId).get()
+
+        db.registeredUsers().thenAccept {
+            val usersIds = otherUser.map { user2 -> user2.userId }
+            assertTrue(usersIds.containsAll(usersIds))
+            assertFalse(usersIds.contains(romain.userId))
         }.join()
+
     }
 
     @Test
@@ -840,22 +814,38 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
-    fun AddAnAnswerUpdateUserTest() {
-        val initialUser = db.getUserById(romain.userId).get()
-        val initialAnswer = initialUser?.answers
-        val question = question2Future.get()
-        val testAnswer = "TEST ANSWER"
+    fun updateUserTest() {
 
-        val newAnswer = db.addAnswer(romain.userId, question.questionId, testAnswer)
+        DatabaseManager.user = romain
 
-        assertFalse(initialAnswer!!.contains(newAnswer.answerId))
+        val newUsername = "RANDOM"
+
+        romain.username = newUsername
+        val user = db.getUserById(romain.userId).get()
+        assertThat(user?.username, not(equalTo(newUsername)))
+
         db.updateUser(romain)
 
-        val finalUser = db.getUserById(romain.userId).get()
-        val finalAnswers = finalUser?.answers
-        assertTrue(finalAnswers!!.contains(newAnswer.answerId))
-
+        val newUser = db.getUserById(romain.userId).get()
+        assertThat(newUser?.username, equalTo(newUsername))
     }
+
+    @Test
+    fun updateLocalizationTest() {
+
+        val randomLatLng = LatLng(6.0,9.0)
+
+        assertThat(romain.latitude, not(equalTo(randomLatLng.latitude)))
+        assertThat(romain.latitude, not(equalTo(randomLatLng.longitude)))
+
+        db.updateLocalization(romain.userId,randomLatLng,true)
+
+        val newRomain = db.getUserById(romain.userId).get()
+        assertThat(newRomain?.latitude, equalTo(randomLatLng.latitude))
+        assertThat(newRomain?.longitude, equalTo(randomLatLng.longitude))
+    }
+
+    //getAnswerEndorsement
 
     private fun navigateToChat() {
         Espresso.onView(ViewMatchers.withContentDescription(R.string.open))

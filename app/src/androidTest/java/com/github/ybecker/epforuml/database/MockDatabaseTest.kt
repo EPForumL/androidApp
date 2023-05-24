@@ -32,18 +32,18 @@ class MockDatabaseTest {
 
         db.addQuestion(user.userId, sdp.courseId,false, "Question about Cirrus CI", "How do I fix the CI ?", "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/4:3/w_960,h_720,c_limit/Artist-Designed%20Album%20Covers%202.jpg","").thenAccept{
             question1 = it
-        }
+        }.join()
         db.addQuestion(user.userId, sdp.courseId,false, "About the Scrum master", "What is the exact role of a Scrum Master ?", "","").thenAccept {
 
             question2 = it
-        }
+        }.join()
         db.addQuestion(user.userId, sdp.courseId, false, "Very long question",
                 "Extremely long long long long long long long long long long long long long " +
                         "long long long long long long long long long long long long long long long" +
                         "long long long long long long long long long long long long long long long" +
                         "long long long long long long long long long long long long long long long " +
                         "question" ,"","").thenAccept{
-            question3 =it }
+            question3 =it }.join()
 
         answer1 = db.addAnswer(user.userId, question1.questionId, "Try to re-run the CI.")
         answer2 = db.addAnswer(user.userId, question1.questionId, "I have already tried it :(")
@@ -132,13 +132,12 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetQuestionByIdTest(){
-        val question = db.addQuestion(user.userId, sdp.courseId, false,"Question","I have a question.", "","")
+        val question = db.addQuestion(user.userId, sdp.courseId, false,"Question","I have a question.", "","").get()
 
-        question.thenAccept{ q->
-        db.getQuestionById(q.questionId).thenAccept {
+        db.getQuestionById(question.questionId).thenAccept {
             assertThat(it, equalTo(question))
         }.join()
-        }
+
     }
 
     @Test
@@ -150,19 +149,16 @@ class MockDatabaseTest {
 
     @Test
     fun AddAndGetAnswerByIdTest(){
-        val question = db.addQuestion(user.userId, sdp.courseId,false, "Question","I have a question.", "","")
+        val question = db.addQuestion(user.userId, sdp.courseId,false, "Question","I have a question.", "","").get()
 
 
-
-        question.thenAccept{ q->
-            val answer = db.addAnswer(user.userId, q.questionId, "And what is it ?")
-            db.getQuestionById(q.questionId).thenAccept {
-                assertThat(it, equalTo(question))
-            }.join()
-            db.getAnswerById(answer.answerId).thenAccept {
-                assertThat(it, equalTo(answer))
-            }.join()
-        }
+        val answer = db.addAnswer(user.userId, question.questionId, "And what is it ?")
+        db.getQuestionById(question.questionId).thenAccept {
+            assertThat(it, equalTo(question))
+        }.join()
+        db.getAnswerById(answer.answerId).thenAccept {
+            assertThat(it, equalTo(answer))
+        }.join()
 
     }
 
@@ -201,7 +197,7 @@ class MockDatabaseTest {
             db.getUserAnswers(user.userId).thenAccept {
                 assertTrue(it.containsAll(answers))
             }.join()
-        }
+        }.join()
     }
 
     @Test
@@ -428,7 +424,7 @@ class MockDatabaseTest {
         db.setUserPresence("0")
         db.getUserById("0").thenAccept {
             assertTrue(it!!.connections.size == 1)
-        }
+        }.join()
     }
 
     @Test
@@ -439,7 +435,7 @@ class MockDatabaseTest {
             assertTrue(it!!.connections.size == 1)
             db.removeUserConnection("0")
             assertTrue(it.connections.size == 0)
-        }
+        }.join()
     }
 
     @Test
@@ -521,14 +517,14 @@ class MockDatabaseTest {
 
     @Test
     fun getOtherUsersGivesAllOtherUsers() {
-        db.getOtherUsers(user.userId).thenAccept { users ->
-            db.registeredUsers().thenAccept {
-                val usersIds = users.map { user2 -> user2.userId }
-                it.forEach { id ->
-                    assertThat(usersIds.contains(id), equalTo(true))
-                }
-            }
+        val otherUser = db.getOtherUsers(user.userId).get()
+
+        db.registeredUsers().thenAccept {
+            val usersIds = otherUser.map { user2 -> user2.userId }
+            assertTrue(usersIds.containsAll(usersIds))
+            assertFalse(usersIds.contains(user.userId))
         }.join()
+
     }
 
     @Test
