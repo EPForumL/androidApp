@@ -120,9 +120,9 @@ class QuestionDetailsActivity : AppCompatActivity() {
         if (MainActivity.isConnected()) {
             db.getQuestionById(questionId).thenAccept {q ->
                 if(!q?.isAnonymous!!){
-                    answerRecyclerView.adapter = AnswerAdapter(q!!, hashMapOf(),this)
+                    answerRecyclerView.adapter = AnswerAdapter(q, hashMapOf(),this)
                 } else {
-                    answerRecyclerView.adapter = AnswerAdapter(q!!, hashMapOf(Pair(q.userId, username)),this)
+                    answerRecyclerView.adapter = AnswerAdapter(q, hashMapOf(Pair(q.userId, username)),this)
                 }
             }
         } else {
@@ -229,7 +229,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
         if (userId.isNotEmpty()) {
             latexButton.setOnClickListener { LatexDialog(this, replyBox).show() }
-            latexButton.isVisible = true
+
             // store content of box as a new answer to corresponding question
             sendButton.setOnClickListener {
                 if (question != null) {
@@ -261,6 +261,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             val cardView : CardView = findViewById(R.id.write_reply_card)
             cardView.visibility = View.GONE
             sendButton.visibility = View.GONE
+            latexButton.visibility =View.GONE
 
             val textView : TextView = findViewById(R.id.not_loggedin_text)
             textView.visibility = View.VISIBLE
@@ -274,15 +275,18 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val cardView : CardView = findViewById(R.id.write_reply_card)
         val sendButton : ImageButton = findViewById(R.id.post_reply_button)
         val saveButton : ImageButton = findViewById(R.id.toggle_save_question)
+        val latexButton : ImageButton = findViewById(R.id.question_details_latex)
 
         if (!MainActivity.isConnected()) {
             cardView.visibility = View.GONE
             sendButton.visibility = View.GONE
             saveButton.visibility = View.GONE
+            latexButton.visibility = View.GONE
         } else {
             cardView.visibility = View.VISIBLE
             sendButton.visibility = View.VISIBLE
             saveButton.visibility = View.VISIBLE
+            latexButton.visibility = View.VISIBLE
         }
     }
 
