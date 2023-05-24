@@ -139,7 +139,7 @@ class FirebaseDatabaseAdapterTest {
     }
 
     @Test
-    fun AAAaddMessageRefresh() {
+    fun addAMessageRefresh() {
         Thread.sleep(3000) // wait for all futures to complete
         Firebase.auth.signOut()
         DatabaseManager.user = romain
@@ -839,24 +839,23 @@ class FirebaseDatabaseAdapterTest {
 
     }
 
-//    @Test
-//    fun updateUserTest() {
-//
-//        val initialUser = db.getUserById(romain.userId).get()
-//        val initialAnswer = initialUser?.answers
-//        val question = question2Future.get()
-//        val testAnswer = "TEST ANSWER"
-//
-//        val newAnswer = db.addAnswer(romain.userId, question.questionId, testAnswer)
-//
-//        assertFalse(initialAnswer!!.contains(newAnswer.answerId))
-//        db.updateUser(romain)
-//
-//        val finalUser = db.getUserById(romain.userId).get()
-//        val finalAnswers = finalUser?.answers
-//        assertTrue(finalAnswers!!.contains(newAnswer.answerId))
-//
-//    }
+    @Test
+    fun AddAnAnswerUpdateUserTest() {
+        val initialUser = db.getUserById(romain.userId).get()
+        val initialAnswer = initialUser?.answers
+        val question = question2Future.get()
+        val testAnswer = "TEST ANSWER"
+
+        val newAnswer = db.addAnswer(romain.userId, question.questionId, testAnswer)
+
+        assertFalse(initialAnswer!!.contains(newAnswer.answerId))
+        db.updateUser(romain)
+
+        val finalUser = db.getUserById(romain.userId).get()
+        val finalAnswers = finalUser?.answers
+        assertTrue(finalAnswers!!.contains(newAnswer.answerId))
+
+    }
 
     private fun navigateToChat() {
         Espresso.onView(ViewMatchers.withContentDescription(R.string.open))

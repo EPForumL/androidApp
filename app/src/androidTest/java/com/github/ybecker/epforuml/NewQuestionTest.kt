@@ -392,7 +392,6 @@ class NewQuestionTest {
 
     @Test
     fun AnonymousQuestionTest(){
-        Firebase.auth.signOut()
 
         val user = db.addUser("AUSERID", "AUSER", "").get()
         DatabaseManager.user = user
@@ -466,7 +465,6 @@ class NewQuestionTest {
     }
 
 
-    /*
     @Test
     fun AnonymousAnswerKeepSameSurnameTest(){
 
@@ -512,9 +510,9 @@ class NewQuestionTest {
 
         scenario.close()
     }
-     */
 
-    /*
+
+
     @Test
     fun AnonymousAnswerToOtherChangeSurnameTest(){
         //Send anonymous question as in previous test
@@ -540,7 +538,7 @@ class NewQuestionTest {
 
         scenario.close()
     }
-     */
+
 
     @Test
     fun checkLatexButtonExistAndOpensDialog() {
