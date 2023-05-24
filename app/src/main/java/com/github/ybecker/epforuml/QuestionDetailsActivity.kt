@@ -35,15 +35,18 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private lateinit var saveToggle : ImageButton
 
-    private lateinit var cache : ArrayList<Model.Question>
-
     private lateinit var newIntent : Intent
     private lateinit var comingFromFragment : String
     private lateinit var audioPlayer : AndroidAudioPlayer
 
     private lateinit var username :String
 
+    private lateinit var cache : ArrayList<Model.Question>
     private var answersCache : ArrayList<Model.Answer> = arrayListOf()
+
+    private lateinit var allQuestionsCache : ArrayList<Model.Question>
+    private lateinit var allAnswersCache : ArrayList<Model.Answer>
+    private lateinit var allCoursesCache : ArrayList<Model.Course>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +59,11 @@ class QuestionDetailsActivity : AppCompatActivity() {
         cache = intent.getParcelableArrayListExtra("savedQuestions")!!
         answersCache = intent.getParcelableArrayListExtra("savedAnswers")!!
         comingFromFragment = intent.getStringExtra("comingFrom")!!
+
+        // TODO : check
+        allQuestionsCache = intent.getParcelableArrayListExtra("allQuestions")!!
+        allAnswersCache = intent.getParcelableArrayListExtra("allAnswers")!!
+        allCoursesCache = intent.getParcelableArrayListExtra("allCourses")!!
 
         newIntent = Intent(
             this,
@@ -126,7 +134,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 }
             }
         } else {
-            answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, answersCache)
+            answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, allAnswersCache)
         }
     }
 
@@ -155,10 +163,10 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private fun updateNewIntent() {
         newIntent.putParcelableArrayListExtra("savedQuestions", cache)
 
-        updateAnswersCacheIfConnected()
+        updateCacheIfConnected()
     }
 
-    private fun updateAnswersCacheIfConnected() {
+    private fun updateCacheIfConnected() {
         if (MainActivity.isConnected()) {
             answersCache.clear()
 
@@ -167,7 +175,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 newIntent.putParcelableArrayListExtra("savedAnswers", answersCache)
             }
 
-            MainActivity.saveDataToDevice(cache, answersCache)
+            MainActivity.saveDataToDevice(cache, answersCache, allQuestionsCache, allAnswersCache, allCoursesCache)
         }
     }
     private fun setVoiceNoteButton(){

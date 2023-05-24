@@ -22,7 +22,8 @@ import com.github.ybecker.epforuml.latex.MathView
 
 import java.util.concurrent.CompletableFuture
 
-class SavedAnswerAdapter(private val questionId : String, private val questionText : String, private val answerList : List<Model.Answer>)
+class SavedAnswerAdapter(private val questionId : String, private val questionText : String,
+                         private val answerList : List<Model.Answer>)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -67,7 +68,6 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
 
                 holder.answerText.text = currentAnswerItem.answerText
 
-                // TODO : change userId to username (need to use future)
                 holder.username.text = currentAnswerItem.userId
 
                 val counter = holder.itemView.findViewById<TextView>(R.id.likeCount)

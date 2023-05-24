@@ -14,6 +14,9 @@ import com.github.ybecker.epforuml.database.Model
 class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, List<Model.Question>>,
                          private val cache: ArrayList<Model.Question>,
                          private val answersCache: ArrayList<Model.Answer>,
+                         private val allQuestions: ArrayList<Model.Question>,
+                         private val allAnswers: ArrayList<Model.Answer>,
+                         private val allCourses: ArrayList<Model.Course>,
                          private val fragment: String) :
     RecyclerView.Adapter<MyQuestionsAdapter.MyQuestionsViewHolder>() {
 
@@ -28,7 +31,7 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
 
     // Return the number of items in the RecyclerView
     override fun getItemCount(): Int {
-        return myQuestionsMap.size
+        return myQuestionsMap.filter { it.value.isNotEmpty() }.size
     }
 
     // Bind the data to each item in the RecyclerView
@@ -42,19 +45,27 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
         // Get the list of questions for the current course
         val questionsList = myQuestionsMap[course]?.toMutableList()
 
-        // Set up the RecyclerView with the list of questions
-        holder.forumAdapter = ForumAdapter(questionsList ?: mutableListOf<Model.Question>())
-        holder.questionsRecyclerView.adapter = holder.forumAdapter
-        holder.questionsRecyclerView.layoutManager = LinearLayoutManager(holder.itemView.context)
+        if (questionsList!!.size > 0) {
+            // Set up the RecyclerView with the list of questions
+            holder.forumAdapter = ForumAdapter(questionsList ?: mutableListOf<Model.Question>())
+            holder.questionsRecyclerView.adapter = holder.forumAdapter
+            holder.questionsRecyclerView.layoutManager = LinearLayoutManager(holder.itemView.context)
 
-        // Set up the click listener for each question in the RecyclerView
-        holder.forumAdapter.onItemClick = { question ->
-            val intent = Intent(holder.itemView.context, QuestionDetailsActivity::class.java)
-            intent.putParcelableArrayListExtra("savedQuestions", cache)
-            intent.putParcelableArrayListExtra("savedAnswers", answersCache)
-            intent.putExtra("comingFrom", fragment)
-            intent.putExtra("question", question)
-            holder.itemView.context.startActivity(intent)
+            // Set up the click listener for each question in the RecyclerView
+            holder.forumAdapter.onItemClick = { question ->
+                val intent = Intent(holder.itemView.context, QuestionDetailsActivity::class.java)
+                intent.putParcelableArrayListExtra("savedQuestions", cache)
+                intent.putParcelableArrayListExtra("savedAnswers", answersCache)
+
+                // TODO : check
+                intent.putParcelableArrayListExtra("allQuestions", allQuestions)
+                intent.putParcelableArrayListExtra("allAnswers", allAnswers)
+                intent.putParcelableArrayListExtra("allCourses", allCourses)
+
+                intent.putExtra("comingFrom", fragment)
+                intent.putExtra("question", question)
+                holder.itemView.context.startActivity(intent)
+            }
         }
     }
 

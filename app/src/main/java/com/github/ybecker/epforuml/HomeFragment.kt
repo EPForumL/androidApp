@@ -33,6 +33,11 @@ class HomeFragment : Fragment() {
     private val user = DatabaseManager.user
     private var questionsMap = mutableMapOf<Course, List<Question>>()
 
+    // TODO : check
+    private lateinit var allQuestions : ArrayList<Question>
+    private lateinit var allAnswers : ArrayList<Answer>
+    private lateinit var allCourses : ArrayList<Course>
+
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     /**
@@ -52,8 +57,12 @@ class HomeFragment : Fragment() {
 
         // Get the list of available courses from the database
         futureCourseList = db.availableCourses()
-        cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
-        answersCache = requireArguments().getParcelableArrayList("savedAnswers") ?: arrayListOf()
+        cache = requireArguments().getParcelableArrayList("savedQuestions")!!
+        answersCache = requireArguments().getParcelableArrayList("savedAnswers")!!
+
+        allQuestions = requireArguments().getParcelableArrayList("allQuestions")!!
+        allAnswers = requireArguments().getParcelableArrayList("allAnswers")!!
+        allCourses = requireArguments().getParcelableArrayList("allCourses")!!
 
         // Set up the new question button and navigate to the new question fragment when clicked
         val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
@@ -98,36 +107,40 @@ class HomeFragment : Fragment() {
         refresh()
     }
 
-    // Fetch the questions and the corresponding courses and display them in the recycler view
-    private fun getForumQuestionsMap() {
-        db.getQuestions().thenAccept { questions ->
-            // Get the list of unique course IDs from the questions list
-            val courseIds = questions.map { question -> question.courseId }.toSet().toList()
+    /**
+     * If is connected, fetches question in DB, otherwise fetches in cache
+     */
+    private fun displayForum() {
+        if (MainActivity.isConnected()) {
+            val futureQuestions = db.getQuestions()
+            val futureCourses = db.availableCourses()
+            CompletableFuture.allOf(futureQuestions, futureCourses).thenAccept {
+                val questions = futureQuestions.get() as ArrayList<Question>
+                val courses = futureCourses.get() as ArrayList<Course>
 
-            // Create a list of futures for fetching the courses corresponding to the course IDs
-            val futureCourses = mutableListOf<CompletableFuture<Model.Course?>>()
-            for (id in courseIds) {
-                futureCourses.add(db.getCourseById(id))
+                getForumQuestionsMap(questions, courses)
+                MainActivity.saveDataToDevice(cache, answersCache, questions, allAnswers, courses)
             }
+        } else {
+            getForumQuestionsMap(allQuestions, allCourses)
+        }
+    }
 
-            // When all courses are fetched, store the questions and display them
-            CompletableFuture.allOf(*futureCourses.toTypedArray()).thenAccept {
-                questionsMap = mutableMapOf()
-                futureCourses.let {
-                    it.forEach { futureCourse ->
-                        val course = futureCourse.get()
-                        if (course != null) {
-                            // Filter the questions corresponding to each course and store the result in the questions map
-                            val courseQuestion = questions.filter { question -> question.courseId == course.courseId }
-                            questionsMap.set(course, courseQuestion)
-                        }
-                    }
-                }
+    // Fetch the questions and the corresponding courses and display them in the recycler view
+    private fun getForumQuestionsMap(questionsList: ArrayList<Question>, courseList: ArrayList<Course>) {
+        questionsMap = mutableMapOf()
 
-                // Update the recycler view adapter with the questions map
-                questionsDisplay()
+        courseList.toTypedArray().forEach { course ->
+            if (course != null) {
+                // Filter the questions corresponding to each course and store the result in the questions map
+                val courseQuestion =
+                    questionsList.filter { question -> question.courseId == course.courseId }
+                questionsMap.set(course, courseQuestion)
             }
         }
+
+        // Update the recycler view adapter with the questions map
+        questionsDisplay()
     }
 
     /**
@@ -143,7 +156,8 @@ class HomeFragment : Fragment() {
         }
 
         // Update the recycler view adapter with the questions map
-        adapter = MyQuestionsAdapter(questionsMap, cache, answersCache, "HomeFragment")
+        adapter = MyQuestionsAdapter(questionsMap, cache, answersCache, allQuestions, allAnswers,
+            allCourses, "HomeFragment")
         recyclerView.adapter = adapter
 
         // move to QuestionDetails when clicking on specific question
@@ -151,6 +165,12 @@ class HomeFragment : Fragment() {
             val intent = Intent(this.context, QuestionDetailsActivity::class.java)
             intent.putParcelableArrayListExtra("savedQuestions", cache)
             intent.putParcelableArrayListExtra("savedAnswers", answersCache)
+
+            // TODO : check
+            intent.putParcelableArrayListExtra("allQuestions", allQuestions)
+            intent.putParcelableArrayListExtra("allAnswers", allAnswers)
+            intent.putParcelableArrayListExtra("allCourses", allCourses)
+
             intent.putExtra("comingFrom", "HomeFragment")
             intent.putExtra("question", q)
             startActivity(intent)
@@ -159,6 +179,6 @@ class HomeFragment : Fragment() {
 
     // Fetch the questions and refresh the display
     private fun refresh() {
-        getForumQuestionsMap()
+        displayForum()
     }
 }

@@ -41,24 +41,52 @@ class MainActivity : AppCompatActivity() {
         /**
          * Saved question cache and answer cache to device
          */
-        fun saveDataToDevice(questionCache: ArrayList<Model.Question>, answerCache: ArrayList<Model.Answer>) {
+        fun saveDataToDevice(questionCache: ArrayList<Model.Question>, answerCache: ArrayList<Model.Answer>,
+                             allQuestionCache: ArrayList<Model.Question>, allAnswerCache: ArrayList<Model.Answer>,
+                            allCoursesCache: ArrayList<Model.Course>) {
             val sharedQuestions : SharedPreferences = context.getSharedPreferences("QUESTIONS", MODE_PRIVATE)
             val sharedAnswers : SharedPreferences = context.getSharedPreferences("ANSWERS", MODE_PRIVATE)
 
-            val questionsEditor = sharedQuestions.edit()
-            val answersEditor = sharedAnswers.edit()
+            var questionsEditor = sharedQuestions.edit()
+            var answersEditor = sharedAnswers.edit()
 
-            val qGson = Gson()
-            val aGson = Gson()
+            var qGson = Gson()
+            var aGson = Gson()
 
-            val qJson = qGson.toJson(questionCache)
-            val aJson = aGson.toJson(answerCache)
+            var qJson = qGson.toJson(questionCache)
+            var aJson = aGson.toJson(answerCache)
 
             questionsEditor.putString("questions", qJson)
             answersEditor.putString("answers", aJson)
 
             questionsEditor.apply()
             answersEditor.apply()
+
+
+            // TODO : check
+            val allQuestions : SharedPreferences = context.getSharedPreferences("ALL_QUESTIONS", MODE_PRIVATE)
+            val allAnswers : SharedPreferences = context.getSharedPreferences("ALL_ANSWERS", MODE_PRIVATE)
+            val allCourses : SharedPreferences = context.getSharedPreferences("ALL_COURSES", MODE_PRIVATE)
+
+            questionsEditor = allQuestions.edit()
+            answersEditor = allAnswers.edit()
+            val coursesEditor = allCourses.edit()
+
+            qGson = Gson()
+            aGson = Gson()
+            val cGson = Gson()
+
+            qJson = qGson.toJson(allQuestionCache)
+            aJson = aGson.toJson(allAnswerCache)
+            val cJson = cGson.toJson(allCoursesCache)
+
+            questionsEditor.putString("all_questions", qJson)
+            answersEditor.putString("all_answers", aJson)
+            coursesEditor.putString("all_courses", cJson)
+
+            questionsEditor.apply()
+            answersEditor.apply()
+            coursesEditor.apply()
         }
     }
 
@@ -66,11 +94,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawerLayout: DrawerLayout
 
     private var cache = ArrayList<Model.Question>()
+    private var allQuestionsCache = ArrayList<Model.Question>()
 
     /**
      * List of all existing answers
      */
     private var answersCache = ArrayList<Model.Answer>()
+    private var allAnswersCache = ArrayList<Model.Answer>()
+    private var allCoursesCache = ArrayList<Model.Course>()
 
 
 
@@ -98,21 +129,6 @@ class MainActivity : AppCompatActivity() {
 
         // load all data from device
         loadDataFromDevice()
-
-        /*
-        // retrieve list of questions if any
-        // TODO : optimize and only allow when logged in
-        val newCache : ArrayList<Model.Question>? = intent.getParcelableArrayListExtra("savedQuestions")
-        if (newCache != null) {
-            cache = newCache
-        }
-
-        val newAnswersCache : ArrayList<Model.Answer>? = intent.getParcelableArrayListExtra("savedAnswers")
-        if (newAnswersCache != null) {
-            answersCache = newAnswersCache
-        }
-
-         */
 
         // get retrieve name of fragment to display if any
         val fragment : String? = intent.extras?.getString("fragment")
@@ -168,6 +184,12 @@ class MainActivity : AppCompatActivity() {
         // send cache to any of the fragments we are going to
         bundle.putParcelableArrayList("savedQuestions", cache)
         bundle.putParcelableArrayList("savedAnswers", answersCache)
+
+        // TODO : check
+        bundle.putParcelableArrayList("allQuestions", allQuestionsCache)
+        bundle.putParcelableArrayList("allAnswers", allAnswersCache)
+        bundle.putParcelableArrayList("allCourses", allCoursesCache)
+
         fragment.arguments = bundle
 
         supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
@@ -206,8 +228,8 @@ class MainActivity : AppCompatActivity() {
         val qGson = Gson()
         val aGson = Gson()
 
-        val qJson =  sharedQuestions.getString("questions", null)
-        val aJson =  sharedAnswers.getString("answers", null)
+        var qJson =  sharedQuestions.getString("questions", null)
+        var aJson =  sharedAnswers.getString("answers", null)
 
         if (qJson != null) {
             val cacheTmp = qGson.fromJson<ArrayList<Model.Question>>(qJson)
@@ -222,6 +244,39 @@ class MainActivity : AppCompatActivity() {
                 answersCache = answerCacheTmp
             }
         }
+
+        // TODO : check
+        val allQuestions : SharedPreferences = context.getSharedPreferences("ALL_QUESTIONS", MODE_PRIVATE)
+        val allAnswers : SharedPreferences = context.getSharedPreferences("ALL_ANSWERS", MODE_PRIVATE)
+        val allCourses : SharedPreferences = context.getSharedPreferences("ALL_COURSES", MODE_PRIVATE)
+
+        qJson =  allQuestions.getString("all_questions", null)
+        aJson =  allAnswers.getString("all_answers", null)
+        val cJson =  allCourses.getString("all_courses", null)
+
+        if (qJson != null) {
+            val allQuestionsTmp = qGson.fromJson<ArrayList<Model.Question>>(qJson)
+            if (allQuestionsTmp != null) {
+                allQuestionsCache = allQuestionsTmp
+            }
+        }
+
+        if (aJson != null) {
+            val allAnswersTmp = aGson.fromJson<ArrayList<Model.Answer>>(aJson)
+            if (allAnswersTmp != null) {
+                allAnswersCache = allAnswersTmp
+            }
+        }
+
+        if (cJson != null) {
+            val allCoursesTmp = aGson.fromJson<ArrayList<Model.Course>>(cJson)
+            if (allCoursesTmp != null) {
+                allCoursesCache = allCoursesTmp
+            }
+        }
+
+        // is it necessary ?
+        //saveDataToDevice(cache, answersCache, allQuestionsCache, allAnswersCache, allCourses)
     }
 }
 
