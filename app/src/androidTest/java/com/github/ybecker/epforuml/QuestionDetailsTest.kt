@@ -20,6 +20,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.basicEntities.questions.QuestionDetailsActivity
+import com.github.ybecker.epforuml.database.UserStatus
 import com.github.ybecker.epforuml.util.EspressoIdlingResource
 import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
 import com.github.ybecker.epforuml.util.onViewWithTimeout.Companion.onViewWithTimeout

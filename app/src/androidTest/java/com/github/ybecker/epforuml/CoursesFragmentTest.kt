@@ -20,6 +20,7 @@ import org.junit.runner.RunWith
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.contrib.RecyclerViewActions
+import com.github.ybecker.epforuml.database.UserStatus
 import com.github.ybecker.epforuml.util.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
