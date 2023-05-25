@@ -44,6 +44,8 @@ class HomeFragment : Fragment() {
     private lateinit var cache : ArrayList<Question>
     private lateinit var answersCache : ArrayList<Answer>
 
+    private lateinit var newQuestionButton : ImageButton
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -57,21 +59,8 @@ class HomeFragment : Fragment() {
         answersCache = requireArguments().getParcelableArrayList("savedAnswers") ?: arrayListOf()
 
         // Set up the new question button and navigate to the new question fragment when clicked
-        val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
-        if (DatabaseManager.user == null) {
-            newQuestionButton.visibility = View.GONE
-        } else {
-            newQuestionButton.setOnClickListener {
-                // Navigate to the new fragment to add a new question
-                val intent = Intent(
-                    context,
-                    MainActivity::class.java
-                )
-
-                intent.putExtra("fragment", "NewQuestionFragment")
-                startActivity(intent)
-            }
-        }
+        newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
+        updateNewQuestionButton()
 
         return view
     }
@@ -165,5 +154,24 @@ class HomeFragment : Fragment() {
     // Fetch the questions and refresh the display
     private fun refresh() {
         getForumQuestionsMap()
+        updateNewQuestionButton()
+    }
+
+    private fun updateNewQuestionButton() {
+        if (DatabaseManager.user == null || !MainActivity.isConnected()) {
+            newQuestionButton.visibility = View.GONE
+        } else {
+            newQuestionButton.visibility = View.VISIBLE
+            newQuestionButton.setOnClickListener {
+                // Navigate to the new fragment to add a new question
+                val intent = Intent(
+                    context,
+                    MainActivity::class.java
+                )
+
+                intent.putExtra("fragment", "NewQuestionFragment")
+                startActivity(intent)
+            }
+        }
     }
 }
