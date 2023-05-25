@@ -51,7 +51,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private var answersCache : ArrayList<Model.Answer> = arrayListOf()
 
     private lateinit var allQuestionsCache : ArrayList<Model.Question>
-    private var allAnswersCache : ArrayList<Model.Answer> = arrayListOf()
+    private lateinit var allAnswersCache : ArrayList<Model.Answer>
     private lateinit var allCoursesCache : ArrayList<Model.Course>
 
     override fun onCreate(savedInstanceState: Bundle?) {
