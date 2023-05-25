@@ -460,9 +460,8 @@ class NewQuestionTest {
 
         //Scroll to the end of the page
         onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
-        onView(withText("Record Voice Note")).check(matches(isDisplayed()))
-        onView(withText("Play_voice_note")).check(matches(isDisplayed()))
-
+        onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
+        onView(withId(R.id.voice_note_button)).check(matches(isDisplayed()))
     }
 
 
