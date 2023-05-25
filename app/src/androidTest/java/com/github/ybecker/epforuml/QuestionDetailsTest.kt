@@ -56,16 +56,13 @@ class QuestionDetailsTest {
 
         registerIdlingResource()
 
+        MainActivity.enableConnection()
+
         intent = Intent(
             ApplicationProvider.getApplicationContext(),
             MainActivity::class.java
         )
 
-//        db.getQuestionById("question1").thenAccept {
-//            question = it!!
-//
-//            // add question to intent
-//            intent.putExtra("question", question)
             // add empty list of saved questions
             cache.clear()
             intent.putParcelableArrayListExtra("savedQuestions", cache)
@@ -83,7 +80,8 @@ class QuestionDetailsTest {
             intent.putParcelableArrayListExtra("allCourses", allCoursesCache)
 
             scenario = ActivityScenario.launch(intent)
-        //}.join()
+
+            MainActivity.saveDataToDevice(cache, answersCache, allQuestionsCache, allAnswersCache, allCoursesCache)
     }
 
 
@@ -161,6 +159,16 @@ class QuestionDetailsTest {
         onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
     }
 
+    private fun switchToSavedQuestionFragment() {
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
+
+        onView(withContentDescription(R.string.open))
+            .perform(click())
+
+        onView(withId(R.id.nav_saved_questions)).perform(click())
+    }
+
 
     private fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
@@ -168,15 +176,6 @@ class QuestionDetailsTest {
 
     private fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
-    }
-
-    @Test
-    fun TODO_REMOVE_THIS() {
-        onView(withText("Forum")).check(matches(isDisplayed()))
-       val question = logInDetailsActivity()
-        val answer = addAnswerInTheQuestion(question)
-
-        swipeToRefresh()
     }
 
     @Test
@@ -498,6 +497,50 @@ class QuestionDetailsTest {
 
         onView(withId(R.id.latex_window_root))
             .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun cutConnectionSavedQuestionTest() {
+        val question = logInDetailsActivity()
+        addAnswerInTheQuestion(question)
+
+        MainActivity.disableConnection()
+
+        swipeToRefresh()
+
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
+
+        onView(withText(question.questionTitle))
+    }
+
+    @Test
+    fun cutConnectionAnonymousSavedQuestionTest() {
+        val question = logInDetailsActivity(true)
+        addAnswerInTheQuestion(question)
+
+        MainActivity.disableConnection()
+
+        swipeToRefresh()
+
+        onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
+            .perform(click())
+
+        onView(withText(question.questionTitle))
+    }
+
+    @Test
+    fun populateSavedQuestionFragmentTest() {
+        val question = logInDetailsActivity(true)
+
+        Thread.sleep(200)
+        onView(withId(R.id.toggle_save_question)).perform(click())
+
+        MainActivity.disableConnection()
+
+        switchToSavedQuestionFragment()
+
+        onView(withText(question.questionTitle)).check(matches(isDisplayed()))
     }
 
 

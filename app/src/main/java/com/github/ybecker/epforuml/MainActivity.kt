@@ -25,16 +25,26 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
 
     companion object {
         lateinit var context: Context
 
         private var connectivityManager : ConnectivityManager? = null
+
+        private var isConnectionEnabled = true
         fun isConnected() : Boolean {
-            if (connectivityManager == null) { return false }
+            if (connectivityManager == null || !isConnectionEnabled) { return false }
 
             return (connectivityManager?.getNetworkCapabilities(connectivityManager?.activeNetwork) != null)
+        }
+
+        fun enableConnection() {
+            isConnectionEnabled = true
+        }
+
+        fun disableConnection() {
+            isConnectionEnabled = false
         }
 
         /**
@@ -303,4 +313,3 @@ class MainActivity : AppCompatActivity() {
         //saveDataToDevice(cache, answersCache, allQuestionsCache, allAnswersCache, allCourses)
     }
 }
-
