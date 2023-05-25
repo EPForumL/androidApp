@@ -432,6 +432,8 @@ class QuestionDetailsTest {
 
         addAnswerInTheQuestion(question)
 
+        Thread.sleep(1000)
+
         swipeToRefresh()
 
         Thread.sleep(1000)
@@ -443,6 +445,7 @@ class QuestionDetailsTest {
         val question = logOutDetailsActivity(true)
 
         addAnswerInTheQuestion(question)
+        Thread.sleep(1000)
 
         swipeToRefresh()
 
