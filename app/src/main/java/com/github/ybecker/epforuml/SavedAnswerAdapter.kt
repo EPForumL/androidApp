@@ -80,7 +80,11 @@ class SavedAnswerAdapter(private val question: Model.Question,
 
                 var answerUserUsername : String? = null
                 val list = userList.filter { it.userId == currentAnswerItem.userId }
-                if (list.isNotEmpty()) answerUserUsername = list[0].username
+                if (list.isNotEmpty()) {
+                    answerUserUsername = list[0].username
+                } else {
+                    answerUserUsername = R.string.unknownUser.toString()
+                }
 
                 //if the question is not anonymous write the real username
                 if(!question.isAnonymous) {

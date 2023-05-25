@@ -91,15 +91,6 @@ class QuestionDetailsActivity : AppCompatActivity() {
         val title : TextView = findViewById(R.id.qdetails_title)
         title.text = question!!.questionTitle
 
-        db.getUserById(question!!.userId).thenAccept {
-
-            if(question?.isAnonymous!!){
-                username = DatabaseManager.anonymousUsers[Random.nextInt(0, DatabaseManager.anonymousUsers.size)]
-            } else {
-                username = it?.username!!
-            }
-            findViewById<TextView>(R.id.qdetails_question_username).text = getString(R.string.qdetail_username_text).replace("Username", username)
-        }
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
 
@@ -131,7 +122,19 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
 
     private fun updateRecycler() {
+
         if (MainActivity.isConnected()) {
+
+            db.getUserById(question!!.userId).thenAccept {
+
+                if(question?.isAnonymous!!){
+                    username = DatabaseManager.anonymousUsers[Random.nextInt(0, DatabaseManager.anonymousUsers.size)]
+                } else {
+                    username = it?.username!!
+                }
+                findViewById<TextView>(R.id.qdetails_question_username).text = getString(R.string.qdetail_username_text).replace("Username", username)
+            }
+
             val futureQuestions = db.getQuestions()
             val futureAnswers = db.getAllAnswers()
             val futureCurrentQuestion = db.getQuestionById(questionId)
@@ -156,6 +159,18 @@ class QuestionDetailsActivity : AppCompatActivity() {
             }
         } else {
             val userList = loadUsersFromDevice()
+            if(question?.isAnonymous!!){
+                username = DatabaseManager.anonymousUsers[Random.nextInt(0, DatabaseManager.anonymousUsers.size)]
+            } else {
+                val filteredUserList = userList.filter { it.userId == question!!.userId }
+                if(filteredUserList.isNotEmpty()) {
+                    username = filteredUserList[0].username
+                } else {
+                    username = R.string.unknownUser.toString()
+                }
+            }
+            findViewById<TextView>(R.id.qdetails_question_username).text = getString(R.string.qdetail_username_text).replace("Username", username)
+
             if(!question?.isAnonymous!!){
                 answerRecyclerView.adapter = SavedAnswerAdapter(question!!, allAnswersCache, userList, hashMapOf(),this)
             } else {
