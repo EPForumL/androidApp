@@ -67,32 +67,46 @@ class RealChatFragment : Fragment() {
             button?.visibility = View.GONE
 
         } else {
-            notConnected.visibility = View.GONE
-            textMsg?.visibility = View.VISIBLE
-            button?.visibility = View.VISIBLE
-            hostId = user!!.userId
-            externId = this.activity?.intent?.getStringExtra("externID").toString()
-            hostUser = user!!
-            db.getUserById(externId).thenAccept{
-                if (it != null) {
-                    externUser = it
-                    chatList = db.getChat(hostId, externId)
-                    view.findViewById<TextView>(R.id.title_chat).text = externUser.username
-                    val button = view.findViewById<ImageButton>(R.id.send_text)
-                    button?.visibility = View.VISIBLE
-                    button.setOnClickListener{
-                        val chat = db.addChat(hostId, externId,textMsg.text.toString())
-                        queryList.add(chat)
-                        textMsg.setText("")
-                        displayChats()
-                    }
-                }else{
-                    val notFound = view?.findViewById<TextView>(R.id.not_found)
-                    notFound?.visibility = View.VISIBLE
-                }
-            }
+            retrieveUsersInitialMessages(textMsg, button, view)
         }
         return view
+    }
+
+    /**
+     * Retrieves the messages of a specific user upon connection to the chat session
+     * @param textMsg the text box
+     * @param button the send button
+     * @param view the current view
+     */
+    private fun retrieveUsersInitialMessages(
+        textMsg: EditText,
+        button: ImageButton,
+        view: View
+    ) {
+        notConnected.visibility = View.GONE
+        textMsg?.visibility = View.VISIBLE
+        button?.visibility = View.VISIBLE
+        hostId = user!!.userId
+        externId = this.activity?.intent?.getStringExtra("externID").toString()
+        hostUser = user!!
+        db.getUserById(externId).thenAccept {
+            if (it != null) {
+                externUser = it
+                chatList = db.getChat(hostId, externId)
+                view.findViewById<TextView>(R.id.title_chat).text = externUser.username
+                val button = view.findViewById<ImageButton>(R.id.send_text)
+                button?.visibility = View.VISIBLE
+                button.setOnClickListener {
+                    val chat = db.addChat(hostId, externId, textMsg.text.toString())
+                    queryList.add(chat)
+                    textMsg.setText("")
+                    displayChats()
+                }
+            } else {
+                val notFound = view?.findViewById<TextView>(R.id.not_found)
+                notFound?.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onViewCreated(fragmentView: View, savedInstanceState: Bundle?) {
@@ -108,6 +122,9 @@ class RealChatFragment : Fragment() {
         setUpDbListener()
     }
 
+    /**
+     * Sets up a listener to refresh the chat upon changes in the database
+     */
     private fun setUpDbListener() {
         if(db.getDbInstance()!=null){
             val database = db.getDbInstance()!!.reference
@@ -133,7 +150,10 @@ class RealChatFragment : Fragment() {
 
     }
 
-
+    /**
+     * This function fetches the chats from the Firebase DB.
+     * It displays a message in special cases.
+     */
     fun fetchChats() {
         var chats : ArrayList<Model.Chat> = arrayListOf()
         db.getChat(hostId,externId).thenAccept{
@@ -146,6 +166,9 @@ class RealChatFragment : Fragment() {
 
     }
 
+    /**
+     * This function displays the chats between two people.
+     */
     private fun displayChats() {
         if (queryList.isEmpty()) {
             noChats.visibility = View.VISIBLE

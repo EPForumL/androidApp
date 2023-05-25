@@ -25,6 +25,7 @@ import java.io.FileOutputStream
  * A simple [Fragment] subclass.
  * Use the [EditPhotoFragment.newInstance] factory method to
  * create an instance of this fragment.
+ * This contains an image editor.
  */
 class EditPhotoActivity: AppCompatActivity() {
 
@@ -70,6 +71,9 @@ private lateinit var imageView : ImageView
         }
     }
 
+    /**
+     * Opens the recently taken image in the photo editor
+     */
     private fun openImage() {
         //Initialize URI
         IMAGE_URI = this.intent.getStringExtra("uri").toString()

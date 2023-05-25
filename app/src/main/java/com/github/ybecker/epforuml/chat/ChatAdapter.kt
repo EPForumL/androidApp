@@ -18,9 +18,9 @@ import com.github.ybecker.epforuml.database.Model
 
 /**
  * This class is an adapter for the Chat Fragment
- * @param chatList representents the list of chats between the logged user and chosen pal
+ * @param chatList represents the list of chats between the logged user and chosen pal
  * @param externUser the User the host is chatting with
- * It will create a recycler view, treating each chat correctly and outputing the correct view
+ * It will create a recycler view, treating each chat correctly and outputting the correct view
  */
 class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val externUser : Model.User ,private val mainActivity: MainActivity, private val fragment : RealChatFragment) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
@@ -70,6 +70,11 @@ class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val ex
         }
     }
 
+    /**
+     * Sets the button to delete the chat on long click
+     * @param currentItem the chat item to be deleted
+     * @return A boolean to assert if the chat was successfully deleted
+     */
     private fun onLongClickListener(currentItem: Model.Chat): Boolean {
         val alertDialogBuilder = AlertDialog.Builder(mainActivity)
         alertDialogBuilder.setTitle("Do you want to delete this message?")

@@ -926,6 +926,12 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
     }
 
+
+    /**
+     * Uploads a local audio file to the Firebase Storage
+     * @param path the loacl path of the audio file
+     * @return A completable future of the file uploaded url
+     */
     private fun uploadAudioToFirebase(path: String) : CompletableFuture<String>{
         val url = CompletableFuture<String>()
         if(path == "" || path.equals(null)){

@@ -113,6 +113,9 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Captures an image
+     */
     private fun takePhoto() {
 
         // Get a stable reference of the modifiable image capture use case
@@ -159,6 +162,9 @@ class CameraActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * Starts the recording of a video
+     */
     private fun startRecordingVideo() {
 
         val videoCapture = this.videoCapture ?: return
@@ -231,12 +237,16 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Stops video recording
+     */
     private fun stopRecordingVideo() {
         recording?.close()
     }
 
-
-
+    /**
+     * opens the camera
+     */
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
@@ -280,12 +290,20 @@ class CameraActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
+    /**
+     * Requires the needed permissions
+     */
+
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             baseContext, it
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    /**
+     * Sets up the intent to launch the image editor
+     * @param uri the image's uri
+     */
     private fun goToEdit(uri : String){
         val intent  = Intent(this, EditPhotoActivity::class.java)
         intent.putExtra("uri", uri)
@@ -294,7 +312,10 @@ class CameraActivity : AppCompatActivity() {
         startActivity(intent)
 
     }
-
+    /**
+     * Sets up the intent to return to the new question fragment
+     * @param uri the edited image's uri
+     */
     private fun goBackToQuestion(uri : String){
         val intent  = Intent(this, MainActivity::class.java)
         intent.putExtra("uri", uri)

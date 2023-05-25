@@ -36,7 +36,6 @@ import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
  */
 class NewQuestionFragment : Fragment() {
 
-    private var mediaRecorder: MediaRecorder? = null
     private var audioFile: File? = null
     private var isRecording = false
 
@@ -116,6 +115,12 @@ class NewQuestionFragment : Fragment() {
     }
 
 
+    /**
+     * Sets up the listener to open the camera.
+     * @param view the current view
+     * @param questBody The body of the question
+     * @param questTitle The title of the question
+     */
     private fun setTakeImageListener(
         view: View,
         questBody: EditText,
@@ -133,6 +138,10 @@ class NewQuestionFragment : Fragment() {
     }
 
 
+    /**
+     * Sets up the listener to play a voice record.
+     * @param view the current view
+     */
     private fun setPlayButtonListener(View: View){
 
         playVoiceNote.setOnClickListener {
@@ -151,6 +160,10 @@ class NewQuestionFragment : Fragment() {
 
         }
     }
+    /**
+     * Sets up the listener to record a voice message.
+     * @param view the current view
+     */
     private fun setRecordButtonListener(View: View){
 
         recordVoiceNote.setOnClickListener {
@@ -221,6 +234,9 @@ class NewQuestionFragment : Fragment() {
     }
 
 
+    /**
+     * Modifies the button text depending on the app's state.
+     */
     private fun updateRecordButtonText() {
         if (isRecording) {
             recordVoiceNote.text = "Stop Recording"
@@ -234,7 +250,13 @@ class NewQuestionFragment : Fragment() {
     }
 
 
-
+    /**
+     * Submits a question
+     * @param spinner the dropdown menu containing the chose title
+     * @param anonymousSwitch the users choiceconcerning anonymity
+     * @param coursesList the list of available courses
+     * @param user the logged in user
+     */
     private fun submitButtonListener(
         spinner: Spinner,
         anonymousSwitch: Switch,
@@ -289,29 +311,4 @@ class NewQuestionFragment : Fragment() {
         }
     }
 
-    private fun setTakeImage(
-        view: View,
-        questBody: EditText,
-        questTitle: EditText
-    ) {
-        takePictureButton = view.findViewById(R.id.takeImage)
-        takePictureButton.setOnClickListener {
-            val questionDetails = questBody.text.toString()
-            val questionTitle = questTitle.text.toString()
-            val intent = Intent(this.mainActivity, CameraActivity::class.java)
-            intent.putExtra("questionTitle", questionTitle)
-            intent.putExtra("questionDetails", questionDetails)
-            startActivity(intent)
-        }
-    }
-
-    private fun setUpArgs(view: View): Triple<EditText, EditText, TextView> {
-        questBody = view.findViewById(R.id.question_details_edittext)
-        questTitle = view.findViewById(R.id.question_title_edittext)
-        imageURI = view.findViewById(R.id.image_uri)
-        questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
-        questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
-        imageURI.text = image_uri
-        return Triple(questBody, questTitle, imageURI)
-    }
 }

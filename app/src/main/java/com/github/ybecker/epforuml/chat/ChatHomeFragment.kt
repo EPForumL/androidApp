@@ -17,7 +17,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager.user
 import java.lang.Thread.sleep
 
 /**
- * A fragment representing a list of Chats.
+ * A fragment representing a list of people the logged user has chatted with.
  */
 class ChatHomeFragment : Fragment() {
 
@@ -61,6 +61,10 @@ class ChatHomeFragment : Fragment() {
         }
     }
 
+    /**
+     * This function fetches the chats from the Firebase DB.
+     * It displays a message in special cases.
+     */
     private fun fetchChats() {
         db.getChatsWith(user!!.userId).thenAccept{
             var chatsWith : List<String> =  it

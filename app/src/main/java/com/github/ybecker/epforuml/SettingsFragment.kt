@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 
 class SettingsFragment : Fragment() {
 
-
     private lateinit var btnToggleDark:Switch
 
     override fun onCreateView(
@@ -28,12 +27,10 @@ class SettingsFragment : Fragment() {
                 AppCompatDelegate
                     .setDefaultNightMode(
                         AppCompatDelegate.MODE_NIGHT_NO)
-
             }else{
                 AppCompatDelegate
                     .setDefaultNightMode(
                         AppCompatDelegate.MODE_NIGHT_YES)
-
             }
         }
         return view
