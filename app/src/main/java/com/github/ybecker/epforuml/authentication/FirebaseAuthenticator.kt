@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.firebase.ui.auth.data.model.User
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.account.AccountFragment
@@ -85,6 +86,9 @@ class FirebaseAuthenticator(
                 .delete(activity)
                 .addOnCompleteListener {
                     DatabaseManager.db.removeUser(user.userId)
+                    DatabaseManager.db.registeredUsers().thenAccept {
+                        MainActivity.saveAllUsersToDevice(it as ArrayList<Model.User>)
+                    }
                     DatabaseManager.user = null
                     logout("Successfully deleted user : ${user.username}")
                 }
@@ -175,6 +179,10 @@ class FirebaseAuthenticator(
     private fun gotToActivity(newUser: Model.User) {
         DatabaseManager.user = newUser
         LoginActivity.saveUserToDevice(newUser)
+
+        DatabaseManager.db.registeredUsers().thenAccept {
+            MainActivity.saveAllUsersToDevice(it as ArrayList<Model.User>)
+        }
 
         //subscribe the device to every users' notification
         DatabaseManager.db.getUserNotificationIds(DatabaseManager.user?.userId ?: "").thenAccept {

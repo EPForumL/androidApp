@@ -1,6 +1,8 @@
 package com.github.ybecker.epforuml
 
+import android.app.Activity
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Bundle
@@ -21,6 +23,8 @@ import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.latex.LatexDialog
 import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
@@ -47,7 +51,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
     private var answersCache : ArrayList<Model.Answer> = arrayListOf()
 
     private lateinit var allQuestionsCache : ArrayList<Model.Question>
-    private lateinit var allAnswersCache : ArrayList<Model.Answer>
+    private var allAnswersCache : ArrayList<Model.Answer> = arrayListOf()
     private lateinit var allCoursesCache : ArrayList<Model.Course>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,8 +155,37 @@ class QuestionDetailsActivity : AppCompatActivity() {
                     )
             }
         } else {
-            answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, allAnswersCache)
+            val userList = loadUsersFromDevice()
+            if(!question?.isAnonymous!!){
+                answerRecyclerView.adapter = SavedAnswerAdapter(question!!, allAnswersCache, userList, hashMapOf(),this)
+            } else {
+                answerRecyclerView.adapter = SavedAnswerAdapter(question!!, allAnswersCache, userList, hashMapOf(Pair(question!!.userId, username)),this)
+            }
         }
+    }
+
+
+    /**
+     * Helper function for function below
+     */
+    inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object: TypeToken<T>() {}.type)
+
+    private fun loadUsersFromDevice() : ArrayList<Model.User> {
+        val sharedUsers : SharedPreferences = MainActivity.context.getSharedPreferences("USERS",
+            AppCompatActivity.MODE_PRIVATE
+        )
+
+        val uGson = Gson()
+
+        var uJson =  sharedUsers.getString("users", null)
+
+        if (uJson != null) {
+            val cacheTmp = uGson.fromJson<ArrayList<Model.User>>(uJson)
+
+            return cacheTmp ?: arrayListOf()
+        }
+
+        return arrayListOf()
     }
 
     private fun isSavedQuestion(): Boolean {

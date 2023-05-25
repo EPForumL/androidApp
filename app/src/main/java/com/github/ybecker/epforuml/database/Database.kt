@@ -34,6 +34,13 @@ abstract class Database {
     abstract fun registeredUsers(): CompletableFuture<List<String>>
 
     /**
+     * Returns a list of all registered user in the current database.
+     *
+     * @return a list of every registered user
+     */
+    abstract fun getAllUsers(): CompletableFuture<List<User>>
+
+    /**
      * Returns a list of all questions in the current database.
      *
      * @return a list of every questions

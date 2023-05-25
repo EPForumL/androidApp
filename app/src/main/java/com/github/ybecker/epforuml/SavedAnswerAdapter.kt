@@ -21,9 +21,14 @@ import com.github.ybecker.epforuml.latex.MathView
 
 
 import java.util.concurrent.CompletableFuture
+import kotlin.coroutines.coroutineContext
+import kotlin.random.Random
 
-class SavedAnswerAdapter(private val questionId : String, private val questionText : String,
-                         private val answerList : List<Model.Answer>)
+class SavedAnswerAdapter(private val question: Model.Question,
+                         private val answerList : List<Model.Answer>,
+                         private val userList : List<Model.User>,
+                        private val anonymousUsernameMap : HashMap<String, String>,
+                         private val mainActivity: Activity)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -35,7 +40,7 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
     }
 
     private val questionAnswers = answerList.filter{
-        it.questionId == questionId
+        it.questionId == question.questionId
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -59,7 +64,7 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderViewHolder -> {
-                holder.headerText.setDisplayText(questionText)
+                holder.headerText.setDisplayText(question.questionText)
             }
 
             is AnswerViewHolder -> {
@@ -70,84 +75,19 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
 
                 holder.username.text = currentAnswerItem.userId
 
-                val counter = holder.itemView.findViewById<TextView>(R.id.likeCount)
-
-                // TODO : fix this + color of endorsement button
-                /*
-                val endorsementCount = currentAnswerItem..size
-                counter.text = (endorsementCount).toString()
-
-                 */
-
                 val like = holder.itemView.findViewById<ImageButton>(R.id.likeButton)
                 like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
 
-                //holder.answerText.text = currentAnswerItem
-                /*
-                val answerId = answerList.get(position-1)
-                val futureAnswer = db.getAnswerById(answerId)
-                val futureEndorsementList = db.getAnswerEndorsements(answerId)
-                CompletableFuture.allOf(futureAnswer, futureEndorsementList).thenAccept {
+                var answerUserUsername : String? = null
+                val list = userList.filter { it.userId == currentAnswerItem.userId }
+                if (list.isNotEmpty()) answerUserUsername = list[0].username
 
-
-
-                    val currentAnswerItem = futureAnswer.get() ?: Model.Answer()
-                    val endorsementList = futureEndorsementList.get()
-
-                    holder.answerText.text = currentAnswerItem.answerText
-                    holder.button.setOnClickListener{
-                        db.addChatsWith(DatabaseManager.user!!.userId, currentAnswerItem.userId)
-                        val intent = Intent(
-                            mainActivity,
-                            MainActivity::class.java
-                        )
-                        intent.putExtra("fragment", "RealChat")
-                        intent.putExtra("externID", currentAnswerItem.userId)
-                        startActivity(mainActivity,intent,null)
-                    }
-                    // TODO : change userId to username (need to use future)
-                    holder.username.text = currentAnswerItem.userId
-
-                    val like = holder.itemView.findViewById<ImageButton>(R.id.likeButton)
-                    val counter = holder.itemView.findViewById<TextView>(R.id.likeCount)
-                    val endorsementCount = endorsementList.size
-                    val isEndorsed = endorsementList.contains(DatabaseManager.user?.userId)
-                    counter.text = (endorsementCount).toString()
-                    if(isEndorsed) {
-                        like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.red), PorterDuff.Mode.SRC_IN)
-                    } else {
-                        like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
-                    }
-
-
-
-
-                    like.tag = listOf(isEndorsed, endorsementCount)
-
-                    like.setOnClickListener {
-                        val userId = DatabaseManager.user?.userId
-                        if (userId != null) {
-                            val tags = like.tag as List<*>
-                            val isEndorsed = tags[0] as Boolean
-                            val count = tags[1] as Int
-                            if (!isEndorsed) {
-                                db.addAnswerEndorsement(userId, currentAnswerItem.answerId)
-                                //turn like color to red ans increment counter
-                                like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.red), PorterDuff.Mode.SRC_IN)
-                                counter.setText((count + 1).toString())
-                                it.tag = listOf(true, count + 1)
-                            } else {
-                                db.removeAnswerEndorsement(userId, currentAnswerItem.answerId)
-                                // turn like color to light gray and decrement counter
-                                like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
-                                counter.setText((count - 1).toString())
-                                it.tag = listOf(false, count - 1)
-                            }
-                        }
-                    }
+                //if the question is not anonymous write the real username
+                if(!question.isAnonymous) {
+                    holder.username.text = answerUserUsername
+                } else {
+                    holder.username.text = "Anonymous user"
                 }
-
-                 */
             }
         }
     }

@@ -33,7 +33,9 @@ import com.google.android.exoplayer2.ui.PlayerView
 import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
-class AnswerAdapter(private val question: Model.Question, private var anonymouseNameMap : HashMap<String, String>, private val mainActivity: Activity)
+class AnswerAdapter(private val question: Model.Question,
+                    private var anonymouseNameMap : HashMap<String, String>,
+                    private val mainActivity: Activity)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {

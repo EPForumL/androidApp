@@ -37,6 +37,23 @@ class MainActivity : AppCompatActivity() {
             return (connectivityManager?.getNetworkCapabilities(connectivityManager?.activeNetwork) != null)
         }
 
+        /**
+         * Saved question cache and answer cache to device
+         */
+        fun saveAllUsersToDevice(usersCache: ArrayList<Model.User>) {
+            val sharedUsers: SharedPreferences =
+                context.getSharedPreferences("USERS", MODE_PRIVATE)
+
+            val usersEditor = sharedUsers.edit()
+
+            var uGson = Gson()
+
+            var uJson = uGson.toJson(usersCache)
+
+            usersEditor.putString("users", uJson)
+            usersEditor.apply()
+        }
+
 
         /**
          * Saved question cache and answer cache to device
@@ -110,6 +127,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         FirebaseApp.initializeApp(this)
         context = applicationContext
+
+        if (isConnected()) {
+            db.getAllUsers().thenAccept {
+                saveAllUsersToDevice(it as ArrayList<Model.User>)
+            }
+        }
 
         // get app connectivity
         connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -249,6 +272,8 @@ class MainActivity : AppCompatActivity() {
         val allAnswers : SharedPreferences = context.getSharedPreferences("ALL_ANSWERS", MODE_PRIVATE)
         val allCourses : SharedPreferences = context.getSharedPreferences("ALL_COURSES", MODE_PRIVATE)
 
+        val cGson = Gson()
+
         qJson =  allQuestions.getString("all_questions", null)
         aJson =  allAnswers.getString("all_answers", null)
         val cJson =  allCourses.getString("all_courses", null)
@@ -268,7 +293,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (cJson != null) {
-            val allCoursesTmp = aGson.fromJson<ArrayList<Model.Course>>(cJson)
+            val allCoursesTmp = cGson.fromJson<ArrayList<Model.Course>>(cJson)
             if (allCoursesTmp != null) {
                 allCoursesCache = allCoursesTmp
             }
