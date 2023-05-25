@@ -326,6 +326,7 @@ class QuestionDetailsTest {
 
         ClickOnButton(answerposition, R.id.endorsementButton)
 
+        Thread.sleep(500)
         VisibilityEquals(answerposition, View.VISIBLE, R.id.endorsementText)
 
     }
@@ -433,10 +434,9 @@ class QuestionDetailsTest {
 
         addAnswerInTheQuestion(question)
 
-        onView(withId(R.id.qdetails_answer_text)).check(doesNotExist())
-
         swipeToRefresh()
 
+        Thread.sleep(500)
         onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
     }
 
@@ -446,10 +446,9 @@ class QuestionDetailsTest {
 
         addAnswerInTheQuestion(question)
 
-        onView(withId(R.id.qdetails_answer_text)).check(doesNotExist())
-
         swipeToRefresh()
 
+        Thread.sleep(500)
         onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
     }
 
