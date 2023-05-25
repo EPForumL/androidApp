@@ -15,11 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity.Companion.context
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.github.ybecker.epforuml.MainActivity.Companion.saveDataToDevice
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.latex.LatexDialog
 import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
+import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
 class QuestionDetailsActivity : AppCompatActivity() {
@@ -126,12 +128,27 @@ class QuestionDetailsActivity : AppCompatActivity() {
 
     private fun updateRecycler() {
         if (MainActivity.isConnected()) {
-            db.getQuestionById(questionId).thenAccept {q ->
-                if(!q?.isAnonymous!!){
-                    answerRecyclerView.adapter = AnswerAdapter(q, hashMapOf(),this)
-                } else {
-                    answerRecyclerView.adapter = AnswerAdapter(q, hashMapOf(Pair(q.userId, username)),this)
-                }
+            val futureQuestions = db.getQuestions()
+            val futureAnswers = db.getAllAnswers()
+            val futureCurrentQuestion = db.getQuestionById(questionId)
+
+            CompletableFuture
+                .allOf(futureQuestions, futureAnswers, futureCurrentQuestion)
+                .thenAccept {
+                    val q = futureCurrentQuestion.get()
+                    if(!q?.isAnonymous!!){
+                        answerRecyclerView.adapter = AnswerAdapter(q, hashMapOf(),this)
+                    } else {
+                        answerRecyclerView.adapter = AnswerAdapter(q, hashMapOf(Pair(q.userId, username)),this)
+                    }
+
+                    saveDataToDevice(
+                        cache,
+                        answersCache,
+                        futureQuestions.get() as ArrayList<Model.Question>,
+                        futureAnswers.get() as ArrayList<Model.Answer>,
+                        allCoursesCache
+                    )
             }
         } else {
             answerRecyclerView.adapter = SavedAnswerAdapter(questionId, question!!.questionText, allAnswersCache)

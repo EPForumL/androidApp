@@ -57,7 +57,7 @@ class SavedQuestionsTest {
         db.getQuestionById("question1").thenAccept {
             question = it!!
             cache.add(it)
-            MainActivity.saveDataToDevice(arrayListOf(it), arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
+            MainActivity.saveDataToDevice(arrayListOf(it), arrayListOf(), cache, arrayListOf(), arrayListOf())
             //intent.putParcelableArrayListExtra("savedQuestions", cache)
         }
     }
