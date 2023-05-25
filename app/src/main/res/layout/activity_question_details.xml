@@ -150,7 +150,7 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:clickable="true"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_gravity="center"
             android:scaleType="fitCenter"
             android:src="@drawable/latex_logo"

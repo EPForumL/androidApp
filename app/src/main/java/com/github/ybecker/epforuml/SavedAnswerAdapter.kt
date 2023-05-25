@@ -65,7 +65,7 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
 
                 val currentAnswerItem = questionAnswers[position-1]
 
-                holder.answerText.text = currentAnswerItem.answerText
+                holder.answerText.setDisplayText(currentAnswerItem.answerText)
 
                 // TODO : change userId to username (need to use future)
                 holder.username.text = currentAnswerItem.userId
@@ -167,7 +167,7 @@ class SavedAnswerAdapter(private val questionId : String, private val questionTe
 
     class AnswerViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
         val username : TextView = itemView.findViewById(R.id.qdetails_answer_username)
-        val answerText : TextView = itemView.findViewById(R.id.qdetails_answer_text)
+        val answerText : MathView = itemView.findViewById(R.id.qdetails_answer_text)
     }
 
 }
