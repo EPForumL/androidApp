@@ -22,7 +22,7 @@ import com.github.ybecker.epforuml.database.Model
  * @param externUser the User the host is chatting with
  * It will create a recycler view, treating each chat correctly and outputing the correct view
  */
-class ChatAdapter(private val chatList : MutableList<Model.Chat>, private val externUser : Model.User ,private val mainActivity: MainActivity, private val fragment : RealChatFragment) :
+class ChatAdapter(var chatList : MutableList<Model.Chat>, var externUser : Model.User ,private val mainActivity: MainActivity, private val fragment : RealChatFragment) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
 

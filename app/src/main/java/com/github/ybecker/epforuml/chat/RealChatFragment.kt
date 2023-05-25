@@ -102,6 +102,7 @@ class RealChatFragment : Fragment() {
         chatRecyclerView = fragmentView.findViewById(R.id.recycler_chat)
         chatRecyclerView.layoutManager = linearLayoutMgr
         chatRecyclerView.setHasFixedSize(false)
+        chatRecyclerView.adapter = ChatAdapter(mutableListOf(), Model.User(), this.activity as MainActivity, this)
         // Update questions list
         if (user != null) fetchChats()
         //startTimer()
@@ -152,8 +153,11 @@ class RealChatFragment : Fragment() {
         } else {
             noChats.visibility = View.GONE
             queryList.sortBy { LocalDateTime.parse(it.date) }
-            chatAdapter = ChatAdapter(queryList, externUser, this.activity as MainActivity, this)
-            chatRecyclerView.adapter = chatAdapter
+            // chatAdapter = ChatAdapter(queryList, externUser, this.activity as MainActivity, this)
+            //chatRecyclerView.adapter = chatAdapter
+            (chatRecyclerView.adapter as ChatAdapter).chatList = queryList
+            (chatRecyclerView.adapter as ChatAdapter).externUser = externUser
+            chatRecyclerView.adapter?.notifyDataSetChanged()
         }
     }
 }
