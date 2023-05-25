@@ -4,15 +4,14 @@ import android.Manifest
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.openContextualActionModeOverflowMenu
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.ybecker.epforuml.authentication.LoginActivity
-import com.github.ybecker.epforuml.authentication.MockAuthenticator
+import com.github.ybecker.epforuml.features.authentication.LoginActivity
+import com.github.ybecker.epforuml.features.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -20,7 +19,6 @@ import junit.framework.TestCase
 import org.hamcrest.Matchers.not
 import org.junit.*
 import org.junit.runner.RunWith
-import java.security.Permission
 import kotlin.math.roundToInt
 
 @RunWith(AndroidJUnit4::class)

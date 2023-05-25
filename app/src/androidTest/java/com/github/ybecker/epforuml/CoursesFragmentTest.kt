@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml
 
-import android.app.Activity
 import android.view.View
 import android.widget.Switch
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +20,7 @@ import org.junit.runner.RunWith
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.contrib.RecyclerViewActions
+import com.github.ybecker.epforuml.util.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.fail

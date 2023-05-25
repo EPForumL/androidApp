@@ -158,5 +158,7 @@ class Model {
 
     data class Chat(
         val chatId: String?, val date: String?,val receiverId:String, val senderId:String,  val text: String?){
+
     }
+
 }

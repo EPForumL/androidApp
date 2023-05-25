@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:id="@+id/fragment_edit_photo_layout"
-    tools:context=".sensor.EditPhotoActivity">
+    tools:context=".features.camera.EditPhotoActivity">
 
 
     <ImageView

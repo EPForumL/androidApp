@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml.database
 
-import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.FirebaseDatabase

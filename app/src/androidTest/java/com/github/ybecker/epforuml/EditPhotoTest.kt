@@ -6,7 +6,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.sensor.EditPhotoActivity
+import com.github.ybecker.epforuml.features.camera.EditPhotoActivity
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith

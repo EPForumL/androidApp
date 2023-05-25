@@ -4,11 +4,10 @@ import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
 import androidx.core.net.toUri
-import com.github.ybecker.epforuml.MainActivity
-import com.github.ybecker.epforuml.UserStatus
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.database.Model.*
-import com.github.ybecker.epforuml.notifications.NotificationType
-import com.github.ybecker.epforuml.notifications.PushNotificationService
+import com.github.ybecker.epforuml.basicEntities.notifications.NotificationType
+import com.github.ybecker.epforuml.basicEntities.notifications.PushNotificationService
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database

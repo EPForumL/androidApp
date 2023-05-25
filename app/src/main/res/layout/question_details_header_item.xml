@@ -16,7 +16,7 @@
         android:textSize="30sp"
         android:id="@+id/qdetails_question_content"/> -->
 
-    <com.github.ybecker.epforuml.latex.MathView
+    <com.github.ybecker.epforuml.features.latex.MathView
         android:id="@+id/qdetails_question_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

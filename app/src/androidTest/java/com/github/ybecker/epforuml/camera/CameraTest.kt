@@ -7,20 +7,16 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
-import com.github.ybecker.epforuml.util.onViewWithTimeout.Companion.onViewWithTimeout
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import android.Manifest
-import com.github.ybecker.epforuml.database.DatabaseManager
 
 
 @RunWith(AndroidJUnit4::class)

@@ -1,13 +1,13 @@
 package com.github.ybecker.epforuml.authentication
 
 import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.features.authentication.LoginActivity
+import com.github.ybecker.epforuml.features.authentication.MockAuthenticator
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -16,8 +16,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import com.github.ybecker.epforuml.R
-import java.util.concurrent.CompletableFuture
 
 
 @RunWith(AndroidJUnit4::class)
