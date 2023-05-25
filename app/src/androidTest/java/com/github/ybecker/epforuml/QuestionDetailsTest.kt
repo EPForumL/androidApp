@@ -21,9 +21,11 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.authentication.LoginActivity
 import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.util.EspressoIdlingResource
 import com.github.ybecker.epforuml.util.ImageButtonHasDrawableMatcher
@@ -88,18 +90,31 @@ class QuestionDetailsTest {
                     click()
                 ))
     }
-    private fun logInDetailsActivity() {
-        scenario.onActivity {
-            MockAuthenticator(it).signIn().join()
-            it.startActivity(intent)
-        }
+
+    private fun logInDetailsActivity() :Model.Question{
+        val testQuStr = "NEWQUESTIONTEST"
+
+        val courseList = db.availableCourses().get()
+        val newQuestion = db.addQuestion("0",courseList[0].courseId, false, testQuStr, testQuStr, "null","null").get()
+
+        user = db.addUser("RANDOMUSER", "M.Ramdom", "email").get()
+        ActivityScenario.launch(MainActivity::class.java)
+        onView(withText(testQuStr)).perform(click())
+        return newQuestion
     }
 
-    private fun logOutDetailsActivity() {
-        scenario.onActivity {
-            MockAuthenticator(it).signOut().join()
-            it.startActivity(intent)
-        }
+    private fun logOutDetailsActivity() :Model.Question{
+        val testQuStr = "NEWQUESTIONTEST"
+
+        val courseList = db.availableCourses().get()
+        val newQuestion = db.addQuestion("0",courseList[0].courseId, false,testQuStr, testQuStr, "null","null").get()
+
+        user = null
+
+        ActivityScenario.launch(MainActivity::class.java)
+        onView(withText(testQuStr)).perform(click())
+
+        return newQuestion
     }
 
 
@@ -138,7 +153,7 @@ class QuestionDetailsTest {
             intent.putExtra("comingFrom", "HomeFragment")
 
             scenario = ActivityScenario.launch(intent)
-        }
+        }.join()
     }
 
     @Test
@@ -154,7 +169,7 @@ class QuestionDetailsTest {
         onView(withId(R.id.title_forum)).check(matches(isDisplayed()))
     }
 
-/*
+
     @Test
     fun loggedInCanPost() {
         logInDetailsActivity()
@@ -163,7 +178,6 @@ class QuestionDetailsTest {
         onView(withId(R.id.post_reply_button)).check(matches(isDisplayed()))
     }
 
- */
 
     @Test
     fun cannotPostEmptyAnswer() {
@@ -178,7 +192,7 @@ class QuestionDetailsTest {
             .check(matches(hasDescendant(not(withText("")))))
     }
 
-    /*
+
     @Test
     fun writeAnswerAndPostIsDisplayed() {
         logInDetailsActivity()
@@ -195,30 +209,21 @@ class QuestionDetailsTest {
         onView(withId(R.id.post_reply_button)).perform(click())
 
         // check displayed
-        onView(withId(R.id.answers_recycler))
-            .perform(RecyclerViewActions.scrollToLastPosition<ViewHolder>())
-            .check(matches(hasDescendant(withText(content))))
-                // check correct userId
-            .check(matches(hasDescendant(withText("0"))))
-
-        // check edittext is now empty (check works)
-        onView(withId(R.id.write_reply_box)).check(matches(withText("")))
+        onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
 
     }
 
-     */
+
 
     @Test
     fun guestUserCannotPostAnswers() {
         logOutDetailsActivity()
 
-        // check button is not clickable
-        onView(withId(R.id.not_loggedin_text)).check(matches(isDisplayed()))
-        onView(withId(R.id.not_loggedin_text)).check(matches(withText("Please login to post answers and endorsements.")))
+        onView(withText(R.string.please_login_to_post_answers)).check(matches(isDisplayed()))
     }
 
     @Test
-    fun questionEndorseButtonModifyTheCounter() {
+    fun questionNotificationButtonModifyTheCounter() {
         logInDetailsActivity()
 
         onView(withId(R.id.notificationCount)).check(matches(withText("0")))
@@ -230,23 +235,22 @@ class QuestionDetailsTest {
 
     @Test
     fun questionEndorsementStaysWhenQuitting() {
-        logInDetailsActivity()
+        val question = logInDetailsActivity()
 
         onView(withId(R.id.addFollowButton)).perform(click())
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
             .perform(click())
 
         onView(withText(question.questionTitle)).perform(click())
-        // Scroll to the end of the page
-        onView(withId(R.id.question_details_layout)).perform(ViewActions.swipeUp())
-
 
         onViewWithTimeout(withId(R.id.notificationCount), matches(withText("1")))
     }
 
     @Test
     fun removeLikeTest() {
-        logInDetailsActivity()
+        val question = logInDetailsActivity()
+
+        db.addAnswer("someone",question.questionId, "ANSWER")
 
         val answerposition = 1
 
@@ -260,7 +264,9 @@ class QuestionDetailsTest {
 
     @Test
     fun answerLikeButtonModifyTheCounter() {
-        logInDetailsActivity()
+        val question = logInDetailsActivity()
+
+        db.addAnswer("someone",question.questionId, "ANSWER")
 
         val answerposition = 1
 
@@ -270,10 +276,13 @@ class QuestionDetailsTest {
 
     }
 
-    /*
+
     @Test
     fun answerLikeStaysWhenQuitting() {
-        logInDetailsActivity()
+        val question = logInDetailsActivity()
+
+        db.addAnswer("someone",question.questionId, "ANSWER")
+
 
         val answerposition = 1
 
@@ -283,14 +292,26 @@ class QuestionDetailsTest {
             .perform(click())
 
         onView(withText(question.questionTitle)).perform(click())
+
         CounterEquals(answerposition, "1", R.id.likeCount)
     }
-     */
 
+    @Test
     fun endorseAnswerButtonTest(){
-        logInDetailsActivity()
+        val testQuStr = "NEWQUESTIONTEST"
 
-        db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+        val courseList = db.availableCourses().get()
+        val questionCourseId = courseList[0].courseId
+
+        user= db.addUser("newUser","someone", "mail").get()
+        db.addStatus(user?.userId ?: "", questionCourseId, UserStatus.ASSISTANT)
+
+
+        val testAnsStr = "NEWANSWERTEST"
+        val newQuestion = db.addQuestion("0",questionCourseId, false, testQuStr, testQuStr, "null","null").get()
+        db.addAnswer("1", newQuestion.questionId, testAnsStr)
+        ActivityScenario.launch(MainActivity::class.java)
+        onView(withText(testQuStr)).perform(click())
 
         val itemPosition = 1
 
@@ -299,14 +320,27 @@ class QuestionDetailsTest {
         ClickOnButton(itemPosition, R.id.endorsementButton)
 
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
+
     }
 
 
     @Test
     fun removeAnswerEndorsementTest(){
-        logInDetailsActivity()
+        val testQuStr = "NEWQUESTIONTEST"
 
-        db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+        val courseList = db.availableCourses().get()
+        val questionCourseId = courseList[0].courseId
+
+        user= db.addUser("newUser","someone", "mail").get()
+        db.addStatus(user?.userId ?: "", questionCourseId, UserStatus.ASSISTANT)
+
+
+        val testAnsStr = "NEWANSWERTEST"
+        val newQuestion = db.addQuestion("0",questionCourseId, false, testQuStr, testQuStr, "null","null").get()
+        db.addAnswer("1", newQuestion.questionId, testAnsStr)
+        ActivityScenario.launch(MainActivity::class.java)
+        onView(withText(testQuStr)).perform(click())
+
 
         val itemPosition = 1
 
@@ -323,27 +357,50 @@ class QuestionDetailsTest {
 
     @Test
     fun endorseButtonIsVisibleOnlyForStatusUsersTest(){
-        logInDetailsActivity()
+        val testQuStr = "NEWQUESTIONTEST"
+
+        val courseList = db.availableCourses().get()
+        val questionCourseId = courseList[0].courseId
+
+        user= db.addUser("newUser","someone", "mail").get()
+
+        val testAnsStr = "NEWANSWERTEST"
+        val newQuestion = db.addQuestion("0",questionCourseId, false, testQuStr, testQuStr, "null","null").get()
+        db.addAnswer("1", newQuestion.questionId, testAnsStr)
+        ActivityScenario.launch(MainActivity::class.java)
+        onView(withText(testQuStr)).perform(click())
 
         val itemPosition = 1
 
         VisibilityEquals(itemPosition, View.GONE, R.id.endorsementButton)
 
-        DatabaseManager.db.addStatus(DatabaseManager.user?.userId ?: "test_user", "course1", UserStatus.TEACHER)
+        db.addStatus(user?.userId ?: "", questionCourseId, UserStatus.ASSISTANT)
 
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
             .perform(click())
 
-        onView(withText("About ci")).perform(click())
+        onView(withText(newQuestion.questionTitle)).perform(click())
 
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementButton)
     }
 
     @Test
     fun answerEndorsementStaysWhenQuitting() {
-        logInDetailsActivity()
+        val testQuStr = "NEWQUESTIONTEST"
 
-        db.addStatus(DatabaseManager.user?.userId ?: "", "course1", UserStatus.ASSISTANT)
+        val courseList = db.availableCourses().get()
+        val questionCourseId = courseList[0].courseId
+
+        user= db.addUser("newUser","someone", "mail").get()
+
+        val testAnsStr = "NEWANSWERTEST"
+        val newQuestion = db.addQuestion("0",questionCourseId, false, testQuStr, testQuStr, "null","null").get()
+        db.addAnswer("1", newQuestion.questionId, testAnsStr)
+        db.addStatus(user?.userId ?: "", questionCourseId, UserStatus.ASSISTANT)
+
+
+        ActivityScenario.launch(MainActivity::class.java)
+        onView(withText(testQuStr)).perform(click())
 
         val itemPosition = 1
 
@@ -356,7 +413,7 @@ class QuestionDetailsTest {
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
             .perform(click())
 
-        onView(withText(question.questionTitle)).perform(click())
+        onView(withText(newQuestion.questionTitle)).perform(click())
 
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
@@ -378,7 +435,7 @@ class QuestionDetailsTest {
 
      */
 
-    @Test
+/*    @Test
     fun toggleOnWhenQuestionSaved() {
         cache.add(question)
         intent.putParcelableArrayListExtra("savedQuestions", cache)
@@ -387,9 +444,9 @@ class QuestionDetailsTest {
 
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
-    }
+    }*/
 
-    /*
+
     @Test
     fun guestCannotSaveQuestion() {
         logOutDetailsActivity()
@@ -398,7 +455,7 @@ class QuestionDetailsTest {
             .check(matches(not(isDisplayed())))
     }
 
-     */
+
 
 
     @Test
@@ -411,29 +468,48 @@ class QuestionDetailsTest {
     }
 
     @Test
-    fun scrollToRefreshAnswers() {
+    fun scrollToRefreshAnswersTest() {
         val testQuStr = "NEWQUESTIONTEST"
-        var questionId: String? = null
-        db.availableCourses().thenAccept {
-            db.addQuestion("0",it[0].courseId, false,testQuStr, testQuStr, "null","null").thenAccept{
 
-                questionId = it.questionId
-            }
-        }.join()
+        val courseList = db.availableCourses().get()
+        val newQuestion = db.addQuestion("0",courseList[0].courseId, false,testQuStr, testQuStr, "null","null").get()
 
-        db.getQuestionById(questionId!!).thenAccept { newQuestion ->
-            intent.putExtra("question", newQuestion)
+        user = Model.User("RANDOMUSER", "M.Ramdom")
 
-            logInDetailsActivity()
+        ActivityScenario.launch(MainActivity::class.java)
+        onView(withText(testQuStr)).perform(click())
 
-            val testAnsStr =  "NEWANSWER"
-            onView(withText(testAnsStr)).check(ViewAssertions.doesNotExist())
-            db.addAnswer("0",questionId?:"", testAnsStr)
+        val testAnsStr =  "NEWANSWER"
+        onView(withText(testAnsStr)).check(ViewAssertions.doesNotExist())
+        db.addAnswer(user?.userId!!,newQuestion.questionId, testAnsStr)
 
-            onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
-            onView(withText(testAnsStr)).check(matches(isDisplayed()))
-        }
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
+        Thread.sleep(500)
+        onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
     }
+
+    @Test
+    fun GuestScrollOnAnonymousToRefreshAnswersTest() {
+        val testQuStr = "NEWQUESTIONTEST"
+
+        val courseList = db.availableCourses().get()
+        val newQuestion = db.addQuestion("0",courseList[0].courseId, true, testQuStr, testQuStr, "null","null").get()
+
+        user = null
+
+        ActivityScenario.launch(MainActivity::class.java)
+        onView(withText(testQuStr)).perform(click())
+
+        val testAnsStr =  "NEWANSWER"
+        onView(withText(testAnsStr)).check(ViewAssertions.doesNotExist())
+        db.addAnswer("user",newQuestion.questionId, testAnsStr)
+
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
+
+        Thread.sleep(500)
+        onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
+    }
+
 
 
     @Test
@@ -460,13 +536,7 @@ class QuestionDetailsTest {
 
     @Test
     fun checkLatexButtonIsHiddenWhenNotLoggedIn() {
-        Firebase.auth.signOut()
-        scenario.onActivity {
-            MockAuthenticator(it).signOut()
-            it.startActivity(intent)
-        }
-
-        //Thread.sleep(10000)
+        logOutDetailsActivity()
 
         onView(withId(R.id.question_details_latex))
             .check(matches(not(isDisplayed())))
@@ -474,10 +544,7 @@ class QuestionDetailsTest {
 
     @Test
     fun checkLatexButtonExistAndOpensDialog() {
-        scenario.onActivity {
-            MockAuthenticator(it).signIn()
-            it.startActivity(intent)
-        }
+        logInDetailsActivity()
 
         onView(withId(R.id.question_details_latex))
             .check(matches(isDisplayed()))

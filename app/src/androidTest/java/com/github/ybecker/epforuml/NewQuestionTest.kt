@@ -97,9 +97,6 @@ class NewQuestionTest {
 
         assertThat(addedQuestion.get(), equalTo(null))
 
-
-
-
         scenario.close()
 
     }
@@ -412,14 +409,11 @@ class NewQuestionTest {
         //Click the anonymous switch and submit
         onView(withId(R.id.anonymous_switch)).perform(scrollTo(), click())
         onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
-        Thread.sleep(500)
         // without a small sleep the test is going to click on the button without finishing the scroll and it will fail !
         onView(withId(R.id.btn_submit)).perform(click())
-        Thread.sleep(500)
 
         onView(withText(title)).perform(click())
 
-        Thread.sleep(1000)
         val allQuestions = db.getQuestions().get()
 
         //Check that de DB has an anonymous question and the the username is in the anonymousUsers list
@@ -433,7 +427,6 @@ class NewQuestionTest {
 
         scenario.close()
     }
-/* TODO FIX IS EQUAL !
 
     @Test
     fun AnonymousAnswerKeepSameSurnameTest(){
@@ -447,13 +440,10 @@ class NewQuestionTest {
         onView(withId(R.id.write_reply_box)).perform(typeText(answerText)).perform(closeSoftKeyboard())
         onView(withId(R.id.post_reply_button)).perform(click())
 
-        Thread.sleep(500)
 
         //get title name
         val usernameText: ViewInteraction = onView(withId(R.id.qdetails_question_username))
         val text = getText(usernameText).removeSuffix(" asks :")
-
-        Thread.sleep(500)
 
         // get text of first item
         TextOnItemEqual(1, text, R.id.qdetails_answer_username)
@@ -486,8 +476,6 @@ class NewQuestionTest {
 
         scenario.close()
     }
-
-*/
 
     @Test
     fun testVoiceButtonDisplayed() {

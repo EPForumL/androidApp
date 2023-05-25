@@ -204,9 +204,13 @@ class MockDatabase : Database() {
 
     override fun addQuestionFollower(userId: String, questionId: String) {
         val question = questions[questionId]
-        if(question != null) {
-            val updatedEndorsement = question.followers + userId
-            questions[questionId] = question.copy(followers = updatedEndorsement)
+        val user = users[userId]
+        if(question != null && user != null) {
+            val updatedQuestion = question.followers + userId
+            questions[questionId] = question.copy(followers = updatedQuestion)
+
+            val updatedUser = user.notifications + questionId
+            users[userId] = user.copy(notifications = updatedUser)
         }
     }
 
