@@ -157,7 +157,7 @@ class SavedQuestionsTest {
         // go to last QuestionDetailsActivity
         onView(withId(R.id.recycler_saved_questions))
             .perform(
-                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
                     0,
                     click()
                 )

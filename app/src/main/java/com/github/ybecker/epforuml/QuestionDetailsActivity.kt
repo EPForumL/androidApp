@@ -186,8 +186,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
     inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object: TypeToken<T>() {}.type)
 
     private fun loadUsersFromDevice() : ArrayList<Model.User> {
-        val sharedUsers : SharedPreferences = MainActivity.context.getSharedPreferences("USERS",
-            AppCompatActivity.MODE_PRIVATE
+        val sharedUsers : SharedPreferences = context.getSharedPreferences("USERS",
+            MODE_PRIVATE
         )
 
         val uGson = Gson()

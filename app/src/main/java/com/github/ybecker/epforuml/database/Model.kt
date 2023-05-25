@@ -33,8 +33,7 @@ class Model {
             parcel.createStringArrayList()!!,
             parcel.createStringArrayList()!!,
             parcel.readString()!!
-            ) {
-        }
+            )
 
         @RequiresApi(Build.VERSION_CODES.Q)
         override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -48,7 +47,7 @@ class Model {
             parcel.writeStringList(answers)
             parcel.writeStringList(followers)
             // At some point audioPath might be null.
-            parcel.writeString(audioPath ?: "")
+            parcel.writeString(audioPath)
         }
 
         override fun describeContents(): Int {
@@ -85,8 +84,7 @@ class Model {
             parcel.readString()!!,
             parcel.createStringArrayList()!!,
             parcel.readString()!!
-        ) {
-        }
+        )
 
         constructor() : this("", "", "", "", emptyList(),"")
 
@@ -163,8 +161,7 @@ class Model {
             parcel.readString()!!,
             parcel.createStringArrayList()!!,
             parcel.createStringArrayList()!!
-        ) {
-        }
+        )
 
         constructor() : this("", "", emptyList(), emptyList())
 
@@ -191,6 +188,5 @@ class Model {
     }
 
     data class Chat(
-        val chatId: String?, val date: String?,val receiverId:String, val senderId:String,  val text: String?){
-    }
+        val chatId: String?, val date: String?,val receiverId:String, val senderId:String,  val text: String?)
 }
