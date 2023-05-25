@@ -42,13 +42,10 @@ class NewQuestionTest {
     fun setup() {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
-
     }
     @Test
     fun testAddQuestionWithNullUser() {
 
-        Firebase.auth.signOut()
-        DatabaseManager.useMockDatabase()
         DatabaseManager.user = null
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
@@ -539,6 +536,15 @@ class NewQuestionTest {
 
         onView(withId(R.id.latex_window_root))
             .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun openCameraTest() {
+        ActivityScenario.launch(MainActivity::class.java)
+
+        onView(withId(R.id.new_question_button)).perform(click())
+
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
     }
 
     fun getText(matcher: ViewInteraction): String {
