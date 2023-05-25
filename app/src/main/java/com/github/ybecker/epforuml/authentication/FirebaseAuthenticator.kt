@@ -106,6 +106,7 @@ class FirebaseAuthenticator(
         DatabaseManager.user?.let { DatabaseManager.db.removeUserConnection(it.userId) }
         // User is logged out
         DatabaseManager.user = null
+        LoginActivity.saveUserToDevice(null)
 
         // Change to guest fragment
         val fragment = caller as Fragment
@@ -173,6 +174,7 @@ class FirebaseAuthenticator(
      */
     private fun gotToActivity(newUser: Model.User) {
         DatabaseManager.user = newUser
+        LoginActivity.saveUserToDevice(newUser)
 
         //subscribe the device to every users' notification
         DatabaseManager.db.getUserNotificationIds(DatabaseManager.user?.userId ?: "").thenAccept {

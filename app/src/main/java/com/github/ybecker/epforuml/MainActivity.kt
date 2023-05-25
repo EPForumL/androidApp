@@ -133,7 +133,6 @@ class MainActivity : AppCompatActivity() {
         // get retrieve name of fragment to display if any
         val fragment : String? = intent.extras?.getString("fragment")
 
-        // TODO : change to switch (without savedInstanceState)
         if(savedInstanceState == null) {
             replaceFragment(HomeFragment())
         }

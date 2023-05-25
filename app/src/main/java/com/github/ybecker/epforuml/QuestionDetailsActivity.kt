@@ -190,7 +190,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             db.getAllAnswers().thenAccept {
                 answersCache.addAll(it)
                 newIntent.putParcelableArrayListExtra("savedAnswers", answersCache)
-                MainActivity.saveDataToDevice(cache, answersCache, allQuestionsCache, allAnswersCache, allCoursesCache)
+                saveDataToDevice(cache, answersCache, allQuestionsCache, allAnswersCache, allCoursesCache)
             }
         }
     }
