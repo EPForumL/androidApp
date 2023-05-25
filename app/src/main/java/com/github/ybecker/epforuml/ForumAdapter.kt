@@ -3,11 +3,14 @@ package com.github.ybecker.epforuml
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model
 import com.google.android.material.imageview.ShapeableImageView
 
@@ -33,6 +36,17 @@ class ForumAdapter(private val questionsList : MutableList<Model.Question>) :
     override fun onBindViewHolder(holder: ForumViewHolder, position: Int) {
         val currentItem = questionsList[position]
 
+        // Load profile picture to image view
+        db.getUserById(currentItem.userId).thenAccept {
+            if (it != null) {
+                AccountFragment.loadProfilePictureToView(
+                    holder.itemView.context,
+                    it.profilePic,
+                    holder.profilePicture
+                )
+            }
+        }
+
         // Set the text of the question title to the view holder
         holder.currentText.text = currentItem.questionTitle
 
@@ -45,6 +59,7 @@ class ForumAdapter(private val questionsList : MutableList<Model.Question>) :
 
     // View holder for the forum questions
     class ForumViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+        val profilePicture : ImageView = itemView.findViewById(R.id.question_image)
         val currentText : TextView = itemView.findViewById(R.id.forum_question_displayed)
     }
 }

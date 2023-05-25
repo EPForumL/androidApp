@@ -13,15 +13,15 @@ check_android_task:
     sdkmanager --install "system-images;android-30;google_apis_playstore;x86"
   create_avd_script:
     echo no | avdmanager create avd --force
-      --name emulator
-      --package "system-images;android-30;google_apis_playstore;x86"
+    --name emulator
+    --package "system-images;android-30;google_apis_playstore;x86"
   start_avd_background_script:
     $ANDROID_HOME/emulator/emulator
-      -avd emulator
-      -no-boot-anim
-      -gpu swiftshader_indirect
-      -no-snapshot
-      -no-window
+    -avd emulator
+    -no-boot-anim
+    -gpu swiftshader_indirect
+    -no-snapshot
+    -no-window
   assemble_instrumented_tests_script: |
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest
@@ -37,9 +37,9 @@ check_android_task:
     ./cc-test-reporter before-build
   screen_record_background_script:
     for n in $(seq 1 20); do adb exec-out screenrecord --time-limit=180 --output-format=h264 - > $n.h264; done
-#  add_permissions:
-#    adb shell pm grant com.github.ybecker.epforuml android.permission.CAMERA
-#    adb shell pm grant com.github.ybecker.epforuml android.permission.RECORD_AUDIO
+  #  add_permissions:
+  #    adb shell pm grant com.github.ybecker.epforuml android.permission.CAMERA
+  #    adb shell pm grant com.github.ybecker.epforuml android.permission.RECORD_AUDIO
   check_script:
     ./gradlew check connectedCheck --no-parallel
   report_codeclimate_script: |
