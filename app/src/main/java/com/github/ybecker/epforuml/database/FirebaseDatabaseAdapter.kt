@@ -199,7 +199,7 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
-    override fun getUserNotificationCourseIds(userId: String): CompletableFuture<List<String>> {
+    override fun getUserNotificationIds(userId: String): CompletableFuture<List<String>> {
         val future = CompletableFuture<List<String>>()
 
         db.child(usersPath).child(userId).child(notificationsPath).get().addOnSuccessListener {
@@ -301,6 +301,16 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         //add the answer in the user's questions list
         db.child(usersPath).child(userId).child(answersPath).child(answerId).setValue(answerId)
 
+        getQuestionById(questionId).thenAccept {question ->
+            if(question?.isAnonymous == true){
+                PushNotificationService().sendNotification(MainActivity.context,"someone Anonymous", answerText ?: "", "", questionId, NotificationType.ANSWER)
+            } else {
+                getUserById(userId).thenAccept {
+                    PushNotificationService().sendNotification(MainActivity.context,it?.username?: "someone", answerText ?: "", "", questionId, NotificationType.ANSWER)
+                }
+            }
+        }
+
         return answer
     }
 
@@ -327,6 +337,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     override fun addQuestionFollower(userId: String, questionId: String) {
         db.child(questionsPath).child(questionId).child(followersPath).child(userId).setValue(userId)
+
+        //add notifications
+        db.child(usersPath).child(userId).child(notificationsPath).child(questionId).setValue(questionId)
+        Firebase.messaging.subscribeToTopic(questionId)
     }
 
     override fun addAnswerLike(userId: String, answerId: String) {
@@ -368,6 +382,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
     override fun removeQuestionFollower(userId: String, questionId: String) {
         db.child(questionsPath).child(questionId).child(followersPath).child(userId).removeValue()
+
+        //remove notifications
+        db.child(usersPath).child(userId).child(notificationsPath).child(questionId).removeValue()
+        Firebase.messaging.unsubscribeFromTopic(questionId)
     }
 
     override fun removeAnswerLike(userId: String, answerId: String) {
@@ -574,6 +592,10 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         db.child(usersPath).child(userId).child(longitudePath).setValue(position.longitude)
         db.child(usersPath).child(userId).child(latitudePath).setValue(position.latitude)
         db.child(usersPath).child(userId).child(sharesLocationPath).setValue(sharesLocation)
+    }
+
+    override fun getDbInstance(): FirebaseDatabase? {
+        return dbInstance
     }
 
     override fun addStatus(userId: String, courseId: String, status: UserStatus) {
@@ -862,27 +884,46 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return questionFuture
     }
-    private fun uploadImageToFirebase(uri: String) : CompletableFuture<String>{
-        val url = CompletableFuture<String>()
 
-        if(uri == "" || uri.equals(null)){
-            url.complete("")
+    companion object {
+        /**
+         * Upload the image stored locally at the given uri to Firebase storage.
+         *
+         * @param uri the uri of the locally stored image
+         * @return a future containing the image url
+         */
+        fun uploadImageToFirebase(uri: String) : CompletableFuture<String>{
+            val url = CompletableFuture<String>()
 
-        } else {
-            val fileRef: StorageReference =
-                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + getExtension(uri))
-            fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
-                fileRef.downloadUrl.addOnSuccessListener { uri ->
-                    url.complete(uri.toString())
+            if(uri == "" || uri.equals(null)){
+                url.complete("")
+
+            } else {
+                val fileRef: StorageReference =
+                    FirebaseStorage
+                        .getInstance("gs://epforuml-38150.appspot.com")
+                        .reference
+                        .child(System.currentTimeMillis().toString() + getExtension(uri))
+                fileRef.putFile(Uri.parse(uri)).addOnSuccessListener {
+                    fileRef.downloadUrl.addOnSuccessListener { uri ->
+                        url.complete(uri.toString())
+                    }
+                }.addOnFailureListener {
+                    url.completeExceptionally(it)
+                }.addOnCanceledListener {
+                    url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
                 }
-            }.addOnFailureListener {
-                url.completeExceptionally(it)
-            }.addOnCanceledListener {
-                url.completeExceptionally(RuntimeException("THIS GOT CANCELED"))
-            }
 
+            }
+            return url
         }
-        return url
+
+        private fun getExtension(uri: String): String {
+            if (uri.contains("images")) {
+                return ".jpeg"
+            }
+            return ".mp4"
+        }
     }
 
     private fun uploadAudioToFirebase(path: String) : CompletableFuture<String>{
@@ -892,7 +933,9 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
 
         }else{
             val fileRef: StorageReference =
-                FirebaseStorage.getInstance("gs://epforuml-38150.appspot.com").reference.child(System.currentTimeMillis().toString() + ".mp4")
+                FirebaseStorage
+                    .getInstance("gs://epforuml-38150.appspot.com")
+                    .reference.child(System.currentTimeMillis().toString() + ".mp4")
             fileRef.putFile(File(path).toUri()).addOnSuccessListener {
                 fileRef.downloadUrl.addOnSuccessListener { uri ->
                     url.complete(uri.toString())
@@ -906,12 +949,4 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         }
         return url
     }
-
-    private fun getExtension(uri: String): String {
-        if (uri.contains("images")) {
-                return ".jpeg"
-        }
-        return ".mp4"
-    }
-
 }

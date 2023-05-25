@@ -150,13 +150,14 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:clickable="true"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_gravity="center"
             android:scaleType="fitCenter"
             android:src="@drawable/latex_logo"
             android:background="@drawable/round_corner"
-            app:tint="@color/white"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            android:padding="4dp"
+            app:tint="@color/white" />
 
         <ImageButton
             android:layout_width="45dp"

@@ -1,11 +1,10 @@
 package com.github.ybecker.epforuml.database
 
-import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.FirebaseDatabase
 import java.util.concurrent.CompletableFuture
-import java.time.LocalDateTime
 
 /**
  * An abstract class that defines a set of methods to be implemented by concrete database implementations.
@@ -91,12 +90,12 @@ abstract class Database {
     abstract fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>>
 
     /**
-     * Returns a list of courseId of every course that the user subscribed to notification for.
+     * Returns a list of Ids of every topics that the user asks notification for.
      *
      * @param userId the user from which to get the notification list
-     * @return a list of courseId of every course that the user subscribed to notification for
+     * @return a list of Ids of every topics that the user asks notification for
      */
-    abstract fun getUserNotificationCourseIds(userId: String): CompletableFuture<List<String>>
+    abstract fun getUserNotificationIds(userId: String): CompletableFuture<List<String>>
 
     /**
      * Posts a new course in the forum
@@ -402,4 +401,7 @@ abstract class Database {
      * @param sharesLocation whether to share the localization or not
      */
     abstract fun updateLocalization(userId: String, position: LatLng, sharesLocation: Boolean)
+
+    abstract fun getDbInstance(): FirebaseDatabase?
+
 }
