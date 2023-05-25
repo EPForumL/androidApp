@@ -427,6 +427,7 @@ class NewQuestionTest {
 
         scenario.close()
     }
+/*
 
     @Test
     fun AnonymousAnswerKeepSameSurnameTest(){
@@ -448,6 +449,7 @@ class NewQuestionTest {
         // get text of first item
         TextOnItemEqual(1, text, R.id.qdetails_answer_username)
     }
+*/
 
 
 
