@@ -31,7 +31,7 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
 
     // Return the number of items in the RecyclerView
     override fun getItemCount(): Int {
-        return myQuestionsMap.filter { it.value.isNotEmpty() }.size
+        return myQuestionsMap.size
     }
 
     // Bind the data to each item in the RecyclerView

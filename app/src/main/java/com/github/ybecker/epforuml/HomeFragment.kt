@@ -131,10 +131,11 @@ class HomeFragment : Fragment() {
         questionsMap = mutableMapOf()
 
         courseList.toTypedArray().forEach { course ->
-            if (course != null) {
-                // Filter the questions corresponding to each course and store the result in the questions map
-                val courseQuestion =
-                    questionsList.filter { question -> question.courseId == course.courseId }
+            // Filter the questions corresponding to each course and store the result in the questions map
+            val courseQuestion =
+                questionsList.filter { question -> question.courseId == course.courseId }
+
+            if (courseQuestion.isNotEmpty()) {
                 questionsMap.set(course, courseQuestion)
             }
         }
