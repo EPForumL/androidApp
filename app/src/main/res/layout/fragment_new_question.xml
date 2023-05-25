@@ -107,6 +107,7 @@
             android:drawablePadding="8dp"
             android:text="@string/record_voice_note" />
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
