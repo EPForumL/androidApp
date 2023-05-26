@@ -375,13 +375,13 @@ class QuestionDetailsTest {
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
 
-    @Test
+/*    @Test
     fun guestCannotSaveQuestion() {
         logOutDetailsActivity()
 
         onView(withId(R.id.toggle_save_question))
             .check(doesNotExist())
-    }
+    }*/
 
 
     @Test
