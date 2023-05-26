@@ -35,7 +35,9 @@ import com.google.android.exoplayer2.ui.PlayerView
 import java.util.concurrent.CompletableFuture
 import kotlin.random.Random
 
-class AnswerAdapter(private val question: Model.Question, private var anonymouseNameMap : HashMap<String, String>, private val mainActivity: Activity)
+class AnswerAdapter(private val question: Model.Question,
+                    private var anonymouseNameMap : HashMap<String, String>,
+                    private val mainActivity: Activity)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -201,7 +203,7 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
                     val like = holder.itemView.findViewById<ImageButton>(R.id.likeButton)
                     val counter = holder.itemView.findViewById<TextView>(R.id.likeCount)
                     val endorsementCount = endorsementList.size
-                    val isEndorsed = endorsementList.contains(DatabaseManager.user?.userId)
+                    val isEndorsed = endorsementList.contains(user?.userId)
                     counter.text = (endorsementCount).toString()
                     if(isEndorsed) {
                         like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.red), PorterDuff.Mode.SRC_IN)
@@ -221,13 +223,13 @@ class AnswerAdapter(private val question: Model.Question, private var anonymouse
                                 db.addAnswerLike(userId, currentAnswerItem.answerId)
                                 //turn like color to red ans increment counter
                                 like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.red), PorterDuff.Mode.SRC_IN)
-                                counter.setText((count + 1).toString())
+                                counter.text = (count + 1).toString()
                                 it.tag = listOf(true, count + 1)
                             } else {
                                 db.removeAnswerLike(userId, currentAnswerItem.answerId)
                                 // turn like color to light gray and decrement counter
                                 like.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.light_gray), PorterDuff.Mode.SRC_IN)
-                                counter.setText((count - 1).toString())
+                                counter.text = (count - 1).toString()
                                 it.tag = listOf(false, count - 1)
                             }
                         }

@@ -52,7 +52,7 @@ class RealChatFragment : Fragment() {
         val button = view.findViewById<ImageButton>(R.id.send_text)
         val textMsg = view.findViewById<EditText>(R.id.edit_text_message)
         noChats = view?.findViewById(R.id.no_chats)!!
-        notConnected = view?.findViewById(R.id.not_connected_text_view)!!
+        notConnected = view.findViewById(R.id.not_connected_text_view)!!
 
         val buttonHome: ImageButton = view.findViewById(R.id.back_to_home_button)
         buttonHome.setOnClickListener { // Create an intent to return to the previous fragment
@@ -87,7 +87,7 @@ class RealChatFragment : Fragment() {
                         displayChats()
                     }
                 }else{
-                    val notFound = view?.findViewById<TextView>(R.id.not_found)
+                    val notFound = view.findViewById<TextView>(R.id.not_found)
                     notFound?.visibility = View.VISIBLE
                 }
             }

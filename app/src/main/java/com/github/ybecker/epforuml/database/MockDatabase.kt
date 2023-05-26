@@ -309,6 +309,10 @@ class MockDatabase : Database() {
         return CompletableFuture.completedFuture(questions.values.toList().reversed())
     }
 
+    override fun getAllUsers(): CompletableFuture<List<User>> {
+        return CompletableFuture.completedFuture(users.values.toList())
+    }
+
     override fun getQuestionById(id: String): CompletableFuture<Question?> {
         return CompletableFuture.completedFuture(questions.get(id))
     }

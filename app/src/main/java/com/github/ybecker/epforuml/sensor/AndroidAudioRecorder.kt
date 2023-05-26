@@ -8,7 +8,7 @@ import java.io.FileOutputStream
 
 class AndroidAudioRecorder(private  val context: Context): AudioRecorder {
 
-    public var recorder: MediaRecorder? = null
+    var recorder: MediaRecorder? = null
 
 
     private fun createRecorder(): MediaRecorder {
