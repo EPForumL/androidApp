@@ -491,7 +491,7 @@ class NewQuestionTest {
         DatabaseManager.user = user
 
         // Launch the fragment
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
 
         //Scroll to the end of the page
         onView(withId(R.id.home_layout_parent)).perform(swipeUp())
@@ -502,8 +502,8 @@ class NewQuestionTest {
 
         //Scroll to the end of the page
         onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
-        onView(withText("Record Voice Note")).check(matches(isDisplayed()))
-        onView(withText("Play_voice_note")).check(matches(isDisplayed()))
+        onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
+        onView(withId(R.id.voice_note_button)).check(matches(isDisplayed()))
     }
 
     @Test

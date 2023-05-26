@@ -233,6 +233,7 @@ class QuestionDetailsTest {
 
         swipeToRefresh()
 
+        Thread.sleep(500)
         // check displayed
         onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
     }
