@@ -748,6 +748,7 @@ class FirebaseDatabaseAdapterTest {
         val answer = answer2Future.get()
         db.addAnswerLike(romain.userId, answer.answerId)
 
+
         db.getAnswerLike(answer.answerId).thenAccept {
             assertThat(it, equalTo(listOf(romain.userId)))
         }.join()
