@@ -37,9 +37,6 @@ class MockDatabaseTest {
 
             question2 = it
         }.join()
-        db.addQuestion(user.userId, sdp.courseId,false, "AUDIO", "What is the exact role of a Scrum Master ?", "","https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/random-acoustic-electronic-guitar-136427.mp3?alt=media&token=3ba7228f-a76f-4137-81fe-8126a30a0173").thenAccept {
-            question2 = it
-        }.join()
         db.addQuestion(user.userId, sdp.courseId, false, "Very long question",
                 "Extremely long long long long long long long long long long long long long " +
                         "long long long long long long long long long long long long long long long" +
