@@ -156,6 +156,7 @@ class QuestionDetailsActivity : AppCompatActivity() {
             val userList = loadUsersFromDevice()
             if(question?.isAnonymous!!){
                 username = DatabaseManager.anonymousUsers[Random.nextInt(0, DatabaseManager.anonymousUsers.size)]
+
             } else {
                 val filteredUserList = userList.filter { it.userId == question!!.userId }
                 if(filteredUserList.isNotEmpty()) {
