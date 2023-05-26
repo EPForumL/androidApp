@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml
 
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
@@ -8,16 +7,14 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.features.authentication.LoginActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.util.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.assertTrue
 import org.hamcrest.CoreMatchers
-import org.junit.After
 import org.junit.Test
 
 class MyQuestionsTest {

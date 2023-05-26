@@ -2,7 +2,6 @@ package com.github.ybecker.epforuml.chat
 
 import android.app.Activity
 import android.content.Intent
-import android.text.TextUtils.isEmpty
 import android.widget.EditText
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -11,13 +10,10 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
@@ -28,7 +24,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.time.LocalDateTime
 
 
 @RunWith(AndroidJUnit4::class)
@@ -117,7 +112,6 @@ class RealChatTest {
     @Test
     fun chatIsRemovedCancelAndConfirm() {
         navigateToChat()
-        //remove chat
         Espresso.onView(withText("HYD?")).perform(scrollTo(), longClick())
         Espresso.onView(withText("Cancel")).perform(click())
         scenario.onActivity { activity ->

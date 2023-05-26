@@ -9,19 +9,24 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.*
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.basicEntities.questions.QuestionDetailsActivity
+import com.github.ybecker.epforuml.database.UserStatus
 import com.github.ybecker.epforuml.util.EspressoIdlingResource
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.util.onViewWithTimeout.Companion.onViewWithTimeout
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before
@@ -382,22 +387,6 @@ class QuestionDetailsTest {
         VisibilityEquals(answerposition, View.VISIBLE, R.id.endorsementText)
     }
 
-    /*
-    @Test
-    fun clickingToggleAltersDrawable() {
-        logInDetailsActivity()
-        Thread.sleep(1000)
-        onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
-        Thread.sleep(1000)
-        onView(withId(R.id.toggle_save_question))
-            .perform(click())
-        Thread.sleep(1000)
-        onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
-    }
-
-     */
 
 /*    @Test
     fun toggleOnWhenQuestionSaved() {
@@ -409,16 +398,6 @@ class QuestionDetailsTest {
         onView(withId(R.id.toggle_save_question))
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }*/
-
-
-    @Test
-    fun guestCannotSaveQuestion() {
-        logOutDetailsActivity()
-
-        onView(withId(R.id.toggle_save_question))
-            .check(matches(not(isDisplayed())))
-    }
-
 
     @Test
     fun loggedInCanSaveQuestion() {

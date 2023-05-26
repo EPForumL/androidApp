@@ -7,14 +7,14 @@
     android:orientation="vertical"
     android:layout_margin="20dp"
     android:id="@+id/question_details_layout"
-    tools:context=".QuestionDetailsActivity">
+    tools:context=".basicEntities.questions.QuestionDetailsActivity">
 
     <LinearLayout
         android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        tools:context=".QuestionDetailsActivity">
+        tools:context=".basicEntities.questions.QuestionDetailsActivity">
 
         <TextView
             android:id="@+id/notificationCount"

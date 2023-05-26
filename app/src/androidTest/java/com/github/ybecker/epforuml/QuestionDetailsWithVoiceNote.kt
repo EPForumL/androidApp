@@ -2,9 +2,7 @@ package com.github.ybecker.epforuml
 
 import android.Manifest
 import android.content.Intent
-import android.view.View
 import android.widget.Button
-import android.widget.ImageView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -15,6 +13,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.util.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.junit.After
@@ -57,20 +56,23 @@ class QuestionDetailsWithVoiceNote {
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
         Thread.sleep(2000)
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
-        onView(withId(R.id.btn_submit)).perform(scrollTo(), click())/*
-        onView(withText(string)).perform(click())
-        onView(withId(R.id.play_note_button)).perform(scrollTo())
-        onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))*/
+        onView(withId(R.id.btn_submit)).perform(scrollTo(), click())
 
     }
+
 
     @Test
     fun disableOtherButton(){
         Thread.sleep(2000)
+        onView(withText("Record Voice Note")).check(matches(isDisplayed()))
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
         scenario.onActivity {
             assertThat(it.findViewById<Button>(R.id.play_note_button), isNotEnabled())
         }
+        onView(withText("Stop Recording")).check(matches(isDisplayed()))
+
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+        onView(withText("Start New Recording")).check(matches(isDisplayed()))
+
     }
 }

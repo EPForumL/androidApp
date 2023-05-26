@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/camera_layout_parent"
-    tools:context=".sensor.CameraActivity">
+    tools:context=".features.camera.CameraActivity">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"

@@ -11,16 +11,15 @@ import androidx.test.espresso.Espresso.*
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.authentication.LoginActivity
-import com.github.ybecker.epforuml.authentication.MockAuthenticator
+import com.github.ybecker.epforuml.features.authentication.LoginActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.util.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import junit.framework.TestCase.*
@@ -42,6 +41,64 @@ class NewQuestionTest {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
     }
+    @Test
+    fun testAddQuestionWithNullUser() {
+
+        DatabaseManager.user = null
+        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+        // go to MainActivity
+
+        Thread.sleep(2000)
+        onView(withId(R.id.guestButton)).perform(click())
+
+        // Wait for the view to be loaded
+        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
+
+        //Scroll to the end of the page
+        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
+
+        // Click on the new question button
+        onView(withId(R.id.new_question_button)).perform(click())
+        // Check that the new fragment is displayed
+        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+
+        //fill the different fields
+
+        //Body of the question
+        val questBody = "Text From Null User"
+        onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
+
+        //Title of the question
+        onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title From Null User"))
+
+        //Selection of the spinner
+        onView(withId(R.id.subject_spinner)).perform(click())
+        val secondItem = onData(anything()).atPosition(1)
+        secondItem.perform(click())
+
+
+
+        // Scroll to the end of the page
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
+
+        // Click on the submit button
+        onView(withId(R.id.btn_submit)).perform(click())
+
+        //Check if the question is added to the database
+        val courseQuestions = db.getCourseQuestions("Database")
+        val addedQuestion = courseQuestions.thenAccept{
+            it.filter { quest -> quest.questionText == questBody }
+        }
+
+        assertThat(addedQuestion.get(), equalTo(null))
+
+
+
+
+        scenario.close()
+
+    }
+
 
 /*
     @Test
@@ -494,22 +551,20 @@ class NewQuestionTest {
 
     @Test
     fun openAudioMessage() {
-        val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity {
-            MockAuthenticator(it).signIn()
-        }
+        ActivityScenario.launch(MainActivity::class.java)
 
         onView(withId(R.id.new_question_button)).perform(click())
 
-        onView(withId(R.id.voice_note_button)).perform(scrollTo(), click())
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
+
+        onView(withId(R.id.voice_note_button)).perform(click())
 
         //take a short audio message
-        //Thread.sleep(200)
-        //onView(withId(R.id.voice_note_button)).perform(click())
+//        Thread.sleep(200)
+//        onView(withId(R.id.voice_note_button)).perform(click())
+//
+//        onView(withId(R.id.play_note_button)).check(matches(isEnabled()))
 
-        //onView(withId(R.id.play_note_button)).check(matches(isEnabled()))
-
-        assertTrue(true)
     }
 
     fun getText(matcher: ViewInteraction): String {

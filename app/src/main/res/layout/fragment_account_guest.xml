@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
-    tools:context=".account.AccountFragment">
+    tools:context=".basicEntities.account.AccountFragment">
 
     <TextView
         android:id="@+id/titleAccountGuest"
