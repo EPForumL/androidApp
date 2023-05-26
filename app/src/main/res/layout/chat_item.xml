@@ -15,36 +15,36 @@
         android:layout_gravity="end">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
+            android:id="@+id/message_card"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:cardUseCompatPadding="true"
-            android:id="@+id/message_card"
-            app:cardCornerRadius="3dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
             android:backgroundTint="@color/even_more_background"
+            app:cardCornerRadius="3dp"
             app:cardElevation="5dp"
-            android:layout_margin="5dp">
+            app:cardUseCompatPadding="true">
 
             <TextView
                 android:id="@+id/textChat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
                 android:layout_margin="10dp"
                 android:textAlignment="center"
-                android:textAppearance="?attr/textAppearanceListItem" />
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textSize="20sp" />
 
         </androidx.cardview.widget.CardView>
-
 
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profilePicture"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/nav_account"
             android:layout_gravity="top"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:src="@drawable/nav_account" />
 
     </LinearLayout>
 

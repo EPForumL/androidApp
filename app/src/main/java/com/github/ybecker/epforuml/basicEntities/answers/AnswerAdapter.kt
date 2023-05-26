@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml.basicEntities.answers
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -15,6 +16,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -48,15 +50,17 @@ class AnswerAdapter(private val question: Model.Question,
         private const val HEADER_ITEM_POSITION = 0
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    private lateinit var context: Context
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        context = parent.context
         return when (viewType) {
             HEADER_ITEM_TYPE -> {
-                HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.question_details_header_item, parent, false))
+                HeaderViewHolder(LayoutInflater.from(context).inflate(R.layout.question_details_header_item, parent, false))
             }
 
             else -> {
-                AnswerViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.question_details_answer_item, parent, false))
+                AnswerViewHolder(LayoutInflater.from(context).inflate(R.layout.question_details_answer_item, parent, false))
             }
         }
     }
@@ -187,14 +191,22 @@ class AnswerAdapter(private val question: Model.Question,
                     }
 
                     holder.button.setOnClickListener{
-                        db.addChatsWith(user!!.userId, currentAnswerItem.userId)
-                        val intent = Intent(
-                            mainActivity,
-                            MainActivity::class.java
-                        )
-                        intent.putExtra("fragment", "RealChat")
-                        intent.putExtra("externID", currentAnswerItem.userId)
-                        startActivity(mainActivity,intent,null)
+                        if (user != null) {
+                            db.addChatsWith(user!!.userId, currentAnswerItem.userId)
+                            val intent = Intent(
+                                mainActivity,
+                                MainActivity::class.java
+                            )
+                            intent.putExtra("fragment", "RealChat")
+                            intent.putExtra("externID", currentAnswerItem.userId)
+                            startActivity(mainActivity,intent,null)
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "You must be connected in order to chat !",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
 
                     val like = holder.itemView.findViewById<ImageButton>(R.id.likeButton)
