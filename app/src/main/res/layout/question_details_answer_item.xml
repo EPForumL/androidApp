@@ -30,7 +30,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:textSize="18sp"
@@ -40,7 +40,7 @@
                     android:maxLength="20"
                     android:ellipsize="end"
                     android:text="@string/username"
-                    android:layout_weight="0"/>
+                    android:layout_weight="2"/>
 
                 <TextView
                     android:id="@+id/likeCount"
@@ -67,6 +67,7 @@
                     android:id="@+id/chatWithUser"
                     android:src="@drawable/nav_chat"
                     android:layout_gravity="center"
+                    android:visibility="gone"
                     android:background="@color/fui_transparent" />
 
 

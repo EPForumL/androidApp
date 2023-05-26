@@ -29,7 +29,7 @@
             android:id="@+id/not_connected_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/you_are_not_connected"
+            android:text="@string/you_are_not_connected_my_question"
             android:textSize="18sp"
             android:padding="16dp"
             android:visibility="gone" />

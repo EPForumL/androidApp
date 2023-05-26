@@ -1,24 +1,29 @@
-package com.github.ybecker.epforuml.structure
+package com.github.ybecker.epforuml
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.github.ybecker.epforuml.R
-import com.github.ybecker.epforuml.basicEntities.questions.MyQuestionsAdapter
-import com.github.ybecker.epforuml.basicEntities.questions.QuestionDetailsActivity
-import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.Model.*
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.database.Model
+import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.github.ybecker.epforuml.basicEntities.questions.MyQuestionsAdapter
+import com.github.ybecker.epforuml.basicEntities.questions.QuestionDetailsActivity
 import com.github.ybecker.epforuml.util.MainActivity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -50,6 +55,8 @@ class HomeFragment : Fragment() {
     private lateinit var cache : ArrayList<Question>
     private lateinit var answersCache : ArrayList<Answer>
 
+    private lateinit var newQuestionButton : ImageButton
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,18 +73,11 @@ class HomeFragment : Fragment() {
         allAnswers = requireArguments().getParcelableArrayList("allAnswers")!!
         allCourses = requireArguments().getParcelableArrayList("allCourses")!!
 
-        // Set up the new question button and navigate to the new question fragment when clicked
-        val newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
-        newQuestionButton.setOnClickListener {
-            // Navigate to the new fragment to add a new question
-            val intent = Intent(
-                context,
-                MainActivity::class.java
-            )
+        recyclerView = view.findViewById(R.id.recycler_my_questions)
 
-            intent.putExtra("fragment", "NewQuestionFragment")
-            startActivity(intent)
-        }
+        // Set up the new question button and navigate to the new question fragment when clicked
+        newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
+        refresh()
 
         return view
     }
@@ -101,7 +101,7 @@ class HomeFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.highlight)
         )
 
-        recyclerView = view.findViewById(R.id.recycler_my_questions)
+
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(false)
 
@@ -191,5 +191,24 @@ class HomeFragment : Fragment() {
     // Fetch the questions and refresh the display
     private fun refresh() {
         displayForum()
+        updateNewQuestionButton()
+    }
+
+    private fun updateNewQuestionButton() {
+        if (DatabaseManager.user == null || !MainActivity.isConnected()) {
+            newQuestionButton.visibility = View.GONE
+        } else {
+            newQuestionButton.visibility = View.VISIBLE
+            newQuestionButton.setOnClickListener {
+                // Navigate to the new fragment to add a new question
+                val intent = Intent(
+                    context,
+                    MainActivity::class.java
+                )
+
+                intent.putExtra("fragment", "NewQuestionFragment")
+                startActivity(intent)
+            }
+        }
     }
 }

@@ -54,7 +54,9 @@
     <string name="refresh">REFRESH</string>
     <!-- TODO: Remove or change this placeholder text -->
 
-    <string name="you_are_not_connected">You are not connected</string>
+    <string name="you_are_not_connected">Please log in to access chats.</string>
+    <string name="you_are_not_connected_courses">Please log in to select courses.</string>
+    <string name="you_are_not_connected_my_question">Please log in to see your questions.</string>
     <string name="course">Course</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -62,7 +64,7 @@
     <string name="login_welcome">Welcome to EPForumL !</string>
     <string name="continue_as_guest">Continue as guest</string>
     <string name="my_questions_display">My Questions</string>
-    <string name="you_still_haven_t_asked_any_question">You still haven\'t asked any question</string>
+    <string name="you_still_haven_t_asked_any_question">You still haven\'t asked any question.</string>
     <string name="you_have_not_started_a_conversation_yet">You have not started a conversation yet!</string>
     <string name="chat">Chat</string>
     <string name="send">Send</string>
@@ -83,7 +85,7 @@
     <string name="sign_out">Sign-Out</string>
     <string name="delete_account">Delete Account</string>
     <string name="sign_in">Sign-In</string>
-    <string name="you_are_currently_using_the_app_as_a_guest">You are currently using the app as a guest</string>
+    <string name="you_are_currently_using_the_app_as_a_guest">You are currently using the app as a guest.\nPlease log in to access additional features.</string>
     <string name="chat_with_someone_new">Chat with someone new</string>
     <string name="import_picture">Import picture</string>
     <string name="take_picture">TAKE PICTURE</string>
@@ -94,7 +96,7 @@
     <string name="username">Username</string>
     <string name="answer">Answer</string>
     <string name="_0">0</string>
-    <string name="please_login_to_save_questions">Please log in to be able to save questions.</string>
+    <string name="please_login_to_save_questions">Please log in to save questions.</string>
     <string name="image">Image</string>
 
     <string name="add_course_title">Add new course</string>
