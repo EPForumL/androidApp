@@ -98,7 +98,7 @@ class RealChatTest {
     @Test
     fun backToHomeIsCorrect() {
         navigateToChat()
-        Espresso.onView(withId(R.id.back_to_home_button)).perform(ViewActions.click())
+        Espresso.onView(withId(R.id.back_to_home_button)).perform(click())
         Espresso.onView(withId(R.id.recycler_chat_home)).check(matches(isDisplayed()))
     }
 

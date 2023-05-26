@@ -55,7 +55,7 @@ class SavedQuestionsTest {
         db.getQuestionById("question1").thenAccept {
             question = it!!
             cache.add(it)
-            MainActivity.saveDataToDevice(arrayListOf(it), arrayListOf())
+            MainActivity.saveDataToDevice(arrayListOf(it), arrayListOf(), cache, arrayListOf(), arrayListOf())
             //intent.putParcelableArrayListExtra("savedQuestions", cache)
         }
     }
@@ -155,7 +155,7 @@ class SavedQuestionsTest {
         // go to last QuestionDetailsActivity
         onView(withId(R.id.recycler_saved_questions))
             .perform(
-                RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
+                RecyclerViewActions.actionOnItemAtPosition<ViewHolder>(
                     0,
                     click()
                 )

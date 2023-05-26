@@ -24,7 +24,10 @@ class MyQuestionsFragment : Fragment() {
 
     private lateinit var cache : ArrayList<Model.Question>
     private lateinit var answersCache : ArrayList<Model.Answer>
-    private lateinit var comingFromFragment : String
+
+    private lateinit var allQuestions : ArrayList<Model.Question>
+    private lateinit var allAnswers : ArrayList<Model.Answer>
+    private lateinit var allCourses : ArrayList<Model.Course>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_my_questions, container, false)
@@ -35,6 +38,10 @@ class MyQuestionsFragment : Fragment() {
 
         cache = requireArguments().getParcelableArrayList("savedQuestions") ?: arrayListOf()
         answersCache = requireArguments().getParcelableArrayList("savedAnswers") ?: arrayListOf()
+
+        allQuestions = requireArguments().getParcelableArrayList("allQuestions")!!
+        allAnswers = requireArguments().getParcelableArrayList("allAnswers")!!
+        allCourses = requireArguments().getParcelableArrayList("allCourses")!!
 
         val layoutManager = LinearLayoutManager(context)
         recyclerView = view.findViewById(R.id.recycler_my_questions)
@@ -97,7 +104,8 @@ class MyQuestionsFragment : Fragment() {
             messageView?.visibility = View.VISIBLE
         }
 
-        adapter = MyQuestionsAdapter(myQuestionsMap, cache, answersCache, "MyQuestionsFragment")
+        adapter = MyQuestionsAdapter(myQuestionsMap, cache, answersCache, allQuestions, allAnswers,
+            allCourses, "MyQuestionsFragment")
         recyclerView.adapter = adapter
     }
 
