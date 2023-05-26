@@ -2,12 +2,12 @@ package com.github.ybecker.epforuml
 
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
+import com.github.ybecker.epforuml.features.authentication.MockAuthenticator
+import com.github.ybecker.epforuml.util.MainActivity
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
@@ -33,7 +33,7 @@ class HomeFragmentTest {
         }
 
         onView(withId(R.id.new_question_button))
-            .check(doesNotExist())
+            .check(matches(not(isDisplayed())))
     }
 
 

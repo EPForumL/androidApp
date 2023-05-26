@@ -13,13 +13,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import com.github.ybecker.epforuml.HomeFragment
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.features.latex.LatexDialog
 import com.github.ybecker.epforuml.features.voiceMessages.AndroidAudioRecorder
 import java.io.File
 import java.util.*
-import com.github.ybecker.epforuml.structure.HomeFragment
 import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.features.voiceMessages.AndroidAudioPlayer

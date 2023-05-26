@@ -19,6 +19,9 @@ import com.github.ybecker.epforuml.database.Model
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.github.ybecker.epforuml.basicEntities.questions.MyQuestionsAdapter
+import com.github.ybecker.epforuml.basicEntities.questions.QuestionDetailsActivity
+import com.github.ybecker.epforuml.util.MainActivity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.concurrent.CompletableFuture
