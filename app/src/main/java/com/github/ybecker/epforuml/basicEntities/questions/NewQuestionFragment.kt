@@ -1,5 +1,6 @@
 package com.github.ybecker.epforuml.basicEntities.questions
 
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,22 +11,20 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
-import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.features.latex.LatexDialog
-import com.github.ybecker.epforuml.features.camera.CameraActivity
 import com.github.ybecker.epforuml.features.voiceMessages.AndroidAudioRecorder
 import java.io.File
 import java.util.*
-import android.Manifest
-import androidx.core.net.toUri
 import com.github.ybecker.epforuml.structure.HomeFragment
 import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.features.voiceMessages.AndroidAudioPlayer
+import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.features.camera.CameraActivity
 
 /**
  * A simple [Fragment] subclass.
@@ -308,5 +307,4 @@ class NewQuestionFragment : Fragment() {
             }
         }
     }
-
 }

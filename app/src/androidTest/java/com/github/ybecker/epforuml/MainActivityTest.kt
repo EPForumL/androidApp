@@ -46,7 +46,7 @@ class MainActivityTest {
             .perform(scrollTo(), click())
 
         onView(withId(R.id.qdetails_title))
-            .check(ViewAssertions.matches(ViewMatchers.withText(question.questionTitle)))
+            .check(ViewAssertions.matches(withText(question.questionTitle)))
     }
 
 

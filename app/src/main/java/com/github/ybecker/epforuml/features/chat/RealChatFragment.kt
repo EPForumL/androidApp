@@ -52,7 +52,7 @@ class RealChatFragment : Fragment() {
         val button = view.findViewById<ImageButton>(R.id.send_text)
         val textMsg = view.findViewById<EditText>(R.id.edit_text_message)
         noChats = view?.findViewById(R.id.no_chats)!!
-        notConnected = view?.findViewById(R.id.not_connected_text_view)!!
+        notConnected = view.findViewById(R.id.not_connected_text_view)!!
 
         val buttonHome: ImageButton = view.findViewById(R.id.back_to_home_button)
         buttonHome.setOnClickListener { // Create an intent to return to the previous fragment
@@ -67,7 +67,30 @@ class RealChatFragment : Fragment() {
             button?.visibility = View.GONE
 
         } else {
-            retrieveUsersInitialMessages(textMsg, button, view)
+            notConnected.visibility = View.GONE
+            textMsg?.visibility = View.VISIBLE
+            button?.visibility = View.VISIBLE
+            hostId = user!!.userId
+            externId = this.activity?.intent?.getStringExtra("externID").toString()
+            hostUser = user!!
+            db.getUserById(externId).thenAccept{
+                if (it != null) {
+                    externUser = it
+                    chatList = db.getChat(hostId, externId)
+                    view.findViewById<TextView>(R.id.title_chat).text = externUser.username
+                    val button = view.findViewById<ImageButton>(R.id.send_text)
+                    button?.visibility = View.VISIBLE
+                    button.setOnClickListener{
+                        val chat = db.addChat(hostId, externId,textMsg.text.toString())
+                        queryList.add(chat)
+                        textMsg.setText("")
+                        displayChats()
+                    }
+                }else{
+                    val notFound = view.findViewById<TextView>(R.id.not_found)
+                    notFound?.visibility = View.VISIBLE
+                }
+            }
         }
         return view
     }

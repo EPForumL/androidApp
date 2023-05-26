@@ -25,9 +25,9 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.video.*
 import androidx.camera.view.PreviewView
 import androidx.core.content.PermissionChecker
-import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.databinding.ActivityCameraBinding
+import com.github.ybecker.epforuml.util.MainActivity
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -67,7 +67,7 @@ class CameraActivity : AppCompatActivity() {
 
 
         captureButton.setOnClickListener {
-            (it as ImageButton).setColorFilter(ContextCompat.getColor(MainActivity.context, R.color.shade3), PorterDuff.Mode.SRC_IN)
+            (it as ImageButton).setColorFilter(ContextCompat.getColor( MainActivity.context, R.color.shade3), PorterDuff.Mode.SRC_IN)
             viewBinding.imageCaptureButton.removeCallbacks(null)
             if (isRecording) {
                 stopRecordingVideo()
@@ -97,15 +97,12 @@ class CameraActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this,
                     "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT).show()
+                    LENGTH_SHORT).show()
                 finish()
             }
         }
     }
 
-    /**
-     * Captures an image
-     */
     private fun takePhoto() {
 
         // Get a stable reference of the modifiable image capture use case
@@ -142,7 +139,7 @@ class CameraActivity : AppCompatActivity() {
                 override fun
                         onImageSaved(output: ImageCapture.OutputFileResults){
                     val msg = "Photo capture succeeded: ${output.savedUri}"
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(baseContext, msg, LENGTH_SHORT).show()
                     Log.d(TAG, msg)
                     goToEdit(output.savedUri.toString())
                 }
@@ -152,9 +149,6 @@ class CameraActivity : AppCompatActivity() {
 
     }
 
-    /**
-     * Starts the recording of a video
-     */
     private fun startRecordingVideo() {
 
         val videoCapture = this.videoCapture ?: return
@@ -228,16 +222,12 @@ class CameraActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Stops video recording
-     */
     private fun stopRecordingVideo() {
         recording?.close()
     }
 
-    /**
-     * opens the camera
-     */
+
+
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
@@ -281,20 +271,12 @@ class CameraActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    /**
-     * Requires the needed permissions
-     */
-
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             baseContext, it
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    /**
-     * Sets up the intent to launch the image editor
-     * @param uri the image's uri
-     */
     private fun goToEdit(uri : String){
         val intent  = Intent(this, EditPhotoActivity::class.java)
         intent.putExtra("uri", uri)
@@ -303,10 +285,7 @@ class CameraActivity : AppCompatActivity() {
         startActivity(intent)
 
     }
-    /**
-     * Sets up the intent to return to the new question fragment
-     * @param uri the edited image's uri
-     */
+
     private fun goBackToQuestion(uri : String){
         val intent  = Intent(this, MainActivity::class.java)
         intent.putExtra("uri", uri)

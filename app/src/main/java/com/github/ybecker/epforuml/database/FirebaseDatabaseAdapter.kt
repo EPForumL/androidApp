@@ -94,6 +94,27 @@ class FirebaseDatabaseAdapter(instance: FirebaseDatabase) : Database() {
         return future
     }
 
+    override fun getAllUsers(): CompletableFuture<List<User>> {
+        val future = CompletableFuture<List<User>>()
+        // go in "questions" dir
+        db.child(usersPath).get().addOnSuccessListener {
+            val users = mutableListOf<User>()
+            // add every question that in not null in "questions" in the map
+            for (userSnapshot in it.children) {
+                val user = getUser(userSnapshot)
+                if (user != null) {
+                    users.add(user)
+                }
+            }
+            //complete the future when every children has been added
+            future.complete(users)
+        }.addOnFailureListener {
+            future.completeExceptionally(it)
+        }
+
+        return future
+    }
+
     override fun getQuestions(): CompletableFuture<List<Question>> {
         val future = CompletableFuture<List<Question>>()
         // go in "questions" dir

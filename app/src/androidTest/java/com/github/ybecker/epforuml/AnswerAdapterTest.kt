@@ -99,7 +99,7 @@ class AnswerAdapterTest {
             db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testImageURI, "")
         }.join()
 
-        onView(withId(R.id.swipe_refresh_layout)).perform(ViewActions.swipeDown())
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
 
         onView(withText(newQuestionTitle)).perform(click())
 
@@ -119,7 +119,7 @@ class AnswerAdapterTest {
             db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testVideoURI, "")
         }.join()
 
-        onView(withId(R.id.swipe_refresh_layout)).perform(ViewActions.swipeDown())
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
 
         onView(withText(newQuestionTitle)).perform(click())
 

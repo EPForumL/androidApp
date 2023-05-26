@@ -32,7 +32,7 @@ class CoursesFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         
-        myContext = requireContext();
+        myContext = requireContext()
 
         // we take the current user in the database
         user = DatabaseManager.user ?: User()

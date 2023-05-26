@@ -40,13 +40,10 @@ class NewQuestionTest {
     fun setup() {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
-
     }
     @Test
     fun testAddQuestionWithNullUser() {
 
-        Firebase.auth.signOut()
-        DatabaseManager.useMockDatabase()
         DatabaseManager.user = null
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
         // go to MainActivity
@@ -58,7 +55,7 @@ class NewQuestionTest {
         onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
         //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
 
         // Click on the new question button
         onView(withId(R.id.new_question_button)).perform(click())
@@ -82,7 +79,7 @@ class NewQuestionTest {
 
 
         // Scroll to the end of the page
-        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
 
         // Click on the submit button
         onView(withId(R.id.btn_submit)).perform(click())
@@ -164,7 +161,7 @@ class NewQuestionTest {
     @Test
     fun testAddQuestionWithEmptyTitle() {
 
-        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        val user = db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user
 
 
@@ -174,7 +171,7 @@ class NewQuestionTest {
 
 
         //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
@@ -202,13 +199,13 @@ class NewQuestionTest {
 
 
         // Scroll to the end of the page
-        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
 
         // Click on the submit button
         onView(withId(R.id.btn_submit)).perform(click())
 
         // Check that no question is added to the database
-        val courseQuestions = DatabaseManager.db.getCourseQuestions("Database").get()
+        val courseQuestions = db.getCourseQuestions("Database").get()
         val addedQuestion = courseQuestions.filter { it.questionText == questBody }.firstOrNull()
 
         assertNull(addedQuestion)
@@ -224,7 +221,7 @@ class NewQuestionTest {
     @Test
     fun testAddQuestionWithEmptyText() {
 
-        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        val user = db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user
 
         // Launch the fragment
@@ -232,7 +229,7 @@ class NewQuestionTest {
 
 
         //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
@@ -251,13 +248,13 @@ class NewQuestionTest {
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("Database")))
 
         // Scroll to the end of the page
-        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
 
         // Click on the submit button
         onView(withId(R.id.btn_submit)).perform(click())
 
         // Check that no question was added to the database
-        val courseQuestions = DatabaseManager.db.getCourseQuestions("Database").get()
+        val courseQuestions = db.getCourseQuestions("Database").get()
         val addedQuestion = courseQuestions.filter { it.questionTitle == "Sample Question Title" }
 
         assertThat(addedQuestion.size, equalTo(0))
@@ -268,7 +265,7 @@ class NewQuestionTest {
     @Test
     fun testAddAQuestion() {
 
-        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        val user = db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user
 
 
@@ -276,7 +273,7 @@ class NewQuestionTest {
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
 
         //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
@@ -304,14 +301,14 @@ class NewQuestionTest {
 
 
         // Scroll to the end of the page
-        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
 
         // Click on the submit button
         onView(withId(R.id.btn_submit)).perform(click())
 
 
         //Check if the question is added to the database
-        val dataBaseCourse= DatabaseManager.db.getCourseById("course11")
+        val dataBaseCourse= db.getCourseById("course11")
 
         val courseQuestions = db.getCourseQuestions("Database")
         val addedQuestion = courseQuestions.thenAccept{
@@ -491,21 +488,21 @@ class NewQuestionTest {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
 
-        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        val user = db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user
 
         // Launch the fragment
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
 
         //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
 
 
         //Scroll to the end of the page
-        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
         onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
         onView(withId(R.id.voice_note_button)).check(matches(isDisplayed()))
     }
@@ -515,7 +512,7 @@ class NewQuestionTest {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
 
-        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
+        val user = db.addUser("user1", "TestUser", "").get()
         DatabaseManager.user = user
 
 
@@ -523,7 +520,7 @@ class NewQuestionTest {
         val scenario = ActivityScenario.launch(LoginActivity::class.java)
 
         //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
+        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
 
         // Click on the new quest button
         onView(withId(R.id.new_question_button)).perform(click())
@@ -537,6 +534,37 @@ class NewQuestionTest {
 
         onView(withId(R.id.latex_window_root))
             .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun openCameraTest() {
+        ActivityScenario.launch(MainActivity::class.java)
+
+        onView(withId(R.id.new_question_button)).perform(click())
+
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
+
+        onView(withId(R.id.takeImage)).perform(click())
+
+        //find a way to check that it has been open correctly...
+    }
+
+    @Test
+    fun openAudioMessage() {
+        ActivityScenario.launch(MainActivity::class.java)
+
+        onView(withId(R.id.new_question_button)).perform(click())
+
+        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
+
+        onView(withId(R.id.voice_note_button)).perform(click())
+
+        //take a short audio message
+//        Thread.sleep(200)
+//        onView(withId(R.id.voice_note_button)).perform(click())
+//
+//        onView(withId(R.id.play_note_button)).check(matches(isEnabled()))
+
     }
 
     fun getText(matcher: ViewInteraction): String {
