@@ -56,6 +56,7 @@ class MockDatabase : Database() {
                                 "How do I fix the CI ?",
             "",
             mutableListOf(), emptyList(),"")
+        questions[question1.questionId] = question1
         val question2 = Question("question2", "course0", "user1", false,"About Scrum master",
                                 "What is a Scrum Master ?", "" , mutableListOf(), emptyList(),"")
 

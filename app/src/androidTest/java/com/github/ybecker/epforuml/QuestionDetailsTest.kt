@@ -336,7 +336,7 @@ class QuestionDetailsTest {
         onView(withContentDescription(androidx.appcompat.R.string.abc_action_bar_up_description))
             .perform(click())
 
-        onView(withText("About ci")).perform(click())
+        onView(withText("About ci")).perform(scrollTo(), click())
 
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementButton)
     }
