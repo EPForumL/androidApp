@@ -123,11 +123,17 @@ class HomeFragment : Fragment() {
                 val courses = futureCourses.get() as ArrayList<Course>
 
                 getForumQuestionsMap(questions, courses)
-                MainActivity.saveDataToDevice(cache, answersCache, questions, allAnswers, courses)
+                updateCaches(questions, courses)
             }
         } else {
             getForumQuestionsMap(allQuestions, allCourses)
         }
+    }
+
+    private fun updateCaches(questions: ArrayList<Question>, courses:ArrayList<Course>) {
+        allQuestions = questions
+        allCourses = courses
+        MainActivity.saveDataToDevice(cache, answersCache, questions, allAnswers, courses)
     }
 
     // Fetch the questions and the corresponding courses and display them in the recycler view
