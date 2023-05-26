@@ -44,59 +44,60 @@ class NewQuestionTest {
         DatabaseManager.useMockDatabase()
     }
 
-    @Test
-    fun testAddQuestionWithNullUser() {
-
-        DatabaseManager.user = null
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
-        // go to MainActivity
-
-        Thread.sleep(2000)
-        onView(withId(R.id.guestButton)).perform(click())
-
-        // Wait for the view to be loaded
-        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
-
-        //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
-
-        // Click on the new question button
-        onView(withId(R.id.new_question_button)).perform(click())
-        // Check that the new fragment is displayed
-        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
-
-        //fill the different fields
-
-        //Body of the question
-        val questBody = "Text From Null User"
-        onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
-
-        //Title of the question
-        onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title From Null User"))
-
-        //Selection of the spinner
-        onView(withId(R.id.subject_spinner)).perform(click())
-        val secondItem = onData(anything()).atPosition(1)
-        secondItem.perform(click())
-
-
-
-        // Scroll to the end of the page
-        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
-
-        // Click on the submit button
-        onView(withId(R.id.btn_submit)).perform(click())
-
-        //Check if the question is added to the database
-        val courseQuestions = db.getCourseQuestions("Database")
-        val addedQuestion = courseQuestions.thenAccept{
-            it.filter { quest -> quest.questionText == questBody }
-        }
-
-        assertThat(addedQuestion.get(), equalTo(null))
-
-        scenario.close()
-    }
+// Add question button is hidden for null user now !
+//    @Test
+//    fun testAddQuestionWithNullUser() {
+//
+//        DatabaseManager.user = null
+//        val scenario = ActivityScenario.launch(LoginActivity::class.java)
+//        // go to MainActivity
+//
+//        Thread.sleep(2000)
+//        onView(withId(R.id.guestButton)).perform(click())
+//
+//        // Wait for the view to be loaded
+//        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
+//
+//        //Scroll to the end of the page
+//        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
+//
+//        // Click on the new question button
+//        onView(withId(R.id.new_question_button)).perform(click())
+//        // Check that the new fragment is displayed
+//        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
+//
+//        //fill the different fields
+//
+//        //Body of the question
+//        val questBody = "Text From Null User"
+//        onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
+//
+//        //Title of the question
+//        onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title From Null User"))
+//
+//        //Selection of the spinner
+//        onView(withId(R.id.subject_spinner)).perform(click())
+//        val secondItem = onData(anything()).atPosition(1)
+//        secondItem.perform(click())
+//
+//
+//
+//        // Scroll to the end of the page
+//        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
+//
+//        // Click on the submit button
+//        onView(withId(R.id.btn_submit)).perform(click())
+//
+//        //Check if the question is added to the database
+//        val courseQuestions = db.getCourseQuestions("Database")
+//        val addedQuestion = courseQuestions.thenAccept{
+//            it.filter { quest -> quest.questionText == questBody }
+//        }
+//
+//        assertThat(addedQuestion.get(), equalTo(null))
+//
+//        scenario.close()
+//    }
 
 
 /*

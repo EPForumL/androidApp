@@ -28,9 +28,8 @@ class HomeFragmentTest {
 
     @Test
     fun guestDoesNotSeeNewQuestionButton() {
-        scenario.onActivity {
-            MockAuthenticator(it).signOut()
-        }
+        DatabaseManager.user = null
+        ActivityScenario.launch(MainActivity::class.java)
 
         onView(withId(R.id.new_question_button))
             .check(matches(not(isDisplayed())))
