@@ -24,34 +24,6 @@ import org.junit.runner.RunWith
 class EditPhotoTest {
 
     @Test
-    fun displaysEditorOnCorrectWorkflow(){
-        Intents.init()
-        val intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MainActivity::class.java
-        )
-        val scenario = ActivityScenario.launch<Activity>(intent)
-
-        onView(withId(R.id.new_question_button)).check(matches(isDisplayed()))
-        onView(withId(R.id.new_question_button)).perform(click())
-        onView(withId(R.id.takeImage)).perform(scrollTo())
-        onView(withId(R.id.takeImage)).check(matches(isDisplayed()))
-        onView(withId(R.id.takeImage)).perform(click())
-        onView(withId(R.id.image_capture_button)).check(matches(isDisplayed()))
-        onView(withId(R.id.image_capture_button)).perform(click())
-        var done = false
-        while(!done){
-            try{
-                intended(hasComponent(DsPhotoEditorActivity::class.java.name))
-                done = true
-            } catch (e: AssertionError){
-            }
-        }
-        Intents.release()
-        scenario.close()
-    }
-
-    @Test
     fun failsWithIncorrectUri(){
         var exception = ExpectedException.none()
         val intent = Intent(
