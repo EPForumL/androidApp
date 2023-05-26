@@ -60,7 +60,7 @@ class MockDatabaseTest {
     @Test
     fun getQuestionsTest() {
         val questions = db.getQuestions().get()
-        assertEquals(6, questions.size)
+        assertEquals(7, questions.size)
         assertTrue(questions.contains(question1))
         assertTrue(questions.contains(question2))
         assertTrue(questions.contains(question3))
