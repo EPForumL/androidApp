@@ -66,6 +66,7 @@ class QuestionDetailsWithVoiceNote {
 
     @Test
     fun disableOtherButton(){
+        Thread.sleep(2000)
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
         scenario.onActivity {
             assertThat(it.findViewById<Button>(R.id.play_note_button), isNotEnabled())

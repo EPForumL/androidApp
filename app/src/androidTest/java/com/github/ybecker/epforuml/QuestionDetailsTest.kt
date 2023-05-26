@@ -5,12 +5,10 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.*
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.*
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -219,7 +217,7 @@ class QuestionDetailsTest {
 
 
     @Test
-    fun writeAnswerAndPostIsDisplayed() {
+    fun writeAnswerAndPostIsDisplayedTest() {
         logInDetailsActivity()
 
         val content = "New answer"
@@ -232,6 +230,8 @@ class QuestionDetailsTest {
 
         // post answer
         onView(withId(R.id.post_reply_button)).perform(click())
+
+        swipeToRefresh()
 
         // check displayed
         onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
@@ -434,9 +434,11 @@ class QuestionDetailsTest {
 
         addAnswerInTheQuestion(question)
 
+        Thread.sleep(1000)
+
         swipeToRefresh()
 
-        Thread.sleep(500)
+        Thread.sleep(1000)
         onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
     }
 
@@ -445,10 +447,11 @@ class QuestionDetailsTest {
         val question = logOutDetailsActivity(true)
 
         addAnswerInTheQuestion(question)
+        Thread.sleep(1000)
 
         swipeToRefresh()
 
-        Thread.sleep(500)
+        Thread.sleep(1000)
         onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
     }
 
@@ -573,7 +576,7 @@ class QuestionDetailsTest {
     private fun checkCounter(viewId: Int, value: String): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> {
-                return Matchers.allOf(isAssignableFrom(View::class.java))
+                return allOf(isAssignableFrom(View::class.java))
             }
 
             override fun getDescription(): String {
@@ -611,9 +614,9 @@ class QuestionDetailsTest {
 
                     // check visibility
                     val visibilityMatcher = when (visibility) {
-                        View.VISIBLE -> Matchers.`is`(View.VISIBLE)
-                        View.INVISIBLE -> Matchers.`is`(View.INVISIBLE)
-                        View.GONE -> Matchers.`is`(View.GONE)
+                        View.VISIBLE -> `is`(View.VISIBLE)
+                        View.INVISIBLE -> `is`(View.INVISIBLE)
+                        View.GONE -> `is`(View.GONE)
                         else -> throw IllegalArgumentException("Invalid visibility argument")
                     }
 

@@ -47,7 +47,7 @@ class MyQuestionsAdapter(private val myQuestionsMap: MutableMap<Model.Course, Li
 
         if (questionsList!!.size > 0) {
             // Set up the RecyclerView with the list of questions
-            holder.forumAdapter = ForumAdapter(questionsList ?: mutableListOf<Model.Question>())
+            holder.forumAdapter = ForumAdapter(questionsList)
             holder.questionsRecyclerView.adapter = holder.forumAdapter
             holder.questionsRecyclerView.layoutManager = LinearLayoutManager(holder.itemView.context)
 
