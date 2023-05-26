@@ -179,6 +179,13 @@ class AnswerAdapter(private val question: Model.Question,
                     holder.answerText.setDisplayText(currentAnswerItem.answerText)
                     holder.answerText.settings.displayZoomControls = false
 
+                    if(MainActivity.isConnected() && user != null && !question.isAnonymous) {
+                        holder.button.visibility = VISIBLE
+                    }
+                    else {
+                        holder.button.visibility = GONE
+                    }
+
                     holder.button.setOnClickListener{
                         db.addChatsWith(user!!.userId, currentAnswerItem.userId)
                         val intent = Intent(
