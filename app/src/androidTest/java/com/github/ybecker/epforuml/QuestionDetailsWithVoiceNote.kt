@@ -57,20 +57,23 @@ class QuestionDetailsWithVoiceNote {
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
         Thread.sleep(2000)
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
-        onView(withId(R.id.btn_submit)).perform(scrollTo(), click())/*
-        onView(withText(string)).perform(click())
-        onView(withId(R.id.play_note_button)).perform(scrollTo())
-        onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))*/
+        onView(withId(R.id.btn_submit)).perform(scrollTo(), click())
 
     }
+
 
     @Test
     fun disableOtherButton(){
         Thread.sleep(2000)
+        onView(withText("Record Voice Note")).check(matches(isDisplayed()))
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
         scenario.onActivity {
             assertThat(it.findViewById<Button>(R.id.play_note_button), isNotEnabled())
         }
+        onView(withText("Stop Recording")).check(matches(isDisplayed()))
+
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
+        onView(withText("Start New Recording")).check(matches(isDisplayed()))
+
     }
 }
