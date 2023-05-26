@@ -27,12 +27,21 @@ class SavedQuestionsFragment : Fragment() {
     private lateinit var answersCache : ArrayList<Model.Answer>
     private lateinit var newIntentDetails : Intent
 
+    // TODO : check
+    private lateinit var allQuestions : ArrayList<Model.Question>
+    private lateinit var allAnswers : ArrayList<Model.Answer>
+    private lateinit var allCourses : ArrayList<Model.Course>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         cache = this.requireArguments().getParcelableArrayList("savedQuestions")!!
         answersCache = this.requireArguments().getParcelableArrayList("savedAnswers")!!
+
+        allQuestions = requireArguments().getParcelableArrayList("allQuestions")!!
+        allAnswers = requireArguments().getParcelableArrayList("allAnswers")!!
+        allCourses = requireArguments().getParcelableArrayList("allCourses")!!
 
         // Inflate the layout for this fragment
 
@@ -61,6 +70,12 @@ class SavedQuestionsFragment : Fragment() {
                 newIntentDetails = Intent(context?.applicationContext, QuestionDetailsActivity::class.java)
                 newIntentDetails.putParcelableArrayListExtra("savedQuestions", cache)
                 newIntentDetails.putParcelableArrayListExtra("savedAnswers", answersCache)
+
+                // TODO : check
+                newIntentDetails.putParcelableArrayListExtra("allQuestions", allQuestions)
+                newIntentDetails.putParcelableArrayListExtra("allAnswers", allAnswers)
+                newIntentDetails.putParcelableArrayListExtra("allCourses", allCourses)
+
                 newIntentDetails.putExtra("comingFrom", "SavedQuestionsFragment")
                 newIntentDetails.putExtra("question", q)
                 startActivity(newIntentDetails)

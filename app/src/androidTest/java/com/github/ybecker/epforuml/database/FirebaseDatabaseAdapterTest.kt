@@ -159,7 +159,7 @@ class FirebaseDatabaseAdapterTest {
                 ViewMatchers.isDisplayed()
             )
         )
-        db.removeChat(chat!!.chatId!!)
+        db.removeChat(chat.chatId!!)
         Thread.sleep(1000)
         Espresso.onView(ViewMatchers.withText(localDateTime)).check(ViewAssertions.doesNotExist())
         scenario.close()
