@@ -12,6 +12,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.intent.Intents
@@ -362,22 +363,6 @@ class QuestionDetailsTest {
         VisibilityEquals(itemPosition, View.VISIBLE, R.id.endorsementText)
     }
 
-    /*
-    @Test
-    fun clickingToggleAltersDrawable() {
-        logInDetailsActivity()
-        Thread.sleep(1000)
-        onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.nav_saved_questions)))
-        Thread.sleep(1000)
-        onView(withId(R.id.toggle_save_question))
-            .perform(click())
-        Thread.sleep(1000)
-        onView(withId(R.id.toggle_save_question))
-            .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
-    }
-
-     */
 
     @Test
     fun toggleOnWhenQuestionSaved() {
@@ -390,16 +375,13 @@ class QuestionDetailsTest {
             .check(matches(ImageButtonHasDrawableMatcher.hasDrawable(R.drawable.checkmark)))
     }
 
-    /*
     @Test
     fun guestCannotSaveQuestion() {
         logOutDetailsActivity()
 
         onView(withId(R.id.toggle_save_question))
-            .check(matches(not(isDisplayed())))
+            .check(doesNotExist())
     }
-
-     */
 
 
     @Test
