@@ -71,9 +71,11 @@ class HomeFragment : Fragment() {
         allAnswers = requireArguments().getParcelableArrayList("allAnswers")!!
         allCourses = requireArguments().getParcelableArrayList("allCourses")!!
 
+        recyclerView = view.findViewById(R.id.recycler_my_questions)
+
         // Set up the new question button and navigate to the new question fragment when clicked
         newQuestionButton = view.findViewById<ImageButton>(R.id.new_question_button)
-        updateNewQuestionButton()
+        refresh()
 
         return view
     }
@@ -97,7 +99,7 @@ class HomeFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.highlight)
         )
 
-        recyclerView = view.findViewById(R.id.recycler_my_questions)
+
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(false)
 
