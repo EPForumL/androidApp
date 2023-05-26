@@ -1,11 +1,10 @@
 package com.github.ybecker.epforuml;
 
 import android.content.Context
-import android.media.MediaRecorder
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.ybecker.epforuml.sensor.AndroidAudioRecorder
+import com.github.ybecker.epforuml.features.voiceMessages.AndroidAudioRecorder
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before

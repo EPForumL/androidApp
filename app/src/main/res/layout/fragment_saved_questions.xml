@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:paddingTop="20dp"
     android:id="@+id/saved_questions_layout_parent"
-    tools:context=".SavedQuestionsFragment">
+    tools:context=".features.cache.SavedQuestionsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -12,6 +12,7 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.util.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.hamcrest.Matchers.not

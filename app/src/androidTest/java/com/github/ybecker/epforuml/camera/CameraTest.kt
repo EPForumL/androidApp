@@ -10,7 +10,7 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule

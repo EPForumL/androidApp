@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml.database
 
-import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.FirebaseDatabase
@@ -121,6 +120,8 @@ abstract class Database {
      * @param questionTitle the title of the question itself
      * @param questionText the text of the question itself
      * @param image_uri the uri to an image linked with the question
+     * @param audioPath the path of the voice message
+     * @param isAnonymous the users choice concerning anonymity
      * @return the question that was posted in database
      */
     abstract fun addQuestion(userId: String, courseId: String,isAnonymous:Boolean,  questionTitle: String, questionText: String?,  image_uri: String, audioPath : String): CompletableFuture<Question>
@@ -268,7 +269,7 @@ abstract class Database {
     abstract fun getCourseById(id: String): CompletableFuture<Course?>
 
     /**
-     * Returns all the chats between two users
+     * Returns all the chats between two users.
      *
      * @param userId1 Id of the logged user
      * @param userId2 Id of the external user
@@ -294,18 +295,17 @@ abstract class Database {
 
 
     /**
-     * Posts a new question in a given course.
+     * Posts a new chat.
      *
      * @param senderId the user that sent the chat
      * @param receiverId user that will receive the chat
      * @param text content of the chat
-     * @param date time of the chat
      * @return the question that was posted in database
      */
     abstract fun addChat(senderId:String,  receiverId:String,  text: String?) : Chat
 
     /**
-     * Posts a new question in a given course.
+     * Records that people chatted with each other.
      *
      * @param senderId the user that sent the chat
      * @param receiverId user that will receive the chat
@@ -314,15 +314,15 @@ abstract class Database {
     abstract fun addChatsWith(senderId: String, receiverId: String): String
 
     /**
-     * Posts a new question in a given course.
+     * Retrieves the user ID given his name
      *
-     * @param userName the name of the useer
+     * @param userName the name of the user
      * @return the user's ID
      */
     abstract fun getUserId(userName: String): CompletableFuture<String>
 
     /**
-     * Gets list of users the hist chatted with
+     * Gets list of users the host chatted with
      *
      * @param userID the id of the useer
      * @return id list of all users he chats with
@@ -342,6 +342,7 @@ abstract class Database {
     /**
     * Removes chat from database
     * @param ChatID to remove
+     * @return if the operation was successful
     */
     abstract fun removeChat(chatId:String) : Boolean
 
@@ -409,6 +410,9 @@ abstract class Database {
      */
     abstract fun updateLocalization(userId: String, position: LatLng, sharesLocation: Boolean)
 
+    /**
+     * @return the current DB instance
+     */
     abstract fun getDbInstance(): FirebaseDatabase?
 
 }
