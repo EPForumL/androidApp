@@ -149,13 +149,8 @@ class QuestionDetailsActivity : AppCompatActivity() {
                         answerRecyclerView.adapter = AnswerAdapter(q, hashMapOf(Pair(q.userId, username)),this)
                     }
 
-                    saveDataToDevice(
-                        cache,
-                        answersCache,
-                        futureQuestions.get() as ArrayList<Model.Question>,
-                        futureAnswers.get() as ArrayList<Model.Answer>,
-                        allCoursesCache
-                    )
+                    updateCaches(futureQuestions.get() as ArrayList<Model.Question>,
+                        futureAnswers.get() as ArrayList<Model.Answer>)
             }
         } else {
             val userList = loadUsersFromDevice()
@@ -177,6 +172,19 @@ class QuestionDetailsActivity : AppCompatActivity() {
                 answerRecyclerView.adapter = SavedAnswerAdapter(question!!, allAnswersCache, userList, hashMapOf(Pair(question!!.userId, username)),this)
             }
         }
+    }
+
+    private fun updateCaches(questions: ArrayList<Model.Question>, answers: ArrayList<Model.Answer>) {
+        allQuestionsCache = questions
+        allAnswersCache = answers
+
+        saveDataToDevice(
+            cache,
+            answersCache,
+            allQuestionsCache,
+            allAnswersCache,
+            allCoursesCache
+        )
     }
 
 
