@@ -41,18 +41,10 @@ class SavedQuestionsTest {
 
         scenario = ActivityScenario.launch(MainActivity::class.java)
 
-        /*
-        intent = Intent(
-            ApplicationProvider.getApplicationContext(),
-            MainActivity::class.java
-        )
-         */
-
         db.getQuestionById("question1").thenAccept {
             question = it!!
             cache.add(it)
             MainActivity.saveDataToDevice(arrayListOf(it), arrayListOf(), cache, arrayListOf(), arrayListOf())
-            //intent.putParcelableArrayListExtra("savedQuestions", cache)
         }
     }
 
@@ -66,7 +58,7 @@ class SavedQuestionsTest {
 
         onView(withId(R.id.text_login_to_save))
             .check(matches(isDisplayed()))
-            .check(matches(withText("Please log in to be able to save questions.")))
+            .check(matches(withText(R.string.please_login_to_save_questions)))
     }
 
     /*

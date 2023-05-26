@@ -19,6 +19,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.features.authentication.LoginActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.features.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.util.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -27,6 +28,7 @@ import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,122 +43,6 @@ class NewQuestionTest {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
     }
-    @Test
-    fun testAddQuestionWithNullUser() {
-
-        DatabaseManager.user = null
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
-        // go to MainActivity
-
-        Thread.sleep(2000)
-        onView(withId(R.id.guestButton)).perform(click())
-
-        // Wait for the view to be loaded
-        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
-
-        //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(swipeUp())
-
-        // Click on the new question button
-        onView(withId(R.id.new_question_button)).perform(click())
-        // Check that the new fragment is displayed
-        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
-
-        //fill the different fields
-
-        //Body of the question
-        val questBody = "Text From Null User"
-        onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
-
-        //Title of the question
-        onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title From Null User"))
-
-        //Selection of the spinner
-        onView(withId(R.id.subject_spinner)).perform(click())
-        val secondItem = onData(anything()).atPosition(1)
-        secondItem.perform(click())
-
-
-
-        // Scroll to the end of the page
-        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
-
-        // Click on the submit button
-        onView(withId(R.id.btn_submit)).perform(click())
-
-        //Check if the question is added to the database
-        val courseQuestions = db.getCourseQuestions("Database")
-        val addedQuestion = courseQuestions.thenAccept{
-            it.filter { quest -> quest.questionText == questBody }
-        }
-
-        assertThat(addedQuestion.get(), equalTo(null))
-
-
-
-
-        scenario.close()
-
-    }
-
-
-/*
-    @Test
-    fun testAddImage() {
-
-        Firebase.auth.signOut()
-        DatabaseManager.useMockDatabase()
-
-        val user = DatabaseManager.db.addUser("user1", "TestUser", "").get()
-        DatabaseManager.user = user
-
-        // Launch the fragment
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
-
-        //Scroll to the end of the page
-        onView(withId(R.id.home_layout_parent)).perform(ViewActions.swipeUp())
-
-        // Click on the new quest button
-        onView(withId(R.id.new_question_button)).perform(click())
-
-        // Check that the new fragment is displayed
-        onView(withId(R.id.new_question_scrollview)).check(matches(isDisplayed()))
-
-        //Body of the question
-        val questBody = "Text From User"
-        onView(withId(R.id.question_details_edittext)).perform(typeText(questBody))
-
-        // Close the keyboard
-        Espresso.closeSoftKeyboard()
-
-        //Title of the question
-        onView(withId(R.id.question_title_edittext)).perform(typeText("Sample Question Title"))
-
-        // Close the keyboard
-        Espresso.closeSoftKeyboard()
-
-        // Scroll to the end of the page
-        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
-
-        onView(withId(R.id.new_question_scrollview)).perform(ViewActions.swipeUp())
-
-        //click on the image button
-        onView(withId(R.id.takeImage)).perform(click())
-
-        onView(withId(R.id.camera_layout_parent)).check(matches(isDisplayed()))
-
-        //click on the camera button
-
-        onView(withId(R.id.image_capture_button)).perform(click())
-
-
-        scenario.close()
-
-    }
-
-
-*/
-
 
     @Test
     fun testAddQuestionWithEmptyTitle() {
@@ -216,6 +102,7 @@ class NewQuestionTest {
         //Return home
         //onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
+        scenario.close()
     }
 
     @Test
@@ -327,8 +214,6 @@ class NewQuestionTest {
 
         //onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
         scenario.close()
-
-
     }
 
 
@@ -374,7 +259,6 @@ class NewQuestionTest {
         onView(withId(R.id.question_details_edittext)).check(matches(withText("DETAILS")))
         onView(withId(R.id.image_uri)).check(matches(withText("URI")))
         scenario.close()
-
     }
 
 
@@ -505,6 +389,8 @@ class NewQuestionTest {
         onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
         onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
         onView(withId(R.id.voice_note_button)).check(matches(isDisplayed()))
+
+        scenario.close()
     }
 
     @Test
@@ -534,11 +420,16 @@ class NewQuestionTest {
 
         onView(withId(R.id.latex_window_root))
             .check(matches(isDisplayed()))
+
+        scenario.close()
     }
 
     @Test
     fun openCameraTest() {
-        ActivityScenario.launch(MainActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+        }
 
         onView(withId(R.id.new_question_button)).perform(click())
 
@@ -547,11 +438,15 @@ class NewQuestionTest {
         onView(withId(R.id.takeImage)).perform(click())
 
         //find a way to check that it has been open correctly...
+        scenario.close()
     }
 
     @Test
     fun openAudioMessage() {
-        ActivityScenario.launch(MainActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+        }
 
         onView(withId(R.id.new_question_button)).perform(click())
 
@@ -564,6 +459,8 @@ class NewQuestionTest {
 //        onView(withId(R.id.voice_note_button)).perform(click())
 //
 //        onView(withId(R.id.play_note_button)).check(matches(isEnabled()))
+
+        scenario.close()
 
     }
 

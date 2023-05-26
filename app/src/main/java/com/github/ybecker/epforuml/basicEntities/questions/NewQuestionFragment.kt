@@ -13,13 +13,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import com.github.ybecker.epforuml.HomeFragment
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.features.latex.LatexDialog
 import com.github.ybecker.epforuml.features.voiceMessages.AndroidAudioRecorder
 import java.io.File
 import java.util.*
-import com.github.ybecker.epforuml.structure.HomeFragment
 import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.features.voiceMessages.AndroidAudioPlayer
@@ -260,17 +260,8 @@ class NewQuestionFragment : Fragment() {
         coursesList: List<Model.Course>,
         user: Model.User?
     ): (v: View) -> Unit = {
-
-        // If the user is not logged in, show a message and don't submit the question
-        if (user == null) {
-            Toast.makeText(
-                requireContext(),
-                "You must be logged in to post a question",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
         // If the question title or body is empty, show a message and don't submit the question
-        else if (questBody.text.isBlank() || questTitle.text.isBlank()) {
+        if (questBody.text.isBlank() || questTitle.text.isBlank()) {
             Toast.makeText(
                 requireContext(),
                 "Question title or body cannot be empty",
@@ -292,7 +283,7 @@ class NewQuestionFragment : Fragment() {
                         audioFilePath = audioFile!!.absolutePath
                     }
                     db.addQuestion(
-                        user.userId,
+                        user!!.userId,
                         course.courseId,
                         anonymousSwitch.isChecked,
                         questTitle.text.toString(),

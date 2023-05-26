@@ -9,6 +9,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.github.ybecker.epforuml.HomeFragment
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.features.cache.SavedQuestionsFragment
 import com.github.ybecker.epforuml.basicEntities.account.AccountFragment
@@ -22,7 +23,6 @@ import com.github.ybecker.epforuml.basicEntities.questions.MyQuestionsFragment
 import com.github.ybecker.epforuml.basicEntities.questions.NewQuestionFragment
 import com.github.ybecker.epforuml.features.maps.MapsFragment
 import com.github.ybecker.epforuml.structure.CoursesFragment
-import com.github.ybecker.epforuml.structure.HomeFragment
 import com.github.ybecker.epforuml.structure.SettingsFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.FirebaseApp
