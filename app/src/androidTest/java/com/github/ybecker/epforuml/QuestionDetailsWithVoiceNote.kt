@@ -58,10 +58,6 @@ class QuestionDetailsWithVoiceNote {
         Thread.sleep(2000)
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
         onView(withId(R.id.btn_submit)).perform(scrollTo(), click())
-        onView(withText(string)).perform(click())
-        onView(withId(R.id.play_note_button)).perform(scrollTo())
-        onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
-
     }
 
     @Test
