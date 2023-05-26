@@ -51,7 +51,7 @@ class MapFragmentTest {
         // Here again temporary comment until we find a solution for the CI fails
 
         scenario.onActivity { MockAuthenticator(it).signIn().join() }
-
+        Thread.sleep(2000)
         Espresso.onView(ViewMatchers.withContentDescription(R.string.open))
             .perform(click())
         Espresso.onView(ViewMatchers.withId(R.id.nav_map))

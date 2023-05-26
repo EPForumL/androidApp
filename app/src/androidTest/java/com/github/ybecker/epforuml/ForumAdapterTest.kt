@@ -55,6 +55,11 @@ class ForumAdapterTest {
         onView(withText(DatabaseManager.db.getQuestionById("question1").get()?.questionTitle))
             .check(matches(isDisplayed()))
     }
+    @Test
+    fun displayAudioCorrect(){
+        onView(withText("AUDIO")).perform(ViewActions.scrollTo(), ViewActions.click())
+        onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
+    }
 
     @Test
     fun stillWorksAfterOtherFragmentTest() {

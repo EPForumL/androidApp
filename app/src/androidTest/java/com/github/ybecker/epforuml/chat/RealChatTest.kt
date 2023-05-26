@@ -112,7 +112,6 @@ class RealChatTest {
     @Test
     fun chatIsRemovedCancelAndConfirm() {
         navigateToChat()
-        //remove chat
         Espresso.onView(withText("HYD?")).perform(scrollTo(), longClick())
         Espresso.onView(withText("Cancel")).perform(click())
         scenario.onActivity { activity ->

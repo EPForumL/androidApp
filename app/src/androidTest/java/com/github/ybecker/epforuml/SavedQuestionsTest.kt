@@ -35,8 +35,6 @@ class SavedQuestionsTest {
     private lateinit var question : Model.Question
     private var cache = arrayListOf<Model.Question>()
 
-    private lateinit var intent : Intent
-
     @Before
     fun setup() {
         DatabaseManager.useMockDatabase()
