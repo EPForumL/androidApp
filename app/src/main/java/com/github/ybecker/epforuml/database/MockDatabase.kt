@@ -2,10 +2,10 @@ package com.github.ybecker.epforuml.database
 
 import android.content.ContentValues
 import android.util.Log
-import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
 import java.util.concurrent.CompletableFuture
@@ -252,28 +252,27 @@ class MockDatabase : Database() {
         }
     }
 
-    override fun addNotification(userId: String, courseId: String): CompletableFuture<Boolean> {
-        val future = CompletableFuture<Boolean>()
+    override fun addNotification(userId: String, courseId: String) {
         val course = courses[courseId]
-        if(course != null) {
-            FirebaseMessaging.getInstance().token.addOnSuccessListener {
-                val updatedNotification = course.notifications + (userId+"/"+it)
-                courses[courseId] = course.copy(notifications = updatedNotification)
-                future.complete(true)
-            }.addOnFailureListener { e ->
-                Log.e(ContentValues.TAG, "Failed to retrieve notification token for user $userId and course $courseId", e)
-                future.complete(false)
-            }
-        }
+        val user = users[userId]
+        if(course != null && user != null) {
+            val updatedCourseNotification = course.notifications + userId
+            courses[courseId] = course.copy(notifications = updatedCourseNotification)
 
-        return future
+            val updatedUserNotification = user.notifications + courseId
+            users[userId] = user.copy(notifications = updatedUserNotification)
+        }
     }
 
     override fun removeNotification(userId: String, courseId: String) {
         val course = courses[courseId]
-        if(course != null) {
-            val updatedNotification = course.notifications.filter { it.split("/").get(0) != userId }
-            courses[courseId] = course.copy(notifications = updatedNotification)
+        val user = users[userId]
+        if(course != null && user != null) {
+            val updatedCourseNotification = course.notifications.filter { it != userId }
+            courses[courseId] = course.copy(notifications = updatedCourseNotification)
+
+            val updatedUserNotification = user.notifications.filter { it != courseId }
+            users[userId] = user.copy(notifications = updatedUserNotification)
         }
     }
 
@@ -308,6 +307,10 @@ class MockDatabase : Database() {
 
     override fun getQuestions(): CompletableFuture<List<Question>> {
         return CompletableFuture.completedFuture(questions.values.toList().reversed())
+    }
+
+    override fun getAllUsers(): CompletableFuture<List<User>> {
+        return CompletableFuture.completedFuture(users.values.toList())
     }
 
     override fun getQuestionById(id: String): CompletableFuture<Question?> {
@@ -346,20 +349,21 @@ class MockDatabase : Database() {
         }
     }
 
-    override fun getCourseNotificationTokens(courseId: String): CompletableFuture<List<String>> {
-        val list = courses[courseId]?.notifications?.map { it.split("/") }
-        if(list == null || list.isEmpty()){
-            return CompletableFuture.completedFuture(listOf())
-        }
-        return CompletableFuture.completedFuture(list.map { it.get(1) })
-    }
 
     override fun getCourseNotificationUserIds(courseId: String): CompletableFuture<List<String>> {
-        val list = courses[courseId]?.notifications?.map { it.split("/") }
+        val list = courses[courseId]?.notifications
         if(list == null || list.isEmpty()){
             return CompletableFuture.completedFuture(listOf())
         }
-        return CompletableFuture.completedFuture(list.map { it.get(0) })
+        return CompletableFuture.completedFuture(list)
+    }
+
+    override fun getUserNotificationIds(userId: String): CompletableFuture<List<String>> {
+        val list = users[userId]?.notifications
+        if(list == null || list.isEmpty()){
+            return CompletableFuture.completedFuture(listOf())
+        }
+        return CompletableFuture.completedFuture(list)
     }
 
     override fun setUserPresence(userId: String) {
@@ -447,5 +451,9 @@ class MockDatabase : Database() {
         users[userId]?.longitude = position.longitude
         users[userId]?.latitude = position.latitude
         users[userId]?.sharesLocation = sharesLocation
+    }
+
+    override fun getDbInstance(): FirebaseDatabase? {
+        return null
     }
 }

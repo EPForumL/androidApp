@@ -1,9 +1,8 @@
 package com.github.ybecker.epforuml
 
-import android.app.Dialog
+import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -12,22 +11,17 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-
-import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
 import com.github.ybecker.epforuml.latex.LatexDialog
-import com.github.ybecker.epforuml.sensor.CameraActivity
+import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
 import com.github.ybecker.epforuml.sensor.AndroidAudioRecorder
+import com.github.ybecker.epforuml.sensor.CameraActivity
 import java.io.File
 import java.util.*
-import android.Manifest
-import android.annotation.SuppressLint
-import androidx.compose.ui.graphics.Color
-import androidx.core.net.toUri
-import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
 
 /**
  * A simple [Fragment] subclass.
@@ -36,7 +30,6 @@ import com.github.ybecker.epforuml.sensor.AndroidAudioPlayer
  */
 class NewQuestionFragment : Fragment() {
 
-    private var mediaRecorder: MediaRecorder? = null
     private var audioFile: File? = null
     private var isRecording = false
 
@@ -278,31 +271,5 @@ class NewQuestionFragment : Fragment() {
                 }
             }
         }
-    }
-
-    private fun setTakeImage(
-        view: View,
-        questBody: EditText,
-        questTitle: EditText
-    ) {
-        takePictureButton = view.findViewById(R.id.takeImage)
-        takePictureButton.setOnClickListener {
-            val questionDetails = questBody.text.toString()
-            val questionTitle = questTitle.text.toString()
-            val intent = Intent(this.mainActivity, CameraActivity::class.java)
-            intent.putExtra("questionTitle", questionTitle)
-            intent.putExtra("questionDetails", questionDetails)
-            startActivity(intent)
-        }
-    }
-
-    private fun setUpArgs(view: View): Triple<EditText, EditText, TextView> {
-        questBody = view.findViewById(R.id.question_details_edittext)
-        questTitle = view.findViewById(R.id.question_title_edittext)
-        imageURI = view.findViewById(R.id.image_uri)
-        questBody.setText(this.mainActivity.intent.getStringExtra("questionDetails"))
-        questTitle.setText(this.mainActivity.intent.getStringExtra("questionTitle"))
-        imageURI.text = image_uri
-        return Triple(questBody, questTitle, imageURI)
     }
 }

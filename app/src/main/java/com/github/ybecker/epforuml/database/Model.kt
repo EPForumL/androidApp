@@ -33,8 +33,7 @@ class Model {
             parcel.createStringArrayList()!!,
             parcel.createStringArrayList()!!,
             parcel.readString()!!
-            ) {
-        }
+            )
 
         @RequiresApi(Build.VERSION_CODES.Q)
         override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -48,7 +47,7 @@ class Model {
             parcel.writeStringList(answers)
             parcel.writeStringList(followers)
             // At some point audioPath might be null.
-            parcel.writeString(audioPath ?: "")
+            parcel.writeString(audioPath)
         }
 
         override fun describeContents(): Int {
@@ -85,8 +84,7 @@ class Model {
             parcel.readString()!!,
             parcel.createStringArrayList()!!,
             parcel.readString()!!
-        ) {
-        }
+        )
 
         constructor() : this("", "", "", "", emptyList(),"")
 
@@ -122,6 +120,7 @@ class Model {
         var questions: List<String> = emptyList(),
         var answers: List<String> = emptyList(),
         var subscriptions: List<String> = emptyList(),
+        var notifications: List<String> = emptyList(),
         var chatsWith: List<String> = emptyList(),
         var profilePic: String = "",
         var userInfo: String = "",
@@ -139,6 +138,7 @@ class Model {
             emptyList(),
             emptyList(),
             emptyList(),
+            emptyList(),
             "",
             "",
             emptyList(),
@@ -150,11 +150,43 @@ class Model {
     }
 
     //This class represent a course
-    data class Course(val courseId: String, val courseName: String, var questions: List<String>, var notifications: List<String>){
+    data class Course(
+            val courseId: String,
+            val courseName: String,
+            var questions: List<String>,
+            var notifications: List<String>
+        ) : Parcelable {
+        constructor(parcel: Parcel) : this(
+            parcel.readString()!!,
+            parcel.readString()!!,
+            parcel.createStringArrayList()!!,
+            parcel.createStringArrayList()!!
+        )
+
         constructor() : this("", "", emptyList(), emptyList())
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeString(courseId)
+            parcel.writeString(courseName)
+            parcel.writeStringList(questions)
+            parcel.writeStringList(notifications)
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<Course> {
+            override fun createFromParcel(parcel: Parcel): Course {
+                return Course(parcel)
+            }
+
+            override fun newArray(size: Int): Array<Course?> {
+                return arrayOfNulls(size)
+            }
+        }
     }
 
     data class Chat(
-        val chatId: String?, val date: String?,val receiverId:String, val senderId:String,  val text: String?){
-    }
+        val chatId: String?, val date: String?,val receiverId:String, val senderId:String,  val text: String?)
 }

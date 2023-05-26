@@ -118,5 +118,6 @@
 
     <string name="qdetail_username_text">Username asks :</string>
     <string name="anonymous">Anonymous</string>
+    <string name="unknownUser">\"Unknown User\"</string>
 
 </resources>

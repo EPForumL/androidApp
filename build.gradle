@@ -16,4 +16,9 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
 }
 
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.test:runner:1.5.2'
+    }
+}
 

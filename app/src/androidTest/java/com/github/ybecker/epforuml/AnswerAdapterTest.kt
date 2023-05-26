@@ -1,12 +1,10 @@
 package com.github.ybecker.epforuml
 
-import android.view.View
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import com.github.ybecker.epforuml.util.onViewWithTimeout.Companion.onViewWithTimeout
 import androidx.test.espresso.action.*
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -14,11 +12,8 @@ import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
-import com.github.ybecker.epforuml.util.onViewWithTimeout
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import org.hamcrest.Matcher
-import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
@@ -103,7 +98,7 @@ class AnswerAdapterTest {
             db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testImageURI, "")
         }.join()
 
-        onView(withId(R.id.swipe_refresh_layout)).perform(ViewActions.swipeDown())
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
 
         onView(withText(newQuestionTitle)).perform(click())
 
@@ -123,7 +118,7 @@ class AnswerAdapterTest {
             db.addQuestion("0",it[0].courseId, false, newQuestionTitle, newQuestionTitle, testVideoURI, "")
         }.join()
 
-        onView(withId(R.id.swipe_refresh_layout)).perform(ViewActions.swipeDown())
+        onView(withId(R.id.swipe_refresh_layout)).perform(swipeDown())
 
         onView(withText(newQuestionTitle)).perform(click())
 

@@ -1,10 +1,7 @@
 package com.github.ybecker.epforuml.authentication
 
-import android.content.ContentValues
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCaller
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -12,6 +9,7 @@ import androidx.fragment.app.FragmentActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.firebase.ui.auth.data.model.User
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
 import com.github.ybecker.epforuml.account.AccountFragment
@@ -19,13 +17,9 @@ import com.github.ybecker.epforuml.account.AccountFragmentGuest
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 
 /**
  * Authenticator implementation that uses firebase authentication mechanisms
@@ -81,11 +75,20 @@ class FirebaseAuthenticator(
     override fun deleteUser(): CompletableFuture<Void> {
         signOutResult = CompletableFuture()
         val user = DatabaseManager.user
+
+        //unsubscribe the device to every users' notifications
+        DatabaseManager.db.getUserNotificationIds(user?.userId ?: "").thenAccept {
+            it.forEach { id -> Firebase.messaging.unsubscribeFromTopic(id) }
+        }
+
         if (user != null) {
             AuthUI.getInstance()
                 .delete(activity)
                 .addOnCompleteListener {
                     DatabaseManager.db.removeUser(user.userId)
+                    DatabaseManager.db.registeredUsers().thenAccept {
+                        MainActivity.saveAllUsersToDevice(it as ArrayList<Model.User>)
+                    }
                     DatabaseManager.user = null
                     logout("Successfully deleted user : ${user.username}")
                 }
@@ -99,9 +102,15 @@ class FirebaseAuthenticator(
      * @param txt: The text to show on the toast
      */
     private fun logout(txt: String) {
+        //unsubscribe the device to every users' notifications
+        DatabaseManager.db.getUserNotificationIds(DatabaseManager.user?.userId ?: "").thenAccept {
+            it.forEach { id -> Firebase.messaging.unsubscribeFromTopic(id) }
+        }
+
         DatabaseManager.user?.let { DatabaseManager.db.removeUserConnection(it.userId) }
         // User is logged out
         DatabaseManager.user = null
+        LoginActivity.saveUserToDevice(null)
 
         // Change to guest fragment
         val fragment = caller as Fragment
@@ -169,6 +178,17 @@ class FirebaseAuthenticator(
      */
     private fun gotToActivity(newUser: Model.User) {
         DatabaseManager.user = newUser
+        LoginActivity.saveUserToDevice(newUser)
+
+        DatabaseManager.db.registeredUsers().thenAccept {
+            MainActivity.saveAllUsersToDevice(it as ArrayList<Model.User>)
+        }
+
+        //subscribe the device to every users' notification
+        DatabaseManager.db.getUserNotificationIds(DatabaseManager.user?.userId ?: "").thenAccept {
+            it.forEach { id -> Firebase.messaging.subscribeToTopic(id) }
+        }
+
         DatabaseManager.db.setUserPresence(DatabaseManager.user!!.userId)
         DatabaseManager.user!!.connections.add(true)
 
