@@ -11,6 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.ybecker.epforuml.MainActivity
 import com.github.ybecker.epforuml.R
+import com.github.ybecker.epforuml.account.AccountFragment
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.Model
 
@@ -34,7 +35,16 @@ class ChatHomeAdapter(private val chatList : MutableList<String>,private val mai
          DatabaseManager.db.getUserById(currentItem).thenAccept{
              val user : Model.User? = it
              holder.chatWithText.text = user?.username
-             if(user?.profilePic!="") holder.chatImage.setImageURI(Uri.parse(user?.profilePic))
+
+             // Load profile picture to image view
+             if (user != null) {
+                 AccountFragment.loadProfilePictureToView(
+                     holder.itemView.context,
+                     user.profilePic,
+                     holder.chatImage
+                 )
+             }
+
              holder.chatWithButton.setOnClickListener{
                  mainActivity.intent.putExtra("externID", currentItem)
                  mainActivity.replaceFragment(RealChatFragment())
