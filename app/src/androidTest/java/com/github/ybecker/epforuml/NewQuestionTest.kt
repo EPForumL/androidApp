@@ -517,16 +517,13 @@ class NewQuestionTest {
 
         onView(withId(R.id.new_question_button)).perform(click())
 
-        onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
-
-        onView(withId(R.id.voice_note_button)).perform(click())
+        onView(withId(R.id.voice_note_button)).perform(scrollTo(), click())
 
         //take a short audio message
-//        Thread.sleep(200)
-//        onView(withId(R.id.voice_note_button)).perform(click())
-//
-//        onView(withId(R.id.play_note_button)).check(matches(isEnabled()))
+        Thread.sleep(200)
+        onView(withId(R.id.voice_note_button)).perform(click())
 
+        onView(withId(R.id.play_note_button)).check(matches(isEnabled()))
     }
 
     fun getText(matcher: ViewInteraction): String {
