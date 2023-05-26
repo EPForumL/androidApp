@@ -45,7 +45,7 @@
         android:textSize="16sp"
         android:layout_below="@+id/latex_render_button"/>
 
-    <com.github.ybecker.epforuml.latex.MathView
+    <com.github.ybecker.epforuml.features.latex.MathView
         android:id="@+id/latex_mathView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

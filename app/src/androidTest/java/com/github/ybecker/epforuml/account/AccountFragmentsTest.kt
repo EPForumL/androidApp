@@ -12,10 +12,10 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.firebase.ui.auth.KickoffActivity
-import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
-import com.github.ybecker.epforuml.authentication.LoginActivity
-import com.github.ybecker.epforuml.authentication.MockAuthenticator
+import com.github.ybecker.epforuml.features.authentication.LoginActivity
+import com.github.ybecker.epforuml.features.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase

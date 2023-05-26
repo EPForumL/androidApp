@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingTop="20dp"
     android:id="@+id/real_chat_layout_parent"
-    tools:context=".chat.RealChatFragment">
+    tools:context=".features.chat.RealChatFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -88,7 +88,7 @@
             android:layout_marginRight="16dp"
             android:layout_weight="1"
             app:layoutManager="LinearLayoutManager"
-            tools:context=".chat.RealChatFragment"
+            tools:context=".features.chat.RealChatFragment"
             tools:listitem="@layout/chat_item"
             />
 

@@ -15,15 +15,18 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.github.ybecker.epforuml.database.DatabaseManager.user
 import com.github.ybecker.epforuml.database.Model
+import com.github.ybecker.epforuml.basicEntities.questions.QuestionDetailsActivity
+import com.github.ybecker.epforuml.database.UserStatus
 import com.github.ybecker.epforuml.util.EspressoIdlingResource
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.util.onViewWithTimeout.Companion.onViewWithTimeout
 import junit.framework.TestCase.fail
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.After
 import org.junit.Before

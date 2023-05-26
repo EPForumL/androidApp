@@ -1,6 +1,5 @@
 package com.github.ybecker.epforuml.database
 
-import com.github.ybecker.epforuml.UserStatus
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import com.github.ybecker.epforuml.database.Model.*

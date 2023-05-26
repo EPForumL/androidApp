@@ -10,9 +10,8 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.ybecker.epforuml.MainActivity
+import com.github.ybecker.epforuml.util.MainActivity
 import com.github.ybecker.epforuml.R
-import com.github.ybecker.epforuml.UserStatus
 import com.github.ybecker.epforuml.database.Model.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth

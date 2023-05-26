@@ -14,8 +14,8 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.ybecker.epforuml.features.camera.EditPhotoActivity
 import com.dsphotoeditor.sdk.activity.DsPhotoEditorActivity
-import com.github.ybecker.epforuml.sensor.EditPhotoActivity
 import org.junit.Test
 import org.junit.rules.ExpectedException
 import org.junit.runner.RunWith
