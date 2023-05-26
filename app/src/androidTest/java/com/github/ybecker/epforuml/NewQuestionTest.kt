@@ -19,6 +19,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.features.authentication.LoginActivity
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
+import com.github.ybecker.epforuml.features.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.util.MainActivity
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -27,6 +28,7 @@ import org.hamcrest.CoreMatchers.*
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,6 +43,7 @@ class NewQuestionTest {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
     }
+
     @Test
     fun testAddQuestionWithNullUser() {
 
@@ -92,11 +95,7 @@ class NewQuestionTest {
 
         assertThat(addedQuestion.get(), equalTo(null))
 
-
-
-
         scenario.close()
-
     }
 
 
@@ -216,6 +215,7 @@ class NewQuestionTest {
         //Return home
         //onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
 
+        scenario.close()
     }
 
     @Test
@@ -327,8 +327,6 @@ class NewQuestionTest {
 
         //onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
         scenario.close()
-
-
     }
 
 
@@ -374,7 +372,6 @@ class NewQuestionTest {
         onView(withId(R.id.question_details_edittext)).check(matches(withText("DETAILS")))
         onView(withId(R.id.image_uri)).check(matches(withText("URI")))
         scenario.close()
-
     }
 
 
@@ -505,6 +502,8 @@ class NewQuestionTest {
         onView(withId(R.id.new_question_scrollview)).perform(swipeUp())
         onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
         onView(withId(R.id.voice_note_button)).check(matches(isDisplayed()))
+
+        scenario.close()
     }
 
     @Test
@@ -534,11 +533,16 @@ class NewQuestionTest {
 
         onView(withId(R.id.latex_window_root))
             .check(matches(isDisplayed()))
+
+        scenario.close()
     }
 
     @Test
     fun openCameraTest() {
-        ActivityScenario.launch(MainActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+        }
 
         onView(withId(R.id.new_question_button)).perform(click())
 
@@ -547,11 +551,15 @@ class NewQuestionTest {
         onView(withId(R.id.takeImage)).perform(click())
 
         //find a way to check that it has been open correctly...
+        scenario.close()
     }
 
     @Test
     fun openAudioMessage() {
-        ActivityScenario.launch(MainActivity::class.java)
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+        }
 
         onView(withId(R.id.new_question_button)).perform(click())
 
@@ -564,6 +572,8 @@ class NewQuestionTest {
 //        onView(withId(R.id.voice_note_button)).perform(click())
 //
 //        onView(withId(R.id.play_note_button)).check(matches(isEnabled()))
+
+        scenario.close()
 
     }
 
