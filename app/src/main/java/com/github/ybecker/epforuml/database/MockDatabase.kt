@@ -56,7 +56,6 @@ class MockDatabase : Database() {
                                 "How do I fix the CI ?",
             "",
             mutableListOf(), emptyList(),"")
-        questions[question1.questionId] = question1
         val question2 = Question("question2", "course0", "user1", false,"About Scrum master",
                                 "What is a Scrum Master ?", "" , mutableListOf(), emptyList(),"")
 
@@ -70,6 +69,12 @@ class MockDatabase : Database() {
                     "question" ,"", mutableListOf(), emptyList(),"")
 
         questions[question3.questionId] = question3
+
+        val question4 = Question("question1", "course1", "user1", false,"AUDIO",
+            "How do I fix the CI ?",
+            "",
+            mutableListOf(), emptyList(),"https://firebasestorage.googleapis.com/v0/b/epforuml-38150.appspot.com/o/random-acoustic-electronic-guitar-136427.mp3?alt=media&token=3ba7228f-a76f-4137-81fe-8126a30a0173")
+        questions[question4.questionId] = question4
 
         val answer1 = Answer("answer1", "question1", "user1", "première réponse", emptyList(), "")
         addAnswer(answer1.userId, answer1.questionId, answer1.answerText)

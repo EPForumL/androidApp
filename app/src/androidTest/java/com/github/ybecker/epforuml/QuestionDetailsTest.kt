@@ -383,6 +383,11 @@ class QuestionDetailsTest {
             .check(doesNotExist())
     }*/
 
+    @Test
+    fun displayAudioCorrect(){
+        onView(withText("AUDIO")).perform(click())
+        onView(withId(R.id.play_note_button)).check(matches(isDisplayed()))
+    }
 
     @Test
     fun loggedInCanSaveQuestion() {

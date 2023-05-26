@@ -58,7 +58,9 @@ class QuestionDetailsWithVoiceNote {
         Thread.sleep(2000)
         onView(withId(R.id.voice_note_button)).perform(scrollTo(),click())
         onView(withId(R.id.btn_submit)).perform(scrollTo(), click())
+
     }
+
 
     @Test
     fun disableOtherButton(){
