@@ -2,6 +2,7 @@ package com.github.ybecker.epforuml
 
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -32,7 +33,7 @@ class HomeFragmentTest {
         }
 
         onView(withId(R.id.new_question_button))
-            .check(matches(withEffectiveVisibility(Visibility.GONE)))
+            .check(doesNotExist())
     }
 
 

@@ -18,6 +18,7 @@ import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.github.ybecker.epforuml.authentication.LoginActivity
+import com.github.ybecker.epforuml.authentication.MockAuthenticator
 import com.github.ybecker.epforuml.database.DatabaseManager
 import com.github.ybecker.epforuml.database.DatabaseManager.db
 import com.google.firebase.auth.ktx.auth
@@ -41,26 +42,6 @@ class NewQuestionTest {
         Firebase.auth.signOut()
         DatabaseManager.useMockDatabase()
     }
-    @Test
-    fun testAddQuestionWithNullUser() {
-
-        DatabaseManager.user = null
-        val scenario = ActivityScenario.launch(LoginActivity::class.java)
-        // go to MainActivity
-
-        Thread.sleep(2000)
-        onView(withId(R.id.guestButton)).perform(click())
-
-        // Wait for the view to be loaded
-        onView(withId(R.id.home_layout_parent)).check(matches(isDisplayed()))
-
-        // Check new question button is not displayed
-        onView(withId(R.id.new_question_button))
-            .check(doesNotExist())
-
-        scenario.close()
-    }
-
 
 /*
     @Test
@@ -513,7 +494,10 @@ class NewQuestionTest {
 
     @Test
     fun openAudioMessage() {
-        ActivityScenario.launch(MainActivity::class.java)
+        val scenario = ActivityScenario.launch(MainActivity::class.java)
+        scenario.onActivity {
+            MockAuthenticator(it).signIn()
+        }
 
         onView(withId(R.id.new_question_button)).perform(click())
 
