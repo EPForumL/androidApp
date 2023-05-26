@@ -217,7 +217,7 @@ class QuestionDetailsTest {
 
 
     @Test
-    fun writeAnswerAndPostIsDisplayed() {
+    fun writeAnswerAndPostIsDisplayedTest() {
         logInDetailsActivity()
 
         val content = "New answer"
@@ -230,6 +230,8 @@ class QuestionDetailsTest {
 
         // post answer
         onView(withId(R.id.post_reply_button)).perform(click())
+
+        swipeToRefresh()
 
         // check displayed
         onView(withId(R.id.qdetails_answer_text)).check(matches(isDisplayed()))
